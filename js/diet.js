@@ -232,6 +232,7 @@ function renderGapTile(){
   if(!m){ el.innerHTML = head + `<span class="gv"><b>–</b><span class="gf">${T("记账天数不够","not enough logged days")}</span></span>`; return; }
   const s = Math.round(m.s), g = Math.round(Math.abs(m.s) / 7.7);
   el.innerHTML = head + `<span class="gv"><b class="${s >= 0 ? "g" : "r"}">${Math.abs(s)} kcal</b><span class="gf">${T("（约 " + g + " g 脂肪）", "(about " + g + " g fat)")}</span></span>`;
+  rollNum(el.querySelector("b"), "gap-" + n);
 }
 
 function activeDietDayKeys(){

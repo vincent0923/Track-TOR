@@ -29,13 +29,23 @@ document.querySelector("nav.tabs").addEventListener("click",e=>{const b=e.target
 /* ---------- theme (manual, does not follow the phone) ---------- */
 const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
 const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
-const BRICK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="12" x="3" y="8" rx="1"/><path d="M10 8V5c0-.6-.4-1-1-1H6a1 1 0 0 0-1 1v3"/><path d="M19 8V5c0-.6-.4-1-1-1h-3a1 1 0 0 0-1 1v3"/></svg>';
-/* the button cycles light → dark → toy and shows the theme it will switch to */
-const THEMES=["light","dark","toy"];
-function nextTheme(t){return THEMES[(THEMES.indexOf(t)+1)%THEMES.length]}
-function applyTheme(t){if(!THEMES.includes(t))t="light";document.documentElement.setAttribute("data-theme",t);const b=document.getElementById("themeBtn"),n=nextTheme(t);
-  b.innerHTML=n==="dark"?MOON:n==="toy"?BRICK:SUN;b.setAttribute("aria-label",n==="dark"?T("切换深色主题","Dark theme"):n==="toy"?T("切换玩具主题","Toy theme"):T("切换浅色主题","Light theme"));
+const PALETTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>';
+/* themes: [id, Chinese name, English name, swatch]. The toy family shares one look (data-skin="toy") with its own colours. */
+const THEMES=[["light","浅色","Light","linear-gradient(135deg,#EDF0F2 50%,#2B55C8 50%)"],["dark","深色","Dark","linear-gradient(135deg,#0F1519 50%,#7393F2 50%)"],
+  ["toy","玩具","Toy","linear-gradient(135deg,#F8F5EF 50%,#EF4F2B 50%)"],["toy-night","夜间玩具","Toy night","linear-gradient(135deg,#292724 50%,#FFC23D 50%)"],
+  ["toy-glow","夜光玩具","Toy glow","linear-gradient(135deg,#0D1220 50%,#B6F23E 50%)"],["woody","牛仔","Cowboy","linear-gradient(135deg,#7B4A2D 34%,#F0C050 34% 67%,#36435A 67%)"]];
+const THEME_IDS=THEMES.map(t=>t[0]);
+function skinOf(t){return /^(toy|woody)/.test(t)?"toy":""}
+function applyTheme(t){if(!THEME_IDS.includes(t))t="light";const r=document.documentElement;r.setAttribute("data-theme",t);
+  const k=skinOf(t);if(k)r.setAttribute("data-skin",k);else r.removeAttribute("data-skin");
+  const b=document.getElementById("themeBtn");b.innerHTML=PALETTE;b.setAttribute("aria-label",T("主题","Theme"));
   try{localStorage.setItem(LS+"-theme",t)}catch(e){}placePieces(false)}
+function closeThemePick(){const p=document.querySelector(".thpick");if(p)p.remove()}
+function openThemePick(){closeThemePick();const btn=document.getElementById("themeBtn"),cur=document.documentElement.getAttribute("data-theme");
+  const p=document.createElement("div");p.className="thpick";p.setAttribute("role","group");p.setAttribute("aria-label",T("主题","Theme"));
+  p.innerHTML=THEMES.map(([id,zh,en,sw])=>'<button type="button" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" aria-label="'+T(zh,en)+'" title="'+T(zh,en)+'" style="--sw:'+sw+'"></button>').join("");
+  document.body.append(p);const r=btn.getBoundingClientRect(),w=p.offsetWidth;
+  p.style.top=(r.bottom+scrollY+8)+"px";p.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w+scrollX))+"px"}
 /* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
 function placePiece(bar,anim){if(!bar||!bar.offsetParent)return;let pc=bar.querySelector(".tpiece");
   if(!pc){pc=document.createElement("i");pc.className="tpiece";pc.setAttribute("aria-hidden","true");bar.prepend(pc)}
@@ -45,16 +55,18 @@ function placePiece(bar,anim){if(!bar||!bar.offsetParent)return;let pc=bar.query
   pc.style.setProperty("--px",b.offsetLeft+"px");pc.style.setProperty("--py",b.offsetTop+"px");
   pc.style.setProperty("--pw",b.offsetWidth+"px");pc.style.setProperty("--ph",b.offsetHeight+"px");
   if(anim&&moved){pc.classList.remove("go");void pc.offsetWidth;pc.classList.add("go")}}
-function placePieces(anim){if(document.documentElement.getAttribute("data-theme")!=="toy")return;document.querySelectorAll("nav.tabs,.subtabs").forEach(x=>placePiece(x,anim))}
+function placePieces(anim){if(document.documentElement.getAttribute("data-skin")!=="toy")return;document.querySelectorAll("nav.tabs,.subtabs").forEach(x=>placePiece(x,anim))}
 addEventListener("resize",()=>placePieces(false));
 if(document.fonts)document.fonts.ready.then(()=>placePieces(false));
-let theme="light";try{theme=localStorage.getItem(LS+"-theme")||"light"}catch(e){}if(!THEMES.includes(theme))theme="light";
+let theme="light";try{theme=localStorage.getItem(LS+"-theme")||"light"}catch(e){}if(!THEME_IDS.includes(theme))theme="light";
 applyTheme(theme);
 function applyLang(l){LANG=l;document.documentElement.setAttribute("data-lang",l);document.documentElement.lang=l==="en"?"en":"zh-CN";
   document.getElementById("langBtn").textContent=l==="en"?"EN":"CH";try{localStorage.setItem(LS+"-lang",l)}catch(e){}}
 applyLang(LANG);
 document.getElementById("langBtn").addEventListener("click",()=>{applyLang(LANG==="en"?"zh":"en");applyTheme(document.documentElement.getAttribute("data-theme")||"light");renderAll();renderDietAll();paintSheetLang();syncUI()});
-document.getElementById("themeBtn").addEventListener("click",()=>applyTheme(nextTheme(document.documentElement.getAttribute("data-theme")||"light")));
+document.getElementById("themeBtn").addEventListener("click",e=>{e.stopPropagation();document.querySelector(".thpick")?closeThemePick():openThemePick()});
+document.addEventListener("click",e=>{const t=e.target.closest("[data-theme-pick]");if(t){applyTheme(t.dataset.themePick);closeThemePick();return}if(!e.target.closest(".thpick"))closeThemePick()});
+addEventListener("resize",closeThemePick);
 
 /* particle flames above an element: the 练 button burns at full size (orange); today's cell on the training
    calendar burns at half size in green. k scales size, height and density. */
@@ -179,6 +191,14 @@ function dnum(s){const p=s.split("-");return Date.UTC(+p[0],+p[1]-1,+p[2])/864e5
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function numOrNull(v){if(v===""||v==null)return null;const n=Number(v);return isFinite(n)?n:null}
 let toastT;
+/* numbers roll to their new value (0.4 s); the first time a number shows, it counts up from 0 */
+const ROLL=new Map();
+function rollNum(el,key){if(!el)return;const txt=el.textContent,m=/\d+(?:\.\d+)?/.exec(txt);if(!m)return;
+  const to=+m[0],dec=(m[0].split(".")[1]||"").length,from=ROLL.has(key)?ROLL.get(key):0;ROLL.set(key,to);
+  if(from===to||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const t0=performance.now(),D=400,ease=x=>1-Math.pow(1-x,3);
+  const step=now=>{const x=Math.min(1,(now-t0)/D);if(!el.isConnected)return;el.textContent=txt.replace(m[0],(from+(to-from)*ease(x)).toFixed(dec));if(x<1)requestAnimationFrame(step)};
+  el.textContent=txt.replace(m[0],from.toFixed(dec));requestAnimationFrame(step)}
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2600)}
 
 /* ---------- sound: synthesised with Web Audio, no files ---------- */
@@ -265,13 +285,17 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     musicbox:()=>{[1047,1175,1319,1568,1760].forEach((f,i)=>tone(f,i*0.11,0.5,"sine",0.1))},
     sparkle:()=>{[2093,2637,3136,2349,2794,3520].forEach((f,i)=>tone(f,i*0.045,0.2,"sine",0.05))},
     sad:()=>{[392,370,349].forEach((f,i)=>tone(f,i*0.22,0.22,"triangle",0.12));tone(330,0.66,0.5,"triangle",0.12,300)},
+    /* plastic toy sounds for the toy themes: a key clacking down, a piece sliding into its slot, two bricks snapping */
+    clack:()=>{noiseHit(0.035,3200,1800,0.32,3,"bandpass",0.15);tone(240,0,0.06,"sine",0.22,110)},
+    slide:()=>{noiseHit(0.2,900,2600,0.12,1.2,"bandpass",0.6);noiseHit(0.03,3400,2200,0.3,3,"bandpass",0.15,0.19);tone(320,0.19,0.06,"sine",0.18,160)},
+    snap:()=>{noiseHit(0.02,4200,2800,0.35,4,"bandpass",0.1);noiseHit(0.025,2600,1600,0.3,4,"bandpass",0.1,0.045);tone(520,0.045,0.08,"triangle",0.12,260)},
     none:()=>{}
   };
   /* sound names, in the order the picker lists them */
   const SN={tap:["翻页声","Page flip"],key:["键盘滴","Key tick"],inc:["上扬","Rise"],dec:["下沉","Drop"],tick:["叮咚","Ding-dong"],untick:["泄气","Deflate"],
     exDone:["四连音","Four notes"],finish:["通关","Level clear"],boom:["烟花","Firework"],bigboom:["大烟花","Big firework"],swoosh:["嗖","Swoosh"],pop:["啵","Pop"],
     click:["咔哒","Click"],chime:["完成铃","Chime"],buzz:["嗡","Buzz"],
-    trash:["揉纸丢掉","Crumple"],poof:["噗","Poof"],sword:["剑气","Sword slash"],unsheathe:["拔剑","Unsheathe"],punch:["重拳","Punch"],charge:["蓄力","Power up"],coin:["金币","Coin"],levelup:["升级","Level up"],fanfare:["号角","Fanfare"],musicbox:["八音盒","Music box"],sparkle:["星光","Sparkle"],sad:["失落","Wah-wah"],none:["无声","Silent"]};
+    trash:["揉纸丢掉","Crumple"],clack:["塑料按键","Plastic key"],slide:["塑料片滑入","Piece slides in"],snap:["积木咔哒","Brick snap"],poof:["噗","Poof"],sword:["剑气","Sword slash"],unsheathe:["拔剑","Unsheathe"],punch:["重拳","Punch"],charge:["蓄力","Power up"],coin:["金币","Coin"],levelup:["升级","Level up"],fanfare:["号角","Fanfare"],musicbox:["八音盒","Music box"],sparkle:["星光","Sparkle"],sad:["失落","Wah-wah"],none:["无声","Silent"]};
   /* every kind of tap that makes a sound, its default sound, grouped as the settings panel shows them */
   const SFX=[
     [["训练","Training"],[["set","打勾完成一组","Tick a set","coin"],["exdone","一个动作的组全部完成","Last set of an exercise","levelup"],["untick","取消打勾","Untick a set","untick"],
@@ -290,7 +314,10 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   const JFK=[];
   JF_SOUNDS.forEach(([k,zh,en,p])=>{JFK.push(k);SN[k]=[zh,en];S[k]=()=>{const c=ac();if(c)jfPlay(c,k,p)}});
   const SDEF={};SFX.forEach(g=>g[1].forEach(r=>{SDEF[r[0]]=r[3]}));
-  const pickOf=id=>{const m=state.settings&&state.settings.sfx;const k=m&&m[id];return S[k]?k:SDEF[id]};
+  /* the toy themes swap the taps' defaults for plastic sounds; a sound the user picked still wins */
+  const SKIN_SFX={toy:{tab1:"slide",tab2:"slide",range:"clack",gap:"clack",header:"clack",other:"clack",open:"clack",close:"clack",fold:"clack",save:"snap",untick:"clack"}};
+  const defOf=id=>{const k=SKIN_SFX[document.documentElement.getAttribute("data-skin")];return k&&k[id]||SDEF[id]};
+  const pickOf=id=>{const m=state.settings&&state.settings.sfx;const k=m&&m[id];return S[k]?k:defOf(id)};
   function playRaw(k){if(on&&S[k])try{S[k]()}catch(e){}}
   function play(id){playRaw(pickOf(id))}
   window.sfx=play;
@@ -342,7 +369,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     const opts='<optgroup label="'+T("推拉机","track-TOR")+'">'+Object.keys(S).filter(k=>!ZZK.includes(k)&&!JFK.includes(k)).map(opt).join("")+'</optgroup>'
       +'<optgroup label="ZzFX">'+ZZK.map(opt).join("")+'</optgroup><optgroup label="jsfxr">'+JFK.map(opt).join("")+'</optgroup>';
     box.innerHTML=SFX.map(([g,rows])=>'<div class="sfxg"><h4>'+T(g[0],g[1])+'</h4>'+rows.map(([id,zh,en])=>
-      '<div class="sfxr'+(pickOf(id)!==SDEF[id]?' changed':'')+'" data-sfx="'+id+'"><span>'+T(zh,en)+'</span><select aria-label="'+T(zh,en)+'">'+opts+'</select>'
+      '<div class="sfxr'+(pickOf(id)!==defOf(id)?' changed':'')+'" data-sfx="'+id+'"><span>'+T(zh,en)+'</span><select aria-label="'+T(zh,en)+'">'+opts+'</select>'
       +'<button type="button" class="sfxp" aria-label="'+T("试听","Play")+'">'+PLAY_I+'</button></div>').join("")+'</div>').join("");
     box.querySelectorAll("[data-sfx]").forEach(r=>{r.querySelector("select").value=pickOf(r.dataset.sfx)});
   }
@@ -350,8 +377,8 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   document.addEventListener("change",e=>{
     const r=e.target.closest("#sfxPanel [data-sfx]");if(!r)return;
     const id=r.dataset.sfx,k=e.target.value,m=Object.assign({},state.settings.sfx||{});
-    if(k===SDEF[id])delete m[id];else m[id]=k;
-    state.settings.sfx=m;saveSettings();r.classList.toggle("changed",k!==SDEF[id]);
+    if(k===defOf(id))delete m[id];else m[id]=k;
+    state.settings.sfx=m;saveSettings();r.classList.toggle("changed",k!==defOf(id));
     const was=on;on=true;playRaw(k);on=was;
   });
   document.addEventListener("click",e=>{

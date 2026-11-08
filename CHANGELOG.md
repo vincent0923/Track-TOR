@@ -6,6 +6,20 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.31a] — 2026-11-08
+
+### 新增 / Added
+- 🎨 **六套主题，点调色盘选**：右上角的主题按钮换成调色盘，点开是一排色板：浅色、深色、玩具、夜间玩具、夜光玩具、牛仔。夜间玩具是同一套塑料的深色版；夜光玩具是深蓝底配荧光绿、粉、青，彩色塑料会发光，适合晚上在外训练；牛仔是奶油底配帽子棕、牛仔蓝和衬衫黄，底纹是木板线。
+  Six themes, picked from a palette: the theme button is now a palette that opens a row of swatches: Light, Dark, Toy, Toy night, Toy glow and Cowboy. Toy night is the same plastic in the dark; Toy glow is glow-in-the-dark plastic (lime, pink and cyan that give off light on navy) for training outside at night; Cowboy is cream with hat brown, denim blue and shirt yellow on plank lines.
+- 🔊 **玩具主题有塑料声**：玩具一族的主题里，切换标签是塑料片滑入卡槽的声音，其他按钮是塑料按键声，保存是两块积木咔哒扣上。「资料 › 音效」里也能单独选这三个声音；自己选过的声音照旧。
+  Plastic sounds for the toy themes: switching tabs sounds like a piece sliding into its slot, other buttons clack like plastic keys, and saving snaps like two bricks. The three sounds can also be picked in Profile › Sound effects; sounds you picked yourself stay.
+- 🟩 **一年打卡热力图**：「图表 › 力量」最上面，最近 53 周每天一格，当天打勾的组越多颜色越深，标题旁是打卡天数。可以横向滑动，打开时停在最近几周。
+  Year of training heatmap: at the top of Charts › Strength, one square per day for the last 53 weeks, darker the more sets you ticked, with the number of training days beside the title. It scrolls sideways and opens on the latest weeks.
+- 🔢 **数字会滚动**：目标百分比、热量缺口和打卡天数变化时滚到新数字，打开时从 0 数上来。玩具主题里提示条会弹出来，目标进度条带回弹。
+  Numbers roll: goal percentages, the calorie gap and the training-day count roll to their new value and count up from 0 when they first show. In the toy themes, toasts pop up and goal bars fill with a bounce.
+
+---
+
 ## [v1.30a] — 2026-11-08
 
 ### 新增 / Added

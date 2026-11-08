@@ -187,8 +187,27 @@ document.getElementById("syncShow").addEventListener("click",e=>{
   const s=Object.assign({},state.settings.sync||{});s[b.dataset.sync]=!syncOn(b.dataset.sync);
   state.settings.sync=s;saveSettings();paintSync();
 });
+/* ---------- year heatmap: one square per day for the last 53 weeks, darker the more sets were ticked ---------- */
+function daySets(d){let n=0;const cnt=doc=>{if(!doc)return;
+    if(doc.sets)Object.values(doc.sets).forEach(a=>a.forEach(x=>{if(x.d)n++}));
+    if(doc.xs)doc.xs.forEach(it=>it.sets.forEach(x=>{if(x.d)n++}))};
+  Object.values(state.sessions).forEach(s=>{if(s&&s.done&&s.date===d)cnt(s)});cnt(state.dayx&&state.dayx[d]);return n}
+function renderHeat(){const box=document.getElementById("heat");if(!box)return;
+  const td=today(),wd=(new Date(td+"T12:00:00").getDay()+6)%7,start=ymdAdd(td,-(52*7+wd)),C=11,G=2,L=22,TOP=14;
+  const by={};Object.values(state.sessions).forEach(s=>{if(s&&s.done&&s.date)by[s.date]=1});Object.keys(state.dayx||{}).forEach(d=>{by[d]=1});
+  let cells="",months="",days=0,lastM="";
+  for(let i=0;i<53*7;i++){const d=ymdAdd(start,i);if(d>td)break;const w=Math.floor(i/7),r=i%7,x=L+w*(C+G),y=TOP+r*(C+G);
+    const n=by[d]?daySets(d):0;if(n)days++;const lv=n===0?0:n<=5?1:n<=15?2:3;
+    cells+='<rect x="'+x+'" y="'+y+'" width="'+C+'" height="'+C+'" rx="2.5" class="h'+lv+(d===td?' ht':'')+'"><title>'+d+(n?" · "+n+T(" 组"," sets"):"")+'</title></rect>';
+    const m=d.slice(5,7);if(r===0&&m!==lastM){if(lastM||d.slice(8)<="07")months+='<text x="'+x+'" y="9">'+(+m)+T("月","")+'</text>';lastM=m}}
+  const wl=[T("一","M"),"",T("三","W"),"",T("五","F"),"",""].map((t,i)=>t?'<text x="0" y="'+(TOP+i*(C+G)+9)+'">'+t+'</text>':"").join("");
+  const W=L+53*(C+G)+14,H=TOP+7*(C+G);
+  box.innerHTML='<svg class="heat" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+T("最近一年的训练日","Training days in the last year")+'">'+months+wl+cells+'</svg>';
+  box.scrollLeft=box.scrollWidth;
+  const cv=document.getElementById("cvHeat");cv.textContent=days+T(" 天"," days");rollNum(cv,"heat")}
 function renderData(){
   paintSync();
+  renderHeat();
   const L=k=>T(CH[k].ma+"日均",CH[k].ma+"-day avg"), tag=k=>T("（MA"+CH[k].ma+"）"," (MA"+CH[k].ma+")");
   const pu=pullSeries();
   chart(document.getElementById("chPull"),pu,{color:"var(--pull)",range:CH.pull.rg,zero:true,dec:0,unit:T(" 个"," reps"),label:T("标准引体趋势","Pull-up trend")});
@@ -314,6 +333,7 @@ function renderGoals(){
   box.hidden=!show.length;
   if(show.some(k=>k==="waist"||k==="weight"))h+='<button type="button" class="privbtn'+(PRIV?' on':'')+'" data-priv="1" aria-pressed="'+PRIV+'" aria-label="'+T('隐私模式','Privacy view')+'">'+(PRIV?EYE_OFF:EYE_ON)+'</button>';
   box.innerHTML=h;
+  box.querySelectorAll(".goal").forEach(g=>rollNum(g.querySelector(".gp"),"goal-"+g.querySelector("[data-setgoal]").dataset.setgoal));
   renderGoalPanel();
 }
 /* ---------- goal panel ---------- */
