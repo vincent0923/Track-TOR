@@ -23,7 +23,10 @@ const ASSETS = [
   "./fonts/barlow-condensed-500.woff2",
   "./fonts/barlow-condensed-600.woff2",
   "./fonts/barlow-condensed-700.woff2",
-  "./fonts/archivo-wdth.woff2"
+  "./fonts/archivo-wdth.woff2",
+  "./fonts/vt323.woff2",
+  "./fonts/bricolage-wght.woff2",
+  "./fonts/geist-wght.woff2"
 ];
 
 self.addEventListener("install", (e) => {

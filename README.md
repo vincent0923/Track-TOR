@@ -51,9 +51,9 @@
 
 产品定位、设计取向和现有功能见 [产品说明](docs/PRODUCT.md)，版本记录见 [更新日志](CHANGELOG.md)。
 
-当前版本 **v1.31a**。Alpha 表示已经在日常使用，还在持续打磨。
+当前版本 **v1.32a**。Alpha 表示已经在日常使用，还在持续打磨。
 
-© 2026 vincent0923，保留所有权利。见 [LICENSE](LICENSE)。数字字体 Barlow Condensed 和玩具主题的字体 Archivo 按 SIL Open Font License 附带，见 [fonts/OFL.txt](fonts/OFL.txt) 和 [fonts/ARCHIVO-OFL.txt](fonts/ARCHIVO-OFL.txt)。部分图标来自 [Lucide](https://lucide.dev)（ISC 许可，见 [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)）。部分音效用 [ZzFX](https://github.com/KilledByAPixel/ZzFX) 合成（MIT 许可，见 [docs/ZZFX-LICENSE.txt](docs/ZZFX-LICENSE.txt)），部分用 [jsfxr](https://github.com/chr15m/jsfxr) 的合成方法（公有领域，见 [docs/JSFXR-UNLICENSE.txt](docs/JSFXR-UNLICENSE.txt)）。
+© 2026 vincent0923，保留所有权利。见 [LICENSE](LICENSE)。数字字体 Barlow Condensed 和各主题用的字体 Archivo、Geist、Bricolage Grotesque、VT323 按 SIL Open Font License 附带，许可见 [fonts/](fonts/) 下的 OFL 文件。主题的四种风格参考了 [Ovio](https://github.com/JanaSundar/ovio)（MIT）的设计，用纯 CSS/JS 重写。部分图标来自 [Lucide](https://lucide.dev)（ISC 许可，见 [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)）。部分音效用 [ZzFX](https://github.com/KilledByAPixel/ZzFX) 合成（MIT 许可，见 [docs/ZZFX-LICENSE.txt](docs/ZZFX-LICENSE.txt)），部分用 [jsfxr](https://github.com/chr15m/jsfxr) 的合成方法（公有领域，见 [docs/JSFXR-UNLICENSE.txt](docs/JSFXR-UNLICENSE.txt)）。
 
 ---
 
@@ -108,6 +108,6 @@ Most people don't need another training plan. They need a reason to keep going. 
 
 See the [product notes](docs/PRODUCT.md) (in Chinese) for positioning, design principles, and how things work today, and the [changelog](CHANGELOG.md) for version history.
 
-Current version: **v1.31a**. Alpha means it's in daily use and still being refined.
+Current version: **v1.32a**. Alpha means it's in daily use and still being refined.
 
-© 2026 vincent0923. All rights reserved. See [LICENSE](LICENSE). The Barlow Condensed number font and the toy theme's Archivo font are included under the SIL Open Font License; see [fonts/OFL.txt](fonts/OFL.txt) and [fonts/ARCHIVO-OFL.txt](fonts/ARCHIVO-OFL.txt). Some icons come from [Lucide](https://lucide.dev) (ISC license; see [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)). Some sound effects are synthesised with [ZzFX](https://github.com/KilledByAPixel/ZzFX) (MIT license; see [docs/ZZFX-LICENSE.txt](docs/ZZFX-LICENSE.txt)), and some with the [jsfxr](https://github.com/chr15m/jsfxr) synth (public domain; see [docs/JSFXR-UNLICENSE.txt](docs/JSFXR-UNLICENSE.txt)).
+© 2026 vincent0923. All rights reserved. See [LICENSE](LICENSE). The Barlow Condensed number font and the theme fonts Archivo, Geist, Bricolage Grotesque and VT323 are included under the SIL Open Font License; see the OFL files in [fonts/](fonts/). The four theme looks follow the design of [Ovio](https://github.com/JanaSundar/ovio) (MIT), rewritten in plain CSS/JS. Some icons come from [Lucide](https://lucide.dev) (ISC license; see [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)). Some sound effects are synthesised with [ZzFX](https://github.com/KilledByAPixel/ZzFX) (MIT license; see [docs/ZZFX-LICENSE.txt](docs/ZZFX-LICENSE.txt)), and some with the [jsfxr](https://github.com/chr15m/jsfxr) synth (public domain; see [docs/JSFXR-UNLICENSE.txt](docs/JSFXR-UNLICENSE.txt)).

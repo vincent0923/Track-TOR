@@ -675,10 +675,6 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
 :root[data-theme="woody"] #pane-diet{--intake:#36435A;--burn:#B5652E;--protein:#6B5FA8;--gain:#5E8A5A;--loss:#B5432E;--dslate:#36435A;--dtotal:#E3DCD2}
 :root[data-theme="woody"] .toast{background:#000}
 
-/* theme picker: swatches under the header buttons */
-.thpick{position:absolute;z-index:40;display:flex;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.thpick button{width:38px;height:38px;border-radius:50%;padding:0;cursor:pointer;border:2px solid transparent;background:var(--sw);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
-.thpick button[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--surface) inset,inset 0 0 0 3px rgba(0,0,0,.1)}
 /* toy: a toast pops up like a key springing out; goal bars fill with a bounce */
 @media (prefers-reduced-motion:no-preference){
   :root[data-skin="toy"] .toast:not([hidden]){animation:toastIn .45s var(--spring)}
@@ -699,3 +695,132 @@ svg.heat rect.h3{fill:var(--ok)}
 svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
 :root[data-skin="toy"] svg.heat rect{rx:3.5}
 :root[data-theme="toy-glow"] svg.heat rect.h3{filter:drop-shadow(0 0 2px var(--ok))}
+
+/* Profile › Theme: one preview tile per theme, grouped by look */
+#themePanel{display:grid;gap:14px}
+.thg h4{margin:0 0 6px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.throw{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.thtile{display:grid;gap:5px;justify-items:center;padding:6px 6px 8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:12px;cursor:pointer;min-width:0}
+.thtile span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.thtile[aria-pressed="true"]{outline:2px solid var(--ink);outline-offset:1px}
+.thprev{position:relative;display:block;width:100%;height:46px;border-radius:8px;background:var(--a);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(127,127,127,.25)}
+.thprev b{position:absolute;left:8%;right:8%;top:9px;height:12px;border-radius:4px;background:var(--b)}
+.thprev s{position:absolute;left:8%;width:46%;bottom:7px;height:13px;border-radius:5px;background:var(--c)}
+.thprev u{position:absolute;right:8%;width:26%;bottom:7px;height:13px;border-radius:5px;background:var(--d)}
+
+/* ---------- fonts for the Ovio looks (all SIL OFL) ---------- */
+@font-face{font-family:"VT323";font-style:normal;font-weight:400;font-display:swap;size-adjust:128%;src:url(../fonts/vt323.woff2) format("woff2")}
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:200 800;font-display:swap;src:url(../fonts/bricolage-wght.woff2) format("woff2")}
+@font-face{font-family:"Geist";font-style:normal;font-weight:100 900;font-display:swap;src:url(../fonts/geist-wght.woff2) format("woff2")}
+
+/* the sliding piece under the selected tab is shared by every look; each look shapes it */
+:root[data-skin] .tpiece{display:block;position:absolute;left:0;top:0;z-index:0;pointer-events:none;width:var(--pw,0);height:var(--ph,0);transform:translate(var(--px,0),var(--py,0))}
+:root[data-skin] :is(nav.tabs,.subtabs){position:relative}
+:root[data-skin] :is(nav.tabs,.subtabs) button{position:relative;z-index:1}
+
+/* Cyber toy: indigo plastic, yellow and lilac pieces */
+:root[data-theme="toy-cyber"]{
+  --bg:#180E6A; --surface:#241A7E; --sunk:#1D1372; --ink:#F6F0FF; --muted:#B8A9D9; --line:#3A2E92;
+  --push:#F3D21A; --push-soft:#3B3260; --pull:#D8B9E1; --pull-soft:#3A2B7E; --ok:#5CE1E6; --ok-soft:#1E3A7E; --warn:#F3D21A; --sleep:#D8B9E1; --cta:#F3D21A; --cta-ink:#F3D21A; --on-cta:#180E6A;
+  --track:#100850; --side:#0C0640; --key:#33268F; --tab-ink:#D8B9E1; --hl:rgba(255,255,255,.06); --dot:rgba(243,210,26,.08);
+  --push-deep:#A88F00; --pull-deep:#7F6C9E; --ok-deep:#2A9FA4; --both-deep:#72227F;
+  --piece:#F3D21A; --piece-deep:#A88F00; --piece-ink:#180E6A; --piece2:#D8B9E1; --piece2-deep:#7F6C9E; --piece2-ink:#180E6A;
+  --drop:0 7px 8px -4px rgba(0,0,0,.6); --sink:inset 0 2px 5px rgba(0,0,0,.45); --pit:rgba(0,0,0,.6); color-scheme:dark}
+:root[data-theme="toy-cyber"] #pane-diet{--intake:#D8B9E1;--burn:#F3D21A;--protein:#C78BE0;--gain:#5CE1E6;--loss:#FF6B9A;--dslate:#3A2E92;--dtotal:#2A2088}
+:root[data-theme="toy-cyber"] .mask .sheet{--bad:#FF6B9A}
+:root[data-theme="toy-cyber"] :is(.cald.push,.cald.pull,.cald.xonly,.card.push .btn,.card.pull .btn,.caltoday){color:#180E6A}
+:root[data-theme="toy-cyber"] .set.ticked .chk svg path{stroke:#180E6A}
+:root[data-theme="toy-cyber"] .toast{background:var(--key);color:var(--ink)}
+
+/* ---------- Minimal: clean, white, thin rules; a black pill marks the tab ---------- */
+:root[data-theme="minimal"]{
+  --bg:#FAFAF8; --surface:#FFFFFF; --sunk:#F3F2EE; --ink:#161614; --muted:#77756E; --line:#E6E4DF;
+  --push:#B5583A; --push-soft:#F6E9E3; --pull:#44609E; --pull-soft:#E6EBF5; --ok:#2F7D58; --ok-soft:#E3F1E9; --warn:#A35D00; --sleep:#6B5FA8; --cta:#161614; --on-cta:#F5F4F0;
+  --track:#EFEDE8; color-scheme:light}
+:root[data-skin="minimal"]{--f-num:"Geist","Barlow Condensed",sans-serif;--f-body:"Geist",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:10px}
+:root[data-skin="minimal"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat){box-shadow:none;border:1px solid var(--line)}
+:root[data-skin="minimal"] :is(h1,.tag,.stat b,.caltitle b,.gh .gp){font-weight:600;letter-spacing:-.01em}
+:root[data-skin="minimal"] :is(nav.tabs,.subtabs){gap:0;padding:4px;background:var(--track);border-radius:14px}
+:root[data-skin="minimal"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:#4A4944}
+:root[data-skin="minimal"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:#F5F4F0}
+:root[data-skin="minimal"] .tpiece{background:var(--ink);border-radius:999px}
+:root[data-skin="minimal"] .syncbtn:not(.off):not(.done){background:var(--ink);color:#F5F4F0;box-shadow:none;animation:none}
+:root[data-skin="minimal"] .bar i{box-shadow:none}
+:root[data-skin="minimal"] .bar i::after{opacity:.5}
+:root[data-skin="minimal"] :is(.iconbtn,.privbtn){background:none;border-color:var(--line)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="minimal"] .tpiece.on{transition:transform .38s cubic-bezier(.2,.8,.2,1),width .38s cubic-bezier(.2,.8,.2,1)}}
+
+/* ---------- Craft: cream paper, tape, soft layered shadows; an orange pill marks the tab ---------- */
+:root[data-theme="craft"]{
+  --bg:#EFE7D8; --surface:#FBF7EF; --sunk:#F1E6D2; --ink:#2A1F14; --muted:#8A7258; --line:rgba(42,31,20,.2);
+  --push:#E0713A; --push-soft:#F8E1D2; --pull:#2F6F9A; --pull-soft:#DCE8F0; --ok:#2F9A45; --ok-soft:#E0F0DF; --warn:#B8471F; --sleep:#7A5CC8; --cta:#E0713A; --on-cta:#FFF6EA;
+  --track:#FBF7EF; --tape:rgba(240,220,160,.82); --paper-shadow:0 2px 4px rgba(70,45,20,.12),0 18px 34px -12px rgba(70,45,20,.4); color-scheme:light}
+:root[data-theme="craft"] #pane-diet{--intake:#2A1F14;--burn:#E0713A;--protein:#7A5CC8;--gain:#2F9A45;--loss:#B8471F;--dtotal:#EADFCB}
+:root[data-skin="craft"]{--f-num:"Bricolage Grotesque","Barlow Condensed",sans-serif;--f-body:"Bricolage Grotesque",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:10px}
+:root[data-skin="craft"] body{background-image:radial-gradient(ellipse at 20% 0%,rgba(255,255,255,.5),transparent 60%),repeating-linear-gradient(0deg,rgba(70,45,20,.025) 0 1px,transparent 1px 3px)}
+:root[data-skin="craft"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat){border:0;box-shadow:var(--paper-shadow)}
+:root[data-skin="craft"] :is(h1,.tag,.stat b,.caltitle b,.gh .gp){font-weight:800;letter-spacing:-.02em}
+/* a strip of tape on the big cards */
+:root[data-skin="craft"] :is(.goals,.cal,#pane-strength>.chartbox:first-child){position:relative;overflow:visible}
+:root[data-skin="craft"] :is(.goals,.cal,#pane-strength>.chartbox:first-child)::before{content:"";position:absolute;top:-9px;right:28px;width:74px;height:20px;background:var(--tape);transform:rotate(5deg);box-shadow:0 1px 2px rgba(70,45,20,.15);z-index:2;pointer-events:none}
+:root[data-skin="craft"] .cal::before{right:auto;left:30px;transform:rotate(-4deg)}
+:root[data-skin="craft"] :is(nav.tabs,.subtabs){gap:0;padding:5px;background:var(--track);border-radius:18px;box-shadow:inset 0 2px 4px rgba(70,45,20,.15),0 1px 0 rgba(255,255,255,.8)}
+:root[data-skin="craft"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:#6E5A45}
+:root[data-skin="craft"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:#FFF6EA}
+:root[data-skin="craft"] .tpiece{background:var(--push);border-radius:999px;box-shadow:0 2px 0 #B8471F,0 6px 10px -4px rgba(70,45,20,.4)}
+:root[data-skin="craft"] .subtabs .tpiece{background:var(--pull);box-shadow:0 2px 0 #1F4E6E,0 6px 10px -4px rgba(70,45,20,.4)}
+:root[data-skin="craft"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost){border:1px solid var(--line);background:var(--surface);box-shadow:0 1px 2px rgba(70,45,20,.15)}
+:root[data-skin="craft"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn):active{transform:translateY(1px) rotate(-1deg)}
+:root[data-skin="craft"] .syncbtn:not(.off):not(.done){animation:none;box-shadow:0 2px 0 #B8471F,0 6px 10px -4px rgba(70,45,20,.4);transform:rotate(-1.5deg)}
+:root[data-skin="craft"] .toast{background:var(--tape);color:var(--ink);border-radius:2px;transform:translateX(-50%) rotate(-1.5deg);box-shadow:0 2px 6px rgba(70,45,20,.25)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="craft"] .tpiece.on{transition:transform .45s cubic-bezier(.34,1.35,.5,1),width .45s cubic-bezier(.34,1.35,.5,1)}}
+
+/* ---------- Retro: phosphor terminal. Pixel font, glow, square corners, double rules, scanlines;
+   the tab block jumps in steps like old hardware ---------- */
+:root[data-theme="retro"]{
+  --bg:#061108; --surface:#0A1F0E; --sunk:#08180B; --ink:#6DFF8A; --muted:#3FAE55; --line:#1D5A2B;
+  --push:#FFD34D; --push-soft:#2A2A0E; --pull:#6DFF8A; --pull-soft:#0E3318; --ok:#4FDC68; --ok-soft:#0E3318; --warn:#FFD34D; --sleep:#6DFF8A; --cta:#4FDC68; --on-cta:#061108;
+  --glow:0 0 6px rgba(80,255,120,.55); --rule:#3FAE55; color-scheme:dark}
+:root[data-theme="retro-cyber"]{
+  --bg:#0C0730; --surface:#150D45; --sunk:#100939; --ink:#F3D21A; --muted:#B39BD0; --line:#3A2A7A;
+  --push:#F3D21A; --push-soft:#2C2440; --pull:#D8B9E1; --pull-soft:#2A1F5A; --ok:#5CE1E6; --ok-soft:#14315A; --warn:#F3D21A; --sleep:#D8B9E1; --cta:#F3D21A; --on-cta:#0C0730;
+  --glow:0 0 6px rgba(243,210,26,.55); --rule:#7F6C9E; color-scheme:dark}
+:root[data-theme="retro-amber"]{
+  --bg:#0B0806; --surface:#15100C; --sunk:#100C09; --ink:#FFB347; --muted:#B07A3A; --line:#4A3018;
+  --push:#FF7A1A; --push-soft:#2E1A0C; --pull:#2EC4B6; --pull-soft:#0E2A28; --ok:#2EC4B6; --ok-soft:#0E2A28; --warn:#FF7A1A; --sleep:#FFB347; --cta:#FFB347; --on-cta:#0B0806;
+  --glow:0 0 6px rgba(255,170,70,.5); --rule:#B07A3A; color-scheme:dark}
+:root:is([data-theme="retro"],[data-theme="retro-cyber"],[data-theme="retro-amber"]) #pane-diet{--intake:var(--ink);--burn:var(--push);--protein:var(--pull);--gain:var(--ok);--loss:#FF5F5F;--dslate:var(--line);--dtotal:var(--sunk)}
+:root[data-skin="retro"] .mask .sheet{--bad:#FF5F5F}
+:root[data-skin="retro"]{--f-num:"VT323",ui-monospace,monospace;--f-body:"VT323",ui-monospace,"PingFang SC","Hiragino Sans GB","Noto Sans SC",monospace;--r:0px}
+:root[data-skin="retro"] body{text-shadow:var(--glow)}
+:root[data-skin="retro"] *,:root[data-skin="retro"] *::before,:root[data-skin="retro"] *::after{border-radius:0!important}
+:root[data-skin="retro"] body::after{content:"";position:fixed;inset:0;z-index:90;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px)}
+:root[data-skin="retro"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat,.sheet,.dp){border:1px solid var(--line);box-shadow:none}
+:root[data-skin="retro"] :is(.goals,.cal){border:3px double var(--rule)}
+:root[data-skin="retro"] :is(h1,.tag,.caltitle b,.stat b){font-weight:400;letter-spacing:.04em;text-transform:uppercase}
+:root[data-skin="retro"] :is(nav.tabs,.subtabs){gap:0;padding:4px;background:var(--surface);border:3px double var(--rule)}
+:root[data-skin="retro"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:var(--ink);text-transform:uppercase}
+:root[data-skin="retro"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:var(--on-cta);text-shadow:none}
+:root[data-skin="retro"] .tpiece{background:var(--cta)}
+:root[data-skin="retro"] .subtabs .tpiece{background:var(--pull)}
+:root[data-skin="retro"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.calfold,.syncbtn.off,.gi,.sfxp,.dp-f button,.chk,.step,.field input,.field select,.field textarea,.sfxr select){background:transparent;border:1px solid var(--rule);box-shadow:none;color:var(--ink)}
+:root[data-skin="retro"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn,.calfold,.syncbtn,.gi,.dp-f button,.chk):active{background:var(--ink);color:var(--bg);text-shadow:none}
+:root[data-skin="retro"] .btn:not(.ghost){background:var(--k,var(--cta));color:var(--on-cta);text-shadow:none;box-shadow:none}
+:root[data-skin="retro"] .syncbtn:not(.off):not(.done){background:var(--cta);color:var(--on-cta);box-shadow:none;animation:none;text-shadow:none}
+:root[data-skin="retro"] .syncbtn.done{background:transparent;color:var(--ok);border:1px dashed var(--ok)}
+:root[data-skin="retro"] .set{background:transparent;border:1px dashed var(--line)}
+:root[data-skin="retro"] .set.ticked{background:var(--ok-soft);border-color:var(--ok)}
+:root[data-skin="retro"] .set.ticked .chk{background:var(--ok);border-color:var(--ok)}
+:root[data-skin="retro"] .set.ticked .chk svg path{stroke:var(--bg)}
+:root[data-skin="retro"] .bar{background:var(--sunk);border:1px solid var(--line)}
+:root[data-skin="retro"] .bar i{box-shadow:var(--glow)}
+:root[data-skin="retro"] :is(.cald.push,.cald.pull,.cald.both,.cald.xonly){color:var(--bg);text-shadow:none}
+:root[data-skin="retro"] .cald.push{background:var(--push)}
+:root[data-skin="retro"] .cald.pull{background:var(--pull)}
+:root[data-skin="retro"] .cald.xonly{background:var(--ok)}
+:root[data-skin="retro"] .toast{background:var(--bg);color:var(--ink);border:3px double var(--rule)}
+:root[data-skin="retro"] .tbtn.next{text-shadow:none}
+:root[data-skin="retro"] svg.heat rect{shape-rendering:crispEdges}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="retro"] .tpiece.on{transition:transform .33s steps(4,end),width .33s steps(4,end)}}
+:root[data-skin="retro"] .goal{--g:var(--ink)!important}
+#themeBtn{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}

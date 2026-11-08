@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.32a] — 2026-11-08
+
+### 新增 / Added
+- 🎨 **十二套主题，四种风格**：参考 Ovio 的四种风格全部做了。极简：白底细线、黑色胶囊标签。手作：奶油纸、胶带、柔和叠影，提示条像一张便签。玩具：原版、夜间、赛博、牛仔、霓虹五种配色。复古终端：像素字体、字会发光、扫描线，标签块一格一格跳过去，有绿屏、赛博、雨夜琥珀三种配色。
+  Twelve themes in four looks: all four of Ovio's looks are in. Minimal: white, thin rules, a black pill on the tab. Craft: cream paper, tape and soft shadows, and toasts look like a sticky note. Toy: original, night, cyber, cowboy and neon palettes. Retro terminal: a pixel font that glows, scanlines and a tab block that jumps in steps, in phosphor green, cyber and rain-amber palettes.
+- 🖌️ **主题按钮点一下换、长按选**：右上角主题按钮点一下换到下一个主题，提示条显示名字；长按打开「资料 › 主题」面板，每个主题一张预览小卡，点一下就换。
+  Theme button: tap for the next theme (a toast names it); hold it to open Profile › Theme, where every theme has a preview tile.
+- 🔊 **每种风格有自己的点按声**：复古是八位哔哔、保存是金币；手作是翻页和纸张轻拍、保存是盖章；极简是轻点；玩具是塑料声。自己选过的声音照旧。
+  Each look has its own tap sounds: 8-bit blips with a coin on save for retro, page flips and paper taps with a stamp on save for craft, a soft click for minimal, plastic for toy. Sounds you picked yourself stay.
+
+---
+
 ## [v1.31a] — 2026-11-08
 
 ### 新增 / Added

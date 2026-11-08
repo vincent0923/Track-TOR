@@ -29,23 +29,30 @@ document.querySelector("nav.tabs").addEventListener("click",e=>{const b=e.target
 /* ---------- theme (manual, does not follow the phone) ---------- */
 const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
 const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
-const PALETTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>';
-/* themes: [id, Chinese name, English name, swatch]. The toy family shares one look (data-skin="toy") with its own colours. */
-const THEMES=[["light","浅色","Light","linear-gradient(135deg,#EDF0F2 50%,#2B55C8 50%)"],["dark","深色","Dark","linear-gradient(135deg,#0F1519 50%,#7393F2 50%)"],
-  ["toy","玩具","Toy","linear-gradient(135deg,#F8F5EF 50%,#EF4F2B 50%)"],["toy-night","夜间玩具","Toy night","linear-gradient(135deg,#292724 50%,#FFC23D 50%)"],
-  ["toy-glow","夜光玩具","Toy glow","linear-gradient(135deg,#0D1220 50%,#B6F23E 50%)"],["woody","牛仔","Cowboy","linear-gradient(135deg,#7B4A2D 34%,#F0C050 34% 67%,#36435A 67%)"]];
+const THEME_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="15" rx="2.5"/><path d="M6 7h8"/><path d="M6 11v3.5h2.5V11z"/><path d="M21.5 5 13.5 13"/><path d="M13.5 13c-1.6-.4-3 .7-3 2.4 0 1.2-.6 2.1-1.6 2.6 2.6 1 5.8-.2 5.6-3.3"/></svg>';
+/* themes: [id, Chinese name, English name, look, preview colours (page, card, accent, second accent)].
+   The four looks follow Ovio's worlds (minimal, craft, toy, retro); each look can come in several palettes. */
+const THEMES=[
+  ["light","浅色","Light","","#EDF0F2 #FFFFFF #B8481F #2B55C8"],["dark","深色","Dark","","#0F1519 #172028 #EE7A4A #7393F2"],
+  ["minimal","极简","Minimal","minimal","#FAFAF8 #FFFFFF #161614 #B5583A"],
+  ["craft","手作","Craft","craft","#EFE7D8 #FBF7EF #E0713A #2F6F9A"],
+  ["toy","玩具","Toy","toy","#E3DFD5 #F8F5EF #EF4F2B #2C55E0"],["toy-night","夜间玩具","Toy night","toy","#1C1B19 #292724 #FF5B36 #FFC23D"],
+  ["toy-cyber","赛博玩具","Cyber toy","toy","#180E6A #241A7E #F3D21A #D8B9E1"],["woody","牛仔","Cowboy","toy","#E6E2DC #F5F2ED #7B4A2D #F0C050"],
+  ["toy-glow","霓虹玩具","Neon toy","toy","#0D1220 #161D30 #B6F23E #FF5FA2"],
+  ["retro","复古绿屏","Phosphor","retro","#061108 #0A1F0E #6DFF8A #FFD34D"],["retro-cyber","赛博终端","Cyber terminal","retro","#0C0730 #150D45 #F3D21A #D8B9E1"],
+  ["retro-amber","雨夜琥珀","Rain amber","retro","#0B0806 #15100C #FFB347 #2EC4B6"]];
 const THEME_IDS=THEMES.map(t=>t[0]);
-function skinOf(t){return /^(toy|woody)/.test(t)?"toy":""}
+function skinOf(t){const r=THEMES.find(x=>x[0]===t);return r?r[3]:""}
 function applyTheme(t){if(!THEME_IDS.includes(t))t="light";const r=document.documentElement;r.setAttribute("data-theme",t);
   const k=skinOf(t);if(k)r.setAttribute("data-skin",k);else r.removeAttribute("data-skin");
-  const b=document.getElementById("themeBtn");b.innerHTML=PALETTE;b.setAttribute("aria-label",T("主题","Theme"));
-  try{localStorage.setItem(LS+"-theme",t)}catch(e){}placePieces(false)}
-function closeThemePick(){const p=document.querySelector(".thpick");if(p)p.remove()}
-function openThemePick(){closeThemePick();const btn=document.getElementById("themeBtn"),cur=document.documentElement.getAttribute("data-theme");
-  const p=document.createElement("div");p.className="thpick";p.setAttribute("role","group");p.setAttribute("aria-label",T("主题","Theme"));
-  p.innerHTML=THEMES.map(([id,zh,en,sw])=>'<button type="button" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" aria-label="'+T(zh,en)+'" title="'+T(zh,en)+'" style="--sw:'+sw+'"></button>').join("");
-  document.body.append(p);const r=btn.getBoundingClientRect(),w=p.offsetWidth;
-  p.style.top=(r.bottom+scrollY+8)+"px";p.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w+scrollX))+"px"}
+  const b=document.getElementById("themeBtn");b.innerHTML=THEME_IC;
+  b.setAttribute("aria-label",T("主题：点一下换下一个，长按打开主题面板","Theme: tap for the next one, hold to open the theme panel"));
+  try{localStorage.setItem(LS+"-theme",t)}catch(e){}placePieces(false);renderThemes()}
+/* Profile › Theme: a preview tile for every theme, grouped by look */
+function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
+  const groups=[["",T("默认","Default")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
+  box.innerHTML=groups.map(([k,name])=>'<div class="thg"><h4>'+name+'</h4><div class="throw">'+THEMES.filter(t=>t[3]===k).map(([id,zh,en,,c])=>{const [bg,sf,a1,a2]=c.split(" ");
+    return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+T(zh,en)+'</span></button>'}).join("")+'</div></div>').join("")}
 /* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
 function placePiece(bar,anim){if(!bar||!bar.offsetParent)return;let pc=bar.querySelector(".tpiece");
   if(!pc){pc=document.createElement("i");pc.className="tpiece";pc.setAttribute("aria-hidden","true");bar.prepend(pc)}
@@ -55,7 +62,7 @@ function placePiece(bar,anim){if(!bar||!bar.offsetParent)return;let pc=bar.query
   pc.style.setProperty("--px",b.offsetLeft+"px");pc.style.setProperty("--py",b.offsetTop+"px");
   pc.style.setProperty("--pw",b.offsetWidth+"px");pc.style.setProperty("--ph",b.offsetHeight+"px");
   if(anim&&moved){pc.classList.remove("go");void pc.offsetWidth;pc.classList.add("go")}}
-function placePieces(anim){if(document.documentElement.getAttribute("data-skin")!=="toy")return;document.querySelectorAll("nav.tabs,.subtabs").forEach(x=>placePiece(x,anim))}
+function placePieces(anim){if(!document.documentElement.getAttribute("data-skin"))return;document.querySelectorAll("nav.tabs,.subtabs").forEach(x=>placePiece(x,anim))}
 addEventListener("resize",()=>placePieces(false));
 if(document.fonts)document.fonts.ready.then(()=>placePieces(false));
 let theme="light";try{theme=localStorage.getItem(LS+"-theme")||"light"}catch(e){}if(!THEME_IDS.includes(theme))theme="light";
@@ -64,9 +71,17 @@ function applyLang(l){LANG=l;document.documentElement.setAttribute("data-lang",l
   document.getElementById("langBtn").textContent=l==="en"?"EN":"CH";try{localStorage.setItem(LS+"-lang",l)}catch(e){}}
 applyLang(LANG);
 document.getElementById("langBtn").addEventListener("click",()=>{applyLang(LANG==="en"?"zh":"en");applyTheme(document.documentElement.getAttribute("data-theme")||"light");renderAll();renderDietAll();paintSheetLang();syncUI()});
-document.getElementById("themeBtn").addEventListener("click",e=>{e.stopPropagation();document.querySelector(".thpick")?closeThemePick():openThemePick()});
-document.addEventListener("click",e=>{const t=e.target.closest("[data-theme-pick]");if(t){applyTheme(t.dataset.themePick);closeThemePick();return}if(!e.target.closest(".thpick"))closeThemePick()});
-addEventListener("resize",closeThemePick);
+/* theme button: a tap moves to the next theme, holding it opens Profile › Theme */
+(function(){const b=document.getElementById("themeBtn");let held=false,tm=0;
+  const go=()=>{held=true;setTab("me");const f=document.getElementById("foldTheme");if(f){f.open=true;f.scrollIntoView({behavior:"smooth",block:"start"})}};
+  b.addEventListener("pointerdown",()=>{held=false;clearTimeout(tm);tm=setTimeout(go,550)});
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>b.addEventListener(ev,()=>clearTimeout(tm)));
+  b.addEventListener("contextmenu",e=>e.preventDefault());
+  b.addEventListener("click",e=>{if(held){held=false;e.stopImmediatePropagation();return}
+    const cur=document.documentElement.getAttribute("data-theme")||"light";applyTheme(THEME_IDS[(THEME_IDS.indexOf(cur)+1)%THEME_IDS.length]);
+    const t=THEMES.find(x=>x[0]===document.documentElement.getAttribute("data-theme"));toast(T(t[1],t[2]))});
+})();
+document.addEventListener("click",e=>{const t=e.target.closest("[data-theme-pick]");if(t)applyTheme(t.dataset.themePick)});
 
 /* particle flames above an element: the 练 button burns at full size (orange); today's cell on the training
    calendar burns at half size in green. k scales size, height and density. */
@@ -289,13 +304,18 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     clack:()=>{noiseHit(0.035,3200,1800,0.32,3,"bandpass",0.15);tone(240,0,0.06,"sine",0.22,110)},
     slide:()=>{noiseHit(0.2,900,2600,0.12,1.2,"bandpass",0.6);noiseHit(0.03,3400,2200,0.3,3,"bandpass",0.15,0.19);tone(320,0.19,0.06,"sine",0.18,160)},
     snap:()=>{noiseHit(0.02,4200,2800,0.35,4,"bandpass",0.1);noiseHit(0.025,2600,1600,0.3,4,"bandpass",0.1,0.045);tone(520,0.045,0.08,"triangle",0.12,260)},
+    /* retro: 8-bit blips; craft: paper; minimal: a soft click */
+    blip:()=>{tone(880,0,0.04,"square",0.06);tone(1320,0.04,0.06,"square",0.05)},
+    paper:()=>noiseHit(0.06,2600,1100,0.22,0.7,"lowpass",0.2),
+    stamp:()=>{tone(150,0,0.09,"sine",0.35,70);noiseHit(0.05,900,400,0.2,0.8,"lowpass",0.1)},
+    soft:()=>{tone(1800,0,0.012,"sine",0.07);tone(1200,0.006,0.02,"sine",0.05)},
     none:()=>{}
   };
   /* sound names, in the order the picker lists them */
   const SN={tap:["翻页声","Page flip"],key:["键盘滴","Key tick"],inc:["上扬","Rise"],dec:["下沉","Drop"],tick:["叮咚","Ding-dong"],untick:["泄气","Deflate"],
     exDone:["四连音","Four notes"],finish:["通关","Level clear"],boom:["烟花","Firework"],bigboom:["大烟花","Big firework"],swoosh:["嗖","Swoosh"],pop:["啵","Pop"],
     click:["咔哒","Click"],chime:["完成铃","Chime"],buzz:["嗡","Buzz"],
-    trash:["揉纸丢掉","Crumple"],clack:["塑料按键","Plastic key"],slide:["塑料片滑入","Piece slides in"],snap:["积木咔哒","Brick snap"],poof:["噗","Poof"],sword:["剑气","Sword slash"],unsheathe:["拔剑","Unsheathe"],punch:["重拳","Punch"],charge:["蓄力","Power up"],coin:["金币","Coin"],levelup:["升级","Level up"],fanfare:["号角","Fanfare"],musicbox:["八音盒","Music box"],sparkle:["星光","Sparkle"],sad:["失落","Wah-wah"],none:["无声","Silent"]};
+    trash:["揉纸丢掉","Crumple"],clack:["塑料按键","Plastic key"],slide:["塑料片滑入","Piece slides in"],snap:["积木咔哒","Brick snap"],blip:["八位哔哔","8-bit blip"],paper:["纸张轻拍","Paper tap"],stamp:["盖章","Stamp"],soft:["轻点","Soft click"],poof:["噗","Poof"],sword:["剑气","Sword slash"],unsheathe:["拔剑","Unsheathe"],punch:["重拳","Punch"],charge:["蓄力","Power up"],coin:["金币","Coin"],levelup:["升级","Level up"],fanfare:["号角","Fanfare"],musicbox:["八音盒","Music box"],sparkle:["星光","Sparkle"],sad:["失落","Wah-wah"],none:["无声","Silent"]};
   /* every kind of tap that makes a sound, its default sound, grouped as the settings panel shows them */
   const SFX=[
     [["训练","Training"],[["set","打勾完成一组","Tick a set","coin"],["exdone","一个动作的组全部完成","Last set of an exercise","levelup"],["untick","取消打勾","Untick a set","untick"],
@@ -315,7 +335,10 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   JF_SOUNDS.forEach(([k,zh,en,p])=>{JFK.push(k);SN[k]=[zh,en];S[k]=()=>{const c=ac();if(c)jfPlay(c,k,p)}});
   const SDEF={};SFX.forEach(g=>g[1].forEach(r=>{SDEF[r[0]]=r[3]}));
   /* the toy themes swap the taps' defaults for plastic sounds; a sound the user picked still wins */
-  const SKIN_SFX={toy:{tab1:"slide",tab2:"slide",range:"clack",gap:"clack",header:"clack",other:"clack",open:"clack",close:"clack",fold:"clack",save:"snap",untick:"clack"}};
+  const SKIN_SFX={toy:{tab1:"slide",tab2:"slide",range:"clack",gap:"clack",header:"clack",other:"clack",open:"clack",close:"clack",fold:"clack",save:"snap",untick:"clack"},
+    retro:{tab1:"blip",tab2:"blip",range:"key",gap:"key",header:"key",other:"key",open:"blip",close:"key",fold:"key",save:"coin",untick:"key"},
+    craft:{tab1:"tap",tab2:"tap",range:"paper",gap:"paper",header:"paper",other:"paper",open:"tap",close:"paper",fold:"paper",save:"stamp",untick:"paper"},
+    minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft"}};
   const defOf=id=>{const k=SKIN_SFX[document.documentElement.getAttribute("data-skin")];return k&&k[id]||SDEF[id]};
   const pickOf=id=>{const m=state.settings&&state.settings.sfx;const k=m&&m[id];return S[k]?k:defOf(id)};
   function playRaw(k){if(on&&S[k])try{S[k]()}catch(e){}}
