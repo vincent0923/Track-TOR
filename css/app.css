@@ -840,3 +840,73 @@ svg.ic-toy .f{fill:var(--icf,var(--cta))}
 :root[data-skin="toy"] :is(nav.tabs,.subtabs) button svg.ic{width:26px;height:26px}
 svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="retro"] .iconbtn svg{width:20px;height:20px}
+
+/* ---------- Interior: quiet stone and white, hairline borders, a key that sinks onto its base plate,
+   a dark thumb that slides under the selected tab and inverts its label, values that flash when they change.
+   Tokens follow interior.dev (MIT), rewritten in plain CSS. ---------- */
+:root[data-theme="interior"]{
+  --bg:#FAFAFA; --surface:#FFFFFF; --sunk:#F5F5F4; --ink:#131313; --muted:#6E6E6E; --line:#E7E5E4;
+  --push:#C0442F; --push-soft:#FBECE9; --pull:#4568FF; --pull-soft:#EDF1FF; --ok:#3D7A4E; --ok-soft:#E8F2EB; --warn:#A35D00; --sleep:#6B5FA8; --cta:#292524; --on-cta:#FAFAF9;
+  --hair:#00000024; --plate:#D6D3D1; --thumb:#292524; --on-thumb:#FAFAF9; --track:rgba(245,245,244,.7);
+  --lift:0 1px 2px rgba(28,25,23,.06),0 4px 10px -8px rgba(28,25,23,.45); --cap:inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(28,25,23,.06);
+  --well:inset 0 1px 2px rgba(28,25,23,.07); --focus:#4568FF; color-scheme:light}
+:root[data-theme="interior-dark"]{
+  --bg:#141312; --surface:#1D1D1A; --sunk:#252522; --ink:#F8F8F4; --muted:#93938B; --line:rgba(255,255,255,.16);
+  --push:#F5897F; --push-soft:#3A2320; --pull:#93B0FF; --pull-soft:rgba(147,176,255,.14); --ok:#5BD79C; --ok-soft:rgba(91,215,156,.14); --warn:#E3A13F; --sleep:#B49CF2; --cta:#F5F5F4; --on-cta:#1C1917;
+  --hair:#ffffff29; --plate:rgba(255,255,255,.25); --thumb:#F5F5F4; --on-thumb:#1C1917; --track:#1D1D1A;
+  --lift:0 1px 6px rgba(0,0,0,.45); --cap:inset 0 1.5px 0 rgba(255,255,255,.09);
+  --well:inset 0 1px 2px rgba(0,0,0,.45); --focus:#93B0FF; color-scheme:dark}
+:root[data-theme="interior"] #pane-diet{--intake:#292524;--burn:#C2662D;--protein:#7A5CC8;--gain:#3D7A4E;--loss:#C0442F;--dslate:#44403C;--dtotal:#E7E5E4}
+:root[data-theme="interior-dark"] #pane-diet{--intake:#D6D3D1;--burn:#F0A06A;--protein:#B49CF2;--gain:#5BD79C;--loss:#F5897F;--dslate:#57534E;--dtotal:#292524}
+:root[data-theme="interior-dark"] .mask .sheet{--bad:#F5897F}
+:root[data-skin="interior"]{--f-num:"Geist","Barlow Condensed",sans-serif;--f-body:"Geist",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:12px;--spr:cubic-bezier(.3,1.25,.5,1)}
+:root[data-skin="interior"] body{-webkit-font-smoothing:antialiased}
+:root[data-skin="interior"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat,.sheet){border:1px solid var(--line);box-shadow:var(--lift)}
+:root[data-skin="interior"] :is(h1,.tag,.stat b,.caltitle b,.gh .gp){font-weight:600;letter-spacing:-.02em}
+:root[data-skin="interior"] :is(button,input,select,textarea,summary):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+/* keys: a white cap on a stone base plate; pressing drops the cap onto the plate */
+:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.sfxp,.dp-f button,.gi,.addset,.gchip2){
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);box-shadow:var(--cap),0 2px 0 var(--plate);transform:translateY(0);
+  transition:transform .28s var(--spr),box-shadow .28s var(--spr),background .15s}
+:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.sfxp,.dp-f button,.gi,.addset,.gchip2):active{transform:translateY(2px);box-shadow:var(--cap),0 0 0 var(--plate);transition-duration:.05s}
+:root[data-skin="interior"] .gi{color:var(--g)}
+:root[data-skin="interior"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,.caltoday){border:0;box-shadow:0 2px 0 color-mix(in srgb,var(--k,var(--cta)) 55%,#000),0 1px 2px rgba(28,25,23,.2);transform:translateY(0);transition:transform .28s var(--spr),box-shadow .28s var(--spr)}
+:root[data-skin="interior"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,.caltoday):active{transform:translateY(2px);box-shadow:0 0 0 transparent;transition-duration:.05s}
+:root[data-skin="interior"] :is(.syncbtn:not(.off):not(.done),.dp-f .dp-today){background:var(--cta);color:var(--on-cta);animation:none}
+:root[data-skin="interior"] .caltoday{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+:root[data-skin="interior"] .syncbtn.done{background:var(--ok-soft);color:var(--ok);box-shadow:none}
+/* wells: inputs, steppers and set rows sit slightly below the surface */
+:root[data-skin="interior"] :is(.field input,.field textarea,.field select,.sfxr select,.step){border:1px solid var(--line);background:var(--surface);box-shadow:var(--well)}
+:root[data-skin="interior"] .set{background:var(--sunk);box-shadow:inset 0 0 0 1px var(--line)}
+:root[data-skin="interior"] .set.ticked{background:var(--ok-soft);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ok) 30%,transparent)}
+:root[data-skin="interior"] .chk{border:1px solid var(--line);box-shadow:var(--cap),0 2px 0 var(--plate);transition:transform .28s var(--spr),box-shadow .28s var(--spr),background .15s}
+:root[data-skin="interior"] .chk:active{transform:translateY(2px);box-shadow:var(--cap)}
+:root[data-skin="interior"] .set.ticked .chk{background:var(--ok);border-color:var(--ok);box-shadow:0 2px 0 color-mix(in srgb,var(--ok) 55%,#000)}
+:root[data-skin="interior"] .bar{background:var(--sunk);box-shadow:var(--well)}
+:root[data-skin="interior"] .bar i{box-shadow:none}
+:root[data-skin="interior"] .bar i::after{opacity:.45}
+/* segmented tracks: main tabs, chart views and the day ranges; a dark thumb slides under the choice */
+:root[data-skin="interior"] :is(nav.tabs,.subtabs){gap:0;padding:3px;background:var(--track);border:1px solid var(--line);border-radius:12px;box-shadow:var(--well)}
+:root[data-theme="interior"] :is(nav.tabs){background:#F5F5F4}
+:root[data-skin="interior"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:var(--muted);transition:color .2s}
+:root[data-skin="interior"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:var(--on-thumb)}
+:root[data-skin="interior"] .tpiece{background:var(--thumb);border-radius:9px;box-shadow:0 1px 2px rgba(28,25,23,.28)}
+:root[data-skin="interior"] .subtabs .tpiece{background:var(--pull)}
+:root[data-skin="interior"] .subtabs button[aria-selected="true"]{color:var(--surface)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="interior"] .tpiece.on{transition:transform .34s var(--spr),width .34s var(--spr)}}
+:root[data-skin="interior"] .maseg{border:1px solid var(--line);border-radius:9px;padding:3px;gap:0;background:var(--track);box-shadow:var(--well)}
+:root[data-skin="interior"] .maseg button{background:none;border:0!important;border-radius:6px;color:var(--muted);transition:background .2s,color .2s}
+:root[data-skin="interior"] .maseg button[aria-pressed="true"]{background:var(--thumb);color:var(--on-thumb);box-shadow:0 1px 2px rgba(28,25,23,.28)}
+/* folding panels: the open body sits in a slightly sunken sub-surface; the chevron turns on a spring */
+:root[data-skin="interior"] details.fold>summary::after{transition:transform .3s var(--spr)}
+:root[data-skin="interior"] details.fold[open]>.fbody{background:var(--sunk);border-top:1px solid var(--line);padding-top:14px;box-shadow:inset 0 1px 2px rgba(28,25,23,.05);border-radius:0 0 var(--r) var(--r)}
+/* calendar */
+:root[data-skin="interior"] .cald.sel{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--focus)}
+:root[data-skin="interior"] .toast{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 28px 56px -24px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.06)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="interior"] .toast:not([hidden]){animation:ivToast .32s var(--spr)}}
+@keyframes ivToast{from{transform:translate(-50%,10px) scale(.96);opacity:0}to{transform:translate(-50%,0) scale(1);opacity:1}}
+/* value flash: a number that just changed gets a tint for a moment */
+:root[data-skin="interior"] :is(.vf-up,.vf-down){border-radius:6px;transition:background-color .2s,scale .2s var(--spr);scale:1.05}
+:root[data-skin="interior"] .vf-up{background-color:color-mix(in srgb,var(--ok) 18%,transparent)}
+:root[data-skin="interior"] .vf-down{background-color:color-mix(in srgb,var(--push) 18%,transparent)}
+:root[data-skin="interior"] .gi.gi{color:var(--g)}

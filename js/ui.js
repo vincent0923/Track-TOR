@@ -34,6 +34,7 @@ const THEME_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
    The four looks follow Ovio's worlds (minimal, craft, toy, retro); each look can come in several palettes. */
 const THEMES=[
   ["light","浅色","Light","","#EDF0F2 #FFFFFF #B8481F #2B55C8"],["dark","深色","Dark","","#0F1519 #172028 #EE7A4A #7393F2"],
+  ["interior","Interior 亮","Interior light","interior","#FAFAFA #FFFFFF #292524 #4568FF"],["interior-dark","Interior 暗","Interior dark","interior","#141312 #1D1D1A #F5F5F4 #93B0FF"],
   ["minimal","极简","Minimal","minimal","#FAFAF8 #FFFFFF #161614 #B5583A"],
   ["craft","手作","Craft","craft","#EFE7D8 #FBF7EF #E0713A #2F6F9A"],
   ["toy","玩具","Toy","toy","#E3DFD5 #F8F5EF #EF4F2B #2C55E0"],["toy-night","夜间玩具","Toy night","toy","#1C1B19 #292724 #FF5B36 #FFC23D"],
@@ -54,7 +55,7 @@ function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const 
   document.dispatchEvent(new Event("themeicons"))}
 /* Profile › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
-  const groups=[["",T("默认","Default")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
+  const groups=[["",T("默认","Default")],["interior","Interior"],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
   box.innerHTML=groups.map(([k,name])=>'<div class="thg"><h4>'+name+'</h4><div class="throw">'+THEMES.filter(t=>t[3]===k).map(([id,zh,en,,c])=>{const [bg,sf,a1,a2]=c.split(" ");
     return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+T(zh,en)+'</span></button>'}).join("")+'</div></div>').join("")}
 /* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
@@ -214,7 +215,10 @@ let toastT;
 const ROLL=new Map();
 function rollNum(el,key){if(!el)return;const txt=el.textContent,m=/\d+(?:\.\d+)?/.exec(txt);if(!m)return;
   const to=+m[0],dec=(m[0].split(".")[1]||"").length,from=ROLL.has(key)?ROLL.get(key):0;ROLL.set(key,to);
-  if(from===to||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  if(from===to)return;
+  /* a changed value is marked for a moment: green when it went up, red when it went down (styled by the Interior look) */
+  if(ROLL.size&&from)el.classList.remove("vf-up","vf-down"),void el.offsetWidth,el.classList.add(to>from?"vf-up":"vf-down"),setTimeout(()=>el.classList.remove("vf-up","vf-down"),900);
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
   const t0=performance.now(),D=400,ease=x=>1-Math.pow(1-x,3);
   const step=now=>{const x=Math.min(1,(now-t0)/D);if(!el.isConnected)return;el.textContent=txt.replace(m[0],(from+(to-from)*ease(x)).toFixed(dec));if(x<1)requestAnimationFrame(step)};
   el.textContent=txt.replace(m[0],from.toFixed(dec));requestAnimationFrame(step)}
@@ -343,7 +347,8 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   const SKIN_SFX={toy:{tab1:"slide",tab2:"slide",range:"clack",gap:"clack",header:"clack",other:"clack",open:"clack",close:"clack",fold:"clack",save:"snap",untick:"clack"},
     retro:{tab1:"blip",tab2:"blip",range:"key",gap:"key",header:"key",other:"key",open:"blip",close:"key",fold:"key",save:"coin",untick:"key"},
     craft:{tab1:"tap",tab2:"tap",range:"paper",gap:"paper",header:"paper",other:"paper",open:"tap",close:"paper",fold:"paper",save:"stamp",untick:"paper"},
-    minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft"}};
+    minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft"},
+    interior:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft"}};
   const defOf=id=>{const k=SKIN_SFX[document.documentElement.getAttribute("data-skin")];return k&&k[id]||SDEF[id]};
   const pickOf=id=>{const m=state.settings&&state.settings.sfx;const k=m&&m[id];return S[k]?k:defOf(id)};
   function playRaw(k){if(on&&S[k])try{S[k]()}catch(e){}}
