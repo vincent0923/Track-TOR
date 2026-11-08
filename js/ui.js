@@ -9,6 +9,7 @@ function setDataSub(sub){
   dataSub=sub;
   document.querySelectorAll(".subtabs button").forEach(x=>x.setAttribute("aria-selected",x.dataset.sub===sub));
   SUBS.forEach(k=>{document.getElementById("pane-"+k).hidden=k!==sub});
+  placePiece(document.querySelector(".subtabs"),true);
   if(sub==="diet"){renderDietAll();dietTabPull()}else renderData();
   try{localStorage.setItem(LS+"-sub",sub)}catch(e){}
 }
@@ -16,6 +17,7 @@ function setTab(tab){
   document.body.dataset.tab=tab;
   document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.tab===tab)));
   ["train","data","me"].forEach(k=>{document.getElementById("pane-"+k).hidden=k!==tab});
+  placePiece(document.querySelector("nav.tabs"),true);
   if(tab==="data")setDataSub(dataSub);
   if(tab==="train")renderTrain();
   if(tab==="me")renderData();
@@ -27,14 +29,32 @@ document.querySelector("nav.tabs").addEventListener("click",e=>{const b=e.target
 /* ---------- theme (manual, does not follow the phone) ---------- */
 const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
 const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
-function applyTheme(t){document.documentElement.setAttribute("data-theme",t);const b=document.getElementById("themeBtn");b.innerHTML=t==="dark"?SUN:MOON;b.setAttribute("aria-label",t==="dark"?T("切换浅色主题","Light theme"):T("切换深色主题","Dark theme"));try{localStorage.setItem(LS+"-theme",t)}catch(e){}}
-let theme="light";try{theme=localStorage.getItem(LS+"-theme")||"light"}catch(e){}
+const BRICK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="12" x="3" y="8" rx="1"/><path d="M10 8V5c0-.6-.4-1-1-1H6a1 1 0 0 0-1 1v3"/><path d="M19 8V5c0-.6-.4-1-1-1h-3a1 1 0 0 0-1 1v3"/></svg>';
+/* the button cycles light → dark → toy and shows the theme it will switch to */
+const THEMES=["light","dark","toy"];
+function nextTheme(t){return THEMES[(THEMES.indexOf(t)+1)%THEMES.length]}
+function applyTheme(t){if(!THEMES.includes(t))t="light";document.documentElement.setAttribute("data-theme",t);const b=document.getElementById("themeBtn"),n=nextTheme(t);
+  b.innerHTML=n==="dark"?MOON:n==="toy"?BRICK:SUN;b.setAttribute("aria-label",n==="dark"?T("切换深色主题","Dark theme"):n==="toy"?T("切换玩具主题","Toy theme"):T("切换浅色主题","Light theme"));
+  try{localStorage.setItem(LS+"-theme",t)}catch(e){}placePieces(false)}
+/* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
+function placePiece(bar,anim){if(!bar||!bar.offsetParent)return;let pc=bar.querySelector(".tpiece");
+  if(!pc){pc=document.createElement("i");pc.className="tpiece";pc.setAttribute("aria-hidden","true");bar.prepend(pc)}
+  const b=bar.querySelector('[aria-selected="true"]');if(!b)return;
+  const was=pc.style.getPropertyValue("--px"),moved=was!==b.offsetLeft+"px";if(!was)anim=false;
+  pc.classList.toggle("on",!!anim);
+  pc.style.setProperty("--px",b.offsetLeft+"px");pc.style.setProperty("--py",b.offsetTop+"px");
+  pc.style.setProperty("--pw",b.offsetWidth+"px");pc.style.setProperty("--ph",b.offsetHeight+"px");
+  if(anim&&moved){pc.classList.remove("go");void pc.offsetWidth;pc.classList.add("go")}}
+function placePieces(anim){if(document.documentElement.getAttribute("data-theme")!=="toy")return;document.querySelectorAll("nav.tabs,.subtabs").forEach(x=>placePiece(x,anim))}
+addEventListener("resize",()=>placePieces(false));
+if(document.fonts)document.fonts.ready.then(()=>placePieces(false));
+let theme="light";try{theme=localStorage.getItem(LS+"-theme")||"light"}catch(e){}if(!THEMES.includes(theme))theme="light";
 applyTheme(theme);
 function applyLang(l){LANG=l;document.documentElement.setAttribute("data-lang",l);document.documentElement.lang=l==="en"?"en":"zh-CN";
   document.getElementById("langBtn").textContent=l==="en"?"EN":"CH";try{localStorage.setItem(LS+"-lang",l)}catch(e){}}
 applyLang(LANG);
 document.getElementById("langBtn").addEventListener("click",()=>{applyLang(LANG==="en"?"zh":"en");applyTheme(document.documentElement.getAttribute("data-theme")||"light");renderAll();renderDietAll();paintSheetLang();syncUI()});
-document.getElementById("themeBtn").addEventListener("click",()=>applyTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark"));
+document.getElementById("themeBtn").addEventListener("click",()=>applyTheme(nextTheme(document.documentElement.getAttribute("data-theme")||"light")));
 
 /* particle flames above an element: the 练 button burns at full size (orange); today's cell on the training
    calendar burns at half size in green. k scales size, height and density. */

@@ -6,6 +6,14 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.30a] — 2026-11-08
+
+### 新增 / Added
+- 🧸 **玩具主题**：右上角主题按钮现在在浅色、深色、玩具三套之间切换，图标显示下一个主题。玩具主题像塑料玩具：米色点点底，按钮是凸起的塑料键，按下去会下沉、松手弹回来；打勾框也是按键，打完变绿；选中的标签是一块红色塑料片，点别的标签会滑过去；日历里的训练日像塑料钉。只换外观，数据还是同一份。
+  Toy theme: the theme button now cycles light, dark and toy, and shows the theme it switches to. Toy looks like moulded plastic: a dotted cream background, buttons are raised keys that sink when pressed and spring back, tick boxes are keys that turn green, the selected tab is a red plastic piece that slides to the tab you tap, and training days on the calendar look like plastic pegs. Only the look changes; the data stays the same.
+
+---
+
 ## [v1.29a] — 2026-11-06
 
 ### 变更 / Changed

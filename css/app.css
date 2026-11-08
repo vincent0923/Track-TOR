@@ -542,3 +542,92 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
 .calctl{margin-left:auto}
 .caltitle{min-width:0}
 .caltitle b{white-space:nowrap;font-size:clamp(20px,6.6vw,26px)}
+
+/* ---------- Toy theme: moulded plastic. Raised keys sink when pressed and spring back;
+   the selected tab is a plastic piece that slides along a sunken track (see placePiece in ui.js). ---------- */
+@font-face{font-family:"Archivo";font-style:normal;font-weight:100 900;font-stretch:62% 125%;font-display:swap;src:url(../fonts/archivo-wdth.woff2) format("woff2")}
+.tpiece{display:none}
+:root[data-theme="toy"]{
+  --bg:#E3DFD5; --surface:#F8F5EF; --sunk:#ECE7DD; --ink:#1E1D1A; --muted:#6B665B; --line:#D2CCBF;
+  --push:#EF4F2B; --push-soft:#FBE1D8; --pull:#2C55E0; --pull-soft:#DFE6FB;
+  --ok:#22A06B; --ok-soft:#D9F0E3; --warn:#B9821A; --sleep:#7B5BD6; --cta:#F4B52A; --cta-ink:#9A6A0E;
+  --track:#D6D0C3; --side:#CFC8B8; --drop:0 7px 8px -4px rgba(40,28,10,.32); --sink:inset 0 2px 5px rgba(40,28,10,.22);
+  --spring:cubic-bezier(.3,1.9,.5,1);
+  --f-num:"Archivo","Barlow Condensed",sans-serif;
+  --f-body:"Archivo",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --r:18px; color-scheme:light; font-stretch:92%}
+:root[data-theme="toy"] body{background-color:var(--bg);background-image:radial-gradient(circle,rgba(60,45,20,.09) 2px,transparent 2.5px);background-size:22px 22px}
+:root[data-theme="toy"] #pane-diet{--intake:#2A3A44;--burn:#EF6A2B;--protein:#7B5BD6;--gain:#22A06B;--loss:#E0442A;--dtotal:#E8E2D5}
+
+/* surfaces: a soft lip under each card instead of a border */
+:root[data-theme="toy"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat,.review,.sheet){border:0;box-shadow:0 3px 0 var(--side),0 14px 20px -16px rgba(40,28,10,.5)}
+:root[data-theme="toy"] :is(.card,.chartbox,.goals,details.fold,.cal){border-radius:var(--r)}
+:root[data-theme="toy"] #pane-diet :is(.chartbox,.diet-day){border-radius:var(--r)}
+:root[data-theme="toy"] :is(h1,.tag,.stat b,.caltitle b,.gtile b,.gh .gp,.chartbox h3 span,.calc b){font-weight:800}
+:root[data-theme="toy"] .tag{font-stretch:105%}
+
+/* sunken: inputs, set rows, steppers, bars */
+:root[data-theme="toy"] :is(.field input,.field textarea,.field select,.sfxr select,.step,.set,.dsub,.lockbar){border-color:transparent;background:var(--sunk);box-shadow:var(--sink)}
+:root[data-theme="toy"] .set.ticked{background:var(--ok-soft)}
+:root[data-theme="toy"] :is(.bar,.prog){background:var(--track);box-shadow:inset 0 2px 3px rgba(40,28,10,.28)}
+:root[data-theme="toy"] .bar i{box-shadow:inset 0 2px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.15)}
+
+/* raised white keys */
+:root[data-theme="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.sfxp,.dp-f button,.cap,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile){
+  border:0;background:#fff;box-shadow:0 4px 0 var(--side),var(--drop);transform:translateY(0);
+  transition:transform .32s var(--spring),box-shadow .32s var(--spring)}
+:root[data-theme="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.sfxp,.dp-f button,.cap,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile):active{
+  transform:translateY(3px);box-shadow:0 1px 0 var(--side),0 2px 3px -2px rgba(40,28,10,.35);transition-duration:.06s}
+:root[data-theme="toy"] .gi{background:color-mix(in srgb,var(--g) 16%,#fff);box-shadow:0 3px 0 color-mix(in srgb,var(--g) 35%,var(--side)),var(--drop)}
+:root[data-theme="toy"] .gchip2.on{background:color-mix(in srgb,var(--g) 16%,#fff);box-shadow:0 4px 0 var(--g),var(--drop)}
+:root[data-theme="toy"] .btn.recedit,:root[data-theme="toy"] .sfxp{color:var(--cta-ink)}
+:root[data-theme="toy"] .cap .cap-r{border-left-color:var(--line)}
+:root[data-theme="toy"] .cap{margin-bottom:4px}
+
+/* raised coloured keys: the side is the same plastic, darker */
+:root[data-theme="toy"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,#pane-diet .diet-add,#pwaInstallBtn,.caltoday){
+  --kc:var(--k,var(--ink));border:0;background:var(--kc);box-shadow:0 4px 0 color-mix(in srgb,var(--kc) 62%,#000),var(--drop),inset 0 2px 0 rgba(255,255,255,.25);
+  transform:translateY(0);transition:transform .32s var(--spring),box-shadow .32s var(--spring)}
+:root[data-theme="toy"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,#pane-diet .diet-add,#pwaInstallBtn,.caltoday):active{
+  transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--kc) 62%,#000),0 2px 3px -2px rgba(40,28,10,.35);transition-duration:.06s}
+:root[data-theme="toy"] :is(.syncbtn,.dp-f .dp-today,#pwaInstallBtn){--kc:var(--cta);color:var(--ink)!important;text-shadow:none}
+:root[data-theme="toy"] #pane-diet .diet-add{--kc:var(--burn)}
+:root[data-theme="toy"] .caltoday{--kc:var(--ok);color:#fff}
+:root[data-theme="toy"] .syncbtn{animation:none}
+:root[data-theme="toy"] .syncbtn.done{background:var(--ok-soft);box-shadow:var(--sink)}
+
+/* tick boxes are keys too: white, then green once ticked */
+:root[data-theme="toy"] .chk{border:0;background:#fff;box-shadow:0 4px 0 var(--side),var(--drop);transition:transform .32s var(--spring),box-shadow .32s var(--spring),background .15s}
+:root[data-theme="toy"] .chk:active{transform:translateY(3px);box-shadow:0 1px 0 var(--side);transition-duration:.06s}
+:root[data-theme="toy"] .set.ticked .chk{background:var(--ok);box-shadow:0 4px 0 #157A50,var(--drop),inset 0 2px 0 rgba(255,255,255,.3)}
+
+/* tracks with a sliding piece: main tabs (red piece), chart views (blue piece) */
+:root[data-theme="toy"] :is(nav.tabs,.subtabs){position:relative;gap:0;padding:6px 6px 10px;background:var(--track);border-radius:20px;box-shadow:inset 0 3px 7px rgba(40,28,10,.32),0 1px 0 #fff}
+:root[data-theme="toy"] nav.tabs{top:calc(env(safe-area-inset-top,0px) + 6px);margin-block:8px}
+:root[data-theme="toy"] :is(nav.tabs,.subtabs) button{position:relative;z-index:1;border:0;background:none;color:#4A463E;transition:color .2s}
+:root[data-theme="toy"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:#fff}
+:root[data-theme="toy"] .tpiece{display:block;position:absolute;left:0;top:0;z-index:0;pointer-events:none;border-radius:14px;
+  width:var(--pw,0);height:var(--ph,0);transform:translate(var(--px,0),var(--py,0));background:var(--push);
+  box-shadow:0 4px 0 #B5311A,0 10px 12px -5px rgba(40,28,10,.4),inset 0 2px 0 rgba(255,255,255,.3)}
+:root[data-theme="toy"] .subtabs .tpiece{background:var(--pull);box-shadow:0 4px 0 #1A36A3,0 10px 12px -5px rgba(40,28,10,.4),inset 0 2px 0 rgba(255,255,255,.3)}
+@media (prefers-reduced-motion:no-preference){
+  :root[data-theme="toy"] .tpiece.on{transition:transform .5s var(--spring),width .5s var(--spring)}
+  :root[data-theme="toy"] .tpiece.go{animation:squash .5s ease-out}
+}
+@keyframes squash{0%{scale:1 1}30%{scale:1.14 .88}65%{scale:.97 1.04}100%{scale:1 1}}
+
+/* 14 / 30 / 60 day switch: a small track, the chosen one a raised white piece */
+:root[data-theme="toy"] .maseg{border:0;border-radius:11px;background:var(--track);padding:3px 3px 5px;gap:3px;overflow:visible;box-shadow:inset 0 2px 4px rgba(40,28,10,.28)}
+:root[data-theme="toy"] .maseg button{background:none;border:0!important;border-radius:8px;color:#4A463E}
+:root[data-theme="toy"] .maseg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 3px 0 var(--side),0 5px 6px -3px rgba(40,28,10,.35)}
+
+/* calendar days are plastic pegs */
+:root[data-theme="toy"] .cald.push{background:var(--push);box-shadow:0 3px 0 #B5311A}
+:root[data-theme="toy"] .cald.pull{background:var(--pull);box-shadow:0 3px 0 #1A36A3}
+:root[data-theme="toy"] .cald.both{background:linear-gradient(135deg,var(--push) 50%,var(--pull) 50%);box-shadow:0 3px 0 #6A2A6A}
+:root[data-theme="toy"] .cald.xonly{background:var(--ok);box-shadow:0 3px 0 #157A50}
+:root[data-theme="toy"] .cald.sel{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
+:root[data-theme="toy"] .calfold{border-radius:11px}
+
+:root[data-theme="toy"] .toast{border-radius:14px;box-shadow:0 4px 0 #000,0 10px 14px -6px rgba(40,28,10,.5)}
+:root[data-theme="toy"] .chk .ord{box-shadow:0 0 0 2px #fff}
