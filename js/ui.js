@@ -493,3 +493,36 @@ async function withProgress(btn, work){
     setTimeout(()=>{ delete btn.dataset.prog; btn.style.removeProperty("--p"); }, 650);
   }
 }
+
+/* ---------- Interior extras ----------
+   Charts › Health and Strength: the charts sit in a row you swipe through one at a time (snap carousel), with a
+   bar per chart under it; tap a chart to read a day, swipe to turn. On the other looks the row is laid out
+   as before, top to bottom. */
+(function(){
+  [["pane-health",""],["pane-strength","#cbHeat"]].forEach(([id,skip])=>{
+    const pane=document.getElementById(id);if(!pane)return;
+    const boxes=[...pane.querySelectorAll(":scope>.chartbox")].filter(b=>!skip||!b.matches(skip));if(boxes.length<2)return;
+    const car=document.createElement("div");car.className="chcar";boxes[0].before(car);boxes.forEach(b=>car.append(b));
+    const dots=document.createElement("div");dots.className="cdots";dots.setAttribute("role","tablist");
+    dots.innerHTML=boxes.map((b,i)=>'<button type="button" role="tab" aria-label="'+(i+1)+' / '+boxes.length+'" aria-selected="'+(i===0)+'"><i></i></button>').join("");
+    car.after(dots);
+    const step=()=>{const a=car.children[0],b=car.children[1];return b?b.offsetLeft-a.offsetLeft:car.clientWidth},cur=()=>Math.round(car.scrollLeft/Math.max(1,step()));
+    car.addEventListener("scroll",()=>{const k=cur();dots.querySelectorAll("button").forEach((d,i)=>d.setAttribute("aria-selected",String(i===k)))},{passive:true});
+    dots.addEventListener("click",e=>{const d=e.target.closest("button");if(!d)return;const i=[...dots.children].indexOf(d);car.scrollTo({left:i*step(),behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})});
+  });
+})();
+/* hold to confirm (Interior): deleting a day's food logs or a record row asks you to hold the button;
+   a dark fill sweeps across while you hold, and letting go early cancels. Keyboard presses keep the usual confirm. */
+(function(){
+  const SEL="#ddelDayBtn,[data-del]",HOLD=700;let el=null,tm=0,pass=false;
+  const on=()=>document.documentElement.getAttribute("data-skin")==="interior";
+  const stop=()=>{clearTimeout(tm);if(el)el.classList.remove("holding");el=null};
+  document.addEventListener("pointerdown",e=>{const b=e.target.closest(SEL);if(!b||!on())return;stop();el=b;
+    b.style.setProperty("--hold",HOLD+"ms");b.classList.add("holding");
+    tm=setTimeout(()=>{const b0=el;stop();if(!b0)return;b0.classList.add("held");setTimeout(()=>b0.classList.remove("held"),400);
+      if(b0.dataset.del&&typeof pendingDel!=="undefined")pendingDel=b0.dataset.del;
+      const c=window.confirm;window.confirm=()=>true;pass=true;try{b0.click()}finally{pass=false;window.confirm=c}},HOLD)},true);
+  ["pointerup","pointercancel","pointerleave"].forEach(t=>document.addEventListener(t,stop,true));
+  document.addEventListener("click",e=>{const b=e.target.closest(SEL);if(!b||!on()||pass||e.detail===0)return;
+    e.stopImmediatePropagation();e.preventDefault();toast(T("按住不放来删除","Hold to delete"))},true);
+})();

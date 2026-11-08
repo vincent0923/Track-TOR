@@ -986,3 +986,26 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="beui"] svg.heat rect.h3{fill:var(--push)}
 :root[data-skin="beui"] #dietTip{border-radius:14px;background:var(--tip);color:var(--on-tip);box-shadow:0 12px 32px -12px rgba(0,0,0,.45)}
 :root[data-skin="beui"] #dietTip b{font-family:"Geist Mono",monospace}
+/* chart carousel: a plain stack on most looks; Interior turns it into a row you swipe through */
+.chcar{display:contents}
+.cdots{display:none}
+:root[data-skin="interior"] .chcar{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;margin-inline:-2px;padding:2px 2px 6px}
+:root[data-skin="interior"] .chcar::-webkit-scrollbar{display:none}
+:root[data-skin="interior"] .chcar>.chartbox{flex:0 0 100%;min-width:0;margin:0;scroll-snap-align:center;scroll-snap-stop:always}
+:root[data-skin="interior"] .chcar svg.chart{touch-action:pan-x pan-y}
+:root[data-skin="interior"] .cdots{display:flex;justify-content:center;gap:3px;margin-top:-4px}
+:root[data-skin="interior"] .cdots button{display:grid;place-items:center;width:22px;height:22px;border:0;background:none;padding:0;cursor:pointer}
+:root[data-skin="interior"] .cdots i{display:block;width:6px;height:5px;border-radius:1.5px;background:var(--ink);opacity:.22;transition:width .3s var(--spr),opacity .2s}
+:root[data-skin="interior"] .cdots button[aria-selected="true"] i{width:16px;opacity:1}
+/* goal bars: Interior's progress bar, a sunken track with a 2px inset and a solid fill with a top highlight */
+:root[data-skin="interior"] .bar{height:12px;padding:2px;border-radius:4px;background:color-mix(in srgb,var(--line) 60%,transparent);box-shadow:inset 0 1px 2px rgba(28,25,23,.1),inset 0 0 0 1px rgba(28,25,23,.06)}
+:root[data-theme="interior-dark"] .bar{background:#1D1D1A;box-shadow:inset 0 1px 2px rgba(0,0,0,.45)}
+:root[data-skin="interior"] .bar i{border-radius:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(28,25,23,.2)}
+:root[data-skin="interior"] .bar i::after{display:none}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="interior"] .bar i{animation:barIn .9s cubic-bezier(.25,1.05,.4,1)}}
+/* hold to confirm: a dark fill sweeps from the left while held */
+:root[data-skin="interior"] :is(#ddelDayBtn,[data-del]){position:relative;overflow:hidden;isolation:isolate;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+:root[data-skin="interior"] :is(#ddelDayBtn,[data-del])::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--push);transform-origin:left;transform:scaleX(0);transition:transform .18s ease-out}
+:root[data-skin="interior"] :is(#ddelDayBtn,[data-del]).holding::before{transform:scaleX(1);transition:transform var(--hold,700ms) linear}
+:root[data-skin="interior"] :is(#ddelDayBtn,[data-del]).holding{color:#fff!important}
+:root[data-skin="interior"] :is(#ddelDayBtn,[data-del]).held{animation:pressPop .32s ease-out}
