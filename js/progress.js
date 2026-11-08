@@ -316,7 +316,7 @@ function renderGoals(){
     if(!noT&&start!=null&&cur!=null)milestone(g.k,pct,g.name);
     const startTxt=start==null?"—":(g.k==="weight"?start.toFixed(1):start);
     const pv=g.k==="waist"||g.k==="weight";      /* privacy view only rewrites body measures */
-    const icon='<button type="button" class="gi" data-setgoal="'+g.k+'" aria-label="'+T('设定目标：','Set goal: ')+g.name+'">'+IC[g.k]+'</button>';
+    const icon='<button type="button" class="gi" data-setgoal="'+g.k+'" aria-label="'+T('设定目标：','Set goal: ')+g.name+'">'+(skinIc('g-'+g.k)||IC[g.k])+'</button>';
     const setBtn='<button type="button" class="gset" data-setgoal="'+g.k+'">'+T('设目标','Set goal')+'</button>';
     const range=noT
       ?(PRIV&&pv?'':T('起点 ','Start ')+startTxt+' → ')+setBtn
@@ -413,3 +413,5 @@ document.getElementById("foldMe").addEventListener("click",e=>{
   if(e.target.id!=="gHreset")return;state.settings.h=state.settings.hC;state.settings.hSrc="coros";saveSettings();renderGoals();
 });
 function renderAll(){renderStats();renderTrain();renderData()}
+
+document.addEventListener("themeicons",()=>{if(document.getElementById("goals").innerHTML)renderGoals()});

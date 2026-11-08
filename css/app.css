@@ -824,3 +824,19 @@ svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
 @media (prefers-reduced-motion:no-preference){:root[data-skin="retro"] .tpiece.on{transition:transform .33s steps(4,end),width .33s steps(4,end)}}
 :root[data-skin="retro"] .goal{--g:var(--ink)!important}
 #themeBtn{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+/* themed icons (js/icons.js): toy icons are an outline with a coloured fill, like moulded plastic */
+svg.ic-toy .f{fill:var(--icf,var(--cta))}
+:root[data-skin="toy"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{--icf:rgba(255,255,255,.4)}
+:root[data-skin="toy"] .gi{--icf:color-mix(in srgb,var(--g) 40%,var(--key))}
+:root[data-skin="toy"] .iconbtn svg{width:22px;height:22px}
+:root[data-skin="toy"] :is(nav.tabs,.subtabs) button svg.ic{width:26px;height:26px}
+svg.ic-retro{shape-rendering:crispEdges}
+:root[data-skin="retro"] .iconbtn svg{width:20px;height:20px}
+/* themed icons (js/icons.js): toy icons are an outline with a coloured fill, like moulded plastic */
+svg.ic-toy .f{fill:var(--icf,var(--cta))}
+:root[data-skin="toy"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{--icf:rgba(255,255,255,.4)}
+:root[data-skin="toy"] .gi{--icf:color-mix(in srgb,var(--g) 40%,var(--key))}
+:root[data-skin="toy"] .iconbtn svg{width:22px;height:22px}
+:root[data-skin="toy"] :is(nav.tabs,.subtabs) button svg.ic{width:26px;height:26px}
+svg.ic-retro{shape-rendering:crispEdges}
+:root[data-skin="retro"] .iconbtn svg{width:20px;height:20px}

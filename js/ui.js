@@ -45,9 +45,13 @@ const THEME_IDS=THEMES.map(t=>t[0]);
 function skinOf(t){const r=THEMES.find(x=>x[0]===t);return r?r[3]:""}
 function applyTheme(t){if(!THEME_IDS.includes(t))t="light";const r=document.documentElement;r.setAttribute("data-theme",t);
   const k=skinOf(t);if(k)r.setAttribute("data-skin",k);else r.removeAttribute("data-skin");
-  const b=document.getElementById("themeBtn");b.innerHTML=THEME_IC;
+  const b=document.getElementById("themeBtn");b.innerHTML=skinIc("theme")||THEME_IC;paintIcons();
   b.setAttribute("aria-label",T("主题：点一下换下一个，长按打开主题面板","Theme: tap for the next one, hold to open the theme panel"));
   try{localStorage.setItem(LS+"-theme",t)}catch(e){}placePieces(false);renderThemes()}
+/* every icon marked data-ic takes the current look's version; the original comes back on the plain themes */
+function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const sv=el.querySelector("svg");if(!sv)return;
+    if(!el._ic0)el._ic0=sv.outerHTML;const n=skinIc(el.dataset.ic)||el._ic0;if(sv.outerHTML!==n)sv.outerHTML=n});
+  document.dispatchEvent(new Event("themeicons"))}
 /* Profile › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
   const groups=[["",T("默认","Default")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
@@ -223,7 +227,8 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   const btn=document.getElementById("sndBtn");
   const ICON_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
   const ICON_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 6 6M22 9l-6 6"/></svg>';
-  function paint(){btn.innerHTML=on?ICON_ON:ICON_OFF;btn.setAttribute("aria-label",on?T("关闭声音","Sound off"):T("打开声音","Sound on"));btn.setAttribute("aria-pressed",on)}
+  document.addEventListener("themeicons",()=>paint());
+  function paint(){btn.innerHTML=on?(skinIc("snd")||ICON_ON):(skinIc("sndx")||ICON_OFF);btn.setAttribute("aria-label",on?T("关闭声音","Sound off"):T("打开声音","Sound on"));btn.setAttribute("aria-pressed",on)}
   paint();
   function ac(){
     if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ctx=new C()}
@@ -425,7 +430,8 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   const ENTER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
   const EXIT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
   const isFs=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
-  function paint(){const f=isFs();btn.innerHTML=f?EXIT:ENTER;btn.setAttribute("aria-label",f?T("退出全屏","Exit full screen"):T("全屏","Full screen"));btn.setAttribute("aria-pressed",f)}
+  document.addEventListener("themeicons",()=>paint());
+  function paint(){const f=isFs();btn.innerHTML=f?(skinIc("fsx")||EXIT):(skinIc("fs")||ENTER);btn.setAttribute("aria-label",f?T("退出全屏","Exit full screen"):T("全屏","Full screen"));btn.setAttribute("aria-pressed",f)}
   paint();
   btn.addEventListener("click",()=>{
     try{
