@@ -152,6 +152,7 @@ function renderDietChart(){
       g += `<text x="${x(i)}" y="${H-6}" text-anchor="middle">${+d.slice(5,7)}.${+d.slice(8)}</text>`;
     }
   });
+  g += serOpen(W, H, L);
   const bw = Math.max(2, Math.min(10, step*0.6));
   pts.forEach((p,i)=>{
     if(p.a!==null && p.b!==null){
@@ -159,15 +160,7 @@ function renderDietChart(){
       g += `<rect x="${x(i)-bw/2}" y="${top}" width="${bw}" height="${Math.max(1,h)}" rx="1.5" fill="${p.b>=p.a ? "var(--gain)" : "var(--loss)"}" fill-opacity=".35"/>`;
     }
   });
-  const line = (key) => {
-    let d="", pen=false;
-    pts.forEach((p,i)=>{
-      const v = p[key]; if(v===null){ pen=false; return; }
-      d += (pen?"L":"M") + x(i).toFixed(1) + " " + y(v).toFixed(1);
-      pen = true;
-    });
-    return d;
-  };
+  const line = (key) => linePath(pts.map((p,i)=>p[key]===null ? null : {x:x(i), y:y(p[key])}));
   const dotsFor = (key, col) => pts.map((p,i)=>p[key]===null?"":`<circle cx="${x(i)}" cy="${y(p[key])}" r="${dates.length>30?1.8:2.6}" fill="${col}"/>`).join("");
   const bm = dates.map(bmrOfDate);
   g += `<path d="${bm.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join("")}" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3" stroke-opacity=".8"/><text x="${W-R}" y="${y(bm[bm.length-1])-5}" text-anchor="end">BMR ${Math.round(bm[bm.length-1])}</text>`;
@@ -180,12 +173,12 @@ function renderDietChart(){
   g += `<path d="${pl(cap)}${need.map((v,i)=>"L"+x(need.length-1-i).toFixed(1)+" "+yp(need[need.length-1-i]).toFixed(1)).join("")}Z" fill="var(--protein)" fill-opacity=".1"/>`;
   g += `<path d="${pl(need)}" fill="none" stroke="var(--protein)" stroke-width="1.3" stroke-dasharray="1.5 3" stroke-linecap="round"/>`;
   g += `<path d="${pl(cap)}" fill="none" stroke="var(--protein)" stroke-width="1.3" stroke-dasharray="1.5 3" stroke-linecap="round"/>`;
-  { let pd="", pen=false; pr.forEach((v,i)=>{ if(v===null){ pen=false; return; } pd += (pen?"L":"M") + x(i).toFixed(1) + " " + yp(v).toFixed(1); pen=true; });
+  { const pd = linePath(pr.map((v,i)=>v===null ? null : {x:x(i), y:yp(v)}));
     g += `<path d="${pd}" fill="none" stroke="var(--protein)" stroke-width="1.4" stroke-opacity=".7" stroke-linejoin="round"/>`; }
   const pr_r = dates.length>30 ? 2 : 2.9;
   pr.forEach((v,i)=>{ if(v===null) return; const low = v < need[i];
     g += `<circle cx="${x(i)}" cy="${yp(v)}" r="${pr_r}" fill="${low ? "var(--surface)" : "var(--protein)"}" stroke="var(--protein)" stroke-width="1.4"/>`; });
-  g += `<line id="dxh" x1="0" x2="0" y1="${TP}" y2="${H-B}" stroke="var(--ink)" stroke-opacity=".35" stroke-width="1" visibility="hidden"/>`;
+  g += `</g><line id="dxh" x1="0" x2="0" y1="${TP}" y2="${H-B}" stroke="var(--ink)" stroke-opacity=".35" stroke-width="1" visibility="hidden"/>`;
   
   const box = document.getElementById("dietChart");
   if(!box) return;

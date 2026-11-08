@@ -910,3 +910,79 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="interior"] .vf-up{background-color:color-mix(in srgb,var(--ok) 18%,transparent)}
 :root[data-skin="interior"] .vf-down{background-color:color-mix(in srgb,var(--push) 18%,transparent)}
 :root[data-skin="interior"] .gi.gi{color:var(--g)}
+
+/* ---------- beUI: near-white or near-black, faint borders, pills everywhere, a glass tab bar,
+   a teal-to-violet gradient on the main action, mono figures; charts with smooth lines, fading area fills,
+   a soft left edge, a left-to-right draw-in, faint grid and pill legend. Tokens follow beui.dev (MIT). ---------- */
+@font-face{font-family:"Geist Mono";font-style:normal;font-weight:100 900;font-display:swap;src:url(../fonts/geist-mono-wght.woff2) format("woff2")}
+:root[data-theme="beui"]{
+  --bg:#FCFCFC; --surface:#FFFFFF; --sunk:#F5F5F5; --ink:#0B0B0B; --muted:#636363; --line:rgba(11,11,11,.08); --line2:rgba(11,11,11,.14);
+  --push:#A37AFF; --push-soft:rgba(163,122,255,.14); --pull:#0285F7; --pull-soft:rgba(2,133,247,.1); --ok:#00BD6C; --ok-soft:rgba(0,189,108,.12); --warn:#F5A500; --sleep:#A37AFF; --cta:#00BEBF; --on-cta:#FFFFFF;
+  --grad:linear-gradient(to right,#00BEBF 0%,#A37AFF 100%); --glass:rgba(252,252,252,.55); --tip:#0B0B0B; --on-tip:#FCFCFC;
+  --soft-shadow:0 1px 2px rgba(11,11,11,.04),0 8px 24px -12px rgba(11,11,11,.12); color-scheme:light}
+:root[data-theme="beui-dark"]{
+  --bg:#151515; --surface:#1C1C1C; --sunk:#222222; --ink:#F2F2F2; --muted:#868686; --line:rgba(255,255,255,.06); --line2:rgba(255,255,255,.11);
+  --push:#AD8CFF; --push-soft:rgba(173,140,255,.14); --pull:#3EA6FF; --pull-soft:rgba(62,166,255,.14); --ok:#2BD98A; --ok-soft:rgba(43,217,138,.13); --warn:#F5A500; --sleep:#AD8CFF; --cta:#00DADB; --on-cta:#151515;
+  --grad:linear-gradient(to right,#00DADB 0%,#AD8CFF 100%); --glass:rgba(28,28,28,.55); --tip:#F2F2F2; --on-tip:#151515;
+  --soft-shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6); color-scheme:dark}
+:root[data-theme="beui"] #pane-diet{--intake:#0B0B0B;--burn:#F5A500;--protein:#A37AFF;--gain:#00BD6C;--loss:#EE343B;--dslate:#3A3A3A;--dtotal:#EDEDED}
+:root[data-theme="beui-dark"] #pane-diet{--intake:#F2F2F2;--burn:#F5A500;--protein:#AD8CFF;--gain:#2BD98A;--loss:#FF5A5F;--dslate:#3A3A3A;--dtotal:#262626}
+:root[data-theme="beui-dark"] .mask .sheet{--bad:#FF5A5F}
+:root[data-skin="beui"]{--f-num:"Geist Mono","Geist",ui-monospace,monospace;--f-body:"Geist",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:18px}
+:root[data-skin="beui"] body{background-image:radial-gradient(120% 60% at 100% 0%,color-mix(in srgb,var(--cta) 7%,transparent),transparent 60%);background-attachment:fixed;-webkit-font-smoothing:antialiased}
+:root[data-skin="beui"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat,.sheet){border:1px solid var(--line);box-shadow:var(--soft-shadow)}
+:root[data-skin="beui"] :is(h1,.tag,.caltitle b){font-family:"Geist",sans-serif;font-weight:600;letter-spacing:-.03em}
+:root[data-skin="beui"] :is(.stat b,.gh .gp,.gtile b,.chartbox h3 span){letter-spacing:-.04em;font-weight:500}
+/* glass tab bars with a pill thumb */
+:root[data-skin="beui"] :is(nav.tabs,.subtabs){gap:0;padding:4px;border-radius:999px;border:1px solid var(--line2);background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4)}
+:root[data-skin="beui"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:var(--muted);border-radius:999px;transition:color .2s}
+:root[data-skin="beui"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:var(--on-tip)}
+:root[data-skin="beui"] .tpiece{background:var(--tip);border-radius:999px;box-shadow:0 4px 14px -4px rgba(0,0,0,.35)}
+:root[data-skin="beui"] .subtabs .tpiece{background:var(--grad)}
+:root[data-skin="beui"] .subtabs button[aria-selected="true"]{color:#fff}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="beui"] .tpiece.on{transition:transform .45s cubic-bezier(.32,1.3,.5,1),width .45s cubic-bezier(.32,1.3,.5,1)}}
+/* pills */
+:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.sfxp,.dp-f button,.addset,.gchip2){border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:999px;box-shadow:none;transition:transform .2s cubic-bezier(.32,1.3,.5,1),background .15s}
+:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn,.calfold,.syncbtn,.sfxp,.dp-f button,.gi,.chk):active{transform:scale(.94)}
+:root[data-skin="beui"] .btn:not(.ghost):not(.recedit){border-radius:999px}
+:root[data-skin="beui"] :is(.syncbtn:not(.off):not(.done),.dp-f .dp-today){background:var(--grad);color:#fff;border:0;box-shadow:0 6px 20px -8px color-mix(in srgb,var(--cta) 70%,transparent);animation:none}
+:root[data-skin="beui"] .syncbtn.done{background:var(--ok-soft);color:var(--ok);box-shadow:none}
+:root[data-skin="beui"] .caltoday{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+:root[data-skin="beui"] :is(.field input,.field textarea,.field select,.sfxr select,.step){border:1px solid var(--line2);background:var(--sunk);box-shadow:none}
+:root[data-skin="beui"] .set{background:var(--sunk)}
+:root[data-skin="beui"] .chk{border:1px solid var(--line2);border-radius:50%}
+:root[data-skin="beui"] .set.ticked .chk{background:var(--grad);border-color:transparent}
+:root[data-skin="beui"] .bar{background:var(--sunk);height:8px}
+:root[data-skin="beui"] .bar i{background:linear-gradient(to right,color-mix(in srgb,var(--g) 55%,transparent),var(--g));box-shadow:0 0 12px color-mix(in srgb,var(--g) 45%,transparent)}
+:root[data-skin="beui"] .bar i::after{opacity:0}
+:root[data-skin="beui"] .gi{border-radius:12px}
+:root[data-skin="beui"] .maseg{border:1px solid var(--line2);border-radius:999px;padding:3px;gap:0;background:var(--sunk);overflow:hidden}
+:root[data-skin="beui"] .maseg button{background:none;border:0!important;border-radius:999px;color:var(--muted);font-family:"Geist Mono",monospace;font-size:12px;transition:background .2s,color .2s}
+:root[data-skin="beui"] .maseg button[aria-pressed="true"]{background:var(--tip);color:var(--on-tip)}
+:root[data-skin="beui"] .toast{background:var(--tip);color:var(--on-tip);border-radius:999px;box-shadow:0 12px 32px -12px rgba(0,0,0,.45)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="beui"] .toast:not([hidden]){animation:ivToast .4s cubic-bezier(.32,1.3,.5,1)}}
+:root[data-skin="beui"] .cald.push{background:var(--push)}
+:root[data-skin="beui"] .cald.pull{background:var(--pull)}
+:root[data-skin="beui"] .cald.both{background:linear-gradient(135deg,var(--push) 50%,var(--pull) 50%)}
+:root[data-skin="beui"] .cald.xonly{background:var(--ok)}
+:root[data-skin="beui"] .cald.sel{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--cta)}
+/* charts */
+:root[data-skin="beui"] .chart .grid{stroke:var(--ink);stroke-opacity:.07}
+:root[data-skin="beui"] #dietChart line:not(#dxh){stroke:var(--ink);stroke-opacity:.07}
+:root[data-skin="beui"] .chart text{font-family:"Geist Mono",ui-monospace,monospace;font-size:10px;fill:var(--muted)}
+:root[data-skin="beui"] .chart .xh-l{stroke:var(--ink);stroke-opacity:.3;stroke-dasharray:2 3}
+:root[data-skin="beui"] .chart path[stroke-width="2.4"]{stroke-width:2}
+@media (prefers-reduced-motion:no-preference){
+  :root[data-skin="beui"] .chart .ser{animation:serIn .8s cubic-bezier(.22,.9,.3,1) .1s both}
+}
+@keyframes serIn{from{clip-path:inset(-20px 100% -20px 0)}to{clip-path:inset(-20px 0 -20px 0)}}
+:root[data-skin="beui"] .xtip{border-radius:999px;background:var(--tip);color:var(--on-tip);font-family:"Geist Mono",monospace;font-size:13px;padding:4px 12px;box-shadow:0 8px 24px -10px rgba(0,0,0,.45)}
+:root[data-skin="beui"] #pane-diet .dlegend{gap:6px}
+:root[data-skin="beui"] #pane-diet .dlegend>span{padding:3px 10px 3px 8px;border:1px solid var(--line2);border-radius:999px;background:var(--surface)}
+:root[data-skin="beui"] svg.heat rect{rx:3}
+:root[data-skin="beui"] svg.heat rect.h0{stroke:none;fill:var(--sunk)}
+:root[data-skin="beui"] svg.heat rect.h1{fill:color-mix(in srgb,var(--cta) 30%,var(--surface))}
+:root[data-skin="beui"] svg.heat rect.h2{fill:color-mix(in srgb,var(--cta) 60%,var(--push))}
+:root[data-skin="beui"] svg.heat rect.h3{fill:var(--push)}
+:root[data-skin="beui"] #dietTip{border-radius:14px;background:var(--tip);color:var(--on-tip);box-shadow:0 12px 32px -12px rgba(0,0,0,.45)}
+:root[data-skin="beui"] #dietTip b{font-family:"Geist Mono",monospace}

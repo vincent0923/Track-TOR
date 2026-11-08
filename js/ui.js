@@ -35,6 +35,7 @@ const THEME_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 const THEMES=[
   ["light","浅色","Light","","#EDF0F2 #FFFFFF #B8481F #2B55C8"],["dark","深色","Dark","","#0F1519 #172028 #EE7A4A #7393F2"],
   ["interior","Interior 亮","Interior light","interior","#FAFAFA #FFFFFF #292524 #4568FF"],["interior-dark","Interior 暗","Interior dark","interior","#141312 #1D1D1A #F5F5F4 #93B0FF"],
+  ["beui","beUI 亮","beUI light","beui","#FCFCFC #F5F5F5 #0285F7 #00BEBF"],["beui-dark","beUI 暗","beUI dark","beui","#151515 #1C1C1C #00DADB #AD8CFF"],
   ["minimal","极简","Minimal","minimal","#FAFAF8 #FFFFFF #161614 #B5583A"],
   ["craft","手作","Craft","craft","#EFE7D8 #FBF7EF #E0713A #2F6F9A"],
   ["toy","玩具","Toy","toy","#E3DFD5 #F8F5EF #EF4F2B #2C55E0"],["toy-night","夜间玩具","Toy night","toy","#1C1B19 #292724 #FF5B36 #FFC23D"],
@@ -49,13 +50,35 @@ function applyTheme(t){if(!THEME_IDS.includes(t))t="light";const r=document.docu
   const b=document.getElementById("themeBtn");b.innerHTML=skinIc("theme")||THEME_IC;paintIcons();
   b.setAttribute("aria-label",T("主题：点一下换下一个，长按打开主题面板","Theme: tap for the next one, hold to open the theme panel"));
   try{localStorage.setItem(LS+"-theme",t)}catch(e){}placePieces(false);renderThemes()}
+/* chart lines follow the look: smooth for beUI, toy and craft (monotone cubic: smooth, but never overshooting a peak
+   or dipping below a trough the data doesn't have), steps for retro, straight segments otherwise. A null breaks the line. */
+const CURVE={beui:"monotone",toy:"monotone",craft:"monotone",retro:"step"};
+function linePath(pts){const kind=CURVE[document.documentElement.getAttribute("data-skin")]||"linear",f=v=>v.toFixed(1);
+  const runs=[];let r=[];pts.forEach(p=>{if(p)r.push(p);else if(r.length){runs.push(r);r=[]}});if(r.length)runs.push(r);
+  return runs.map(r=>{let d="M"+f(r[0].x)+" "+f(r[0].y);if(r.length<2)return d;
+    if(kind==="step"){for(let i=1;i<r.length;i++){const m=(r[i-1].x+r[i].x)/2;d+="H"+f(m)+"V"+f(r[i].y)+"H"+f(r[i].x)}return d}
+    if(kind==="linear"){for(let i=1;i<r.length;i++)d+="L"+f(r[i].x)+" "+f(r[i].y);return d}
+    const n=r.length,s=[],t=new Array(n).fill(0);
+    for(let i=0;i<n-1;i++){const h=r[i+1].x-r[i].x;s.push(h?(r[i+1].y-r[i].y)/h:0)}
+    t[0]=s[0];t[n-1]=s[n-2];
+    for(let i=1;i<n-1;i++)t[i]=s[i-1]*s[i]<=0?0:3*(s[i-1]+s[i])/((2*s[i]+s[i-1])/s[i-1]+(s[i]+2*s[i-1])/s[i]);
+    for(let i=0;i<n-1;i++){const h=(r[i+1].x-r[i].x)/3;d+="C"+f(r[i].x+h)+" "+f(r[i].y+t[i]*h)+" "+f(r[i+1].x-h)+" "+f(r[i+1].y-t[i+1]*h)+" "+f(r[i+1].x)+" "+f(r[i+1].y)}
+    return d}).join("")}
+/* beUI charts: the series group fades in from the left edge and draws in left to right; area fills fade downwards */
+let CFX=0;
+function serOpen(W,H,L){if(document.documentElement.getAttribute("data-skin")!=="beui")return '<g class="ser">';
+  const id="cf"+(++CFX),a=L/W;
+  return '<defs><linearGradient id="'+id+'g" x1="0" x2="1"><stop offset="'+a+'" stop-color="#fff" stop-opacity=".15"/><stop offset="'+(a+.08)+'" stop-color="#fff"/></linearGradient>'
+    +'<mask id="'+id+'m" maskUnits="userSpaceOnUse" x="0" y="-10" width="'+W+'" height="'+(H+20)+'"><rect y="-10" width="'+W+'" height="'+(H+20)+'" fill="url(#'+id+'g)"/></mask></defs><g class="ser" mask="url(#'+id+'m)">'}
+function areaFill(col){if(document.documentElement.getAttribute("data-skin")!=="beui")return null;const id="af"+(++CFX);
+  return {def:'<defs><linearGradient id="'+id+'" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:'+col+';stop-opacity:.32"/><stop offset="1" style="stop-color:'+col+';stop-opacity:0"/></linearGradient></defs>',fill:'url(#'+id+')'}}
 /* every icon marked data-ic takes the current look's version; the original comes back on the plain themes */
 function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const sv=el.querySelector("svg");if(!sv)return;
     if(!el._ic0)el._ic0=sv.outerHTML;const n=skinIc(el.dataset.ic)||el._ic0;if(sv.outerHTML!==n)sv.outerHTML=n});
   document.dispatchEvent(new Event("themeicons"))}
 /* Profile › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
-  const groups=[["",T("默认","Default")],["interior","Interior"],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
+  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
   box.innerHTML=groups.map(([k,name])=>'<div class="thg"><h4>'+name+'</h4><div class="throw">'+THEMES.filter(t=>t[3]===k).map(([id,zh,en,,c])=>{const [bg,sf,a1,a2]=c.split(" ");
     return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+T(zh,en)+'</span></button>'}).join("")+'</div></div>').join("")}
 /* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
@@ -348,7 +371,8 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     retro:{tab1:"blip",tab2:"blip",range:"key",gap:"key",header:"key",other:"key",open:"blip",close:"key",fold:"key",save:"coin",untick:"key"},
     craft:{tab1:"tap",tab2:"tap",range:"paper",gap:"paper",header:"paper",other:"paper",open:"tap",close:"paper",fold:"paper",save:"stamp",untick:"paper"},
     minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft"},
-    interior:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft"}};
+    interior:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft"},
+    beui:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft"}};
   const defOf=id=>{const k=SKIN_SFX[document.documentElement.getAttribute("data-skin")];return k&&k[id]||SDEF[id]};
   const pickOf=id=>{const m=state.settings&&state.settings.sfx;const k=m&&m[id];return S[k]?k:defOf(id)};
   function playRaw(k){if(on&&S[k])try{S[k]()}catch(e){}}

@@ -27,7 +27,8 @@ const ASSETS = [
   "./fonts/archivo-wdth.woff2",
   "./fonts/vt323.woff2",
   "./fonts/bricolage-wght.woff2",
-  "./fonts/geist-wght.woff2"
+  "./fonts/geist-wght.woff2",
+  "./fonts/geist-mono-wght.woff2"
 ];
 
 self.addEventListener("install", (e) => {
