@@ -29,6 +29,10 @@ Trying-on phase: the themes below are experiments and the ones that don't fit wi
 - 🔊 **每种风格有自己的点按声**：复古是八位哔哔、保存是金币；手作是翻页和纸张轻拍、保存是盖章；极简是轻点；玩具是塑料声。自己选过的声音照旧。
   Each look has its own tap sounds: 8-bit blips with a coin on save for retro, page flips and paper taps with a stamp on save for craft, a soft click for minimal, plastic for toy. Sounds you picked yourself stay.
 
+### 修复 / Fixed
+- 手表整天心率偏高的日子（比如 11 月 9 日：5,377 步，运动以外却记了 958 kcal），日常活动被全额算进消耗，缺口虚大。现在日常活动最多按步数估算值的 1.5 倍再加 120 kcal 计入，超出的不算，日卡上会写「按步数封顶」；正常的日子不受影响。
+  On days the watch reads a raised heart rate all day (e.g. 9 November: 5,377 steps but 958 kcal outside workouts), everyday movement counted in full and inflated the deficit. Everyday movement now counts up to 1.5 times what the steps account for plus 120 kcal; the day card says when it was capped. Normal days are unaffected.
+
 ---
 
 ## [v1.29a] — 2026-11-06

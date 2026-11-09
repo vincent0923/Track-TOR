@@ -13,12 +13,22 @@ const AGE_DEFAULT = 30, W_DEFAULT = 65, TEF = 0.09, TEF_DEFAULT = 1850;
    activities, yoga) at 0.5, since a heart rate barely above resting is where the estimate is worst; rides
    measured by a power meter at 0.9. A day whose workouts are unknown counts at 0.7 throughout. */
 const EX_FACTOR = 0.7, LOW_FACTOR = 0.5, POWER_FACTOR = 0.9;
+/* everyday movement (watch calories outside logged workouts) is capped by the day's steps: about 0.00055 kcal per kg
+   per step, times 1.5, plus 120 kcal for standing and chores. A watch that reads a raised heart rate all day (a loose
+   strap, heat, a long day) can report several times what the steps allow; normal days stay under the cap. */
+const STEP_KCAL = 0.00055, STEP_MARGIN = 1.5, STEP_EXTRA = 120;
+function everydayCap(date){
+  const m = state.metrics[date], st = m ? numVal(m.steps) : null;
+  if(st === null || st <= 0) return Infinity;
+  const kg = weightAtDate(date) || 65;
+  return st * kg * STEP_KCAL * STEP_MARGIN + STEP_EXTRA;
+}
 function watchBurn(date, act){
   if(act === null) return null;
   const m = state.metrics[date];
   if(!m || m.ex == null) return act * EX_FACTOR;
   const ex = Math.min(+m.ex || 0, act), exP = Math.min(+m.exP || 0, ex), exL = Math.min(+m.exL || 0, ex - exP);
-  return (act - ex) + (ex - exP - exL) * EX_FACTOR + exL * LOW_FACTOR + exP * POWER_FACTOR;
+  return Math.min(act - ex, everydayCap(date)) + (ex - exP - exL) * EX_FACTOR + exL * LOW_FACTOR + exP * POWER_FACTOR;
 }
 
 function numVal(v){ return (v===null||v===undefined||v===""||isNaN(+v)) ? null : +v; }
@@ -271,7 +281,8 @@ function renderDietDays(){
       /* show the split so the burn can be checked: day total, how much was logged workouts, what counts */
       metaTags.push(`${T("手表活动","Watch activity")} ${f0Dec(cAct)} kcal`
         + (ex ? T("（运动 "+f0Dec(ex)+"）"," (workouts "+f0Dec(ex)+")") : (mm.ex == null ? T("（运动未知）"," (workouts unknown)") : ""))
-        + ` → ${T("计入","counted")} ${f0Dec(watchBurn(k, cAct))}`); }
+        + ` → ${T("计入","counted")} ${f0Dec(watchBurn(k, cAct))}`
+        + (ex != null && cAct - Math.min(ex, cAct) > everydayCap(k) ? T("（日常活动按步数封顶 "+f0Dec(everydayCap(k))+"）"," (everyday movement capped by steps at "+f0Dec(everydayCap(k))+")") : "")); }
     if(numVal(d.expendOverride)!==null) metaTags.push(`${T("手动总消耗","Manual total burn")} ${f0Dec(d.expendOverride)} kcal`);
     if(wKg!==null) metaTags.push(`${T("体重","Weight")} ${f1Dec(wKg)} kg`);
     const metaLine = metaTags.length ? `<p class="note"${dietState.open.has(k)?"":" hidden"} style="padding-top:6px;padding-bottom:${d.note?2:10}px">${metaTags.join(" · ")}</p>` : "";
