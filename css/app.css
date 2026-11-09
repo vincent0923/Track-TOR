@@ -1333,3 +1333,35 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 :root[data-skin="retro"] .bug{filter:drop-shadow(0 0 3px var(--ink))}
 :root[data-skin="craft"]{--bug:#4A3A2A}
 .wearseg{display:inline-flex}
+/* retro worn: a cyberpsychosis glitch. Bursts of red, slices of the screen torn sideways with their colours flipped,
+   heavy red/cyan split. Rare at level 1, every few seconds at 2, constant fits at 3. */
+@media (prefers-reduced-motion:no-preference){
+  :root[data-skin="retro"][data-wear] main,:root[data-skin="retro"][data-wear] .goals{animation:cpGlitch 5.5s steps(1,end) infinite}
+  :root[data-skin="retro"][data-wear="2"] main,:root[data-skin="retro"][data-wear="2"] .goals{animation-duration:3.2s}
+  :root[data-skin="retro"][data-wear="3"] main,:root[data-skin="retro"][data-wear="3"] .goals{animation-duration:1.7s}
+  :root[data-skin="retro"][data-wear] .wrap::before{content:"";position:fixed;inset:0;z-index:88;pointer-events:none;
+    -webkit-backdrop-filter:hue-rotate(150deg) saturate(4) contrast(1.5) invert(.15);backdrop-filter:hue-rotate(150deg) saturate(4) contrast(1.5) invert(.15);
+    clip-path:inset(100% 0 0 0);animation:cpTear 5.5s steps(1,end) infinite}
+  :root[data-skin="retro"][data-wear="2"] .wrap::before{animation-duration:3.2s}
+  :root[data-skin="retro"][data-wear="3"] .wrap::before{animation-duration:1.7s}
+  :root[data-skin="retro"][data-wear] .wrap::after{content:"";position:fixed;inset:0;z-index:87;pointer-events:none;background:#FF1744;mix-blend-mode:screen;opacity:0;animation:cpRed 5.5s steps(1,end) infinite}
+  :root[data-skin="retro"][data-wear="2"] .wrap::after{animation-duration:3.2s}
+  :root[data-skin="retro"][data-wear="3"] .wrap::after{animation-duration:1.7s}
+}
+@keyframes cpGlitch{
+  0%,84%,100%{transform:none;filter:none;clip-path:none}
+  85%{transform:translateX(-7px) skewX(-6deg);filter:drop-shadow(5px 0 0 rgba(255,23,68,.85)) drop-shadow(-5px 0 0 rgba(0,240,255,.8))}
+  86.5%{transform:translateX(9px);clip-path:inset(0 0 52% 0);filter:drop-shadow(-6px 0 0 rgba(255,23,68,.9)) drop-shadow(6px 0 0 rgba(0,240,255,.8))}
+  88%{transform:translateX(-3px) skewX(9deg);clip-path:inset(38% 0 0 0);filter:drop-shadow(8px 0 0 rgba(255,23,68,.9)) hue-rotate(90deg)}
+  89.5%{transform:translateX(5px);clip-path:inset(12% 0 30% 0);filter:drop-shadow(-4px 0 0 rgba(0,240,255,.9)) saturate(3)}
+  91%{transform:translateX(-2px);clip-path:none;filter:drop-shadow(3px 0 0 rgba(255,23,68,.7))}
+  92.5%{transform:none;filter:none}}
+@keyframes cpTear{
+  0%,84%,100%{clip-path:inset(100% 0 0 0);transform:none}
+  85%{clip-path:inset(22% 0 70% 0);transform:translateX(-18px)}
+  86.5%{clip-path:inset(55% 0 33% 0);transform:translateX(24px)}
+  88%{clip-path:inset(8% 0 86% 0);transform:translateX(-30px)}
+  89.5%{clip-path:inset(71% 0 20% 0);transform:translateX(14px)}
+  91%{clip-path:inset(40% 0 52% 0);transform:translateX(-9px)}
+  92.5%{clip-path:inset(100% 0 0 0)}}
+@keyframes cpRed{0%,84%,100%{opacity:0}85%{opacity:.32}86.5%{opacity:0}88%{opacity:.45}89%{opacity:.1}90.5%{opacity:.25}92%{opacity:0}}
