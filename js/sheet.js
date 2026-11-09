@@ -316,9 +316,11 @@ async function pullSheet(opts){
 
 /* a link counts as valid when it looks like a web address (domain with a dot) */
 function validSheetUrl(v){ return /^(https?:\/\/)?[^\s\/]+\.[^\s\/]+/i.test(extractUrl(v || "")); }
+/* the sync icon at the right of "Food logs" is greyed out until a valid link is saved (it still answers a tap with a hint) */
 function paintSyncCap(){
   const b = document.getElementById("dietSyncBtn"), inp = document.getElementById("dsrcUrl"); if(!b || !inp) return;
-  b.disabled = !validSheetUrl(inp.value);
+  const off = !validSheetUrl(inp.value);
+  b.classList.toggle("off", off); b.setAttribute("aria-disabled", String(off));
 }
 function copyText(t){
   if(navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t);
@@ -346,9 +348,19 @@ function copyText(t){
   };
   const pull = ()=>{ if(!pullBtn.disabled) withProgress(pullBtn, pullAll); };
   pullBtn.addEventListener("click", pull);
-  /* the sync half of the capsule beside "Food logs": pulls straight away; greyed out until a valid link is saved */
+  /* the sync icon at the right of "Food logs": a tap pulls straight away (or, without a link, says how to add one);
+     holding it opens Profile › Food table, where the link and how it works live */
   const syncBtn = document.getElementById("dietSyncBtn");
-  syncBtn.addEventListener("click", ()=>{ if(!syncBtn.disabled && !pullBtn.disabled && !syncBtn.dataset.prog) withProgress(syncBtn, pullAll); });
+  let held = false, tm = 0;
+  const openSettings = ()=>{ setTab("me"); const f = document.getElementById("foldDietSrc"); if(f){ f.open = true; f.scrollIntoView({ behavior:"smooth", block:"start" }); } };
+  syncBtn.addEventListener("pointerdown", ()=>{ held = false; clearTimeout(tm); tm = setTimeout(()=>{ held = true; if(navigator.vibrate) navigator.vibrate(15); openSettings(); }, 550); });
+  ["pointerup","pointerleave","pointercancel"].forEach(t=>syncBtn.addEventListener(t, ()=>clearTimeout(tm)));
+  syncBtn.addEventListener("contextmenu", e=>e.preventDefault());
+  syncBtn.addEventListener("click", e=>{
+    if(held){ held = false; e.stopImmediatePropagation(); return; }
+    if(syncBtn.classList.contains("off")){ toast(T("还没填同步饮食记录的链接，长按这个按钮进入设置", "No food table link yet — hold this button to set it")); return; }
+    if(!pullBtn.disabled && !syncBtn.dataset.prog) withProgress(syncBtn, pullAll);
+  });
   inp.addEventListener("input", paintSyncCap);
   inp.addEventListener("keydown", e=>{ if(e.key === "Enter") pull(); });
   inp.addEventListener("change", ()=>{ inp.value = extractUrl(inp.value); paintSyncCap(); });

@@ -224,6 +224,13 @@ function renderDietChart(){
 const GAP_WINS = [3, 7, 14, 30, 0];          /* 0 = since the first logged day */
 const GAP_WIN_K = LS + "-gapwin";
 try{ const w = +localStorage.getItem(GAP_WIN_K); if(GAP_WINS.includes(w) && localStorage.getItem(GAP_WIN_K) !== null) dietState.gw = w; }catch(e){}
+/* the chart shows the same stretch the gap tile sums (at least a week; "since the first log" spans every logged day) */
+function syncDietRange(){
+  const n = dietState.gw;
+  if(n){ dietState.range = Math.max(7, n); return; }
+  const ks = Object.keys(state.diet).sort();
+  dietState.range = ks.length ? Math.min(180, Math.max(14, Math.round(dnum(today()) - dnum(ks[0])) + 1)) : 14;
+}
 function gapAllTime(){
   const ks = Object.keys(state.diet).sort(); if(!ks.length) return null;
   let s = 0, c = 0;
@@ -254,22 +261,11 @@ function activeDietDayKeys(){
   return Array.from(set).sort().reverse();
 }
 
-/* the "Food logs" capsule: + expands every day, − collapses them */
-function paintAllCap(allOpen, empty){
-  const b = document.getElementById("dietAllBtn"); if(!b) return;
-  b.setAttribute("aria-expanded", String(allOpen)); b.disabled = !!empty;
-  /* the round chevron turns with aria-expanded (CSS) */
-}
 function renderDietDays(){
   const box = document.getElementById("dietDays");
   if(!box) return;
   const keys = activeDietDayKeys();
-  if(!keys.length){
-    box.innerHTML = `<div class="empty">${T("还没有饮食记录。","No diet logs yet.")}<br>${T("点「饮食记录」旁边的图标，手动添加或从线上表格同步。","Tap the icons next to Food logs to add one by hand or sync an online table.")}</div>`;
-    paintAllCap(false, true);
-    return;
-  }
-  paintAllCap(keys.every(k=>dietState.open.has(k)), false);
+  if(!keys.includes(today())) keys.unshift(today());   /* today always has a card: its pencil adds food */
   box.innerHTML = keys.map(k=>{
     const d = state.diet[k] || { items:[] }, t = dietTotals(d), intake = intakeOf(k), b = burnOfDate(k);
     const gap = (b===null || intake===null) ? null : b - intake;
@@ -307,7 +303,7 @@ function renderDietAll(){
 /* the newest logged day starts expanded */
 function initDiet(){
   dietState.open = latestDietOpenSet(state.diet);
-  if(!activeDietDayKeys().length) setDietSrc(true);
+  syncDietRange();
   renderDietAll();
 }
 
@@ -716,17 +712,12 @@ function parseDailyHealthText(text){
 }
 
 document.addEventListener("click", e=>{
-  const b = e.target.closest("[data-dr]");
-  if(b){
-    dietState.range = +b.dataset.dr;
-    document.querySelectorAll("[data-dr]").forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
-      renderDietChart();
-    return;
-  }
   if(e.target.closest("#dietGapTile")){
     dietState.gw = GAP_WINS[(GAP_WINS.indexOf(dietState.gw) + 1) % GAP_WINS.length];
     try{ localStorage.setItem(GAP_WIN_K, String(dietState.gw)); }catch(err){}
+    syncDietRange();
     renderGapTile();
+    renderDietChart();
     return;
   }
   const tog = e.target.closest("[data-dtoggle]");
@@ -736,32 +727,8 @@ document.addEventListener("click", e=>{
     renderDietDays();
     return;
   }
-  if(e.target.closest("#dietAllBtn")){
-    const keys = activeDietDayKeys();
-    const allOpen = keys.every(k=>dietState.open.has(k));
-    dietState.open = allOpen ? new Set() : new Set(keys);
-    renderDietDays();
-    return;
-  }
   const ed = e.target.closest("[data-dedit]");
   if(ed){ openDietEntryModal(ed.dataset.dedit); return; }
 });
 
-/* capsules next to "Food logs": the add capsule opens and closes the manual log panel; the sync
-   capsule's left half pulls the online table (greyed out without a valid link), its + opens the link panel */
-function setDietSrc(open){
-  const p = document.getElementById("dietSrc"), b = document.getElementById("dietSrcToggle");
-  p.hidden = !open; b.setAttribute("aria-expanded", String(open));
-  if(open) document.getElementById("dsrcOnline").open = true;
-}
-function setDietManual(open){
-  const host = document.getElementById("dietManual"), b = document.getElementById("dietAddBtn");
-  const paint = on=>{ host.hidden = !on; b.setAttribute("aria-expanded", String(on)); };
-  if(!open){ host.innerHTML = ""; paint(false); return; }
-  if(host.firstChild) return;
-  openDietEntryModal(today(), host, ()=>paint(false));
-  paint(true);
-}
-document.getElementById("dietAddBtn").addEventListener("click", ()=>setDietManual(document.getElementById("dietManual").hidden));
-document.getElementById("dietSrcToggle").addEventListener("click", ()=>setDietSrc(document.getElementById("dietSrc").hidden));
-document.getElementById("dsrcOnline").addEventListener("toggle", e=>{ if(!e.target.open) setDietSrc(false); });
+

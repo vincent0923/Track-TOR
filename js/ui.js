@@ -513,7 +513,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     if(el.matches("[data-recsave],[data-dsave]"))return "save";
     if(el.matches("[data-close]"))return "close";
     if(el.matches("[data-del],[data-ddel],#ddelDayBtn,[data-act=rm],[data-xa=rmset]"))return "del";
-    if(el.matches(".chedit,#dietAddBtn,[data-dedit],[data-rec]"))return "open";
+    if(el.matches(".chedit,[data-dedit],[data-rec]"))return "open";
     if(el.closest(".seg,.maseg,.rgseg"))return "range";
     if(el.closest(".hbtns"))return "header";
     return "other";

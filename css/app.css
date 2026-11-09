@@ -1505,3 +1505,9 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 :root[data-skin="mech"] .cald.xonly{background:linear-gradient(180deg,color-mix(in srgb,var(--ok) 88%,#fff),var(--ok));color:#fff}
 /* the START button: an illuminated cap behind a guard ring, less candy */
 :root[data-theme="mech"] .tbtn.next{background:radial-gradient(ellipse at 50% 28%,#F2B98A 0,var(--cta) 48%,color-mix(in srgb,var(--cta) 55%,#000) 100%)}
+/* Food logs header: the title, and the sync icon at the far right (greyed out without a table link) */
+#dietBar h2{display:flex;align-items:center;gap:8px;flex:1;flex-wrap:nowrap}
+#dietBar #dietSyncBtn{margin-left:auto;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+#dietSyncBtn.off{opacity:.38}
+#foldDietSrc .dsrc{display:grid;gap:8px}
+#foldDietSrc #dsrcOnline>summary{display:none}
