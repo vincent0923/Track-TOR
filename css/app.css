@@ -1013,7 +1013,6 @@ html,body{overflow-x:clip}
    latching piano keys for tabs (the chosen one stays pressed in, with a lit lamp), bat-handle toggle switches
    for ticking sets, knurled knobs for the small buttons, and a spring lever for Sync ---------- */
 @font-face{font-family:"Share Tech Mono";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/share-tech-mono.woff2) format("woff2")}
-.leverbox{display:none}
 :root[data-theme="mech"]{
   --bg:#25282C; --surface:#33373C; --sunk:#1E2124; --ink:#ECE8DF; --muted:#9BA1A7; --line:#474C52;
   --push:#FF6A13; --push-soft:#4A2E1F; --pull:#3FA7D6; --pull-soft:#1F3A48; --ok:#5BD45B; --ok-soft:#1F3A22; --warn:#FFB000; --sleep:#B49CF2; --cta:#FF6A13; --on-cta:#17191B;
@@ -1073,24 +1072,8 @@ html,body{overflow-x:clip}
 :root[data-skin="mech"] .cald.xonly{background:var(--ok);color:#10200F}
 :root[data-skin="mech"] .toast{background:#16181B;color:var(--warn);border:1px solid #474C52;border-radius:4px;font-family:var(--f-num);box-shadow:0 6px 18px rgba(0,0,0,.6)}
 :root[data-skin="mech"] .chart .grid{stroke-dasharray:2 3}
-/* the spring lever and its lamp, in place of the Sync button */
+/* the REC slide switch and its lamp, in place of the Sync button */
 :root[data-skin="mech"] #syncBtn{display:none!important}
-:root[data-skin="mech"] .leverbox{display:flex;align-items:center;gap:8px;flex:none;margin-top:-4px}
-.lamp{width:12px;height:12px;border-radius:50%;background:#3A2A16;border:1px solid #111;box-shadow:inset 0 1px 2px rgba(0,0,0,.7)}
-.lamp.ready{background:#C25410;box-shadow:0 0 5px #C25410}
-.lamp.busy{background:var(--warn);box-shadow:0 0 10px var(--warn);animation:lampBlink .5s steps(2,jump-none) infinite}
-.lamp.done{background:var(--ok);box-shadow:0 0 10px var(--ok),inset 0 0 2px #fff}
-@keyframes lampBlink{50%{opacity:.25}}
-.lever{position:relative;width:46px;height:62px;padding:0;border:1px solid #111;border-radius:7px;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
-  background:var(--screw) 4px 4px/9px 9px no-repeat,var(--screw) calc(100% - 4px) calc(100% - 4px)/9px 9px no-repeat,linear-gradient(180deg,#43474D,#2E3237);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 3px 6px rgba(0,0,0,.5)}
-.lever:active{cursor:grabbing}
-.lever .slot{position:absolute;left:50%;top:9px;bottom:9px;width:8px;margin-left:-4px;border-radius:4px;background:#0E0F11;box-shadow:inset 0 2px 3px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.08)}
-.lever .rod{position:absolute;left:50%;top:3px;width:22px;height:22px;margin-left:-11px;transform:translateY(var(--dy,0px))}
-.lever .rod::before{content:"";position:absolute;left:50%;top:11px;width:6px;height:16px;margin-left:-3px;border-radius:3px;background:linear-gradient(90deg,#7C8288,#DDE1E5 45%,#6A7076)}
-.lever .ball{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFB27A 0 12%,var(--cta) 42%,#A63C05 100%);box-shadow:0 3px 5px rgba(0,0,0,.55)}
-.lever .rod.back{animation:leverBack .62s linear}
-@keyframes leverBack{0%{transform:translateY(var(--from))}22%{transform:translateY(-7px)}40%{transform:translateY(4px)}58%{transform:translateY(-2.5px)}74%{transform:translateY(1.2px)}88%{transform:translateY(-.5px)}100%{transform:translateY(0)}}
-@media (prefers-reduced-motion:reduce){.lever .rod.back{animation:none}}
 
 /* the three diet lines get three different colours on the terminal looks */
 :root[data-theme="retro"] #pane-diet{--intake:#6DFF8A;--burn:#FFD34D;--protein:#5CD6FF}
@@ -1137,12 +1120,6 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
 :root[data-theme="mech-light"] .toast{background:#1C2024;color:#9CC8FF;border-color:#59616A}
 :root[data-theme="mech-light"] .cald.xonly{color:#fff}
 :root[data-theme="mech-light"] .caltoday{color:#fff;box-shadow:0 4px 0 #0F6B31}
-:root[data-theme="mech-light"] .lever{border-color:#6E767E;background:var(--screw) 4px 4px/9px 9px no-repeat,var(--screw) calc(100% - 4px) calc(100% - 4px)/9px 9px no-repeat,linear-gradient(180deg,#EEF1F3,#CDD2D7);box-shadow:inset 0 1px 0 #fff,0 3px 6px rgba(30,40,50,.3)}
-:root[data-theme="mech-light"] .lever .slot{background:#2A2F34}
-:root[data-theme="mech-light"] .lever .ball{background:radial-gradient(circle at 35% 30%,#BFE0FF 0 12%,var(--cta) 42%,#0A3F99 100%)}
-:root[data-theme="mech-light"] .lamp.ready{background:#3B8CFF;box-shadow:0 0 6px #3B8CFF}
-:root[data-theme="mech-light"] .lamp.busy{background:#5AB4FF;box-shadow:0 0 10px #5AB4FF}
-:root[data-theme="mech-light"] .lamp{background:#8A97A6}
 /* machine looks: the small round buttons are matte (bead-blasted) caps, not brushed; titanium grey on the dark one */
 :root[data-skin="mech"] :is(.iconbtn,.privbtn){color:#D9DCDF;
   background:radial-gradient(circle at 40% 32%,#7A8086 0,#62676D 55%,#53585E 100%);
@@ -1448,3 +1425,33 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 :root:not([data-skin]){--xc:#8FA3AB}
 :root[data-theme="dark"]{--xc:#C9D3D6}
 :root:not([data-skin]) .cald.xonly{background:color-mix(in srgb,var(--xc) 72%,transparent)}
+
+/* machine: the REC-style sync slide switch (see ui.js). A recessed slot, a brushed-metal slider with a ribbed rubber
+   grip and a red pip, engraved SYNC and a slit lamp: red breathing while syncing, green when done, dark otherwise. */
+:root[data-skin="mech"] .leverbox{display:flex;align-items:center;gap:9px;flex:none}
+.lever{position:relative;width:96px;height:40px;padding:0;border:0;background:none;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.lever:active{cursor:grabbing}
+.lever .slot{position:absolute;inset:0;border-radius:20px;background:linear-gradient(180deg,#17191C,#2A2D32);
+  box-shadow:inset 0 3px 6px rgba(0,0,0,.85),inset 0 -1px 0 rgba(255,255,255,.06),0 0 0 3px #3A3E44,0 0 0 4px #1B1D20,0 1px 0 4px rgba(255,255,255,.07)}
+.lever .rod{position:absolute;left:4px;top:4px;width:58px;height:32px;border-radius:16px;transform:translateX(var(--dx,0px));overflow:hidden;
+  background:linear-gradient(180deg,#E3E6E9 0,#A7AEB4 38%,#CDD2D6 58%,#80878D 100%);box-shadow:0 2px 4px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(0,0,0,.25)}
+.lever .rod::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+.lever .grip{position:absolute;right:0;top:0;bottom:0;width:22px;border-radius:0 16px 16px 0;background:repeating-linear-gradient(90deg,#1B1C1E 0 2px,#2C2E31 2px 4px);box-shadow:inset 1px 0 0 rgba(255,255,255,.15),inset 0 2px 3px rgba(255,255,255,.12)}
+.lever .rec{position:absolute;left:11px;top:50%;width:17px;height:8px;margin-top:-4px;border-radius:4px;background:radial-gradient(ellipse at 40% 30%,#FF9A8C 0 18%,#E21E25 50%,#8E0B10 100%);box-shadow:0 0 0 1px rgba(60,0,0,.5),0 1px 1px rgba(0,0,0,.4)}
+.lever .rod.back{animation:slideBack .5s linear}
+@keyframes slideBack{0%{transform:translateX(var(--from))}25%{transform:translateX(-4px)}45%{transform:translateX(2px)}65%{transform:translateX(-1px)}100%{transform:translateX(0)}}
+@media (prefers-reduced-motion:reduce){.lever .rod.back{animation:none}}
+.recside{display:flex;flex-direction:column;align-items:center;gap:6px}
+.reclabel{font:700 12px/1 var(--f-num);letter-spacing:.14em;color:#E0343B;text-shadow:0 -1px 0 rgba(0,0,0,.55),0 1px 0 rgba(255,255,255,.08)}
+.lamp{display:block;width:6px;height:16px;border-radius:3px;background:#0C0D0F;box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.08)}
+.lamp.busy{background:#FF2B2B;animation:recBreathe 1.6s ease-in-out infinite}
+.lamp.done{background:#3EDC5C;box-shadow:0 0 8px #3EDC5C,0 0 2px #fff inset}
+@keyframes recBreathe{0%,100%{opacity:.35;box-shadow:0 0 2px rgba(255,43,43,.3)}50%{opacity:1;box-shadow:0 0 10px #FF2B2B,0 0 2px #fff inset}}
+:root[data-theme="mech-light"] .lever .slot{background:linear-gradient(180deg,#B9BFC5,#D8DCE0);box-shadow:inset 0 3px 6px rgba(30,40,50,.45),inset 0 -1px 0 rgba(255,255,255,.7),0 0 0 3px #E9ECEE,0 0 0 4px #A3AAB1,0 1px 0 4px rgba(255,255,255,.8)}
+:root[data-theme="mech-light"] .reclabel{color:#D2232A;text-shadow:0 1px 0 rgba(255,255,255,.8)}
+:root[data-theme="mech-light"] .lamp{background:#5D656D;box-shadow:inset 0 1px 2px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.8)}
+.lever{height:36px}
+.lever .rod{height:28px;width:54px;border-radius:14px}
+.lever .grip{border-radius:0 14px 14px 0;width:20px}
+.lever .slot{border-radius:18px}
+:root[data-skin="mech"] .leverbox{margin:2px 4px 10px 0}
