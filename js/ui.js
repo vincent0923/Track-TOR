@@ -80,8 +80,11 @@ function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const 
 /* Profile › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
   const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
+  let wf=0;try{wf=+localStorage.getItem(LS+"-wear")||0}catch(e){}
+  const wear='<div class="thg"><h4>'+T("磨损","Wear and tear")+'</h4><div class="wearseg seg maseg" role="group" aria-label="'+T("磨损","Wear and tear")+'">'
+    +[[0,"自动","Auto"],[1,"轻","Light"],[2,"中","Medium"],[3,"重","Heavy"]].map(([v,zh,en])=>'<button type="button" data-wear-force="'+v+'" aria-pressed="'+(wf===v)+'">'+T(zh,en)+'</button>').join("")+'</div></div>';
   box.innerHTML=groups.map(([k,name])=>'<div class="thg"><h4>'+name+'</h4><div class="throw">'+THEMES.filter(t=>t[3]===k).map(([id,zh,en,,c])=>{const [bg,sf,a1,a2]=c.split(" ");
-    return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+T(zh,en)+'</span></button>'}).join("")+'</div></div>').join("")}
+    return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+T(zh,en)+'</span></button>'}).join("")+'</div></div>').join("")+wear}
 /* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
 function placePiece(bar,anim){if(!bar||!bar.offsetParent)return;let pc=bar.querySelector(".tpiece");
   if(!pc){pc=document.createElement("i");pc.className="tpiece";pc.setAttribute("aria-hidden","true");bar.prepend(pc)}
@@ -110,7 +113,8 @@ document.getElementById("langBtn").addEventListener("click",()=>{applyLang(LANG=
     const cur=document.documentElement.getAttribute("data-theme")||"light";applyTheme(THEME_IDS[(THEME_IDS.indexOf(cur)+1)%THEME_IDS.length]);
     const t=THEMES.find(x=>x[0]===document.documentElement.getAttribute("data-theme"));toast(T(t[1],t[2]))});
 })();
-document.addEventListener("click",e=>{const t=e.target.closest("[data-theme-pick]");if(t)applyTheme(t.dataset.themePick)});
+document.addEventListener("click",e=>{const t=e.target.closest("[data-theme-pick]");if(t)applyTheme(t.dataset.themePick);
+  const w=e.target.closest("[data-wear-force]");if(w){try{localStorage.setItem(LS+"-wear",w.dataset.wearForce)}catch(err){}if(typeof updateWear==="function")updateWear();renderThemes()}});
 
 /* particle flames above an element: the 练 button burns at full size (orange); today's cell on the training
    calendar burns at half size in green. k scales size, height and density. */
@@ -255,7 +259,8 @@ function celebrate(kind,n,big){const cf=window.confetti;if(!cf||matchMedia("(pre
   for(let i=0;i<Math.min(bursts,2);i++)go(i,()=>cf(Object.assign({},base,{particleCount:26+n*2,spread:70,startVelocity:34,origin:{x:.5,y:.7},colors,shapes:["square"],scalar:.7,gravity:.9,ticks:160})))}
 /* the two machine looks have their own: molten iron flowers on the dark one, electric arcs on the light one */
 const CELEB_THEME={mech:"iron","mech-light":"zap"};
-function fireworks(n,big){const t=document.documentElement.getAttribute("data-theme"),own=CELEB_THEME[t];
+function fireworks(n,big){if(typeof bugs!=="undefined")bugs.swat(big?99:Math.max(1,Math.ceil((n||1)/2)));
+  const t=document.documentElement.getAttribute("data-theme"),own=CELEB_THEME[t];
   if(own){metalFx(own,n||1,big||0);return}
   const k=CELEB[document.documentElement.getAttribute("data-skin")];if(k&&window.confetti)celebrate(k,n||1,big||0);else FW.add(n||0,big||0)}
 /* metal celebrations on their own canvas. Iron flowers: molten drops are struck upward from the bottom, trail light
@@ -639,3 +644,40 @@ async function withProgress(btn, work){
   const paintLamp=()=>{const c=sync.classList;lamp.className="lamp "+(c.contains("busy")?"busy":c.contains("done")?"done":c.contains("off")?"off":"ready")};
   new MutationObserver(paintLamp).observe(sync,{attributes:true,attributeFilter:["class"]});paintLamp();
 })();
+
+/* ---------- bugs: while the app is worn, little bugs wander over the screen (2, 4 or 7 by wear level). Every
+   celebration (fireworks, poppers, arcs, iron flowers...) swats some: each pops in a splat of its colour. They
+   creep back while the wear lasts; a tick today ends the wear and pops the rest. ---------- */
+const bugs=(function(){
+  const BUG='<svg viewBox="0 0 20 24" aria-hidden="true"><g fill="currentColor"><ellipse cx="10" cy="15" rx="5" ry="6.5"/><ellipse cx="10" cy="7.6" rx="3.4" ry="3"/><circle cx="10" cy="3.9" r="2.2"/></g>'
+    +'<g class="legs" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"><path d="M6 11 2 9M6 14H1.5M6 17l-4 3M14 11l4-2M14 14h4.5M14 17l4 3M9 2 7 0M11 2l2-2"/></g>'
+    +'<g class="spots" fill="rgba(0,0,0,.45)"><circle cx="8" cy="13" r="1.2"/><circle cx="12.3" cy="16" r="1.2"/><circle cx="8.6" cy="18.4" r="1"/></g></svg>';
+  let list=[],raf=0,last=0,respawn=0;const reduce=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const want=()=>{const w=+document.documentElement.getAttribute("data-wear")||0;return [0,2,4,7][w]};
+  function spawn(){const el=document.createElement("div");el.className="bug";el.innerHTML=BUG;document.body.append(el);
+    const side=Math.floor(Math.random()*4),W=innerWidth,H=innerHeight;
+    const b={el,x:side===1?W+10:side===3?-10:Math.random()*W,y:side===0?-10:side===2?H+10:Math.random()*H,a:Math.random()*6.28,v:22+Math.random()*26,turn:0,pause:0};
+    b.a=Math.atan2(H/2-b.y,W/2-b.x)+(Math.random()-.5);list.push(b);place(b)}
+  function place(b){b.el.style.transform="translate("+(b.x-10).toFixed(1)+"px,"+(b.y-12).toFixed(1)+"px) rotate("+(b.a*57.3+90).toFixed(1)+"deg)"}
+  function tick(now){raf=0;const dt=Math.min(.05,(now-(last||now))/1000);last=now;const W=innerWidth,H=innerHeight;
+    list.forEach(b=>{if(b.dead)return;if(b.pause>0){b.pause-=dt;return}
+      if(Math.random()<dt*.4)b.pause=.4+Math.random()*1.2;
+      b.turn+=(Math.random()-.5)*dt*6;b.turn*=.96;b.a+=b.turn*dt*2;
+      b.x+=Math.cos(b.a)*b.v*dt;b.y+=Math.sin(b.a)*b.v*dt;
+      if(b.x<8||b.x>W-8)b.a=Math.PI-b.a;if(b.y<8||b.y>H-8)b.a=-b.a;b.x=Math.max(6,Math.min(W-6,b.x));b.y=Math.max(6,Math.min(H-6,b.y));place(b)});
+    if(list.length&&!document.hidden)raf=requestAnimationFrame(tick);else last=0}
+  function sync(){const n=want();if(!n){killAll();return}
+    while(list.filter(b=>!b.dead).length<n&&list.length<n+4)spawn();
+    if(!raf&&!reduce())raf=requestAnimationFrame(tick);
+    clearInterval(respawn);respawn=setInterval(()=>{if(list.filter(b=>!b.dead).length<want()){spawn();if(!raf&&!reduce())raf=requestAnimationFrame(tick)}},25000)}
+  function pop(b){if(b.dead)return;b.dead=true;b.el.classList.add("pop");
+    if(window.confetti&&!reduce()){const c=getComputedStyle(b.el).color;const m=c.match(/[\d.]+/g)||[60,50,40];const hex="#"+m.slice(0,3).map(x=>(+x|0).toString(16).padStart(2,"0")).join("");
+      window.confetti({particleCount:14,spread:360,startVelocity:9,origin:{x:b.x/innerWidth,y:b.y/innerHeight},colors:[hex],shapes:["circle"],scalar:.45,ticks:45,gravity:.6,zIndex:46,disableForReducedMotion:true})}
+    if(window.sfxRaw)window.sfxRaw("pop");
+    setTimeout(()=>{b.el.remove();list=list.filter(x=>x!==b)},380)}
+  function swat(k){const live=list.filter(b=>!b.dead);live.sort(()=>Math.random()-.5).slice(0,k).forEach((b,i)=>setTimeout(()=>pop(b),150+i*140))}
+  function killAll(){clearInterval(respawn);list.filter(b=>!b.dead).forEach((b,i)=>setTimeout(()=>pop(b),i*110))}
+  new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:["data-wear"]});
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&list.length&&!raf&&!reduce())raf=requestAnimationFrame(tick)});
+  setTimeout(sync,800);
+  return {swat,sync}})();

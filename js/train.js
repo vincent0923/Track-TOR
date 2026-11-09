@@ -144,6 +144,19 @@ const editBtn=attrs=>'<button class="btn recedit" '+attrs+' aria-label="'+T('修
 const calState={month:null, sel:null, panel:false};
 const dxUnlocked=new Set();
 function dayLocked(d){return d<today()&&!dxUnlocked.has(d)}
+/* wear and tear: more than two days without training and every look starts to show it (webs, rust, static,
+   cracks...). Last training = a finished session, a day with ticked extra practice, or a ticked set today in a
+   session not finished yet. Never trained at all: no wear. 3-4 days = 1, 5-7 = 2, 8+ = 3. */
+function lastTrainedDay(){let last="";const td=today();
+  Object.values(state.sessions).forEach(s=>{if(!s)return;if(s.done&&s.date&&s.date>last)last=s.date;
+    if(!s.done&&s.sets&&Object.values(s.sets).some(a=>a.some(x=>x.d)))last=td});
+  Object.entries(state.dayx||{}).forEach(([d,x])=>{if(d>last&&x&&x.xs&&x.xs.some(it=>it.sets.some(y=>y.d)))last=d});
+  return last}
+function updateWear(){const last=lastTrainedDay(),r=document.documentElement;
+  const gap=last?Math.round(dnum(today())-dnum(last)):0;let lv=gap>=8?3:gap>=5?2:gap>=3?1:0;
+  /* Profile › Theme can force a level to try the look on */
+  let f=0;try{f=+localStorage.getItem(LS+"-wear")||0}catch(e){}if(f>=1&&f<=3)lv=f;
+  if(lv)r.setAttribute("data-wear",String(lv));else r.removeAttribute("data-wear")}
 function dayHas(d){
   const kinds=PROGRAM.filter(p=>{const s=state.sessions[p.sid];return s&&s.done&&s.date===d}).map(p=>p.kind);
   const dx=state.dayx&&state.dayx[d], x=!!(dx&&((dx.xs&&dx.xs.some(it=>it.sets.some(y=>y.d)))||(dx.note&&dx.note.trim())));
@@ -202,6 +215,7 @@ function cardHtml(p,cur){
   return html+'</article>';
 }
 function renderTrain(){
+  updateWear();
   const pane=document.getElementById("pane-train");
   const cur=currentSid();
   let html=calendarHtml();

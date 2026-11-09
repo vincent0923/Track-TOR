@@ -287,6 +287,7 @@ document.getElementById("goals").addEventListener("click",e=>{
   renderGoals();
 });
 function renderGoals(){
+  if(typeof updateWear==="function")updateWear();
   const st=state.settings, HT=+st.h||H_FALLBACK, wr=v=>(v/HT).toFixed(3), WL=T("腰高比","WHtR"), par=t=>T("（"+t+"）"," ("+t+")");
   const GOALS=[
     {k:"pullups",name:T("引体","Pull-ups"),target:+st.p>0?+st.p:null,unit:T("个","reps"),color:"var(--pull)",start:0},
