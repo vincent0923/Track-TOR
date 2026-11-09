@@ -33,7 +33,7 @@ const THEME_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 /* themes: [id, Chinese name, English name, look, preview colours (page, card, accent, second accent)].
    The four looks follow Ovio's worlds (minimal, craft, toy, retro); each look can come in several palettes. */
 const THEMES=[
-  ["light","浅色","Light","","#EDF0F2 #FFFFFF #B8481F #2B55C8"],["dark","深色","Dark","","#0F1519 #172028 #EE7A4A #7393F2"],
+  ["light","浅色","Light","","#E9E5DE #F6F4F0 #546638 #4E6B78"],["dark","深色","Dark","","#0D151C #151F27 #8BA05E #A9B6BA"],
   ["interior","Interior 亮","Interior light","interior","#FAFAFA #FFFFFF #292524 #4568FF"],["interior-dark","Interior 暗","Interior dark","interior","#141312 #1D1D1A #F5F5F4 #93B0FF"],
   ["beui","beUI 亮","beUI light","beui","#FCFCFC #F5F5F5 #0285F7 #00BEBF"],["beui-dark","beUI 暗","beUI dark","beui","#151515 #1C1C1C #00DADB #AD8CFF"],
   ["mech-light","亮色机械","Machine light","mech","#D9DCDF #ECEEF0 #1E7BFF #E87511"],["mech","暗色机械","Machine dark","mech","#25282C #3A3E44 #FF6A13 #5BD45B"],

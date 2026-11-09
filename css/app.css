@@ -81,8 +81,8 @@
 .xadd input,.xadd select{min-width:0;width:100%;font:inherit;font-size:16px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:var(--sunk);color:var(--ink)}
 .xadd .btn{padding:7px 12px}
 .xchips{display:flex;gap:6px;flex-wrap:wrap}
-#pane-diet{--protein:#7A5CC8;--intake:#2C3B44;--burn:#C2662D;--gain:#3E8E63;--loss:#C2453B;--dslate:#2C3B44;--dtotal:#E6E1D6;display:grid;gap:16px;padding-top:8px}
-:root[data-theme="dark"] #pane-diet{--protein:#E07BE0;--intake:#9DB8C6;--burn:#E58A4F;--gain:#55B884;--loss:#E66A5F;--dslate:#34505E;--dtotal:#2A3234}
+#pane-diet{--protein:#6E8C99;--intake:#0D151C;--burn:#546638;--gain:#7E9460;--loss:#A5634F;--dslate:#545F59;--dtotal:#E1DCD3;display:grid;gap:16px;padding-top:8px}
+:root[data-theme="dark"] #pane-diet{--protein:#A9B6BA;--intake:#D9D2C6;--burn:#8BA05E;--gain:#7FAE8E;--loss:#C9806A;--dslate:#545F59;--dtotal:#1E2A31}
 /* diet data source (Google Sheets CSV) */
 .dsrc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
 .dsrc-h{display:flex;align-items:center;gap:8px}
@@ -163,17 +163,16 @@
 /* Layout: one narrow column, phone first. A sticky summary strip, three tabs (训练 / 数据 / 要点),
    sessions as stacked cards; push sessions marked in rust, pull sessions in cobalt. */
 :root{
-  --bg:#EDF0F2; --surface:#FFFFFF; --sunk:#F5F7F8; --ink:#16212B; --muted:#5D6C78; --line:#D4DBE0;
-  --push:#B8481F; --push-soft:#F6E4DC; --pull:#2B55C8; --pull-soft:#E1E8FA;
-  --ok:#1E8556; --ok-soft:#DDF1E6; --warn:#A35D00; --sleep:#6B4FC4; --cta:#E06A10; color-scheme:light;
+  /* palette: ink #0D151C, slate #545F59, mist #A9B6BA, stone #D9D2C6, moss #546638 */
+  --bg:#E9E5DE; --surface:#F6F4F0; --sunk:#E1DCD3; --ink:#0D151C; --muted:#545F59; --line:#CFC9BE;
+  --push:#546638; --push-soft:#E1E6D6; --pull:#4E6B78; --pull-soft:#DDE4E7; --ok:#3D6E58; --ok-soft:#DCE8E0; --warn:#8C6D3A; --sleep:#6B6A8E; --cta:#0D151C; color-scheme:light;
   --f-num:"Barlow Condensed","DIN Alternate","Arial Narrow",sans-serif;
   --f-body:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
   --r:12px;
 }
 :root[data-theme="dark"]{
-  --bg:#0F1519; --surface:#172028; --sunk:#121a20; --ink:#E4EAEE; --muted:#93A3AF; --line:#2A3640;
-  --push:#EE7A4A; --push-soft:#3A2419; --pull:#7393F2; --pull-soft:#1D2843;
-  --ok:#43C08A; --ok-soft:#173527; --warn:#E3A13F; --sleep:#A58CF0; --cta:#F08A3C; color-scheme:dark}
+  --bg:#0D151C; --surface:#151F27; --sunk:#10191F; --ink:#D9D2C6; --muted:#A9B6BA; --line:#26323A;
+  --push:#8BA05E; --push-soft:#232B1C; --pull:#A9B6BA; --pull-soft:#1E2A31; --ok:#7FAE8E; --ok-soft:#1A2B23; --warn:#C9A66B; --sleep:#A3A1C6; --cta:#546638; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-tap-highlight-color:transparent}
 .wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:12px 96px}
@@ -1182,10 +1181,10 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
 
 /* ---------- one round button for folding and adding: a dark grey disc with a bold white chevron (down when closed,
    turned up when open) or a white plus. The same everywhere, whatever the theme. ---------- */
-:root{--rk-bg:#4A4D52;
+:root{--rk-bg:#545F59;
   --rk-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 9.5 12 15l5.5-5.5'/%3E%3C/svg%3E");
   --rk-plus:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E")}
-:root:is([data-theme="dark"],[data-theme="interior-dark"],[data-theme="beui-dark"],[data-theme="mech"],[data-theme="toy-night"],[data-theme="toy-glow"],[data-theme="toy-cyber"],[data-theme="retro"],[data-theme="retro-cyber"],[data-theme="retro-amber"]){--rk-bg:#62666D}
+:root:is([data-theme="interior-dark"],[data-theme="beui-dark"],[data-theme="mech"],[data-theme="toy-night"],[data-theme="toy-glow"],[data-theme="toy-cyber"],[data-theme="retro"],[data-theme="retro-cyber"],[data-theme="retro-amber"]){--rk-bg:#62666D}
 :root .rk,:root details.fold>summary::after,:root .dsub>summary::after,:root .savefold .saveic::after,:root .dtoggle::before,:root #dietAllBtn .cap-r::before,:root #dietSrcToggle::before,:root #dietAddBtn .cap-r::before,:root .dsrc-i-r::before,:root .shead::after{
   content:"";display:inline-block;flex:none;box-sizing:border-box;width:26px;height:26px;margin:0;padding:0;
   border:0!important;border-radius:50%!important;background-color:var(--rk-bg)!important;background-image:var(--rk-chev),var(--rk-shade)!important;background-position:center!important;background-repeat:no-repeat!important;background-size:58%,100%!important;box-shadow:var(--rk-fx)!important;
