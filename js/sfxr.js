@@ -118,5 +118,5 @@ const jfCache={};
 function jfPlay(ctx,key,params,at,dest){
   let buf=jfCache[key];
   if(!buf){const b=sfxrRender(params);buf=jfCache[key]=ctx.createBuffer(1,b.length||1,44100);const d=buf.getChannelData(0);for(let i=0;i<b.length;i++)d[i]=b[i]*.35}
-  const src=ctx.createBufferSource();src.buffer=buf;src.connect(dest||ctx.destination);src.start(ctx.currentTime+(at||0));
+  const src=ctx.createBufferSource();src.buffer=buf;src.connect(dest||ctx.__out||ctx.destination);src.start(ctx.currentTime+(at||0));
 }

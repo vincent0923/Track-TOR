@@ -334,7 +334,6 @@ function copyText(t){
   try{ inp.value = localStorage.getItem(SHEET_URL_K) || ""; }catch(e){}
   ib.addEventListener("click", ()=>{
     info.hidden = !info.hidden; ib.setAttribute("aria-expanded", String(!info.hidden));
-    ib.querySelector(".dsrc-i-r").textContent = info.hidden ? "+" : "−";     /* + opens, − closes */
   });
   /* Pull: the table, plus the watch calories when COROS is connected */
   const pullBtn = document.getElementById("dsrcPull");

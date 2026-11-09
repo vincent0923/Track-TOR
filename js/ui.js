@@ -324,14 +324,17 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
 (function(){
   let ctx=null, on=true;
   try{on=localStorage.getItem(LS+"-sound")!=="off"}catch(e){}
+  const VOLS=[0.75,1,1.25];let VOL=1;try{const v=+localStorage.getItem(LS+"-vol");if(VOLS.includes(v))VOL=v}catch(e){}
   const btn=document.getElementById("sndBtn");
   const ICON_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
   const ICON_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 6 6M22 9l-6 6"/></svg>';
   document.addEventListener("themeicons",()=>paint());
-  function paint(){btn.innerHTML=on?(skinIc("snd")||ICON_ON):(skinIc("sndx")||ICON_OFF);btn.setAttribute("aria-label",on?T("关闭声音","Sound off"):T("打开声音","Sound on"));btn.setAttribute("aria-pressed",on)}
+  function paint(){btn.innerHTML=on?(skinIc("snd")||ICON_ON):(skinIc("sndx")||ICON_OFF);btn.setAttribute("aria-label",(on?T("关闭声音","Sound off"):T("打开声音","Sound on"))+T("（长按调音量，现在 ",". Hold for volume, now ")+Math.round(VOL*100)+T("%）","%"));btn.dataset.vol=Math.round(VOL*100);btn.setAttribute("aria-pressed",on)}
   paint();
   function ac(){
-    if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ctx=new C()}
+    if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ctx=new C();
+      /* every sound goes through one master gain: the volume the speaker button's long press sets */
+      ctx.__out=ctx.createGain();ctx.__out.gain.value=VOL;ctx.__out.connect(ctx.destination)}
     if(ctx.state==="suspended")ctx.resume();
     return ctx;
   }
@@ -343,7 +346,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+len);
     g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol||0.2,t0+0.008);
     g.gain.exponentialRampToValueAtTime(0.0001,t0+len);
-    o.connect(g).connect(c.destination);o.start(t0);o.stop(t0+len+0.02);
+    o.connect(g).connect(c.__out||c.destination);o.start(t0);o.stop(t0+len+0.02);
   }
   /* filtered noise burst, shaped like a page being turned */
   let noiseBuf=null;
@@ -354,7 +357,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     src.buffer=noiseBuf;bp.type=type;bp.Q.value=q;
     bp.frequency.setValueAtTime(f1,t0);bp.frequency.exponentialRampToValueAtTime(f2,t0+len);
     g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+len*peak);g.gain.exponentialRampToValueAtTime(0.0001,t0+len);
-    src.connect(bp).connect(g).connect(dest||c.destination);src.start(t0,Math.random()*0.5,len+0.02);
+    src.connect(bp).connect(g).connect(dest||c.__out||c.destination);src.start(t0,Math.random()*0.5,len+0.02);
   }
   /* fireworks: a jsfxr noise explosion (the realistic part, at jsfxr's own volume), our low sine thump
      under it, and a few crackles as the sparks fall; a big one adds a second, deeper blast and more crackle.
@@ -367,7 +370,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
                 [3,0,0.42,0.8,0.55,0.06,0,-0.08,0,0.2,0.25,0,0,0,0,0,0.15,-0.05,0.8]];
   let fwBus=null;
   function fwOut(c){
-    if(!fwBus){const k=c.createDynamicsCompressor();k.threshold.value=-10;k.knee.value=8;k.ratio.value=6;k.attack.value=0.003;k.release.value=0.25;k.connect(c.destination);fwBus=k}
+    if(!fwBus){const k=c.createDynamicsCompressor();k.threshold.value=-10;k.knee.value=8;k.ratio.value=6;k.attack.value=0.003;k.release.value=0.25;k.connect(c.__out||c.destination);fwBus=k}
     return fwBus;
   }
   function fwSound(big){
@@ -474,7 +477,15 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   function play(id){playRaw(pickOf(id))}
   window.sfx=play;window.sfxRaw=playRaw;
   document.addEventListener("fwburst",e=>play(e.detail&&e.detail.big?"bigfw":"fw"));
-  btn.addEventListener("click",()=>{on=!on;try{localStorage.setItem(LS+"-sound",on?"on":"off")}catch(e){}paint();if(on)play("sndon")});
+  /* hold the speaker: volume steps 75% → 100% → 125% and plays a sample at the new level */
+  let vHeld=false,vTm=0;
+  btn.addEventListener("pointerdown",()=>{vHeld=false;clearTimeout(vTm);btn.classList.add("holding");
+    vTm=setTimeout(()=>{vHeld=true;btn.classList.remove("holding");VOL=VOLS[(VOLS.indexOf(VOL)+1)%VOLS.length];try{localStorage.setItem(LS+"-vol",String(VOL))}catch(e){}
+      if(ctx&&ctx.__out)ctx.__out.gain.setValueAtTime(VOL,ctx.currentTime);if(navigator.vibrate)navigator.vibrate(15);
+      if(!on){on=true;try{localStorage.setItem(LS+"-sound","on")}catch(e){}}paint();toast(T("音量 ","Volume ")+Math.round(VOL*100)+"%");play("sndon")},550)});
+  ["pointerup","pointercancel","pointerleave"].forEach(t=>btn.addEventListener(t,()=>{clearTimeout(vTm);btn.classList.remove("holding")}));
+  btn.addEventListener("contextmenu",e=>e.preventDefault());
+  btn.addEventListener("click",e=>{if(vHeld){vHeld=false;e.stopImmediatePropagation();return}on=!on;try{localStorage.setItem(LS+"-sound",on?"on":"off")}catch(e){}paint();if(on)play("sndon")});
   /* which kind of tap an element is */
   function kindOf(el){
     if(el.closest("nav.tabs"))return "tab1";
@@ -541,12 +552,11 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   document.getElementById("langBtn").addEventListener("click",()=>setTimeout(paint,0));
 })();
 
-/* i pills (i | +): open and close the panel they name; + means it can open, − that it can close */
+/* i pills (i | round chevron): open and close the panel they name; the chevron turns up while it is open */
 document.addEventListener("click", e=>{
   const b = e.target.closest("[data-itoggle]"); if(!b) return;
   const p = document.getElementById(b.dataset.itoggle); if(!p) return;
   p.hidden = !p.hidden; b.setAttribute("aria-expanded", String(!p.hidden));
-  const r = b.querySelector(".dsrc-i-r"); if(r) r.textContent = p.hidden ? "+" : "−";
 });
 
 /* A progress fill on a button while its work runs. It is a feeling of progress, not a measurement:

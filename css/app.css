@@ -495,11 +495,9 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
 .cal{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 14px 14px}
 .calh{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .cal:not(.folded) .calh{margin-bottom:12px}
-.caltitle{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;color:var(--ok)}
-.caltitle .calic{width:16px;height:16px;fill:currentColor}
+.caltitle{flex:1;min-width:0;display:grid;justify-items:center;border:0;background:none;padding:0;cursor:pointer;font:inherit;color:var(--ok)}
 .caltitle b{font-family:var(--f-num);font-size:26px;font-weight:700;letter-spacing:.12em;line-height:1;color:var(--ok)}
-.caltitle small{grid-column:2;font-family:var(--f-num);font-size:12px;letter-spacing:.08em;color:var(--ok);opacity:.8;margin-top:4px}
-.calctl{display:flex;align-items:center;gap:4px}
+.caltitle small{font-family:var(--f-num);font-size:12px;letter-spacing:.08em;color:var(--ok);opacity:.8;margin-top:4px}
 .calnav{width:30px;height:34px;border:0;background:none;color:var(--ink);font-size:22px;line-height:1;cursor:pointer;border-radius:8px;padding:0}
 .calnav:disabled{opacity:.25;cursor:default}
 .calfold{width:34px;height:34px;border:0;border-radius:9px;background:var(--sunk);color:var(--ink);font-size:20px;font-weight:600;line-height:1;cursor:pointer;margin-left:2px}
@@ -529,8 +527,6 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
 .btn.recedit{display:inline-grid;place-items:center;width:52px;height:44px;padding:0;background:transparent;border:1px solid var(--cta);color:var(--cta)}
 .recedit svg{width:21px;height:21px;display:block}
 .calh{flex-wrap:wrap}
-.calctl{margin-left:auto}
-.caltitle{min-width:0}
 .caltitle b{white-space:nowrap;font-size:clamp(20px,6.6vw,26px)}
 
 /* ---------- Toy theme: moulded plastic. Raised keys sink when pressed and spring back;
@@ -1183,3 +1179,50 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
 :root[data-skin="mech"] .tbtn.next:active{transform:translateY(4px);box-shadow:0 0 0 2px #15171A,0 0 0 4px #5A5F65,0 0 0 5px #1A1C1F,0 1px 0 5px #0E0F11,0 0 10px 2px color-mix(in srgb,var(--cta) 35%,transparent),inset 0 3px 6px rgba(0,0,0,.35)}
 :root[data-theme="mech-light"] .tbtn.next{color:#fff;background:radial-gradient(ellipse at 50% 30%,#BFE0FF 0,var(--cta) 45%,#0A3F99 100%);box-shadow:0 0 0 2px #5D656D,0 0 0 4px #C4CAD0,0 0 0 5px #6E767E,0 5px 0 5px #4A525A,0 0 18px 4px rgba(30,123,255,.4),inset 0 2px 1px rgba(255,255,255,.5)}
 :root[data-theme="mech-light"] .tbtn.next:active{box-shadow:0 0 0 2px #5D656D,0 0 0 4px #C4CAD0,0 0 0 5px #6E767E,0 1px 0 5px #4A525A,0 0 10px 2px rgba(30,123,255,.3),inset 0 3px 6px rgba(0,0,0,.3)}
+
+/* ---------- one round button for folding and adding: a dark grey disc with a bold white chevron (down when closed,
+   turned up when open) or a white plus. The same everywhere, whatever the theme. ---------- */
+:root{--rk-bg:#4A4D52;
+  --rk-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 9.5 12 15l5.5-5.5'/%3E%3C/svg%3E");
+  --rk-plus:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E")}
+:root:is([data-theme="dark"],[data-theme="interior-dark"],[data-theme="beui-dark"],[data-theme="mech"],[data-theme="toy-night"],[data-theme="toy-glow"],[data-theme="toy-cyber"],[data-theme="retro"],[data-theme="retro-cyber"],[data-theme="retro-amber"]){--rk-bg:#62666D}
+:root .rk,:root details.fold>summary::after,:root .dsub>summary::after,:root .savefold .saveic::after,:root .dtoggle::before,:root #dietAllBtn .cap-r::before,:root #dietSrcToggle::before,:root #dietAddBtn .cap-r::before,:root .dsrc-i-r::before,:root .shead::after{
+  content:"";display:inline-block;flex:none;box-sizing:border-box;width:26px;height:26px;margin:0;padding:0;
+  border:0!important;border-radius:50%!important;background:var(--rk-bg) var(--rk-chev) center/15px no-repeat!important;box-shadow:none!important;
+  transform:none;transition:transform .18s ease;cursor:pointer;vertical-align:middle;text-shadow:none;color:transparent}
+:root .rk-plus,:root #dietAddBtn .cap-r::before{background-image:var(--rk-plus)!important}
+/* open: the chevron points up */
+:root details.fold[open]>summary::after,:root .dsub[open]>summary::after,:root .savefold .saveic::after,:root .dtoggle[aria-expanded="true"]::before,:root .calfold[aria-expanded="true"],:root #dietAllBtn[aria-expanded="true"] .cap-r::before,:root #dietSrcToggle[aria-expanded="true"]::before,:root .dsrc-i[aria-expanded="true"] .dsrc-i-r::before,:root .shead[aria-expanded="true"]::after,:root .rk-up{transform:rotate(180deg)}
+#dietAddBtn[aria-expanded="true"] .cap-r::before{transform:rotate(45deg)}
+:root .rk:active{transform:scale(.9)}
+:root .rk-up:active{transform:rotate(180deg) scale(.9)}
+@media (prefers-reduced-motion:reduce){:root .rk,:root details.fold>summary::after,:root .dsub>summary::after,:root .dtoggle::before,:root .shead::after{transition:none}}
+/* where they sit */
+details.fold>summary::after{margin-right:0}
+.savefold .saveic::after{margin:0}
+.dtoggle svg{display:none}
+.dtoggle::before{width:24px;height:24px}
+.cap .cap-r,.cap>button.cap-r{font-size:0;background:none!important;color:transparent;padding:0 6px;display:grid;place-items:center}
+.cap .cap-r::before{width:24px;height:24px}
+.dsrc-i .dsrc-i-r{font-size:0;display:grid;place-items:center;padding:0 4px}
+.dsrc-i .dsrc-i-r::before{width:22px;height:22px}
+.dsrc-i[aria-expanded="true"]{background:none;color:var(--ink);border-color:var(--line)}
+.shead::after{width:24px;height:24px;align-self:center}
+.rk.addset{margin-top:8px}
+.xadd-row .rk{width:32px;height:32px}
+.xchip{gap:6px;padding-left:5px}
+.xchip .rk{width:20px;height:20px;background-size:12px!important}
+.tbar .rk-up{width:32px;height:32px}
+/* calendar banner: fold · ‹ · month · › · today */
+.calh{flex-wrap:nowrap;align-items:center;gap:6px}
+.cal:not(.folded) .calh{margin-bottom:12px}
+.calh .calfold{width:30px;height:30px;margin:0}
+.calh .caltoday{margin-left:0;flex:none;position:relative;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+@keyframes holdRing{from{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent)}to{box-shadow:0 0 0 6px color-mix(in srgb,var(--ok) 0%,transparent),0 0 0 3px var(--ok)}}
+.calh .caltoday.holding{transform:scale(.94);animation:holdRing .55s linear forwards}
+:root .savefold[open]>summary::after{display:none}
+:root .dsub>summary::after{margin-left:auto}
+/* speaker button: a small level mark when the volume is not 100%, and a filling ring while held */
+#sndBtn{position:relative;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+#sndBtn[data-vol="75"]::after,#sndBtn[data-vol="125"]::after{content:attr(data-vol);position:absolute;right:-4px;bottom:-4px;min-width:20px;height:14px;padding:0 3px;border-radius:7px;background:var(--ink);color:var(--bg);font:700 9px/14px var(--f-num);text-align:center}
+#sndBtn.holding{animation:holdRing .55s linear forwards}

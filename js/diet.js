@@ -243,7 +243,7 @@ function activeDietDayKeys(){
 function paintAllCap(allOpen, empty){
   const b = document.getElementById("dietAllBtn"); if(!b) return;
   b.setAttribute("aria-expanded", String(allOpen)); b.disabled = !!empty;
-  b.querySelector(".cap-r").textContent = allOpen ? "−" : "+";
+  /* the round chevron turns with aria-expanded (CSS) */
 }
 function renderDietDays(){
   const box = document.getElementById("dietDays");
@@ -735,12 +735,12 @@ document.addEventListener("click", e=>{
    capsule's left half pulls the online table (greyed out without a valid link), its + opens the link panel */
 function setDietSrc(open){
   const p = document.getElementById("dietSrc"), b = document.getElementById("dietSrcToggle");
-  p.hidden = !open; b.setAttribute("aria-expanded", String(open)); b.textContent = open ? "−" : "+";
+  p.hidden = !open; b.setAttribute("aria-expanded", String(open));
   if(open) document.getElementById("dsrcOnline").open = true;
 }
 function setDietManual(open){
   const host = document.getElementById("dietManual"), b = document.getElementById("dietAddBtn");
-  const paint = on=>{ host.hidden = !on; b.setAttribute("aria-expanded", String(on)); b.querySelector(".cap-r").textContent = on ? "−" : "+"; };
+  const paint = on=>{ host.hidden = !on; b.setAttribute("aria-expanded", String(on)); };
   if(!open){ host.innerHTML = ""; paint(false); return; }
   if(host.firstChild) return;
   openDietEntryModal(today(), host, ()=>paint(false));

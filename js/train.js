@@ -12,7 +12,6 @@ let autoOpened=false, finishing=false;
 /* list icon with arrows: outward = expand all, inward = collapse all (the button shows the action it will do) */
 const LIST_BASE='<circle cx="3.2" cy="6" r="1.4"/><circle cx="3.2" cy="12" r="1.4"/><circle cx="3.2" cy="18" r="1.4"/><rect x="6.8" y="4.6" width="9" height="2.8" rx="1.4"/><rect x="6.8" y="10.6" width="9" height="2.8" rx="1.4"/><rect x="6.8" y="16.6" width="9" height="2.8" rx="1.4"/>';
 const svgList=arrows=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+LIST_BASE+arrows+'</svg>';
-const ICON_COLLAPSE=svgList('<path d="M20 2v4.5M20 22v-4.5"/><path d="M17.6 5.8 20 9l2.4-3.2z M17.6 18.2 20 15l2.4 3.2z" fill="currentColor"/>');
 /* ---------- extra practice: lives inside each session's panel, separate from its program sets ---------- */
 const XPULL="pullup";
 function xName(it){return it.id===XPULL?T("引体向上","Pull-ups"):it.name}
@@ -87,7 +86,7 @@ function extraBlock(sid,s,locked){
         +(it.sets.length>1&&!locked?'<button class="x" data-xa="rmset"'+ds+' aria-label="'+T("删除这一组","Remove set")+'">×</button>':'')
         +'</div>';
     });
-    if(!locked)h+='<button class="addset" data-xa="addset"'+D+' data-k="'+k+'">+ '+T('加一组','Add set')+'</button>';
+    if(!locked)h+='<button class="rk rk-plus addset" data-xa="addset"'+D+' data-k="'+k+'" aria-label="'+T('加一组','Add set')+'" title="'+T('加一组','Add set')+'"></button>';
     h+='</div>';
   });
   if(locked)return h+'</div>';
@@ -98,10 +97,10 @@ function extraBlock(sid,s,locked){
   h+='<div class="xadd"><div class="xadd-row">'
     +'<input id="xName-'+sid+'" type="text" aria-label="'+T("项目名称","Exercise name")+'" placeholder="'+T("其他项目，如 俯卧撑","Other, e.g. push-ups")+'">'
     +'<select id="xUnit-'+sid+'" aria-label="'+T("单位","Unit")+'"><option value="个">'+U("个")+'</option><option value="秒">'+U("秒")+'</option><option value="分钟">'+U("分钟")+'</option></select>'
-    +'<button class="btn ghost" data-xa="addex"'+D+'>'+T("添加","Add")+'</button></div>';
+    +'<button class="rk rk-plus" data-xa="addex"'+D+' aria-label="'+T("添加","Add")+'" title="'+T("添加","Add")+'"></button></div>';
   if(past.size){
     h+='<div class="xchips">';
-    past.forEach(it=>{h+='<button class="tbtn" data-xa="chip"'+D+' data-id="'+esc(it.id)+'" data-name="'+esc(it.name)+'" data-unit="'+esc(it.unit)+'">+ '+esc(xName(it))+'</button>'});
+    past.forEach(it=>{h+='<button class="tbtn xchip" data-xa="chip"'+D+' data-id="'+esc(it.id)+'" data-name="'+esc(it.name)+'" data-unit="'+esc(it.unit)+'"><i class="rk rk-plus" aria-hidden="true"></i>'+esc(xName(it))+'</button>'});
     h+='</div>';
   }
   return h+'</div></div>';
@@ -141,7 +140,8 @@ function extraAct(t){
    then only the next five unfinished sessions */
 const EDIT_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 20h6"/></svg>';
 const editBtn=attrs=>'<button class="btn recedit" '+attrs+' aria-label="'+T('修改记录','Edit record')+'" title="'+T('修改记录','Edit record')+'">'+EDIT_ICON+'</button>';
-const calState={month:null, sel:null};
+/* sel: the chosen day (ringed, its finished sessions listed); panel: whether that day's extra-practice panel is open */
+const calState={month:null, sel:null, panel:false};
 const dxUnlocked=new Set();
 function dayLocked(d){return d<today()&&!dxUnlocked.has(d)}
 function dayHas(d){
@@ -151,7 +151,6 @@ function dayHas(d){
 }
 const CAL_FOLD_K=LS+"-calfold";
 try{calState.fold=localStorage.getItem(CAL_FOLD_K)==="1"}catch(e){}
-const CAL_ICON='<svg class="calic" viewBox="0 0 12 12" aria-hidden="true">'+[0,4.2,8.4].map(y=>[0,4.2,8.4].map(x=>'<rect x="'+x+'" y="'+y+'" width="3.4" height="3.4" rx=".6"/>').join("")).join("")+'</svg>';
 /* month calendar: trained days are filled circles (push orange, pull blue, both split, extra only green),
    today burns green, the chosen day gets a ring; the +/− square folds the grid away */
 function calendarHtml(){
@@ -161,14 +160,15 @@ function calendarHtml(){
   const prevDays=new Date(y,mo-1,0).getDate(), cells=Math.ceil((lead+days)/7)*7;
   const wk=T("一二三四五六日","MTWTFSS").split(""), fold=!!calState.fold;
   const mname=T(mo+"月",new Date(y,mo-1,1).toLocaleString("en",{month:"long"}).toUpperCase());
+  /* banner, left to right: fold button · previous month · month (tap also folds) · next month · today */
+  const ft=fold?T("展开日历","Show calendar"):T("收起日历","Hide calendar");
   let h='<section class="cal'+(fold?" folded":"")+'" aria-label="'+T("训练日历","Training calendar")+'"><div class="calh">'
-    +'<div class="caltitle">'+CAL_ICON+'<b>'+mname+'</b><small>'+y+'</small></div>'
-    +'<div class="calctl">'
+    +'<button type="button" class="calfold rk" data-cal-fold aria-expanded="'+!fold+'" aria-label="'+ft+'"></button>'
     +'<button type="button" class="calnav" data-cal-nav="-1" aria-label="'+T("上个月","Previous month")+'">‹</button>'
+    +'<button type="button" class="caltitle" data-cal-fold aria-expanded="'+!fold+'" aria-label="'+mname+' '+y+'，'+ft+'"><b>'+mname+'</b><small>'+y+'</small></button>'
     +'<button type="button" class="calnav" data-cal-nav="1" aria-label="'+T("下个月","Next month")+'"'+(m>=td.slice(0,7)?" disabled":"")+'>›</button>'
-    +'<button type="button" class="caltoday" data-cal-today aria-label="'+T("跳到今天","Go to today")+'">'+T("今天","Today")+'</button>'
-    +'<button type="button" class="calfold" data-cal-fold aria-expanded="'+!fold+'" aria-label="'+(fold?T("展开日历","Show calendar"):T("收起日历","Hide calendar"))+'">'+(fold?"+":"−")+'</button>'
-    +'</div></div>';
+    +'<button type="button" class="caltoday" data-cal-today aria-label="'+T("今天：点一下定位，长按打开加练","Today: tap to jump there, hold to add extra practice")+'">'+T("今天","Today")+'</button>'
+    +'</div>';
   if(fold)return h+'</section>';
   h+='<div class="calg">'+wk.map(w=>'<span class="calw">'+w+'</span>').join("");
   for(let c=0;c<cells;c++){
@@ -208,17 +208,20 @@ function renderTrain(){
   if(sel){
     html+='<section class="calday">';
     PROGRAM.filter(p=>{const s=state.sessions[p.sid];return s&&s.done&&(s.date===sel||unlocked.has(p.sid))}).forEach(p=>{html+=cardHtml(p,cur)});
+    if(calState.panel){
     const dn=(state.dayx[sel]&&state.dayx[sel].note)||"", dl=dayLocked(sel);
     html+='<article class="card dayx"><div class="sbody'+(dl?' locked':'')+'">'+extraBlock("d:"+sel,state.dayx[sel],dl)
       +'<div class="field" style="margin-top:14px"><label for="dxn-'+sel+'">'+T('备注','Notes')+'</label><textarea id="dxn-'+sel+'" rows="2" data-dxnote="'+sel+'"'+(dl?' disabled':'')+' placeholder="'+T('比如：酒店健身房，高位下拉 40 kg','e.g. hotel gym, lat pulldown 40 kg')+'">'+esc(dn)+'</textarea></div>'
       +'<div class="savebar">'+(dl
         ?editBtn('data-act="dxedit" data-day="'+sel+'"')
         :'<button class="btn recsave" data-act="dxsave" data-day="'+sel+'" aria-label="'+T('保存','Save')+'" title="'+T('保存','Save')+'">'+SAVE_ICON+'</button>')+'</div>'
-      +'</div></article></section>';
+      +'</div></article>';
+    }
+    html+='</section>';
   }
   /* finished sessions without a date can't sit on the calendar; keep them reachable */
   PROGRAM.filter(p=>{const s=state.sessions[p.sid];return s&&s.done&&!s.date}).forEach(p=>{html+=cardHtml(p,cur)});
-  html+='<div class="tbar"><button class="tbtn" data-act="all" aria-label="'+T("全部收起","Collapse all")+'">'+ICON_COLLAPSE+T("全部收起","Collapse all")+'</button>'
+  html+='<div class="tbar"><button class="rk rk-up" data-act="all" aria-label="'+T("全部收起","Collapse all")+'" title="'+T("全部收起","Collapse all")+'"></button>'
     +(cur?'<button class="tbtn next" data-act="next" aria-label="'+T("跳到下一次训练","Jump to next session")+'">💪🏼'+T("练","Train")+'</button>':'')+'</div>';
   PROGRAM.filter(p=>!(state.sessions[p.sid]&&state.sessions[p.sid].done)).slice(0,5).forEach(p=>{
     html+=cardHtml(p,cur);
@@ -253,7 +256,7 @@ function sessionBody(p){
         +(extra&&!locked?'<button class="x" data-act="rm" data-sid="'+p.sid+'" data-ex="'+e.id+'" data-i="'+i+'" aria-label="'+T("删除这一组","Remove set")+'">×</button>':'')
         +'</div>';
     });
-    if(e.id!=="stretch"&&!locked) h+='<button class="addset" data-act="add" data-sid="'+p.sid+'" data-ex="'+e.id+'">+ '+T('加一组','Add set')+'</button>';
+    if(e.id!=="stretch"&&!locked) h+='<button class="rk rk-plus addset" data-act="add" data-sid="'+p.sid+'" data-ex="'+e.id+'" aria-label="'+T('加一组','Add set')+'" title="'+T('加一组','Add set')+'"></button>';
     h+='</div>';
   });
   if(!future)h+=extraBlock(p.sid,s,s.done&&!unlocked.has(p.sid)&&s.date!==today());
@@ -361,11 +364,11 @@ function setRowState(sid,ex,i){
 document.getElementById("pane-train").addEventListener("click",e=>{
   const xt=e.target.closest("[data-xa]"); if(xt){extraAct(xt);return}
   const cd=e.target.closest("[data-cal]");
-  if(cd){calState.sel=calState.sel===cd.dataset.cal?null:cd.dataset.cal;renderTrain();
-    const box=document.querySelector("#pane-train .calday");if(box)foldIn([box],FOLD_MS);return}
-  if(e.target.closest("[data-cal-today]")){calState.month=null;calState.sel=today();calState.fold=false;try{localStorage.setItem(CAL_FOLD_K,"0")}catch(err){}renderTrain();
-    const c=document.querySelector("#pane-train .cal");if(c)c.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
-    const box=document.querySelector("#pane-train .calday");if(box)foldIn([box],FOLD_MS);return}
+  if(cd){const d=cd.dataset.cal;
+    /* a new day: choose it and open its panel; the chosen day again: open its panel if it was closed, else close it */
+    if(calState.sel!==d){calState.sel=d;calState.panel=true}else if(!calState.panel)calState.panel=true;else{calState.sel=null;calState.panel=false}
+    renderTrain();const box=document.querySelector("#pane-train .calday");if(box)foldIn([box],FOLD_MS);return}
+  if(e.target.closest("[data-cal-today]")){if(todayHeld){todayHeld=false;return}goToday(false);return}
   if(e.target.closest("[data-cal-fold]")){calState.fold=!calState.fold;try{localStorage.setItem(CAL_FOLD_K,calState.fold?"1":"0")}catch(err){}
     renderTrain();if(!calState.fold){const g=document.querySelector("#pane-train .calg");if(g)foldIn([g],FOLD_MS)}return}
   const cn=e.target.closest("[data-cal-nav]");
@@ -388,7 +391,7 @@ document.getElementById("pane-train").addEventListener("click",e=>{
     const doc=state.dayx[d], sets=doc&&doc.xs?doc.xs.reduce((a,it)=>a+it.sets.filter(x=>x.d).length,0):0;
     if(d===today()&&sets)fireworks(Math.min(sets,15),sets>=10?1:0);
     const box=document.querySelector("#pane-train .calday");
-    foldOut(box?[box]:[],SAVE_FOLD_MS).then(()=>{calState.sel=null;renderTrain()});return}
+    foldOut(box?[box]:[],SAVE_FOLD_MS).then(()=>{calState.sel=null;calState.panel=false;renderTrain()});return}
   if(act==="edit"){confirmEdit(sid);return}
   if(act==="save"){unlocked.delete(sid);lsSave();
     toast(LAB(BYID[sid])+T(" 的修改已保存"," changes saved"));
@@ -454,3 +457,21 @@ document.getElementById("pane-train").addEventListener("input",e=>{
   if(act==="note"){s.note=t.value;lsSave()}
   if(act==="date"){s.date=t.value||null;lsSave();renderStats()}
 });
+
+/* 今天: a tap jumps to this month, chooses today and scrolls to today's finished session (or the calendar) without
+   opening the extra-practice panel; holding it opens the panel, with a short buzz and a filling ring while held */
+function goToday(openPanel){calState.month=null;calState.sel=today();calState.panel=!!openPanel;calState.fold=false;
+  try{localStorage.setItem(CAL_FOLD_K,"0")}catch(err){}renderTrain();
+  const smooth=window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+  const box=document.querySelector("#pane-train .calday");
+  const first=box&&box.querySelector(openPanel?".card.dayx":".card");
+  (first||document.querySelector("#pane-train .cal")).scrollIntoView({behavior:smooth,block:first?"center":"start"});
+  if(openPanel&&box)foldIn([box],FOLD_MS)}
+let todayHeld=false;
+(function(){let tm=0,el=null;const pane=document.getElementById("pane-train");
+  const stop=()=>{clearTimeout(tm);if(el)el.classList.remove("holding");el=null};
+  pane.addEventListener("pointerdown",e=>{const b=e.target.closest("[data-cal-today]");if(!b)return;stop();todayHeld=false;el=b;b.classList.add("holding");
+    tm=setTimeout(()=>{stop();todayHeld=true;if(navigator.vibrate)navigator.vibrate(18);if(window.sfxRaw)window.sfxRaw("pop");goToday(true)},550)});
+  ["pointerup","pointercancel","pointerleave"].forEach(t=>pane.addEventListener(t,stop));
+  pane.addEventListener("contextmenu",e=>{if(e.target.closest("[data-cal-today]"))e.preventDefault()});
+})();

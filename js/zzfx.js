@@ -82,5 +82,5 @@ function zzBuild(volume=1,randomness=.05,frequency=220,attack=0,sustain=0,releas
 function zzPlay(ctx,key,params){
   let buf=zzCache[key];
   if(!buf){const b=zzBuild(...params);buf=zzCache[key]=ctx.createBuffer(1,b.length||1,44100);buf.getChannelData(0).set(b)}
-  const src=ctx.createBufferSource();src.buffer=buf;src.connect(ctx.destination);src.start();
+  const src=ctx.createBufferSource();src.buffer=buf;src.connect(ctx.__out||ctx.destination);src.start();
 }
