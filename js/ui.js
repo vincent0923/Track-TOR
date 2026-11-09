@@ -37,7 +37,8 @@ const THEMES=[
   ["interior","Interior 亮","Interior light","interior","#FAFAFA #FFFFFF #292524 #4568FF"],["interior-dark","Interior 暗","Interior dark","interior","#141312 #1D1D1A #F5F5F4 #93B0FF"],
   ["beui","beUI 亮","beUI light","beui","#FCFCFC #F5F5F5 #0285F7 #00BEBF"],["beui-dark","beUI 暗","beUI dark","beui","#151515 #1C1C1C #00DADB #AD8CFF"],
   ["mech-light","亮色机械","Machine light","mech","#D9DCDF #ECEEF0 #1E7BFF #E87511"],["mech","暗色机械","Machine dark","mech","#25282C #3A3E44 #FF6A13 #5BD45B"],
-  ["minimal","极简","Minimal","minimal","#FAFAF8 #FFFFFF #161614 #B5583A"],
+  ["minimal","极简","Minimal","minimal","#FAFAF8 #FFFFFF #161614 #B5583A"],["minimal-warm","极简·暖","Minimal warm","minimal","#F6ECE5 #FDF8F6 #FF955F #7896CF"],
+  ["xmas","圣诞","Christmas","xmas","#E9D9BF #FBF6EE #B3192E #1F5A3A"],
   ["craft","手作","Craft","craft","#EFE7D8 #FBF7EF #E0713A #2F6F9A"],
   ["toy","玩具","Toy","toy","#E3DFD5 #F8F5EF #EF4F2B #2C55E0"],["toy-night","夜间玩具","Toy night","toy","#1C1B19 #292724 #FF5B36 #FFC23D"],
   ["toy-cyber","赛博玩具","Cyber toy","toy","#180E6A #241A7E #F3D21A #D8B9E1"],["woody","牛仔","Cowboy","toy","#E6E2DC #F5F2ED #7B4A2D #F0C050"],
@@ -53,7 +54,7 @@ function applyTheme(t){if(!THEME_IDS.includes(t))t="light";const r=document.docu
   try{localStorage.setItem(LS+"-theme",t)}catch(e){}placePieces(false);renderThemes()}
 /* chart lines follow the look: smooth for beUI, toy and craft (monotone cubic: smooth, but never overshooting a peak
    or dipping below a trough the data doesn't have), steps for retro, straight segments otherwise. A null breaks the line. */
-const CURVE={beui:"monotone",toy:"monotone",craft:"monotone",retro:"step"};
+const CURVE={beui:"monotone",toy:"monotone",craft:"monotone",xmas:"monotone",retro:"step"};
 function linePath(pts){const kind=CURVE[document.documentElement.getAttribute("data-skin")]||"linear",f=v=>v.toFixed(1);
   const runs=[];let r=[];pts.forEach(p=>{if(p)r.push(p);else if(r.length){runs.push(r);r=[]}});if(r.length)runs.push(r);
   return runs.map(r=>{let d="M"+f(r[0].x)+" "+f(r[0].y);if(r.length<2)return d;
@@ -79,7 +80,7 @@ function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const 
   document.dispatchEvent(new Event("themeicons"))}
 /* Profile › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
-  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
+  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["xmas",T("节日","Holiday")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
   let wf=0;try{wf=+localStorage.getItem(LS+"-wear")||0}catch(e){}
   const wear='<div class="thg"><h4>'+T("磨损","Wear and tear")+'</h4><div class="wearseg seg maseg" role="group" aria-label="'+T("磨损","Wear and tear")+'">'
     +[[0,"自动","Auto"],[1,"轻","Light"],[2,"中","Medium"],[3,"重","Heavy"]].map(([v,zh,en])=>'<button type="button" data-wear-force="'+v+'" aria-pressed="'+(wf===v)+'">'+T(zh,en)+'</button>').join("")+'</div></div>';
@@ -234,7 +235,7 @@ const FW=(function(){
 /* the celebration follows the look: fireworks on the plain themes, a party popper in the theme's colours on the
    toy looks, pixel bits on retro, paper scraps on craft, sparks on the machine console, a small tidy burst on the
    quiet looks. Particles come from canvas-confetti (js/confetti.js); n is how many rockets the fireworks would fire. */
-const CELEB={toy:"party",retro:"pixel",craft:"paper",mech:"sparks",beui:"glow",interior:"tidy",minimal:"tidy"};
+const CELEB={xmas:"snow",toy:"party",retro:"pixel",craft:"paper",mech:"sparks",beui:"glow",interior:"tidy",minimal:"tidy"};
 function themeHex(names){const c=document.createElement("canvas").getContext("2d"),cs=getComputedStyle(document.documentElement);
   return names.map(n=>{c.fillStyle="#000";c.fillStyle=cs.getPropertyValue(n).trim()||"#888";const v=c.fillStyle;
     if(v[0]==="#")return v;const m=v.match(/[\d.]+/g);return "#"+m.slice(0,3).map(x=>(+x|0).toString(16).padStart(2,"0")).join("")})}
@@ -247,6 +248,10 @@ function celebrate(kind,n,big){const cf=window.confetti;if(!cf||matchMedia("(pre
       cf(Object.assign({},base,{particleCount:k,angle:118,spread:58,startVelocity:58,origin:{x:1,y:1},colors,shapes:["square","circle"],scalar:1.15,ticks:260}))});
     if(big&&cf.shapeFromText)setTimeout(()=>{const shapes=["🎉","🎊","⭐"].map(t=>cf.shapeFromText({text:t,scalar:2.2}));
       cf(Object.assign({},base,{particleCount:24,spread:100,startVelocity:42,origin:{x:.5,y:.75},shapes,scalar:2.2,ticks:280,flat:true}))},bursts*260);return}
+  if(kind==="snow"){const colors=["#B3192E","#1F5A3A","#E8C468","#FFFFFF"];
+    const flakes=cf.shapeFromText?["❄️","🎁","⭐"].map(t=>cf.shapeFromText({text:t,scalar:1.6})):["circle"];
+    for(let i=0;i<bursts;i++)go(i,()=>{cf(Object.assign({},base,{particleCount:24+n*4,angle:270,spread:160,startVelocity:12,origin:{x:.15+Math.random()*.7,y:-.05},colors,shapes:["circle"],scalar:.9,gravity:.45,drift:Math.random()-.5,ticks:380}));
+      cf(Object.assign({},base,{particleCount:6+n,angle:270,spread:150,startVelocity:10,origin:{x:.2+Math.random()*.6,y:-.05},shapes:flakes,scalar:1.6,gravity:.4,ticks:400,flat:true}))});return}
   if(kind==="pixel"){const colors=themeHex(["--ink","--push","--pull","--ok"]);
     for(let i=0;i<bursts;i++)go(i,()=>cf(Object.assign({},base,{particleCount:30+n*5,spread:80,startVelocity:45,origin:{x:.2+Math.random()*.6,y:.8},colors,shapes:["square"],flat:true,scalar:.9,gravity:1.3,ticks:140,decay:.9})));return}
   if(kind==="paper"){const colors=themeHex(["--push","--pull","--ok","--tape","--surface"]);
@@ -437,6 +442,8 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     ironfl2:()=>{S.ironfl();setTimeout(()=>S.ironfl(),300)},
     zap:()=>{tone(120,0,.28,"sawtooth",.08,55);tone(240,0,.2,"square",.03,90);noiseHit(.25,7000,3000,.12,.8,"highpass",.05);for(let i=0;i<6;i++)noiseHit(.01,8000,6000,.25,6,"bandpass",.1,Math.random()*.3)},
     zap2:()=>{S.zap();setTimeout(()=>S.zap(),160)},
+    /* sleigh bells */
+    jingle:()=>{[[2637,0],[3136,.035],[2794,.07],[3520,.1],[3136,.14]].forEach(([f,t])=>{tone(f,t,.22,"sine",.045);tone(f*1.5,t,.12,"sine",.015)});noiseHit(.18,9000,6000,.05,.8,"highpass",.2)},
     sparks:()=>{noiseHit(0.5,8000,2500,0.12,0.9,"highpass",0.05);for(let i=0;i<6;i++)noiseHit(0.012,6000,4000,0.25,5,"bandpass",0.1,0.05+Math.random()*0.4)},
     sparks2:()=>{S.sparks();tone(110,0,0.3,"sine",0.3,60);setTimeout(()=>S.sparks(),180)},
     /* party popper: a sharp pop and paper streamers rustling down */
@@ -474,6 +481,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     craft:{tab1:"tap",tab2:"tap",range:"paper",gap:"paper",header:"paper",other:"paper",open:"tap",close:"paper",fold:"paper",save:"stamp",untick:"paper",set:"pencil",fw:"rustle",bigfw:"rustle2"},
     minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
     interior:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
+    xmas:{tab1:"jingle",tab2:"jingle",range:"soft",gap:"soft",header:"soft",other:"soft",open:"jingle",close:"soft",fold:"none",untick:"soft",set:"sparkle",save:"musicbox",fw:"jingle",bigfw:"musicbox"},
     beui:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft",fw:"sparkle",bigfw:"glint2"}};
   const THEME_SFX={mech:{fw:"ironfl",bigfw:"ironfl2"},"mech-light":{fw:"zap",bigfw:"zap2"}};
   const defOf=id=>{const r=document.documentElement,th=THEME_SFX[r.getAttribute("data-theme")],k=SKIN_SFX[r.getAttribute("data-skin")];return th&&th[id]||k&&k[id]||SDEF[id]};
@@ -699,3 +707,40 @@ const bugs=(function(){
   document.addEventListener("visibilitychange",()=>{if(!document.hidden&&list.length&&!raf&&!reduce())raf=requestAnimationFrame(tick)});
   setTimeout(sync,800);
   return {swat,sync}})();
+
+/* ---------- Christmas ----------
+   Snow lies on the buttons and bars. Pressing one shakes its snow off (a puff of flakes falls); it settles back over
+   five minutes. Sync is a floppy Santa hat: tap it and it slowly fills out while syncing, then becomes Santa. */
+(function(){
+  const SNOWY=".iconbtn,.tbtn:not(.next),.cap,nav.tabs,.subtabs,.caltoday,.btn,.calnav,.maseg,.hatbox .hat";
+  const on=()=>document.documentElement.getAttribute("data-skin")==="xmas";
+  const shaken=new Map();
+  document.addEventListener("pointerdown",e=>{if(!on())return;const el=e.target.closest(SNOWY);if(!el)return;
+    const t=shaken.get(el),left=t?Math.min(1,(Date.now()-t)/300000):1;if(left<.35)return;
+    shaken.set(el,Date.now());el.style.setProperty("--snow","0");el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake");
+    if(window.sfxRaw)window.sfxRaw("poof");
+    if(window.confetti&&!matchMedia("(prefers-reduced-motion: reduce)").matches){const r=el.getBoundingClientRect();
+      window.confetti({particleCount:Math.round(8+r.width/6*left),spread:70,angle:90,startVelocity:6,origin:{x:(r.left+r.width/2)/innerWidth,y:r.top/innerHeight},colors:["#FFFFFF","#EEF3F8"],shapes:["circle"],scalar:.55,gravity:.5,ticks:90,zIndex:46,disableForReducedMotion:true})}},true);
+  setInterval(()=>{const now=Date.now();shaken.forEach((t,el)=>{if(!el.isConnected){shaken.delete(el);return}const v=Math.min(1,(now-t)/300000);el.style.setProperty("--snow",v.toFixed(3));if(v>=1){shaken.delete(el);el.style.removeProperty("--snow")}})},5000);
+  /* the hat */
+  const sync=document.getElementById("syncBtn");if(!sync)return;
+  const box=document.createElement("div");box.className="hatbox";
+  box.innerHTML='<button type="button" class="hat" aria-label="'+T("同步","Sync")+'"><svg viewBox="0 0 56 56" aria-hidden="true">'
+    +'<g class="floppy"><path d="M10 40C11 27 19 19 30 18C39 17 45 23 44 30C43.5 34 40 35 38.5 32C37.5 29.5 37 34 36 40Z" fill="#C8102E"/><path d="M30 18C39 17 45 23 44 30C43.5 34 40 35 38.5 32C38 27 35 22 30 18Z" fill="#9E0C24"/><circle cx="40.5" cy="35.5" r="4.6" fill="#fff" stroke="#E4DCCF"/></g>'
+    +'<g class="upright"><path d="M12 40C14 28 20 15 27 7C29 5 31 6 31 9C32 19 37 30 41 40Z" fill="#C8102E"/><path d="M27 7C29 5 31 6 31 9C32 19 37 30 41 40H33C32 29 30 17 27 7Z" fill="#9E0C24"/><circle cx="28.5" cy="6.5" r="4.6" fill="#fff" stroke="#E4DCCF"/></g>'
+    +'<rect class="brim" x="7" y="38" width="37" height="9" rx="4.5" fill="#fff" stroke="#E4DCCF"/>'
+    +'<g class="santa"><path d="M12 24C15 13 24 6 32 6C38 6 42 10 44 15L46 24Z" fill="#C8102E"/><circle cx="45" cy="15.5" r="4" fill="#fff" stroke="#E4DCCF"/>'
+    +'<circle cx="28" cy="33" r="10.5" fill="#F5C6A5"/><path d="M15.5 33C15.5 46 21.5 53 28 53S40.5 46 40.5 33C37.5 38 33 39.5 28 39.5S18.5 38 15.5 33Z" fill="#fff" stroke="#E4DCCF"/>'
+    +'<rect x="10" y="21" width="36" height="8" rx="4" fill="#fff" stroke="#E4DCCF"/><circle cx="24.4" cy="31.6" r="1.2" fill="#3B2A20"/><circle cx="31.6" cy="31.6" r="1.2" fill="#3B2A20"/>'
+    +'<circle cx="21.5" cy="35.4" r="2" fill="#F29C9C" opacity=".7"/><circle cx="34.5" cy="35.4" r="2" fill="#F29C9C" opacity=".7"/><circle cx="28" cy="35" r="1.7" fill="#E89B80"/>'
+    +'<path d="M20.5 38.6C23.6 35.6 26.6 36.4 28 37.9C29.4 36.4 32.4 35.6 35.5 38.6C32.4 40.6 29.6 40.1 28 39C26.4 40.1 23.6 40.6 20.5 38.6Z" fill="#fff" stroke="#E4DCCF"/></g>'
+    +'</svg></button>';
+  sync.after(box);
+  const hat=box.querySelector(".hat");let started=0,doneTm=0;
+  hat.addEventListener("click",()=>{started=Date.now();box.classList.remove("santa","inflate");void box.offsetWidth;box.classList.add("inflate");sync.click()});
+  const follow=()=>{const c=sync.classList;clearTimeout(doneTm);
+    if(c.contains("done")){const wait=started?Math.max(0,2600-(Date.now()-started)):0;doneTm=setTimeout(()=>{box.classList.remove("inflate");box.classList.add("santa");started=0},wait)}
+    else if(c.contains("busy")){box.classList.remove("santa");box.classList.add("inflate")}
+    else if(!started){box.classList.remove("santa","inflate")}};
+  new MutationObserver(follow).observe(sync,{attributes:true,attributeFilter:["class"]});follow();
+})();

@@ -154,10 +154,15 @@ function renderDietChart(){
   });
   g += serOpen(W, H, L);
   const bw = Math.max(2, Math.min(10, step*0.6));
+  /* Christmas: a deficit is a green-and-white candy stick, a surplus a red-and-white one */
+  const candy = document.documentElement.getAttribute("data-skin")==="xmas";
+  if(candy) g += `<defs>${[["candyG","#2E7D4F"],["candyR","#B3192E"]].map(([id,c])=>`<pattern id="${id}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect width="5" height="5" fill="#fff"/><rect width="2.6" height="5" fill="${c}"/></pattern>`).join("")}</defs>`;
   pts.forEach((p,i)=>{
     if(p.a!==null && p.b!==null){
       const top = Math.min(y(p.a), y(p.b)), h = Math.abs(y(p.a) - y(p.b));
-      g += `<rect x="${x(i)-bw/2}" y="${top}" width="${bw}" height="${Math.max(1,h)}" rx="1.5" fill="${p.b>=p.a ? "var(--gain)" : "var(--loss)"}" fill-opacity=".35"/>`;
+      g += candy
+        ? `<rect x="${x(i)-bw/2}" y="${top}" width="${bw}" height="${Math.max(1,h)}" rx="${bw/2}" fill="url(#${p.b>=p.a ? "candyG" : "candyR"})" stroke="rgba(60,40,30,.18)" stroke-width=".6"/>`
+        : `<rect x="${x(i)-bw/2}" y="${top}" width="${bw}" height="${Math.max(1,h)}" rx="1.5" fill="${p.b>=p.a ? "var(--gain)" : "var(--loss)"}" fill-opacity=".35"/>`;
     }
   });
   const line = (key) => linePath(pts.map((p,i)=>p[key]===null ? null : {x:x(i), y:y(p[key])}));

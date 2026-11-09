@@ -1373,3 +1373,65 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 .chartbox h3{justify-content:flex-start;column-gap:8px}
 .chartbox h3:has(.chic) .num{flex:0 1 auto}
 .chartbox h3>button:last-child{margin-left:auto}
+
+/* ---------- Minimal warm: the minimal look in off white, apricot, tangerine, sage, vista and chartreuse ---------- */
+:root[data-theme="minimal-warm"]{
+  --bg:#F6ECE5; --surface:#FDF8F6; --sunk:#F1E4DA; --ink:#3B2F2A; --muted:#8A7A70; --line:#EADCD1;
+  --push:#F07A3C; --push-soft:#FCE3D3; --pull:#5F7FC0; --pull-soft:#E3EAF7; --ok:#6E9A6A; --ok-soft:#E5EFE2; --warn:#B8961F; --sleep:#8C7AB0; --cta:#3B2F2A; --on-cta:#FDF8F6;
+  --track:#F1E4DA; color-scheme:light}
+:root[data-theme="minimal-warm"] #pane-diet{--intake:#3B2F2A;--burn:#F07A3C;--protein:#5F7FC0;--gain:#8DB389;--loss:#F7A57A;--dslate:#8A7A70;--dtotal:#F1E4DA}
+:root[data-theme="minimal-warm"] .subtabs .tpiece{background:var(--push)}
+:root[data-theme="minimal-warm"] .subtabs button[aria-selected="true"]{color:#fff}
+
+/* ---------- Christmas: warm knitted wool behind everything, snow on the buttons, red and pine green ---------- */
+:root[data-theme="xmas"]{
+  --bg:#E9D9BF; --surface:#FBF6EE; --sunk:#F1E6D4; --ink:#3B2A20; --muted:#7A5A44; --line:#E2D2B8;
+  --push:#B3192E; --push-soft:#F6DADD; --pull:#1F5A3A; --pull-soft:#DCEBE1; --ok:#2E7D4F; --ok-soft:#DDEFE3; --warn:#B08C6E; --sleep:#6B5E8E; --cta:#B3192E; --on-cta:#fff;
+  --rk-bg:#7A5A44; color-scheme:light}
+:root[data-theme="xmas"] #pane-diet{--intake:#5A3E2C;--burn:#B3192E;--protein:#1F5A3A;--gain:#2E7D4F;--loss:#B3192E;--dslate:#7A5A44;--dtotal:#F1E6D4}
+:root[data-skin="xmas"]{--r:16px}
+:root[data-skin="xmas"] body{background-color:var(--bg);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='16' viewBox='0 0 14 16'%3E%3Cg fill='rgba(120,85,55,.16)'%3E%3Cellipse cx='4' cy='8' rx='2.7' ry='6.4' transform='rotate(-30 4 8)'/%3E%3Cellipse cx='10' cy='8' rx='2.7' ry='6.4' transform='rotate(30 10 8)'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(255,250,240,.35)' stroke-width='.8'%3E%3Cpath d='M2.6 3.5c1 2.4 2.2 5 3 8.2'/%3E%3Cpath d='M11.4 3.5c-1 2.4-2.2 5-3 8.2'/%3E%3C/g%3E%3C/svg%3E");background-size:14px 16px}
+:root[data-skin="xmas"] :is(.card,.goals,.cal,details.fold,.stat){border:1px solid var(--line);box-shadow:0 2px 0 #D9C6A6,0 10px 18px -12px rgba(80,50,20,.4)}
+:root[data-skin="xmas"] .chartbox{border:1px solid var(--line);background-color:#F7EFE3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='16' viewBox='0 0 14 16'%3E%3Cg fill='rgba(150,115,80,.08)'%3E%3Cellipse cx='4' cy='8' rx='2.7' ry='6.4' transform='rotate(-30 4 8)'/%3E%3Cellipse cx='10' cy='8' rx='2.7' ry='6.4' transform='rotate(30 10 8)'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(255,255,255,.5)' stroke-width='.8'%3E%3Cpath d='M2.6 3.5c1 2.4 2.2 5 3 8.2'/%3E%3Cpath d='M11.4 3.5c-1 2.4-2.2 5-3 8.2'/%3E%3C/g%3E%3C/svg%3E");background-size:14px 16px;box-shadow:0 2px 0 #D9C6A6,0 10px 18px -12px rgba(80,50,20,.4)}
+:root[data-skin="xmas"] :is(h1,.tag,.caltitle b){color:var(--push)}
+:root[data-skin="xmas"] :is(nav.tabs,.subtabs){gap:0;padding:5px;background:#F3E7D3;border-radius:16px;border:1px solid var(--line)}
+:root[data-skin="xmas"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:var(--muted)}
+:root[data-skin="xmas"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:#fff}
+:root[data-skin="xmas"] .tpiece{background:var(--push);border-radius:12px;box-shadow:0 3px 0 #7E0F20}
+:root[data-skin="xmas"] .subtabs .tpiece{background:var(--pull);box-shadow:0 3px 0 #123A25}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="xmas"] .tpiece.on{transition:transform .4s cubic-bezier(.3,1.4,.5,1),width .4s cubic-bezier(.3,1.4,.5,1)}}
+:root[data-skin="xmas"] .bar i{background:repeating-linear-gradient(135deg,var(--g) 0 7px,color-mix(in srgb,var(--g) 55%,#fff) 7px 10px)}
+:root[data-skin="xmas"] .bar i::after{display:none}
+/* snow on buttons and bars: shaken off by a press (--snow drops to 0), settling back over five minutes */
+:root[data-skin="xmas"] :is(.iconbtn,.tbtn:not(.next),.cap,nav.tabs,.subtabs,.caltoday,.btn,.calnav,.maseg){position:relative;overflow:visible}
+:root[data-skin="xmas"] :is(.iconbtn,.tbtn:not(.next),.cap,nav.tabs,.subtabs,.caltoday,.btn,.calnav,.maseg)::before{content:"";position:absolute;left:6%;right:6%;top:-6px;height:10px;z-index:3;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 14' preserveAspectRatio='none'%3E%3Cpath d='M0 14C1 9 4 7.5 8 8.5C10 4.5 15 3 19 5.5C22 1.5 29 .8 33 4.5C37 2 43 2.5 46 6C50 4.5 55 6 57 9.5C59 10.5 60 12 60 14Z' fill='%2523DCE6F0'/%3E%3Cpath d='M0 13C1 8.5 4 6.8 8 7.6C10 3.8 15 2.2 19 4.6C22 .8 29 0 33 3.6C37 1.2 43 1.6 46 5.2C50 3.8 55 5.2 57 8.6C59 9.6 60 11 60 13Z' fill='white'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat;filter:drop-shadow(0 1px .5px rgba(90,110,140,.3));transform-origin:50% 100%;transform:scaleY(var(--snow,1));opacity:calc(var(--snow,1)*1.4);transition:transform .25s,opacity .25s}
+:root[data-skin="xmas"] :is(nav.tabs,.subtabs)::before{left:12px;right:12px;top:-7px;height:11px}
+:root[data-skin="xmas"] .iconbtn::before{left:20%;right:20%;top:-3px;height:7px}
+:root[data-skin="xmas"] :is(.caltoday,.calnav)::before{left:14%;right:14%;top:-5px;height:8px}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="xmas"] .shake{animation:snowShake .32s ease-out}}
+@keyframes snowShake{0%,100%{translate:0}20%{translate:-3px}45%{translate:3px}70%{translate:-1.5px}}
+/* the 练 button is a gift box that bounces gently */
+:root[data-skin="xmas"] .tbtn.next{border:0;border-radius:6px;padding:10px 18px 9px;color:#fff;font-weight:800;text-shadow:0 1px 0 rgba(0,0,0,.35);box-shadow:0 3px 0 #7E0F20,0 8px 14px -6px rgba(80,20,20,.5);
+  background:linear-gradient(90deg,transparent 43%,#1F5A3A 43% 57%,transparent 57%),linear-gradient(transparent 38%,#1F5A3A 38% 56%,transparent 56%),#C8102E}
+:root[data-skin="xmas"] .tbtn.next::after{content:"";position:absolute;left:50%;top:-12px;width:30px;height:15px;margin-left:-15px;pointer-events:none;
+  background:radial-gradient(ellipse 46% 62% at 24% 55%,#2E7D4F 60%,transparent 63%),radial-gradient(ellipse 46% 62% at 76% 55%,#2E7D4F 60%,transparent 63%),radial-gradient(circle at 50% 70%,#1F5A3A 24%,transparent 26%)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="xmas"] .tbtn.next{animation:giftBounce 1.8s ease-in-out infinite}}
+@keyframes giftBounce{0%,100%{transform:translateY(0) scale(1,1)}40%{transform:translateY(-5px) scale(.98,1.03)}55%{transform:translateY(0) scale(1.04,.96)}70%{transform:translateY(-1.5px) scale(1,1)}}
+:root[data-skin="xmas"] .tbtn.next:active{transform:translateY(2px) scale(1.03,.95)}
+/* the Santa hat in place of Sync: floppy, filling out while syncing, then Santa */
+.hatbox{display:none}
+:root[data-skin="xmas"] #syncBtn{display:none!important}
+:root[data-skin="xmas"] .hatbox{display:block;flex:none;margin-top:-6px}
+.hatbox .hat{position:relative;width:58px;height:58px;padding:0;border:0;background:none;cursor:pointer}
+.hatbox svg{width:100%;height:100%;display:block;overflow:visible}
+.hatbox .upright,.hatbox .santa{opacity:0}
+.hatbox .floppy{transform-origin:20px 40px}
+.hatbox .upright{transform-origin:26px 40px;transform:scaleY(.35)}
+.hatbox.inflate .floppy{opacity:0;transition:opacity .5s}
+.hatbox.inflate .upright{opacity:1;animation:hatUp 2.6s cubic-bezier(.3,1.15,.5,1) forwards}
+@keyframes hatUp{0%{transform:scaleY(.35) rotate(18deg)}35%{transform:scaleY(.65) rotate(10deg)}70%{transform:scaleY(.92) rotate(-4deg)}100%{transform:scaleY(1) rotate(0)}}
+.hatbox.santa :is(.floppy,.upright,.brim){opacity:0}
+.hatbox.santa .santa{opacity:1;animation:santaIn .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes santaIn{from{transform:scale(.6) translateY(6px)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.hatbox.inflate .upright{animation:none;transform:none}}
