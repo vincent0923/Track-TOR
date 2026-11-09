@@ -109,9 +109,9 @@ function chart(el,pts,o){
   g+=serOpen(W,H,L);const af=areaFill(col);
   if(!o.line||af){const area=path+" L"+sx(main[main.length-1].x).toFixed(1)+" "+(H-B)+" L"+sx(main[0].x).toFixed(1)+" "+(H-B)+" Z";g+=af?af.def+'<path d="'+area+'" fill="'+af.fill+'"/>':'<path d="'+area+'" fill="'+col+'" fill-opacity=".10"/>'}
   g+='<path d="'+path+'" fill="none" stroke="'+col+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
-  pts.forEach((p,i)=>{const last=i===pts.length-1;g+='<circle cx="'+sx(p.x)+'" cy="'+sy(p.y)+'" r="'+(last?4.5:3)+'" fill="'+(p.c||(o.line?"var(--muted)":col))+'" fill-opacity="'+(p.c?.8:o.line?.55:1)+'"><title>'+(p.tag||"")+md(p.date)+'：'+p.y+o.unit+'</title></circle>'});
+  pts.forEach((p,i)=>{const last=i===pts.length-1;g+='<circle cx="'+sx(p.x)+'" cy="'+sy(p.y)+'" r="'+(last?3.2:2.2)+'" fill="'+(p.c||(o.line?"var(--muted)":col))+'" fill-opacity="'+(p.c?.8:o.line?.55:1)+'"><title>'+(p.tag||"")+md(p.date)+'：'+p.y+o.unit+'</title></circle>'});
   const lp=main[main.length-1];
-  g+='<circle cx="'+sx(lp.x)+'" cy="'+sy(lp.y)+'" r="5" fill="var(--surface)" stroke="'+col+'" stroke-width="2.4"/></g>';
+  g+='<circle cx="'+sx(lp.x)+'" cy="'+sy(lp.y)+'" r="3.8" fill="var(--surface)" stroke="'+col+'" stroke-width="2"/></g>';
   g+='<g class="xh" visibility="hidden"><line class="xh-l" y1="'+TP+'" y2="'+(H-B)+'"/><g class="xh-d"></g></g>';
   el.innerHTML='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+o.label+'">'+g+'</svg><div class="xtip" hidden></div>';
   scrub(el,{W,sx,sy,pts,line:o.line,col,o});

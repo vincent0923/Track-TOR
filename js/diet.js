@@ -161,7 +161,7 @@ function renderDietChart(){
     }
   });
   const line = (key) => linePath(pts.map((p,i)=>p[key]===null ? null : {x:x(i), y:y(p[key])}));
-  const dotsFor = (key, col) => pts.map((p,i)=>p[key]===null?"":`<circle cx="${x(i)}" cy="${y(p[key])}" r="${dates.length>30?1.8:2.6}" fill="${col}"/>`).join("");
+  const dotsFor = (key, col) => pts.map((p,i)=>p[key]===null?"":`<circle cx="${x(i)}" cy="${y(p[key])}" r="${dates.length>30?1.3:1.9}" fill="${col}"/>`).join("");
   const bm = dates.map(bmrOfDate);
   g += `<path d="${bm.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join("")}" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3" stroke-opacity=".8"/><text x="${W-R}" y="${y(bm[bm.length-1])-5}" text-anchor="end">BMR ${Math.round(bm[bm.length-1])}</text>`;
   g += `<path d="${line("b")}" fill="none" stroke="var(--burn)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>`;
@@ -174,10 +174,11 @@ function renderDietChart(){
   g += `<path d="${pl(need)}" fill="none" stroke="var(--protein)" stroke-width="1.3" stroke-dasharray="1.5 3" stroke-linecap="round"/>`;
   g += `<path d="${pl(cap)}" fill="none" stroke="var(--protein)" stroke-width="1.3" stroke-dasharray="1.5 3" stroke-linecap="round"/>`;
   { const pd = linePath(pr.map((v,i)=>v===null ? null : {x:x(i), y:yp(v)}));
-    g += `<path d="${pd}" fill="none" stroke="var(--protein)" stroke-width="1.4" stroke-opacity=".7" stroke-linejoin="round"/>`; }
-  const pr_r = dates.length>30 ? 2 : 2.9;
-  pr.forEach((v,i)=>{ if(v===null) return; const low = v < need[i];
-    g += `<circle cx="${x(i)}" cy="${yp(v)}" r="${pr_r}" fill="${low ? "var(--surface)" : "var(--protein)"}" stroke="var(--protein)" stroke-width="1.4"/>`; });
+    /* protein is a broad see-through stroke: it shows the level without getting in the way of the calorie lines;
+       a day with no logged neighbour is a short blob */
+    g += `<path d="${pd}" fill="none" stroke="var(--protein)" stroke-width="7" stroke-opacity=".3" stroke-linejoin="round" stroke-linecap="round"/>`;
+    pr.forEach((v,i)=>{ if(v===null || (pr[i-1]!=null) || (pr[i+1]!=null)) return;
+      g += `<circle cx="${x(i)}" cy="${yp(v)}" r="3.5" fill="var(--protein)" fill-opacity=".3"/>`; }); }
   g += `</g><line id="dxh" x1="0" x2="0" y1="${TP}" y2="${H-B}" stroke="var(--ink)" stroke-opacity=".35" stroke-width="1" visibility="hidden"/>`;
   
   const box = document.getElementById("dietChart");

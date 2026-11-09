@@ -82,7 +82,7 @@
 .xadd .btn{padding:7px 12px}
 .xchips{display:flex;gap:6px;flex-wrap:wrap}
 #pane-diet{--protein:#7A5CC8;--intake:#2C3B44;--burn:#C2662D;--gain:#3E8E63;--loss:#C2453B;--dslate:#2C3B44;--dtotal:#E6E1D6;display:grid;gap:16px;padding-top:8px}
-:root[data-theme="dark"] #pane-diet{--protein:#B49CF2;--intake:#9DB8C6;--burn:#E58A4F;--gain:#55B884;--loss:#E66A5F;--dslate:#34505E;--dtotal:#2A3234}
+:root[data-theme="dark"] #pane-diet{--protein:#E07BE0;--intake:#9DB8C6;--burn:#E58A4F;--gain:#55B884;--loss:#E66A5F;--dslate:#34505E;--dtotal:#2A3234}
 /* diet data source (Google Sheets CSV) */
 .dsrc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
 .dsrc-h{display:flex;align-items:center;gap:8px}
@@ -638,8 +638,8 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
   --track:#090D18; --side:#080B14; --key:#232C46; --tab-ink:#AEB9D6; --hl:rgba(255,255,255,.05); --dot:rgba(182,242,62,.07);
   --push-deep:#A82F66; --pull-deep:#178AA3; --ok-deep:#6A961A; --both-deep:#5A3A8A; --piece:var(--push); --piece-deep:var(--push-deep); --piece2:var(--pull); --piece2-deep:var(--pull-deep); --piece2-ink:#0D1220;
   --drop:0 7px 8px -4px rgba(0,0,0,.7); --sink:inset 0 2px 5px rgba(0,0,0,.55); --pit:rgba(0,0,0,.7); color-scheme:dark}
-:root:is([data-theme="toy-night"],[data-theme="toy-glow"]) #pane-diet{--intake:#C9D6DD;--burn:#FF8A4C;--protein:#B49CF2;--gain:#4CCB8E;--loss:#FF6B5E;--dslate:#34505E;--dtotal:#2E2C28}
-:root[data-theme="toy-glow"] #pane-diet{--burn:#FF9F5A;--protein:#C3A8FF;--gain:#B6F23E;--loss:#FF5FA2;--dtotal:#1E2740}
+:root:is([data-theme="toy-night"],[data-theme="toy-glow"]) #pane-diet{--intake:#C9D6DD;--burn:#FF8A4C;--protein:#E07BE0;--gain:#4CCB8E;--loss:#FF6B5E;--dslate:#34505E;--dtotal:#2E2C28}
+:root[data-theme="toy-glow"] #pane-diet{--burn:#FF9F5A;--protein:#B57BFF;--gain:#B6F23E;--loss:#FF5FA2;--dtotal:#1E2740}
 :root:is([data-theme="toy-night"],[data-theme="toy-glow"]) .mask .sheet{--bad:#FF6B5E}
 /* glow: coloured plastic gives off light */
 :root[data-theme="toy-glow"] .tpiece{box-shadow:0 4px 0 var(--piece-deep),0 0 16px color-mix(in srgb,var(--piece) 55%,transparent),inset 0 2px 0 rgba(255,255,255,.3)}
@@ -716,7 +716,7 @@ svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
   --push-deep:#A88F00; --pull-deep:#7F6C9E; --ok-deep:#2A9FA4; --both-deep:#72227F;
   --piece:#F3D21A; --piece-deep:#A88F00; --piece-ink:#180E6A; --piece2:#D8B9E1; --piece2-deep:#7F6C9E; --piece2-ink:#180E6A;
   --drop:0 7px 8px -4px rgba(0,0,0,.6); --sink:inset 0 2px 5px rgba(0,0,0,.45); --pit:rgba(0,0,0,.6); color-scheme:dark}
-:root[data-theme="toy-cyber"] #pane-diet{--intake:#D8B9E1;--burn:#F3D21A;--protein:#C78BE0;--gain:#5CE1E6;--loss:#FF6B9A;--dslate:#3A2E92;--dtotal:#2A2088}
+:root[data-theme="toy-cyber"] #pane-diet{--intake:#D8B9E1;--burn:#F3D21A;--protein:#FFFFFF;--gain:#5CE1E6;--loss:#FF6B9A;--dslate:#3A2E92;--dtotal:#2A2088}
 :root[data-theme="toy-cyber"] .mask .sheet{--bad:#FF6B9A}
 :root[data-theme="toy-cyber"] :is(.cald.push,.cald.pull,.cald.xonly,.card.push .btn,.card.pull .btn,.caltoday){color:#180E6A}
 :root[data-theme="toy-cyber"] .set.ticked .chk svg path{stroke:#180E6A}
@@ -847,7 +847,7 @@ svg.ic-retro{shape-rendering:crispEdges}
   --lift:0 1px 6px rgba(0,0,0,.45); --cap:inset 0 1.5px 0 rgba(255,255,255,.09);
   --well:inset 0 1px 2px rgba(0,0,0,.45); --focus:#93B0FF; color-scheme:dark}
 :root[data-theme="interior"] #pane-diet{--intake:#292524;--burn:#C2662D;--protein:#7A5CC8;--gain:#3D7A4E;--loss:#C0442F;--dslate:#44403C;--dtotal:#E7E5E4}
-:root[data-theme="interior-dark"] #pane-diet{--intake:#D6D3D1;--burn:#F0A06A;--protein:#B49CF2;--gain:#5BD79C;--loss:#F5897F;--dslate:#57534E;--dtotal:#292524}
+:root[data-theme="interior-dark"] #pane-diet{--intake:#D6D3D1;--burn:#F0A06A;--protein:#A98BFF;--gain:#5BD79C;--loss:#F5897F;--dslate:#57534E;--dtotal:#292524}
 :root[data-theme="interior-dark"] .mask .sheet{--bad:#F5897F}
 :root[data-skin="interior"]{--f-num:"Geist","Barlow Condensed",sans-serif;--f-body:"Geist",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:12px;--spr:cubic-bezier(.3,1.25,.5,1)}
 :root[data-skin="interior"] body{-webkit-font-smoothing:antialiased}
@@ -1018,7 +1018,7 @@ html,body{overflow-x:clip}
   --push:#FF6A13; --push-soft:#4A2E1F; --pull:#3FA7D6; --pull-soft:#1F3A48; --ok:#5BD45B; --ok-soft:#1F3A22; --warn:#FFB000; --sleep:#B49CF2; --cta:#FF6A13; --on-cta:#17191B;
   --plate:linear-gradient(180deg,#3B3F45,#30343A); --screw:radial-gradient(circle,#8A9096 0 1.6px,#4A4F55 2.2px,#1B1D20 2.8px,transparent 3.2px);
   --key:linear-gradient(180deg,#4C5157,#3A3E44); --key-side:#141619; color-scheme:dark}
-:root[data-theme="mech"] #pane-diet{--intake:#ECE8DF;--burn:#FF8A3D;--protein:#B49CF2;--gain:#5BD45B;--loss:#FF5A4A;--dslate:#474C52;--dtotal:#2A2E33}
+:root[data-theme="mech"] #pane-diet{--intake:#ECE8DF;--burn:#FF8A3D;--protein:#3FA7D6;--gain:#5BD45B;--loss:#FF5A4A;--dslate:#474C52;--dtotal:#2A2E33}
 :root[data-theme="mech"] .mask .sheet{--bad:#FF5A4A}
 :root[data-skin="mech"]{--f-num:"Share Tech Mono","Barlow Condensed",ui-monospace,monospace;--r:6px}
 :root[data-skin="mech"] body{background-color:var(--bg);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 4px)}
@@ -1090,3 +1090,13 @@ html,body{overflow-x:clip}
 .lever .rod.back{animation:leverBack .62s linear}
 @keyframes leverBack{0%{transform:translateY(var(--from))}22%{transform:translateY(-7px)}40%{transform:translateY(4px)}58%{transform:translateY(-2.5px)}74%{transform:translateY(1.2px)}88%{transform:translateY(-.5px)}100%{transform:translateY(0)}}
 @media (prefers-reduced-motion:reduce){.lever .rod.back{animation:none}}
+
+/* the three diet lines get three different colours on the terminal looks */
+:root[data-theme="retro"] #pane-diet{--intake:#6DFF8A;--burn:#FFD34D;--protein:#5CD6FF}
+:root[data-theme="retro-cyber"] #pane-diet{--intake:#5CE1E6;--burn:#F3D21A;--protein:#D8B9E1}
+:root[data-theme="retro-amber"] #pane-diet{--intake:#FFB347;--burn:#2EC4B6;--protein:#D98CFF}
+/* toy icons have white inner parts (a face, a medal); on a coloured piece those melt into the white outline,
+   so there the inner parts turn see-through and the fill turns translucent white */
+svg.ic-toy .w{fill:var(--icw,#fff)}
+:root[data-skin="toy"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{--icw:transparent;--icf:rgba(255,255,255,.32)}
+:root[data-theme="toy-cyber"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-theme="toy-glow"] .subtabs button[aria-selected="true"],:root[data-theme="woody"] .subtabs button[aria-selected="true"]{--icw:rgba(255,255,255,.55);--icf:rgba(255,255,255,.45)}
