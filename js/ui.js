@@ -36,7 +36,7 @@ const THEMES=[
   ["light","浅色","Light","","#EDF0F2 #FFFFFF #B8481F #2B55C8"],["dark","深色","Dark","","#0F1519 #172028 #EE7A4A #7393F2"],
   ["interior","Interior 亮","Interior light","interior","#FAFAFA #FFFFFF #292524 #4568FF"],["interior-dark","Interior 暗","Interior dark","interior","#141312 #1D1D1A #F5F5F4 #93B0FF"],
   ["beui","beUI 亮","beUI light","beui","#FCFCFC #F5F5F5 #0285F7 #00BEBF"],["beui-dark","beUI 暗","beUI dark","beui","#151515 #1C1C1C #00DADB #AD8CFF"],
-  ["mech","机械控制台","Machine console","mech","#25282C #3A3E44 #FF6A13 #5BD45B"],
+  ["mech-light","亮色机械","Machine light","mech","#D9DCDF #ECEEF0 #1E7BFF #E87511"],["mech","暗色机械","Machine dark","mech","#25282C #3A3E44 #FF6A13 #5BD45B"],
   ["minimal","极简","Minimal","minimal","#FAFAF8 #FFFFFF #161614 #B5583A"],
   ["craft","手作","Craft","craft","#EFE7D8 #FBF7EF #E0713A #2F6F9A"],
   ["toy","玩具","Toy","toy","#E3DFD5 #F8F5EF #EF4F2B #2C55E0"],["toy-night","夜间玩具","Toy night","toy","#1C1B19 #292724 #FF5B36 #FFC23D"],
@@ -247,7 +247,47 @@ function celebrate(kind,n,big){const cf=window.confetti;if(!cf||matchMedia("(pre
     for(let i=0;i<bursts;i++)go(i,()=>cf(Object.assign({},base,{particleCount:30+n*4,spread:360,startVelocity:26,origin:{x:.2+Math.random()*.6,y:.3+Math.random()*.3},colors,shapes:["circle"],scalar:.8,gravity:.4,decay:.93,ticks:180})));return}
   const colors=themeHex(["--ink","--pull","--ok"]);
   for(let i=0;i<Math.min(bursts,2);i++)go(i,()=>cf(Object.assign({},base,{particleCount:26+n*2,spread:70,startVelocity:34,origin:{x:.5,y:.7},colors,shapes:["square"],scalar:.7,gravity:.9,ticks:160})))}
-function fireworks(n,big){const k=CELEB[document.documentElement.getAttribute("data-skin")];if(k&&window.confetti)celebrate(k,n||1,big||0);else FW.add(n||0,big||0)}
+/* the two machine looks have their own: molten iron flowers on the dark one, electric arcs on the light one */
+const CELEB_THEME={mech:"iron","mech-light":"zap"};
+function fireworks(n,big){const t=document.documentElement.getAttribute("data-theme"),own=CELEB_THEME[t];
+  if(own){metalFx(own,n||1,big||0);return}
+  const k=CELEB[document.documentElement.getAttribute("data-skin")];if(k&&window.confetti)celebrate(k,n||1,big||0);else FW.add(n||0,big||0)}
+/* metal celebrations on their own canvas. Iron flowers: molten drops are struck upward from the bottom, trail light
+   as they fly, burst into smaller drops near the top of the arc and cool from white through gold to deep orange as
+   they fall. Electric arcs: a few jagged bolts flicker out from a point with a cold blue glow and a spray of tiny
+   sparks. */
+const metalFx=(function(){let cv=null,ctx=null,ps=[],arcs=[],flash=0,raf=0,W=0,H=0,dpr=1;
+  const fit=()=>{dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};
+  const ensure=()=>{if(cv)return;cv=document.createElement("canvas");cv.className="fw";document.body.append(cv);ctx=cv.getContext("2d");fit();addEventListener("resize",()=>cv&&fit())};
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const ironCol=t=>t<.18?"255,250,225":t<.45?"255,205,90":t<.75?"255,140,40":"215,70,20";
+  function iron(x,count,k){const sp=H/820;for(let i=0;i<count;i++){const a=rnd(-Math.PI*.78,-Math.PI*.22),v=rnd(9,17)*sp*k;
+    ps.push({kind:"iron",x,y:H*.97,vx:Math.cos(a)*v,vy:Math.sin(a)*v,age:0,life:rnd(95,150),w:rnd(1.6,2.6),tr:[],split:Math.random()<.45})}}
+  function zap(x,y,big){const n=big?6:4;for(let i=0;i<n;i++){const a=rnd(0,Math.PI*2),r=rnd(70,big?260:190);arcs.push({x,y,tx:x+Math.cos(a)*r,ty:y+Math.sin(a)*r,age:0,life:rnd(14,24),pts:null})}
+    for(let i=0;i<(big?60:36);i++){const a=rnd(0,Math.PI*2),v=rnd(3,9);ps.push({kind:"spark",x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,age:0,life:rnd(14,32),w:rnd(1,1.8),tr:[]})}flash=4}
+  function bolt(a){const pts=[[a.x,a.y]],seg=8,dx=a.tx-a.x,dy=a.ty-a.y,len=Math.hypot(dx,dy),nx=-dy/len,ny=dx/len;
+    for(let i=1;i<seg;i++){const t=i/seg,o=rnd(-1,1)*len*.12;pts.push([a.x+dx*t+nx*o,a.y+dy*t+ny*o])}pts.push([a.tx,a.ty]);return pts}
+  function frame(){ctx.clearRect(0,0,W,H);const lightBg=getComputedStyle(document.documentElement).colorScheme==="light";ctx.globalCompositeOperation=lightBg?"source-over":"lighter";
+    if(flash>0){ctx.fillStyle="rgba(90,170,255,"+((lightBg?.03:.05)*flash)+")";ctx.fillRect(0,0,W,H);flash--}
+    arcs=arcs.filter(a=>{a.age++;if(!a.pts||a.age%2===0)a.pts=bolt(a);const al=1-a.age/a.life;
+      (lightBg?[[8,"30,123,255",.28],[3.2,"14,95,216",.9],[1.2,"255,255,255",1]]:[[7,"90,170,255",.35],[2.4,"235,248,255",1]]).forEach(([w,c,o])=>{ctx.strokeStyle="rgba("+c+","+(o*al)+")";ctx.lineWidth=w;ctx.lineJoin="round";ctx.beginPath();a.pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke()});
+      return a.age<a.life});
+    const born=[];
+    ps=ps.filter(p=>{p.age++;p.tr.push([p.x,p.y]);if(p.tr.length>(p.kind==="iron"?7:3))p.tr.shift();
+      p.vy+=p.kind==="iron"?.17*H/820:.12;p.vx*=.985;p.vy*=.985;p.x+=p.vx;p.y+=p.vy;
+      if(p.kind==="iron"&&p.split&&p.vy>-.5){p.split=false;for(let i=0;i<4;i++){const a=rnd(0,Math.PI*2),v=rnd(1.5,4);born.push({kind:"iron",x:p.x,y:p.y,vx:p.vx*.3+Math.cos(a)*v,vy:Math.sin(a)*v,age:p.age,life:p.age+rnd(45,80),w:p.w*.7,tr:[],split:false})}}
+      const t=p.age/p.life,al=Math.max(0,1-t*t),col=p.kind==="iron"?ironCol(t):lightBg?(t<.4?"14,95,216":"30,123,255"):(t<.4?"235,248,255":"110,185,255");
+      const tr=p.tr.concat([[p.x,p.y]]);
+      ctx.lineCap="round";ctx.strokeStyle="rgba("+col+","+(.25*al)+")";ctx.lineWidth=p.w*3;ctx.beginPath();tr.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.stroke();
+      ctx.strokeStyle="rgba("+col+","+al+")";ctx.lineWidth=p.w;ctx.stroke();
+      return p.age<p.life&&p.y<H+20});
+    ps=ps.concat(born);ctx.globalCompositeOperation="source-over";
+    if(ps.length||arcs.length||flash>0)raf=requestAnimationFrame(frame);else{raf=0;ctx.clearRect(0,0,W,H)}}
+  return function(kind,n,big){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;ensure();
+    const bursts=Math.min(5,Math.max(1,Math.ceil(n/3)));
+    for(let i=0;i<bursts;i++)setTimeout(()=>{const last=i===bursts-1;
+      if(kind==="iron")iron(rnd(W*.2,W*.8),40+n*5,big&&last?1.15:1);else zap(rnd(W*.25,W*.75),rnd(H*.3,H*.6),big&&last);
+      document.dispatchEvent(new CustomEvent("fwburst",{detail:{big:!!(big&&last)}}));if(!raf)raf=requestAnimationFrame(frame)},i*(kind==="iron"?320:240))}})();
 /* set / exercise / day outcomes used for the fireworks */
 function exDone(s,e){const a=s.sets[e.id]||[];return a.length>0&&a.every(x=>x.d)}
 function exOver(s,e){const a=s.sets[e.id]||[];return a.length>e.sets||a.some(x=>x.d&&+x.v>e.target)}
@@ -376,6 +416,13 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     ratchet:()=>{noiseHit(0.011,4700,3600,0.26,6,"bandpass",0.1);tone(1900,0,0.01,"square",0.03)},
     spring:()=>{tone(210,0,0.42,"triangle",0.16,150);tone(420,0,0.3,"sine",0.05,300);[0.06,0.13,0.2].forEach((t,i)=>tone(260-i*25,t,0.07,"sine",0.06-i*0.015))},
     bell:()=>{[[1568,0],[2093,0.08]].forEach(([f,t])=>{tone(f,t,0.9,"sine",0.11);tone(f*2.76,t,0.4,"sine",0.025)})},
+    /* iron flowers: the clang of the strike, then molten drops sizzling and crackling as they fall;
+       electric arcs: a buzzing zap with crackle */
+    ironfl:()=>{tone(230,0,.7,"triangle",.12);tone(612,0,.55,"sine",.05);tone(1490,0,.3,"sine",.02);noiseHit(.05,2500,900,.35,1.5,"bandpass",.1);
+      noiseHit(1.1,9000,5000,.05,.5,"highpass",.25,.08);for(let i=0;i<9;i++)noiseHit(.012,6500,4200,.22,5,"bandpass",.1,.15+Math.random()*1)},
+    ironfl2:()=>{S.ironfl();setTimeout(()=>S.ironfl(),300)},
+    zap:()=>{tone(120,0,.28,"sawtooth",.08,55);tone(240,0,.2,"square",.03,90);noiseHit(.25,7000,3000,.12,.8,"highpass",.05);for(let i=0;i<6;i++)noiseHit(.01,8000,6000,.25,6,"bandpass",.1,Math.random()*.3)},
+    zap2:()=>{S.zap();setTimeout(()=>S.zap(),160)},
     sparks:()=>{noiseHit(0.5,8000,2500,0.12,0.9,"highpass",0.05);for(let i=0;i<6;i++)noiseHit(0.012,6000,4000,0.25,5,"bandpass",0.1,0.05+Math.random()*0.4)},
     sparks2:()=>{S.sparks();tone(110,0,0.3,"sine",0.3,60);setTimeout(()=>S.sparks(),180)},
     /* party popper: a sharp pop and paper streamers rustling down */
@@ -414,7 +461,8 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
     interior:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
     beui:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft",fw:"sparkle",bigfw:"glint2"}};
-  const defOf=id=>{const k=SKIN_SFX[document.documentElement.getAttribute("data-skin")];return k&&k[id]||SDEF[id]};
+  const THEME_SFX={mech:{fw:"ironfl",bigfw:"ironfl2"},"mech-light":{fw:"zap",bigfw:"zap2"}};
+  const defOf=id=>{const r=document.documentElement,th=THEME_SFX[r.getAttribute("data-theme")],k=SKIN_SFX[r.getAttribute("data-skin")];return th&&th[id]||k&&k[id]||SDEF[id]};
   const pickOf=id=>{const k=defOf(id);return S[k]?k:SDEF[id]};
   function playRaw(k){if(on&&S[k])try{S[k]()}catch(e){}}
   function play(id){playRaw(pickOf(id))}

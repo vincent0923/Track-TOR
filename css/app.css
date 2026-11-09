@@ -1107,3 +1107,38 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
   box-shadow:0 0 0 2px #15171A,0 0 0 3px #4A4F55,0 3px 0 3px #0E0F11,0 5px 8px 3px rgba(0,0,0,.5),inset 0 -2px 3px rgba(0,0,0,.25);transition:transform .08s,box-shadow .08s}
 :root[data-skin="mech"] :is(.iconbtn,.privbtn):active{transform:translateY(2px);box-shadow:0 0 0 2px #15171A,0 0 0 3px #4A4F55,0 1px 0 3px #0E0F11,0 2px 4px 3px rgba(0,0,0,.5),inset 0 2px 4px rgba(0,0,0,.35)}
 :root[data-skin="mech"] .iconbtn.flagbtn{color:#24272B}
+
+/* ---------- Machine light: brushed aluminium panels, black engraving, electric-blue actions and lamps ---------- */
+:root[data-theme="mech-light"]{
+  --bg:#D3D7DB; --surface:#E8EBEE; --sunk:#C7CCD1; --ink:#1C2024; --muted:#59616A; --line:#AEB5BC;
+  --push:#E87511; --push-soft:#F6E1CF; --pull:#1E7BFF; --pull-soft:#D7E6FB; --ok:#16A34A; --ok-soft:#D6EEDD; --warn:#0E5FD8; --sleep:#7A5CC8; --cta:#1E7BFF; --on-cta:#FFFFFF;
+  --plate:linear-gradient(180deg,#F1F3F5,#DDE1E5); --screw:radial-gradient(circle,#F4F6F8 0 1.6px,#9AA2AA 2.2px,#5D656D 2.8px,transparent 3.2px);
+  --key:linear-gradient(180deg,#F7F8F9,#D9DDE1); --key-side:#8E959C; color-scheme:light}
+:root[data-theme="mech-light"] #pane-diet{--intake:#1C2024;--burn:#E87511;--protein:#1E7BFF;--gain:#16A34A;--loss:#D9342B;--dslate:#59616A;--dtotal:#D3D7DB}
+:root[data-theme="mech-light"] body{background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,rgba(0,0,0,.025) 0 1px,transparent 1px 4px)}
+:root[data-theme="mech-light"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat){border-color:#9AA2AA;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(0,0,0,.08),0 2px 5px rgba(40,50,60,.22)}
+:root[data-theme="mech-light"] :is(h1,.tag,.caltitle b){text-shadow:0 1px 0 rgba(255,255,255,.8)}
+:root[data-theme="mech-light"] :is(.stat b,.gh .gp,.gtile b,.chartbox h3 span){text-shadow:none}
+:root[data-theme="mech-light"] :is(nav.tabs,.subtabs),:root[data-theme="mech-light"] .maseg{background:#AEB5BC;box-shadow:inset 0 2px 5px rgba(30,40,50,.45),0 1px 0 rgba(255,255,255,.7)}
+:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button,:root[data-theme="mech-light"] .maseg button{border-color:#8E959C!important;color:var(--muted);box-shadow:0 5px 0 var(--key-side),inset 0 1px 0 #fff}
+:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-theme="mech-light"] .maseg button[aria-pressed="true"]{background:linear-gradient(180deg,#D5DADF,#E3E7EA);color:var(--ink);box-shadow:0 1px 0 var(--key-side),inset 0 2px 4px rgba(30,40,50,.3)}
+:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button::after{background:#9DB4D3}
+:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button[aria-selected="true"]::after{background:var(--cta);box-shadow:0 0 7px var(--cta),0 0 2px #fff inset}
+:root[data-theme="mech-light"] :is(.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.dp-f button,.addset,.gi,.gchip2,.calnav){border-color:#8E959C;box-shadow:0 4px 0 var(--key-side),inset 0 1px 0 #fff}
+:root[data-theme="mech-light"] :is(.iconbtn,.privbtn){box-shadow:0 0 0 2px #6E767E,0 0 0 3px #C4CAD0,0 3px 0 3px #5D656D,0 5px 8px 3px rgba(30,40,50,.3),inset 0 -2px 3px rgba(0,0,0,.18)}
+:root[data-theme="mech-light"] :is(.iconbtn,.privbtn):active{box-shadow:0 0 0 2px #6E767E,0 0 0 3px #C4CAD0,0 1px 0 3px #5D656D,0 2px 4px 3px rgba(30,40,50,.3),inset 0 2px 4px rgba(0,0,0,.3)}
+:root[data-theme="mech-light"] :is(.field input,.field textarea,.field select,.step){border-color:#8E959C;background:#F4F6F8;color:var(--warn);box-shadow:inset 0 2px 4px rgba(30,40,50,.25)}
+:root[data-theme="mech-light"] .step input{color:var(--warn);-webkit-text-fill-color:var(--warn)}
+:root[data-theme="mech-light"] .set{background:#DCE0E4;box-shadow:inset 0 1px 3px rgba(30,40,50,.2)}
+:root[data-theme="mech-light"] .set.ticked{background:#D3E7DA}
+:root[data-theme="mech-light"] .chk{border-color:#6E767E;background:radial-gradient(circle,#2A2F34 0 28%,#C3C9CF 30% 40%,#E4E7EA 42% 100%)!important;box-shadow:0 2px 4px rgba(30,40,50,.35),inset 0 1px 0 #fff}
+:root[data-theme="mech-light"] .bar{background:#BFC5CB;box-shadow:inset 0 2px 4px rgba(30,40,50,.35)}
+:root[data-theme="mech-light"] .toast{background:#1C2024;color:#9CC8FF;border-color:#59616A}
+:root[data-theme="mech-light"] .cald.xonly{color:#fff}
+:root[data-theme="mech-light"] .caltoday{color:#fff;box-shadow:0 4px 0 #0F6B31}
+:root[data-theme="mech-light"] .lever{border-color:#6E767E;background:var(--screw) 5px 5px/7px 7px no-repeat,var(--screw) calc(100% - 5px) calc(100% - 5px)/7px 7px no-repeat,linear-gradient(180deg,#EEF1F3,#CDD2D7);box-shadow:inset 0 1px 0 #fff,0 3px 6px rgba(30,40,50,.3)}
+:root[data-theme="mech-light"] .lever .slot{background:#2A2F34}
+:root[data-theme="mech-light"] .lever .ball{background:radial-gradient(circle at 35% 30%,#BFE0FF 0 12%,var(--cta) 42%,#0A3F99 100%)}
+:root[data-theme="mech-light"] .lamp.ready{background:#3B8CFF;box-shadow:0 0 6px #3B8CFF}
+:root[data-theme="mech-light"] .lamp.busy{background:#5AB4FF;box-shadow:0 0 10px #5AB4FF}
+:root[data-theme="mech-light"] .lamp{background:#8A97A6}
