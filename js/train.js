@@ -153,7 +153,7 @@ const CAL_FOLD_K=LS+"-calfold";
 try{calState.fold=localStorage.getItem(CAL_FOLD_K)==="1"}catch(e){}
 /* month calendar: trained days are filled circles (push orange, pull blue, both split, extra only green),
    today burns green, the chosen day gets a ring; the +/− square folds the grid away */
-/* the calendar mark left of the month: a calendar with a clock; the toy, retro and craft looks use their own set's calendar */
+/* the calendar mark inside the Today button: a calendar with a clock; the toy, retro and craft looks use their own set's calendar */
 const CAL_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M16 2v4M8 2v4M3 10h5"/><path d="M17.5 17.5 16 16.3V14"/><circle cx="16" cy="16" r="6"/></svg>';
 function calendarHtml(){
   const td=today(), m=calState.month||td.slice(0,7);
@@ -167,9 +167,9 @@ function calendarHtml(){
   let h='<section class="cal'+(fold?" folded":"")+'" aria-label="'+T("训练日历","Training calendar")+'"><div class="calh">'
     +'<button type="button" class="calfold rk" data-cal-fold aria-expanded="'+!fold+'" aria-label="'+ft+'"></button>'
     +'<div class="calmon"><button type="button" class="calnav" data-cal-nav="-1" aria-label="'+T("上个月","Previous month")+'">‹</button>'
-    +'<button type="button" class="caltitle" data-cal-fold aria-expanded="'+!fold+'" aria-label="'+mname+' '+y+'，'+ft+'"><span class="calic">'+(skinIc("cal")||CAL_IC)+'</span><span class="calmy"><b>'+mname+'</b><small>'+y+'</small></span></button>'
+    +'<button type="button" class="caltitle" data-cal-fold aria-expanded="'+!fold+'" aria-label="'+mname+' '+y+'，'+ft+'"><span class="calmy"><b>'+mname+'</b><small>'+y+'</small></span></button>'
     +'<button type="button" class="calnav" data-cal-nav="1" aria-label="'+T("下个月","Next month")+'"'+(m>=td.slice(0,7)?" disabled":"")+'>›</button></div>'
-    +'<button type="button" class="caltoday" data-cal-today aria-label="'+T("今天：点一下定位，长按打开加练","Today: tap to jump there, hold to add extra practice")+'">'+T("今天","Today")+'</button>'
+    +'<button type="button" class="caltoday" data-cal-today aria-label="'+T("今天：点一下定位，长按打开加练","Today: tap to jump there, hold to add extra practice")+'"><span class="calic">'+(skinIc("cal")||CAL_IC)+'</span>'+T("今天","Today")+'</button>'
     +'</div>';
   if(fold)return h+'</section>';
   h+='<div class="calg">'+wk.map(w=>'<span class="calw">'+w+'</span>').join("");

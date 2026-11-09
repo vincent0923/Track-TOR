@@ -1262,7 +1262,9 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 /* calendar banner: fold on the left, the month with ‹ › hugging it in the middle, Today on its own at the right */
 .calmon{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:2px}
 .calmon .caltitle{flex:0 1 auto;display:flex;align-items:center;gap:7px;padding:0 4px}
-.caltitle .calic{display:grid;place-items:center;flex:none;color:var(--ok)}
-.caltitle .calic svg{width:24px;height:24px}
 .caltitle .calmy{display:grid;justify-items:center}
 .calh .caltoday{margin-left:10px}
+.calh .caltoday{display:inline-flex;align-items:center;gap:5px;padding-left:9px}
+.caltoday .calic{display:grid;place-items:center;flex:none}
+.caltoday .calic svg{width:17px;height:17px;display:block}
+:root[data-skin="toy"] .caltoday{--icw:transparent;--icf:rgba(255,255,255,.35)}
