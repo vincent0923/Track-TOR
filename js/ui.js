@@ -128,6 +128,12 @@ function flameOn(sel,k,green){
     parts.push({x,y:base+Math.random()*4*k,vx:(Math.random()-.5)*.5*k,vy:-(0.245+Math.random()*0.315)*(0.7+mid*0.6)*k,age:0,life:26+Math.random()*22*(0.6+mid),r:(1.225+Math.random()*1.4*(0.6+mid))*Math.max(k,.7),seed:Math.random()*9});
   }
   function col(t,a){ /* white-hot core -> flame colour -> deep edge */
+    if(!green&&document.documentElement.getAttribute("data-theme")==="mech-light"){ /* a blue gas flame for the electric-blue machine look */
+      if(t<.12)return "rgba(225,245,255,"+a+")";
+      if(t<.38)return "rgba(110,190,255,"+a+")";
+      if(t<.7)return "rgba(40,120,255,"+a+")";
+      return "rgba(20,50,180,"+a*.8+")";
+    }
     if(green){
       if(t<.12)return "rgba(225,255,215,"+a+")";
       if(t<.38)return "rgba(130,240,150,"+a+")";

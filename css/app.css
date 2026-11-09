@@ -1149,3 +1149,37 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
 :root[data-skin="mech"] .iconbtn.flagbtn{color:#D9DCDF}
 :root[data-theme="mech-light"] :is(.iconbtn,.privbtn),:root[data-theme="mech-light"] .iconbtn.flagbtn{color:#2A2F34;
   background-image:radial-gradient(circle at 40% 32%,rgba(255,255,255,.5),rgba(255,255,255,0) 60%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)'/%3E%3C/svg%3E"),radial-gradient(circle at 40% 32%,#E9ECEE 0,#D3D8DC 60%,#C3C9CE 100%)}
+
+/* ---------- the 练 (next session) button follows the look; the particle flames stay on top ---------- */
+:root[data-skin] .tbtn.next{animation:none;text-shadow:none;background-image:none}
+/* toy: a raised plastic key in the theme's red, sinks when pressed */
+:root[data-skin="toy"] .tbtn.next{background:var(--push);color:#fff;border-radius:14px;padding:8px 16px;box-shadow:0 5px 0 var(--push-deep),0 10px 14px -6px rgba(40,28,10,.45),inset 0 2px 0 rgba(255,255,255,.3);transition:transform .3s var(--spring),box-shadow .3s var(--spring)}
+:root[data-skin="toy"] .tbtn.next:active{transform:translateY(4px);box-shadow:0 1px 0 var(--push-deep),inset 0 2px 0 rgba(255,255,255,.3);transition-duration:.06s}
+:root[data-theme="toy-cyber"] .tbtn.next{color:#180E6A}
+/* retro: a lit block that inverts when pressed, blinking like a cursor */
+:root[data-skin="retro"] .tbtn.next{background:var(--cta);color:var(--on-cta);border:2px solid var(--ink);box-shadow:0 0 10px color-mix(in srgb,var(--cta) 60%,transparent);text-transform:uppercase}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="retro"] .tbtn.next{animation:retroBlink 1.1s steps(1,end) infinite}}
+@keyframes retroBlink{50%{box-shadow:0 0 2px color-mix(in srgb,var(--cta) 30%,transparent)}}
+:root[data-skin="retro"] .tbtn.next:active{background:var(--bg);color:var(--ink)}
+/* craft: an orange paper tag with stitching, set a little crooked */
+:root[data-skin="craft"] .tbtn.next{background:var(--push);color:#FFF6EA;border-radius:6px;padding:8px 15px;transform:rotate(-2.5deg);outline:1.5px dashed rgba(255,246,234,.7);outline-offset:-5px;box-shadow:0 2px 0 #B8471F,0 8px 14px -6px rgba(70,45,20,.45)}
+:root[data-skin="craft"] .tbtn.next:active{transform:rotate(0) translateY(1px)}
+/* minimal: a black pill */
+:root[data-skin="minimal"] .tbtn.next{background:var(--ink);color:#F5F4F0;border-radius:999px;box-shadow:none}
+:root[data-skin="minimal"] .tbtn.next:active{transform:scale(.96)}
+/* Interior: a dark cap on its base plate */
+:root[data-skin="interior"] .tbtn.next{background:var(--thumb);color:var(--on-thumb);border-radius:9px;box-shadow:0 2px 0 var(--plate),0 1px 2px rgba(28,25,23,.3),inset 0 1px 0 rgba(255,255,255,.12);transition:transform .28s var(--spr),box-shadow .28s var(--spr)}
+:root[data-skin="interior"] .tbtn.next:active{transform:translateY(2px);box-shadow:0 0 0 var(--plate);transition-duration:.05s}
+/* beUI: a gradient pill with a soft breathing glow */
+:root[data-skin="beui"] .tbtn.next{background:var(--grad);color:#fff;border-radius:999px;box-shadow:0 6px 20px -8px color-mix(in srgb,var(--cta) 70%,transparent)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="beui"] .tbtn.next{animation:beuiGlow 2.2s ease-in-out infinite}}
+@keyframes beuiGlow{50%{box-shadow:0 8px 28px -6px color-mix(in srgb,var(--push) 80%,transparent)}}
+:root[data-skin="beui"] .tbtn.next:active{transform:scale(.94)}
+/* machine: an illuminated industrial START button in a guard ring; it sinks when pressed */
+:root[data-skin="mech"] .tbtn.next{border:0;border-radius:10px;padding:8px 16px;color:#1A1205;letter-spacing:.06em;
+  background:radial-gradient(ellipse at 50% 30%,#FFD2A8 0,var(--cta) 45%,color-mix(in srgb,var(--cta) 60%,#000) 100%);
+  box-shadow:0 0 0 2px #15171A,0 0 0 4px #5A5F65,0 0 0 5px #1A1C1F,0 5px 0 5px #0E0F11,0 0 18px 4px color-mix(in srgb,var(--cta) 45%,transparent),inset 0 2px 1px rgba(255,255,255,.45);
+  transition:transform .09s,box-shadow .09s}
+:root[data-skin="mech"] .tbtn.next:active{transform:translateY(4px);box-shadow:0 0 0 2px #15171A,0 0 0 4px #5A5F65,0 0 0 5px #1A1C1F,0 1px 0 5px #0E0F11,0 0 10px 2px color-mix(in srgb,var(--cta) 35%,transparent),inset 0 3px 6px rgba(0,0,0,.35)}
+:root[data-theme="mech-light"] .tbtn.next{color:#fff;background:radial-gradient(ellipse at 50% 30%,#BFE0FF 0,var(--cta) 45%,#0A3F99 100%);box-shadow:0 0 0 2px #5D656D,0 0 0 4px #C4CAD0,0 0 0 5px #6E767E,0 5px 0 5px #4A525A,0 0 18px 4px rgba(30,123,255,.4),inset 0 2px 1px rgba(255,255,255,.5)}
+:root[data-theme="mech-light"] .tbtn.next:active{box-shadow:0 0 0 2px #5D656D,0 0 0 4px #C4CAD0,0 0 0 5px #6E767E,0 1px 0 5px #4A525A,0 0 10px 2px rgba(30,123,255,.3),inset 0 3px 6px rgba(0,0,0,.3)}
