@@ -1435,3 +1435,16 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 .hatbox.santa .santa{opacity:1;animation:santaIn .5s cubic-bezier(.3,1.6,.5,1)}
 @keyframes santaIn{from{transform:scale(.6) translateY(6px)}to{transform:none}}
 @media (prefers-reduced-motion:reduce){.hatbox.inflate .upright{animation:none;transform:none}}
+/* calendar: a training day with extra practice too is split. The session colour takes two thirds, the extra-practice
+   green the last third (a diagonal cut at 59% leaves a third of the area); push + pull + extra are three equal thirds.
+   The corner dot is then not needed. */
+:root{--calmix:72%}
+:root[data-skin]{--calmix:100%}
+.cald.wx.push{background:linear-gradient(135deg,color-mix(in srgb,var(--push) var(--calmix),transparent) 59%,color-mix(in srgb,var(--xc,var(--ok)) var(--calmix),transparent) 59%)!important}
+.cald.wx.pull{background:linear-gradient(135deg,color-mix(in srgb,var(--pull) var(--calmix),transparent) 59%,color-mix(in srgb,var(--xc,var(--ok)) var(--calmix),transparent) 59%)!important}
+.cald.wx.both{background:linear-gradient(135deg,color-mix(in srgb,var(--push) var(--calmix),transparent) 40.8%,color-mix(in srgb,var(--pull) var(--calmix),transparent) 40.8% 59.2%,color-mix(in srgb,var(--xc,var(--ok)) var(--calmix),transparent) 59.2%)!important}
+.cald.wx .calm i.xp.badge{display:none}
+/* the default looks' moss push is too close to their green: extra practice shows in mist there */
+:root:not([data-skin]){--xc:#8FA3AB}
+:root[data-theme="dark"]{--xc:#C9D3D6}
+:root:not([data-skin]) .cald.xonly{background:color-mix(in srgb,var(--xc) 72%,transparent)}

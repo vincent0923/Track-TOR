@@ -190,7 +190,7 @@ function calendarHtml(){
     const i=c-lead+1;
     if(i<1||i>days){h+='<span class="cald out">'+(i<1?prevDays+i:i-days)+'</span>';continue}
     const d=m+"-"+pad(i), f=dayHas(d), fut=d>td, ses=f.push||f.pull;
-    const fill=f.push&&f.pull?" both":f.push?" push":f.pull?" pull":f.x?" xonly":"";
+    const fill=(f.push&&f.pull?" both":f.push?" push":f.pull?" pull":f.x?" xonly":"")+(ses&&f.x?" wx":"");
     h+='<button type="button" class="cald'+fill+(d===td?" today":"")+(d===calState.sel?" sel":"")+'" data-cal="'+d+'"'+(fut?" disabled":"")
       +' aria-pressed="'+(d===calState.sel)+'" aria-label="'+md(d)+'">'+i
       +'<span class="calm">'+(f.push?'<i class="push"></i>':'')+(f.pull?'<i class="pull"></i>':'')+(f.x?'<i class="xp'+(ses?' badge':'')+'"></i>':'')+'</span></button>';
