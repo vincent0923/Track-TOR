@@ -974,11 +974,17 @@ svg.ic-retro{shape-rendering:crispEdges}
 /* chart carousel: a plain stack on most looks; Interior turns it into a row you swipe through */
 .chcar{display:contents}
 .cdots{display:none}
-:root[data-skin="interior"] .chcar{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;margin-inline:-2px;padding:2px 2px 6px}
-:root[data-skin="interior"] .chcar::-webkit-scrollbar{display:none}
-:root[data-skin="interior"] .chcar>.chartbox{flex:0 0 100%;min-width:0;margin:0;scroll-snap-align:center;scroll-snap-stop:always}
-:root[data-skin="interior"] .chcar svg.chart{touch-action:pan-x pan-y}
-:root[data-skin="interior"] .cdots{display:flex;justify-content:center;gap:3px;margin-top:-4px}
+:root[data-skin="interior"] .chcar{display:grid;padding:2px 2px 30px;margin-inline:-2px}
+:root[data-skin="interior"] .chcar>.chartbox{grid-area:1/1;min-width:0;margin:0;transform-origin:50% 100%;
+  transform:translateY(calc(var(--i,0)*13px)) scale(calc(1 - var(--i,0)*.045));z-index:calc(10 - var(--i,0));
+  transition:transform .42s cubic-bezier(.3,1.25,.5,1),opacity .3s,box-shadow .3s;touch-action:pan-y}
+:root[data-skin="interior"] .chcar>.chartbox:not(.top){pointer-events:none;box-shadow:0 1px 2px rgba(28,25,23,.06)}
+:root[data-skin="interior"] .chcar>.chartbox:not(.top)>*{visibility:hidden}
+:root[data-skin="interior"] .chcar>.chartbox.deep{opacity:0}
+:root[data-skin="interior"] .chcar>.chartbox.drag{transition:none;cursor:grabbing}
+:root[data-skin="interior"] .chcar>.chartbox.fly{transition:transform .26s ease-in,opacity .26s;opacity:0}
+:root[data-skin="interior"] .chcar svg.chart{touch-action:pan-y}
+:root[data-skin="interior"] .cdots{display:flex;justify-content:center;gap:3px;margin-top:-6px}
 :root[data-skin="interior"] .cdots button{display:grid;place-items:center;width:22px;height:22px;border:0;background:none;padding:0;cursor:pointer}
 :root[data-skin="interior"] .cdots i{display:block;width:6px;height:5px;border-radius:1.5px;background:var(--ink);opacity:.22;transition:width .3s var(--spr),opacity .2s}
 :root[data-skin="interior"] .cdots button[aria-selected="true"] i{width:16px;opacity:1}
@@ -1364,3 +1370,6 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
   91%{clip-path:inset(40% 0 52% 0);transform:translateX(-9px)}
   92.5%{clip-path:inset(100% 0 0 0)}}
 @keyframes cpRed{0%,84%,100%{opacity:0}85%{opacity:.32}86.5%{opacity:0}88%{opacity:.45}89%{opacity:.1}90.5%{opacity:.25}92%{opacity:0}}
+.chartbox h3{justify-content:flex-start;column-gap:8px}
+.chartbox h3:has(.chic) .num{flex:0 1 auto}
+.chartbox h3>button:last-child{margin-left:auto}

@@ -583,10 +583,12 @@ async function withProgress(btn, work){
 }
 
 /* ---------- Interior extras ----------
-   Charts › Health and Strength: the charts sit in a row you swipe through one at a time (snap carousel), with a
-   bar per chart under it; tap a chart to read a day, swipe to turn. On the other looks the row is laid out
-   as before, top to bottom. */
+   Charts › Health and Strength: on the Interior look the charts are a stacked deck. The top card shows; the next two
+   peek out behind it. Fling it left or right and it flies off and goes to the back; a bar per chart under the deck
+   shows which is on top, and tapping a bar brings that chart to the top. Tap a chart to read a day. On the other
+   looks the charts are laid out as before, top to bottom. */
 (function(){
+  const on=()=>document.documentElement.getAttribute("data-skin")==="interior";
   [["pane-health",""],["pane-strength","#cbHeat"]].forEach(([id,skip])=>{
     const pane=document.getElementById(id);if(!pane)return;
     const boxes=[...pane.querySelectorAll(":scope>.chartbox")].filter(b=>!skip||!b.matches(skip));if(boxes.length<2)return;
@@ -594,9 +596,25 @@ async function withProgress(btn, work){
     const dots=document.createElement("div");dots.className="cdots";dots.setAttribute("role","tablist");
     dots.innerHTML=boxes.map((b,i)=>'<button type="button" role="tab" aria-label="'+(i+1)+' / '+boxes.length+'" aria-selected="'+(i===0)+'"><i></i></button>').join("");
     car.after(dots);
-    const step=()=>{const a=car.children[0],b=car.children[1];return b?b.offsetLeft-a.offsetLeft:car.clientWidth},cur=()=>Math.round(car.scrollLeft/Math.max(1,step()));
-    car.addEventListener("scroll",()=>{const k=cur();dots.querySelectorAll("button").forEach((d,i)=>d.setAttribute("aria-selected",String(i===k)))},{passive:true});
-    dots.addEventListener("click",e=>{const d=e.target.closest("button");if(!d)return;const i=[...dots.children].indexOf(d);car.scrollTo({left:i*step(),behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})});
+    let order=boxes.map((b,i)=>i);
+    const paint=()=>{const d=on();order.forEach((bi,pos)=>{const b=boxes[bi];b.style.setProperty("--i",pos);b.classList.toggle("top",pos===0);b.classList.toggle("deep",pos>2);
+        if(d&&pos)b.setAttribute("aria-hidden","true");else b.removeAttribute("aria-hidden")});
+      dots.querySelectorAll("button").forEach((d,i)=>d.setAttribute("aria-selected",String(i===order[0])))};
+    paint();document.addEventListener("themeicons",paint);
+    const toTop=i=>{while(order[0]!==i)order.push(order.shift());paint()};
+    dots.addEventListener("click",e=>{const d=e.target.closest("button");if(!d)return;toTop([...dots.children].indexOf(d))});
+    /* fling the top card */
+    let sx=0,sy=0,dx=0,drag=false,pid=null,card=null;
+    car.addEventListener("pointerdown",e=>{if(!on()||e.target.closest("button,select,input,.maseg"))return;card=boxes[order[0]];if(!card.contains(e.target))return;
+      sx=e.clientX;sy=e.clientY;dx=0;drag=false;pid=e.pointerId});
+    car.addEventListener("pointermove",e=>{if(pid!==e.pointerId||!card)return;const mx=e.clientX-sx,my=e.clientY-sy;
+      if(!drag){if(Math.abs(mx)>12&&Math.abs(mx)>Math.abs(my)*1.3){drag=true;card.classList.add("drag");const x=card.querySelector(".xh");if(x)x.setAttribute("visibility","hidden")}else return}
+      dx=mx;card.style.transform="translateX("+dx+"px) rotate("+(dx/22)+"deg)"});
+    const end=()=>{if(!card){pid=null;return}const c=card;card=null;pid=null;if(!drag)return;c.classList.remove("drag");
+      if(Math.abs(dx)>90){c.classList.add("fly");c.style.transform="translateX("+(dx>0?130:-130)+"%) rotate("+(dx>0?16:-16)+"deg)";if(window.sfxRaw)window.sfxRaw("soft");
+        setTimeout(()=>{c.classList.remove("fly");c.style.transform="";order.push(order.shift());paint()},260)}
+      else c.style.transform=""};
+    car.addEventListener("pointerup",end);car.addEventListener("pointercancel",end);
   });
 })();
 /* hold to confirm (Interior): deleting a day's food logs or a record row asks you to hold the button;
