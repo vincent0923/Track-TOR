@@ -11,6 +11,7 @@ const ASSETS = [
   "./js/core.js",
   "./js/zzfx.js",
   "./js/sfxr.js",
+  "./js/confetti.js",
   "./js/icons.js",
   "./js/ui.js",
   "./js/train.js",
@@ -28,7 +29,8 @@ const ASSETS = [
   "./fonts/vt323.woff2",
   "./fonts/bricolage-wght.woff2",
   "./fonts/geist-wght.woff2",
-  "./fonts/geist-mono-wght.woff2"
+  "./fonts/geist-mono-wght.woff2",
+  "./fonts/share-tech-mono.woff2"
 ];
 
 self.addEventListener("install", (e) => {

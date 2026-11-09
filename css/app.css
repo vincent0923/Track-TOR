@@ -469,16 +469,6 @@ nav.tabs .t-me svg{width:24px;height:24px}
 /* the Diet tab shows the background table pull as a fill in the accent colour */
 body .subtabs button[data-prog][data-prog]{background-image:linear-gradient(90deg,color-mix(in srgb,var(--burn) 35%,transparent) var(--p),transparent var(--p))}
 
-/* Profile › Sound effects */
-#sfxPanel{display:grid;gap:12px}
-.sfxg h4{margin:0 0 4px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em}
-.sfxr{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:6px 8px;border-radius:8px}
-.sfxr span{min-width:0;font-size:14px}
-.sfxr.changed{background:color-mix(in srgb,var(--cta) 14%,transparent)}
-.sfxr select{font:inherit;font-size:14px;padding:5px 6px;border:1px solid var(--line);border-radius:8px;background:var(--sunk);color:var(--ink);max-width:120px}
-.sfxp{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--cta);padding:0;cursor:pointer}
-.sfxp svg{width:13px;height:13px}
-
 /* capsule buttons: an icon or words on the left, + / − on the right */
 .cap{display:inline-flex;align-items:stretch;height:36px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--burn);padding:0;overflow:hidden;font:inherit;cursor:pointer;flex:none}
 button.cap>span,.cap>button{display:grid;place-items:center;padding:0 10px;border:0;background:none;color:inherit;font:inherit;cursor:pointer;margin:0}
@@ -569,20 +559,20 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
 :root[data-skin="toy"] .tag{font-stretch:105%}
 
 /* sunken: inputs, set rows, steppers, bars */
-:root[data-skin="toy"] :is(.field input,.field textarea,.field select,.sfxr select,.step,.set,.dsub,.lockbar){border-color:transparent;background:var(--sunk);box-shadow:var(--sink)}
+:root[data-skin="toy"] :is(.field input,.field textarea,.field select,.step,.set,.dsub,.lockbar){border-color:transparent;background:var(--sunk);box-shadow:var(--sink)}
 :root[data-skin="toy"] .set.ticked{background:var(--ok-soft)}
 :root[data-skin="toy"] :is(.bar,.prog){background:var(--track);box-shadow:inset 0 2px 3px var(--pit)}
 :root[data-skin="toy"] .bar i{box-shadow:inset 0 2px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.15)}
 
 /* raised white keys */
-:root[data-skin="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.sfxp,.dp-f button,.cap,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile){
+:root[data-skin="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.dp-f button,.cap,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile){
   border:0;background:var(--key);box-shadow:0 4px 0 var(--side),var(--drop);transform:translateY(0);
   transition:transform .32s var(--spring),box-shadow .32s var(--spring)}
-:root[data-skin="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.sfxp,.dp-f button,.cap,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile):active{
+:root[data-skin="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.dp-f button,.cap,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile):active{
   transform:translateY(3px);box-shadow:0 1px 0 var(--side),0 2px 3px -2px rgba(40,28,10,.35);transition-duration:.06s}
 :root[data-skin="toy"] .gi{background:color-mix(in srgb,var(--g) 16%,var(--key));box-shadow:0 3px 0 color-mix(in srgb,var(--g) 35%,var(--side)),var(--drop)}
 :root[data-skin="toy"] .gchip2.on{background:color-mix(in srgb,var(--g) 16%,var(--key));box-shadow:0 4px 0 var(--g),var(--drop)}
-:root[data-skin="toy"] .btn.recedit,:root[data-skin="toy"] .sfxp{color:var(--cta-ink)}
+:root[data-skin="toy"] .btn.recedit{color:var(--cta-ink)}
 :root[data-skin="toy"] .cap .cap-r{border-left-color:var(--line)}
 :root[data-skin="toy"] .cap{margin-bottom:4px}
 
@@ -803,7 +793,7 @@ svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
 :root[data-skin="retro"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:var(--on-cta);text-shadow:none}
 :root[data-skin="retro"] .tpiece{background:var(--cta)}
 :root[data-skin="retro"] .subtabs .tpiece{background:var(--pull)}
-:root[data-skin="retro"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.calfold,.syncbtn.off,.gi,.sfxp,.dp-f button,.chk,.step,.field input,.field select,.field textarea,.sfxr select){background:transparent;border:1px solid var(--rule);box-shadow:none;color:var(--ink)}
+:root[data-skin="retro"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.calfold,.syncbtn.off,.gi,.dp-f button,.chk,.step,.field input,.field select,.field textarea){background:transparent;border:1px solid var(--rule);box-shadow:none;color:var(--ink)}
 :root[data-skin="retro"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn,.calfold,.syncbtn,.gi,.dp-f button,.chk):active{background:var(--ink);color:var(--bg);text-shadow:none}
 :root[data-skin="retro"] .btn:not(.ghost){background:var(--k,var(--cta));color:var(--on-cta);text-shadow:none;box-shadow:none}
 :root[data-skin="retro"] .syncbtn:not(.off):not(.done){background:var(--cta);color:var(--on-cta);box-shadow:none;animation:none;text-shadow:none}
@@ -865,10 +855,10 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="interior"] :is(h1,.tag,.stat b,.caltitle b,.gh .gp){font-weight:600;letter-spacing:-.02em}
 :root[data-skin="interior"] :is(button,input,select,textarea,summary):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 /* keys: a white cap on a stone base plate; pressing drops the cap onto the plate */
-:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.sfxp,.dp-f button,.gi,.addset,.gchip2){
+:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.dp-f button,.gi,.addset,.gchip2){
   border:1px solid var(--line);background:var(--surface);color:var(--ink);box-shadow:var(--cap),0 2px 0 var(--plate);transform:translateY(0);
   transition:transform .28s var(--spr),box-shadow .28s var(--spr),background .15s}
-:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.sfxp,.dp-f button,.gi,.addset,.gchip2):active{transform:translateY(2px);box-shadow:var(--cap),0 0 0 var(--plate);transition-duration:.05s}
+:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.dp-f button,.gi,.addset,.gchip2):active{transform:translateY(2px);box-shadow:var(--cap),0 0 0 var(--plate);transition-duration:.05s}
 :root[data-skin="interior"] .gi{color:var(--g)}
 :root[data-skin="interior"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,.caltoday){border:0;box-shadow:0 2px 0 color-mix(in srgb,var(--k,var(--cta)) 55%,#000),0 1px 2px rgba(28,25,23,.2);transform:translateY(0);transition:transform .28s var(--spr),box-shadow .28s var(--spr)}
 :root[data-skin="interior"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,.caltoday):active{transform:translateY(2px);box-shadow:0 0 0 transparent;transition-duration:.05s}
@@ -876,7 +866,7 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="interior"] .caltoday{background:var(--ok);border-color:var(--ok);color:var(--surface)}
 :root[data-skin="interior"] .syncbtn.done{background:var(--ok-soft);color:var(--ok);box-shadow:none}
 /* wells: inputs, steppers and set rows sit slightly below the surface */
-:root[data-skin="interior"] :is(.field input,.field textarea,.field select,.sfxr select,.step){border:1px solid var(--line);background:var(--surface);box-shadow:var(--well)}
+:root[data-skin="interior"] :is(.field input,.field textarea,.field select,.step){border:1px solid var(--line);background:var(--surface);box-shadow:var(--well)}
 :root[data-skin="interior"] .set{background:var(--sunk);box-shadow:inset 0 0 0 1px var(--line)}
 :root[data-skin="interior"] .set.ticked{background:var(--ok-soft);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ok) 30%,transparent)}
 :root[data-skin="interior"] .chk{border:1px solid var(--line);box-shadow:var(--cap),0 2px 0 var(--plate);transition:transform .28s var(--spr),box-shadow .28s var(--spr),background .15s}
@@ -942,13 +932,13 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="beui"] .subtabs button[aria-selected="true"]{color:#fff}
 @media (prefers-reduced-motion:no-preference){:root[data-skin="beui"] .tpiece.on{transition:transform .45s cubic-bezier(.32,1.3,.5,1),width .45s cubic-bezier(.32,1.3,.5,1)}}
 /* pills */
-:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.sfxp,.dp-f button,.addset,.gchip2){border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:999px;box-shadow:none;transition:transform .2s cubic-bezier(.32,1.3,.5,1),background .15s}
-:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn,.calfold,.syncbtn,.sfxp,.dp-f button,.gi,.chk):active{transform:scale(.94)}
+:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.dp-f button,.addset,.gchip2){border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:999px;box-shadow:none;transition:transform .2s cubic-bezier(.32,1.3,.5,1),background .15s}
+:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn,.calfold,.syncbtn,.dp-f button,.gi,.chk):active{transform:scale(.94)}
 :root[data-skin="beui"] .btn:not(.ghost):not(.recedit){border-radius:999px}
 :root[data-skin="beui"] :is(.syncbtn:not(.off):not(.done),.dp-f .dp-today){background:var(--grad);color:#fff;border:0;box-shadow:0 6px 20px -8px color-mix(in srgb,var(--cta) 70%,transparent);animation:none}
 :root[data-skin="beui"] .syncbtn.done{background:var(--ok-soft);color:var(--ok);box-shadow:none}
 :root[data-skin="beui"] .caltoday{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-:root[data-skin="beui"] :is(.field input,.field textarea,.field select,.sfxr select,.step){border:1px solid var(--line2);background:var(--sunk);box-shadow:none}
+:root[data-skin="beui"] :is(.field input,.field textarea,.field select,.step){border:1px solid var(--line2);background:var(--sunk);box-shadow:none}
 :root[data-skin="beui"] .set{background:var(--sunk)}
 :root[data-skin="beui"] .chk{border:1px solid var(--line2);border-radius:50%}
 :root[data-skin="beui"] .set.ticked .chk{background:var(--grad);border-color:transparent}
@@ -1017,3 +1007,86 @@ svg.ic-retro{shape-rendering:crispEdges}
 .goal{min-width:0}
 .gb .gr{overflow-wrap:anywhere}
 html,body{overflow-x:clip}
+
+/* ---------- Machine console: gunmetal plates with corner screws, engraved labels, safety-orange actions,
+   latching piano keys for tabs (the chosen one stays pressed in, with a lit lamp), bat-handle toggle switches
+   for ticking sets, knurled knobs for the small buttons, and a spring lever for Sync ---------- */
+@font-face{font-family:"Share Tech Mono";font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/share-tech-mono.woff2) format("woff2")}
+.leverbox{display:none}
+:root[data-theme="mech"]{
+  --bg:#25282C; --surface:#33373C; --sunk:#1E2124; --ink:#ECE8DF; --muted:#9BA1A7; --line:#474C52;
+  --push:#FF6A13; --push-soft:#4A2E1F; --pull:#3FA7D6; --pull-soft:#1F3A48; --ok:#5BD45B; --ok-soft:#1F3A22; --warn:#FFB000; --sleep:#B49CF2; --cta:#FF6A13; --on-cta:#17191B;
+  --plate:linear-gradient(180deg,#3B3F45,#30343A); --screw:radial-gradient(circle,#8A9096 0 1.6px,#4A4F55 2.2px,#1B1D20 2.8px,transparent 3.2px);
+  --key:linear-gradient(180deg,#4C5157,#3A3E44); --key-side:#141619; color-scheme:dark}
+:root[data-theme="mech"] #pane-diet{--intake:#ECE8DF;--burn:#FF8A3D;--protein:#B49CF2;--gain:#5BD45B;--loss:#FF5A4A;--dslate:#474C52;--dtotal:#2A2E33}
+:root[data-theme="mech"] .mask .sheet{--bad:#FF5A4A}
+:root[data-skin="mech"]{--f-num:"Share Tech Mono","Barlow Condensed",ui-monospace,monospace;--r:6px}
+:root[data-skin="mech"] body{background-color:var(--bg);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 4px)}
+/* plates: a bevelled panel with a screw in each corner */
+:root[data-skin="mech"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat){border:1px solid #17191C;border-radius:6px;
+  background:var(--screw) 7px 7px/7px 7px no-repeat,var(--screw) calc(100% - 7px) 7px/7px 7px no-repeat,var(--screw) 7px calc(100% - 7px)/7px 7px no-repeat,var(--screw) calc(100% - 7px) calc(100% - 7px)/7px 7px no-repeat,var(--plate);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.45)}
+:root[data-skin="mech"] :is(h1,.tag,.caltitle b){letter-spacing:.06em;text-transform:uppercase;text-shadow:0 -1px 0 rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.06)}
+:root[data-skin="mech"] :is(.stat b,.gh .gp,.gtile b,.chartbox h3 span){color:var(--warn);text-shadow:0 0 6px rgba(255,176,0,.35)}
+:root[data-skin="mech"] .gh .gp{color:var(--g)}
+/* latching keys: raised until chosen; the chosen one is pressed in and its lamp is lit */
+:root[data-skin="mech"] .tpiece{display:none!important}
+:root[data-skin="mech"] :is(nav.tabs,.subtabs){gap:6px;padding:6px;background:#1A1C1F;border-radius:8px;box-shadow:inset 0 2px 6px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.06)}
+:root[data-skin="mech"] :is(nav.tabs,.subtabs) button,:root[data-skin="mech"] .maseg button{position:relative;border:1px solid #17191C;border-radius:5px;background:var(--key);color:var(--muted);
+  box-shadow:0 5px 0 var(--key-side),inset 0 1px 0 rgba(255,255,255,.14);transform:translateY(-3px);transition:transform .12s cubic-bezier(.3,1.6,.5,1),box-shadow .12s,color .2s}
+:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-skin="mech"] .maseg button[aria-pressed="true"]{transform:translateY(1px);background:linear-gradient(180deg,#3A3E44,#33373C);color:var(--ink);box-shadow:0 1px 0 var(--key-side),inset 0 2px 4px rgba(0,0,0,.45)}
+:root[data-skin="mech"] :is(nav.tabs,.subtabs) button::after{content:"";position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:#4A2A18;box-shadow:inset 0 1px 1px rgba(0,0,0,.6)}
+:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"]::after{background:var(--cta);box-shadow:0 0 6px var(--cta),0 0 2px #fff inset}
+:root[data-skin="mech"] .maseg{border:0;gap:5px;padding:5px 5px 7px;background:#1A1C1F;border-radius:6px;overflow:visible;box-shadow:inset 0 2px 5px rgba(0,0,0,.7)}
+:root[data-skin="mech"] .maseg button{border:1px solid #17191C!important;font-size:12px;padding:4px 7px}
+/* knurled knobs for the small round buttons: a twist when pressed */
+:root[data-skin="mech"] :is(.iconbtn,.privbtn){border:1px solid #111;color:var(--ink);
+  background:radial-gradient(circle,#4E535A 0 54%,transparent 56%),repeating-conic-gradient(from 0deg,#5C6168 0 7deg,#2E3237 7deg 14deg);
+  box-shadow:0 3px 5px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+:root[data-skin="mech"] :is(.iconbtn,.privbtn):active{transform:rotate(35deg) scale(.96)}
+/* plain buttons: chunky push buttons */
+:root[data-skin="mech"] :is(.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.dp-f button,.addset,.gi,.gchip2,.calnav){border:1px solid #17191C;background:var(--key);color:var(--ink);box-shadow:0 4px 0 var(--key-side),inset 0 1px 0 rgba(255,255,255,.14);transition:transform .1s,box-shadow .1s}
+:root[data-skin="mech"] :is(.tbtn:not(.next),.cap,.btn,.calfold,.dp-f button,.addset,.gi,.gchip2,.caltoday):active{transform:translateY(3px);box-shadow:0 1px 0 var(--key-side),inset 0 2px 4px rgba(0,0,0,.4)}
+:root[data-skin="mech"] .btn:not(.ghost):not(.recedit){border:1px solid #17191C;box-shadow:0 4px 0 color-mix(in srgb,var(--k,var(--cta)) 45%,#000),inset 0 1px 0 rgba(255,255,255,.25)}
+:root[data-skin="mech"] .caltoday{border:1px solid #17191C;background:var(--ok);color:#10200F;box-shadow:0 4px 0 #1E5A1E}
+:root[data-skin="mech"] .gi{color:var(--g)}
+:root[data-skin="mech"] :is(.field input,.field textarea,.field select,.step){border:1px solid #111;background:#16181B;color:var(--warn);box-shadow:inset 0 2px 5px rgba(0,0,0,.7)}
+:root[data-skin="mech"] .step input{color:var(--warn);-webkit-text-fill-color:var(--warn)}
+:root[data-skin="mech"] .set{background:#26292D;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
+:root[data-skin="mech"] .set.ticked{background:#22301F}
+/* tick boxes become bat-handle toggle switches: down = not done, flicked up = done, with a green lamp */
+:root[data-skin="mech"] .chk{border:1px solid #111;border-radius:50%;background:radial-gradient(circle,#1A1C1F 0 28%,#6A7077 30% 40%,#3A3E44 42% 100%);box-shadow:0 2px 4px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2)}
+:root[data-skin="mech"] .chk svg{display:none}
+:root[data-skin="mech"] .chk::before{content:"";position:absolute;left:50%;top:50%;width:7px;height:17px;margin-left:-3.5px;border-radius:4px 4px 3px 3px;transform-origin:50% 0;transform:rotate(18deg);
+  background:linear-gradient(90deg,#8E949B,#E3E6EA 45%,#7A8087);box-shadow:0 1px 2px rgba(0,0,0,.7);transition:transform .16s cubic-bezier(.3,1.8,.5,1)}
+:root[data-skin="mech"] .set.ticked .chk::before{transform:rotate(162deg)}
+:root[data-skin="mech"] .chk::after{content:"";position:absolute;right:-1px;bottom:-1px;width:7px;height:7px;border-radius:50%;background:#1E3A1E;box-shadow:inset 0 1px 1px rgba(0,0,0,.6)}
+:root[data-skin="mech"] .set.ticked .chk::after{background:var(--ok);box-shadow:0 0 6px var(--ok)}
+:root[data-skin="mech"] .set.ticked .chk{background:radial-gradient(circle,#1A1C1F 0 28%,#6A7077 30% 40%,#3A3E44 42% 100%);border-color:#111}
+:root[data-skin="mech"] .bar{background:#16181B;box-shadow:inset 0 2px 4px rgba(0,0,0,.8);border-radius:2px}
+:root[data-skin="mech"] .bar i{border-radius:1px;background:repeating-linear-gradient(90deg,var(--g) 0 6px,transparent 6px 8px);box-shadow:0 0 8px color-mix(in srgb,var(--g) 55%,transparent)}
+:root[data-skin="mech"] .bar i::after{display:none}
+:root[data-skin="mech"] .cald{border-radius:4px}
+:root[data-skin="mech"] .cald.push{background:var(--push);box-shadow:0 0 8px color-mix(in srgb,var(--push) 50%,transparent)}
+:root[data-skin="mech"] .cald.pull{background:var(--pull);box-shadow:0 0 8px color-mix(in srgb,var(--pull) 50%,transparent)}
+:root[data-skin="mech"] .cald.xonly{background:var(--ok);color:#10200F}
+:root[data-skin="mech"] .toast{background:#16181B;color:var(--warn);border:1px solid #474C52;border-radius:4px;font-family:var(--f-num);box-shadow:0 6px 18px rgba(0,0,0,.6)}
+:root[data-skin="mech"] .chart .grid{stroke-dasharray:2 3}
+/* the spring lever and its lamp, in place of the Sync button */
+:root[data-skin="mech"] #syncBtn{display:none!important}
+:root[data-skin="mech"] .leverbox{display:flex;align-items:center;gap:8px;flex:none;margin-top:-4px}
+.lamp{width:12px;height:12px;border-radius:50%;background:#3A2A16;border:1px solid #111;box-shadow:inset 0 1px 2px rgba(0,0,0,.7)}
+.lamp.ready{background:#C25410;box-shadow:0 0 5px #C25410}
+.lamp.busy{background:var(--warn);box-shadow:0 0 10px var(--warn);animation:lampBlink .5s steps(2,jump-none) infinite}
+.lamp.done{background:var(--ok);box-shadow:0 0 10px var(--ok),inset 0 0 2px #fff}
+@keyframes lampBlink{50%{opacity:.25}}
+.lever{position:relative;width:46px;height:62px;padding:0;border:1px solid #111;border-radius:7px;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  background:var(--screw) 5px 5px/7px 7px no-repeat,var(--screw) calc(100% - 5px) calc(100% - 5px)/7px 7px no-repeat,linear-gradient(180deg,#43474D,#2E3237);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 3px 6px rgba(0,0,0,.5)}
+.lever:active{cursor:grabbing}
+.lever .slot{position:absolute;left:50%;top:9px;bottom:9px;width:8px;margin-left:-4px;border-radius:4px;background:#0E0F11;box-shadow:inset 0 2px 3px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.08)}
+.lever .rod{position:absolute;left:50%;top:3px;width:22px;height:22px;margin-left:-11px;transform:translateY(var(--dy,0px))}
+.lever .rod::before{content:"";position:absolute;left:50%;top:11px;width:6px;height:16px;margin-left:-3px;border-radius:3px;background:linear-gradient(90deg,#7C8288,#DDE1E5 45%,#6A7076)}
+.lever .ball{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFB27A 0 12%,var(--cta) 42%,#A63C05 100%);box-shadow:0 3px 5px rgba(0,0,0,.55)}
+.lever .rod.back{animation:leverBack .62s linear}
+@keyframes leverBack{0%{transform:translateY(var(--from))}22%{transform:translateY(-7px)}40%{transform:translateY(4px)}58%{transform:translateY(-2.5px)}74%{transform:translateY(1.2px)}88%{transform:translateY(-.5px)}100%{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.lever .rod.back{animation:none}}

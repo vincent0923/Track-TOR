@@ -36,6 +36,7 @@ const THEMES=[
   ["light","浅色","Light","","#EDF0F2 #FFFFFF #B8481F #2B55C8"],["dark","深色","Dark","","#0F1519 #172028 #EE7A4A #7393F2"],
   ["interior","Interior 亮","Interior light","interior","#FAFAFA #FFFFFF #292524 #4568FF"],["interior-dark","Interior 暗","Interior dark","interior","#141312 #1D1D1A #F5F5F4 #93B0FF"],
   ["beui","beUI 亮","beUI light","beui","#FCFCFC #F5F5F5 #0285F7 #00BEBF"],["beui-dark","beUI 暗","beUI dark","beui","#151515 #1C1C1C #00DADB #AD8CFF"],
+  ["mech","机械控制台","Machine console","mech","#25282C #3A3E44 #FF6A13 #5BD45B"],
   ["minimal","极简","Minimal","minimal","#FAFAF8 #FFFFFF #161614 #B5583A"],
   ["craft","手作","Craft","craft","#EFE7D8 #FBF7EF #E0713A #2F6F9A"],
   ["toy","玩具","Toy","toy","#E3DFD5 #F8F5EF #EF4F2B #2C55E0"],["toy-night","夜间玩具","Toy night","toy","#1C1B19 #292724 #FF5B36 #FFC23D"],
@@ -78,7 +79,7 @@ function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const 
   document.dispatchEvent(new Event("themeicons"))}
 /* Profile › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
-  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
+  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
   box.innerHTML=groups.map(([k,name])=>'<div class="thg"><h4>'+name+'</h4><div class="throw">'+THEMES.filter(t=>t[3]===k).map(([id,zh,en,,c])=>{const [bg,sf,a1,a2]=c.split(" ");
     return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+T(zh,en)+'</span></button>'}).join("")+'</div></div>').join("")}
 /* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
@@ -220,7 +221,33 @@ const FW=(function(){
   }
   return {add};
 })();
-function fireworks(n,big){FW.add(n||0,big||0)}
+/* the celebration follows the look: fireworks on the plain themes, a party popper in the theme's colours on the
+   toy looks, pixel bits on retro, paper scraps on craft, sparks on the machine console, a small tidy burst on the
+   quiet looks. Particles come from canvas-confetti (js/confetti.js); n is how many rockets the fireworks would fire. */
+const CELEB={toy:"party",retro:"pixel",craft:"paper",mech:"sparks",beui:"glow",interior:"tidy",minimal:"tidy"};
+function themeHex(names){const c=document.createElement("canvas").getContext("2d"),cs=getComputedStyle(document.documentElement);
+  return names.map(n=>{c.fillStyle="#000";c.fillStyle=cs.getPropertyValue(n).trim()||"#888";const v=c.fillStyle;
+    if(v[0]==="#")return v;const m=v.match(/[\d.]+/g);return "#"+m.slice(0,3).map(x=>(+x|0).toString(16).padStart(2,"0")).join("")})}
+function celebrate(kind,n,big){const cf=window.confetti;if(!cf||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const base={zIndex:45,disableForReducedMotion:true},bursts=Math.min(5,Math.max(1,Math.ceil(n/3))),boom=b=>document.dispatchEvent(new CustomEvent("fwburst",{detail:{big:b}}));
+  const go=(i,f)=>setTimeout(()=>{f();boom(big&&i===bursts-1)},i*260);
+  if(kind==="party"){const colors=themeHex(["--push","--pull","--cta","--ok","--sleep"]);
+    for(let i=0;i<bursts;i++)go(i,()=>{const k=18+n*4;
+      cf(Object.assign({},base,{particleCount:k,angle:62,spread:58,startVelocity:58,origin:{x:0,y:1},colors,shapes:["square","circle"],scalar:1.15,ticks:260}));
+      cf(Object.assign({},base,{particleCount:k,angle:118,spread:58,startVelocity:58,origin:{x:1,y:1},colors,shapes:["square","circle"],scalar:1.15,ticks:260}))});
+    if(big&&cf.shapeFromText)setTimeout(()=>{const shapes=["🎉","🎊","⭐"].map(t=>cf.shapeFromText({text:t,scalar:2.2}));
+      cf(Object.assign({},base,{particleCount:24,spread:100,startVelocity:42,origin:{x:.5,y:.75},shapes,scalar:2.2,ticks:280,flat:true}))},bursts*260);return}
+  if(kind==="pixel"){const colors=themeHex(["--ink","--push","--pull","--ok"]);
+    for(let i=0;i<bursts;i++)go(i,()=>cf(Object.assign({},base,{particleCount:30+n*5,spread:80,startVelocity:45,origin:{x:.2+Math.random()*.6,y:.8},colors,shapes:["square"],flat:true,scalar:.9,gravity:1.3,ticks:140,decay:.9})));return}
+  if(kind==="paper"){const colors=themeHex(["--push","--pull","--ok","--tape","--surface"]);
+    for(let i=0;i<bursts;i++)go(i,()=>cf(Object.assign({},base,{particleCount:22+n*3,spread:120,startVelocity:30,origin:{x:.2+Math.random()*.6,y:.55},colors,shapes:["square"],scalar:1.6,gravity:.55,drift:Math.random()-.5,ticks:320})));return}
+  if(kind==="sparks"){const colors=["#FFF4D6","#FFD27A","#FF9A3C","#FF6A13"];
+    for(let i=0;i<bursts;i++)go(i,()=>cf(Object.assign({},base,{particleCount:60+n*8,angle:90,spread:110,startVelocity:52,origin:{x:.25+Math.random()*.5,y:.9},colors,shapes:["circle"],scalar:.45,gravity:2.1,decay:.88,ticks:90})));return}
+  if(kind==="glow"){const colors=themeHex(["--cta","--push","--pull"]);
+    for(let i=0;i<bursts;i++)go(i,()=>cf(Object.assign({},base,{particleCount:30+n*4,spread:360,startVelocity:26,origin:{x:.2+Math.random()*.6,y:.3+Math.random()*.3},colors,shapes:["circle"],scalar:.8,gravity:.4,decay:.93,ticks:180})));return}
+  const colors=themeHex(["--ink","--pull","--ok"]);
+  for(let i=0;i<Math.min(bursts,2);i++)go(i,()=>cf(Object.assign({},base,{particleCount:26+n*2,spread:70,startVelocity:34,origin:{x:.5,y:.7},colors,shapes:["square"],scalar:.7,gravity:.9,ticks:160})))}
+function fireworks(n,big){const k=CELEB[document.documentElement.getAttribute("data-skin")];if(k&&window.confetti)celebrate(k,n||1,big||0);else FW.add(n||0,big||0)}
 /* set / exercise / day outcomes used for the fireworks */
 function exDone(s,e){const a=s.sets[e.id]||[];return a.length>0&&a.every(x=>x.d)}
 function exOver(s,e){const a=s.sets[e.id]||[];return a.length>e.sets||a.some(x=>x.d&&+x.v>e.target)}
@@ -341,13 +368,28 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     paper:()=>noiseHit(0.06,2600,1100,0.22,0.7,"lowpass",0.2),
     stamp:()=>{tone(150,0,0.09,"sine",0.35,70);noiseHit(0.05,900,400,0.2,0.8,"lowpass",0.1)},
     soft:()=>{tone(1800,0,0.012,"sine",0.07);tone(1200,0.006,0.02,"sine",0.05)},
+    /* machine console: a latching key going down, a detent click on a knob, a bat-handle toggle, a ratchet notch,
+       the lever's spring letting go, a bell, grinder sparks */
+    clunk:()=>{tone(95,0,0.13,"sine",0.45,55);noiseHit(0.045,1900,900,0.32,2,"bandpass",0.1);tone(1500,0.005,0.03,"square",0.03)},
+    knob:()=>{noiseHit(0.014,6200,4200,0.3,6,"bandpass",0.1);tone(2600,0,0.012,"square",0.025)},
+    toggle:()=>{noiseHit(0.016,5200,3600,0.38,5,"bandpass",0.1);tone(2400,0,0.02,"square",0.04);noiseHit(0.022,3200,2000,0.28,4,"bandpass",0.1,0.04);tone(160,0.04,0.06,"sine",0.18,90)},
+    ratchet:()=>{noiseHit(0.011,4700,3600,0.26,6,"bandpass",0.1);tone(1900,0,0.01,"square",0.03)},
+    spring:()=>{tone(210,0,0.42,"triangle",0.16,150);tone(420,0,0.3,"sine",0.05,300);[0.06,0.13,0.2].forEach((t,i)=>tone(260-i*25,t,0.07,"sine",0.06-i*0.015))},
+    bell:()=>{[[1568,0],[2093,0.08]].forEach(([f,t])=>{tone(f,t,0.9,"sine",0.11);tone(f*2.76,t,0.4,"sine",0.025)})},
+    sparks:()=>{noiseHit(0.5,8000,2500,0.12,0.9,"highpass",0.05);for(let i=0;i<6;i++)noiseHit(0.012,6000,4000,0.25,5,"bandpass",0.1,0.05+Math.random()*0.4)},
+    sparks2:()=>{S.sparks();tone(110,0,0.3,"sine",0.3,60);setTimeout(()=>S.sparks(),180)},
+    /* party popper: a sharp pop and paper streamers rustling down */
+    party:()=>{noiseHit(0.07,7000,1600,0.55,0.7,"highpass",0.04);tone(170,0,0.12,"sine",0.35,60);noiseHit(0.55,9000,4500,0.07,0.5,"highpass",0.35,0.06)},
+    party2:()=>{S.party();setTimeout(()=>S.party(),140);tone(523,0.25,0.12,"square",0.04);tone(784,0.33,0.25,"square",0.04)},
+    pixboom:()=>{fwSound(false);tone(988,0.05,0.07,"square",0.05);tone(1319,0.12,0.2,"square",0.05)},
+    pixboom2:()=>{fwSound(true);S.levelup()},
+    pencil:()=>{noiseHit(0.09,3500,5200,0.16,1.6,"bandpass",0.3);noiseHit(0.05,4200,2800,0.12,1.6,"bandpass",0.3,0.08)},
+    rustle:()=>{for(let i=0;i<5;i++)noiseHit(0.08,2600+Math.random()*1500,1200,0.12,0.8,"lowpass",0.3,i*0.07)},
+    rustle2:()=>{S.rustle();setTimeout(()=>S.rustle(),220);S.stamp()},
+    glint:()=>{tone(1760,0,0.25,"sine",0.06);tone(2637,0.05,0.3,"sine",0.04)},
+    glint2:()=>{S.glint();setTimeout(()=>S.glint(),120);tone(1319,0.18,0.5,"sine",0.06)},
     none:()=>{}
   };
-  /* sound names, in the order the picker lists them */
-  const SN={tap:["翻页声","Page flip"],key:["键盘滴","Key tick"],inc:["上扬","Rise"],dec:["下沉","Drop"],tick:["叮咚","Ding-dong"],untick:["泄气","Deflate"],
-    exDone:["四连音","Four notes"],finish:["通关","Level clear"],boom:["烟花","Firework"],bigboom:["大烟花","Big firework"],swoosh:["嗖","Swoosh"],pop:["啵","Pop"],
-    click:["咔哒","Click"],chime:["完成铃","Chime"],buzz:["嗡","Buzz"],
-    trash:["揉纸丢掉","Crumple"],clack:["塑料按键","Plastic key"],slide:["塑料片滑入","Piece slides in"],snap:["积木咔哒","Brick snap"],blip:["八位哔哔","8-bit blip"],paper:["纸张轻拍","Paper tap"],stamp:["盖章","Stamp"],soft:["轻点","Soft click"],poof:["噗","Poof"],sword:["剑气","Sword slash"],unsheathe:["拔剑","Unsheathe"],punch:["重拳","Punch"],charge:["蓄力","Power up"],coin:["金币","Coin"],levelup:["升级","Level up"],fanfare:["号角","Fanfare"],musicbox:["八音盒","Music box"],sparkle:["星光","Sparkle"],sad:["失落","Wah-wah"],none:["无声","Silent"]};
   /* every kind of tap that makes a sound, its default sound, grouped as the settings panel shows them */
   const SFX=[
     [["训练","Training"],[["set","打勾完成一组","Tick a set","coin"],["exdone","一个动作的组全部完成","Last set of an exercise","levelup"],["untick","取消打勾","Untick a set","untick"],
@@ -360,24 +402,23 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     [["其他","Other"],[["sndon","打开声音","Sound on","tick"],["header","顶部小按钮","Top buttons","tap"],["other","其他按钮","Other buttons","tap"]]]
   ];
   /* ZzFX sounds join the list (js/zzfx.js); sparse arrays keep their holes as defaults */
-  const ZZK=[];
-  ZZ_SOUNDS.forEach(([k,zh,en,p])=>{ZZK.push(k);SN[k]=[zh,en];S[k]=()=>{const c=ac();if(c)zzPlay(c,k,p)}});
+  ZZ_SOUNDS.forEach(([k,zh,en,p])=>{S[k]=()=>{const c=ac();if(c)zzPlay(c,k,p)}});
   /* and jsfxr sounds (js/sfxr.js) */
-  const JFK=[];
-  JF_SOUNDS.forEach(([k,zh,en,p])=>{JFK.push(k);SN[k]=[zh,en];S[k]=()=>{const c=ac();if(c)jfPlay(c,k,p)}});
+  JF_SOUNDS.forEach(([k,zh,en,p])=>{S[k]=()=>{const c=ac();if(c)jfPlay(c,k,p)}});
   const SDEF={};SFX.forEach(g=>g[1].forEach(r=>{SDEF[r[0]]=r[3]}));
   /* the toy themes swap the taps' defaults for plastic sounds; a sound the user picked still wins */
-  const SKIN_SFX={toy:{tab1:"slide",tab2:"slide",range:"clack",gap:"clack",header:"clack",other:"clack",open:"clack",close:"clack",fold:"clack",save:"snap",untick:"clack"},
-    retro:{tab1:"blip",tab2:"blip",range:"key",gap:"key",header:"key",other:"key",open:"blip",close:"key",fold:"key",save:"coin",untick:"key"},
-    craft:{tab1:"tap",tab2:"tap",range:"paper",gap:"paper",header:"paper",other:"paper",open:"tap",close:"paper",fold:"paper",save:"stamp",untick:"paper"},
-    minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft"},
-    interior:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft"},
-    beui:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft"}};
+  const SKIN_SFX={toy:{tab1:"slide",tab2:"slide",range:"clack",gap:"clack",header:"clack",other:"clack",open:"clack",close:"clack",fold:"clack",save:"snap",untick:"clack",set:"snap",fw:"party",bigfw:"party2"},
+    mech:{tab1:"clunk",tab2:"clunk",range:"knob",gap:"knob",header:"knob",other:"knob",open:"knob",close:"knob",fold:"knob",save:"clunk",untick:"toggle",set:"toggle",xtick:"toggle",xuntick:"toggle",exdone:"bell",sync:"none",syncok:"bell",syncfail:"buzz",fw:"sparks",bigfw:"sparks2",del:"clunk"},
+    retro:{tab1:"blip",tab2:"blip",range:"key",gap:"key",header:"key",other:"key",open:"blip",close:"key",fold:"key",save:"coin",untick:"key",set:"coin",fw:"pixboom",bigfw:"pixboom2"},
+    craft:{tab1:"tap",tab2:"tap",range:"paper",gap:"paper",header:"paper",other:"paper",open:"tap",close:"paper",fold:"paper",save:"stamp",untick:"paper",set:"pencil",fw:"rustle",bigfw:"rustle2"},
+    minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
+    interior:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
+    beui:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft",fw:"sparkle",bigfw:"glint2"}};
   const defOf=id=>{const k=SKIN_SFX[document.documentElement.getAttribute("data-skin")];return k&&k[id]||SDEF[id]};
-  const pickOf=id=>{const m=state.settings&&state.settings.sfx;const k=m&&m[id];return S[k]?k:defOf(id)};
+  const pickOf=id=>{const k=defOf(id);return S[k]?k:SDEF[id]};
   function playRaw(k){if(on&&S[k])try{S[k]()}catch(e){}}
   function play(id){playRaw(pickOf(id))}
-  window.sfx=play;
+  window.sfx=play;window.sfxRaw=playRaw;
   document.addEventListener("fwburst",e=>play(e.detail&&e.detail.big?"bigfw":"fw"));
   btn.addEventListener("click",()=>{on=!on;try{localStorage.setItem(LS+"-sound",on?"on":"off")}catch(e){}paint();if(on)play("sndon")});
   /* which kind of tap an element is */
@@ -398,7 +439,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   document.addEventListener("click",e=>{
     if(!on)return;
     const el=e.target.closest("button,summary,[data-act],[data-toggle]");
-    if(!el||el===btn||el.closest("#sfxPanel"))return;
+    if(!el||el===btn||el.closest(".lever"))return;
     const act=el.dataset&&el.dataset.act;
     const xa=el.dataset&&el.dataset.xa;
     if(xa==="tick")return play(el.closest(".set").classList.contains("ticked")?"xuntick":"xtick");
@@ -418,32 +459,6 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     if(el.matches("input,textarea,select"))return;
     play(kindOf(el));
   });
-  /* Profile › Sound effects: pick a sound for each kind of tap; Reset goes back to the defaults */
-  const PLAY_I='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>';
-  function renderSfx(){
-    const box=document.getElementById("sfxPanel");if(!box)return;
-    const opt=k=>'<option value="'+k+'">'+T(SN[k][0],SN[k][1])+'</option>';
-    const opts='<optgroup label="'+T("推拉机","track-TOR")+'">'+Object.keys(S).filter(k=>!ZZK.includes(k)&&!JFK.includes(k)).map(opt).join("")+'</optgroup>'
-      +'<optgroup label="ZzFX">'+ZZK.map(opt).join("")+'</optgroup><optgroup label="jsfxr">'+JFK.map(opt).join("")+'</optgroup>';
-    box.innerHTML=SFX.map(([g,rows])=>'<div class="sfxg"><h4>'+T(g[0],g[1])+'</h4>'+rows.map(([id,zh,en])=>
-      '<div class="sfxr'+(pickOf(id)!==defOf(id)?' changed':'')+'" data-sfx="'+id+'"><span>'+T(zh,en)+'</span><select aria-label="'+T(zh,en)+'">'+opts+'</select>'
-      +'<button type="button" class="sfxp" aria-label="'+T("试听","Play")+'">'+PLAY_I+'</button></div>').join("")+'</div>').join("");
-    box.querySelectorAll("[data-sfx]").forEach(r=>{r.querySelector("select").value=pickOf(r.dataset.sfx)});
-  }
-  window.renderSfx=renderSfx;
-  document.addEventListener("change",e=>{
-    const r=e.target.closest("#sfxPanel [data-sfx]");if(!r)return;
-    const id=r.dataset.sfx,k=e.target.value,m=Object.assign({},state.settings.sfx||{});
-    if(k===defOf(id))delete m[id];else m[id]=k;
-    state.settings.sfx=m;saveSettings();r.classList.toggle("changed",k!==defOf(id));
-    const was=on;on=true;playRaw(k);on=was;
-  });
-  document.addEventListener("click",e=>{
-    const p=e.target.closest("#sfxPanel .sfxp");
-    if(p){const was=on;on=true;playRaw(p.parentNode.querySelector("select").value);on=was;return}
-    if(e.target.closest("#sfxReset")){delete state.settings.sfx;saveSettings();renderSfx();toast(T("音效已恢复默认","Sounds back to default"))}
-  });
-  const fold=document.getElementById("foldSound");if(fold)fold.addEventListener("toggle",()=>{if(fold.open)renderSfx()});
   let last=0;
   document.addEventListener("input",e=>{
     if(!on||!e.target.matches("input:not([type=date]):not([type=checkbox]),textarea"))return;
@@ -525,4 +540,34 @@ async function withProgress(btn, work){
   ["pointerup","pointercancel","pointerleave"].forEach(t=>document.addEventListener(t,stop,true));
   document.addEventListener("click",e=>{const b=e.target.closest(SEL);if(!b||!on()||pass||e.detail===0)return;
     e.stopImmediatePropagation();e.preventDefault();toast(T("按住不放来删除","Hold to delete"))},true);
+})();
+
+/* ---------- machine console: the Sync button becomes a spring lever ----------
+   Pull the knob down: the lever gets heavier the further it goes and clicks over ratchet notches; past the last notch it
+   latches, and letting go fires Sync while the spring throws the lever back up, where it wobbles to rest. Let go
+   early and it just springs back. A tap or Enter pulls it all the way by itself. The lamp beside it follows Sync:
+   dim before COROS is connected, amber blinking while syncing, green when done. */
+(function(){
+  const sync=document.getElementById("syncBtn");if(!sync)return;
+  const wrap=document.createElement("div");wrap.className="leverbox";
+  wrap.innerHTML='<i class="lamp" aria-hidden="true"></i><button type="button" class="lever" aria-label="'+T("同步","Sync")+'"><span class="slot" aria-hidden="true"></span><span class="rod" aria-hidden="true"><b class="ball"></b></span></button>';
+  sync.after(wrap);
+  const lever=wrap.querySelector(".lever"),rod=wrap.querySelector(".rod"),lamp=wrap.querySelector(".lamp");
+  const MAX=30,NOTCH=6,raw=k=>window.sfxRaw&&window.sfxRaw(k);
+  let y0=0,dy=0,down=false,notch=0,armed=false;
+  const set=v=>{dy=v;rod.style.setProperty("--dy",v.toFixed(1)+"px")};
+  const springBack=fire=>{rod.classList.remove("back");void rod.offsetWidth;rod.style.setProperty("--from",dy.toFixed(1)+"px");set(0);rod.classList.add("back");
+    raw("spring");if(fire){raw("clunk");setTimeout(()=>sync.click(),60)}};
+  lever.addEventListener("pointerdown",e=>{down=true;armed=false;notch=0;y0=e.clientY;rod.classList.remove("back");try{lever.setPointerCapture(e.pointerId)}catch(err){}});
+  lever.addEventListener("pointermove",e=>{if(!down)return;const d=Math.max(0,e.clientY-y0),v=MAX*(1-Math.exp(-d/(MAX*1.1)));set(v);
+    const n=Math.floor(v/NOTCH);if(n>notch){raw("ratchet");if(navigator.vibrate)navigator.vibrate(4)}notch=n;
+    if(!armed&&v>MAX*.88){armed=true;raw("knob");if(navigator.vibrate)navigator.vibrate(12)}});
+  const up=()=>{if(!down)return;down=false;if(dy<2){autoPull();return}springBack(armed)};
+  lever.addEventListener("pointerup",up);lever.addEventListener("pointercancel",()=>{down=false;springBack(false)});
+  function autoPull(){let v=0,n=0;rod.classList.remove("back");const t0=performance.now();
+    const step=now=>{v=Math.min(MAX,(now-t0)/220*MAX);set(v);const k=Math.floor(v/NOTCH);if(k>n){raw("ratchet");n=k}
+      if(v<MAX)requestAnimationFrame(step);else setTimeout(()=>springBack(true),70)};requestAnimationFrame(step)}
+  lever.addEventListener("click",e=>{if(e.detail===0)autoPull()});
+  const paintLamp=()=>{const c=sync.classList;lamp.className="lamp "+(c.contains("busy")?"busy":c.contains("done")?"done":c.contains("off")?"off":"ready")};
+  new MutationObserver(paintLamp).observe(sync,{attributes:true,attributeFilter:["class"]});paintLamp();
 })();
