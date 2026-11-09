@@ -1012,7 +1012,7 @@ html,body{overflow-x:clip}
 :root[data-theme="mech"]{
   --bg:#25282C; --surface:#33373C; --sunk:#1E2124; --ink:#ECE8DF; --muted:#9BA1A7; --line:#474C52;
   --push:#FF6A13; --push-soft:#4A2E1F; --pull:#3FA7D6; --pull-soft:#1F3A48; --ok:#5BD45B; --ok-soft:#1F3A22; --warn:#FFB000; --sleep:#B49CF2; --cta:#FF6A13; --on-cta:#17191B;
-  --plate:linear-gradient(180deg,#3B3F45,#30343A); --screw:radial-gradient(circle,#8A9096 0 1.6px,#4A4F55 2.2px,#1B1D20 2.8px,transparent 3.2px);
+  --plate:linear-gradient(180deg,#3B3F45,#30343A); --screw:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23A3A9AF'/%3E%3Cstop offset='.55' stop-color='%2362686E'/%3E%3Cstop offset='1' stop-color='%233C4146'/%3E%3C/linearGradient%3E%3Cpattern id='b' width='24' height='1.3' patternUnits='userSpaceOnUse' patternTransform='rotate(-25)'%3E%3Crect width='24' height='.55' fill='white' opacity='.16'/%3E%3C/pattern%3E%3CclipPath id='h'%3E%3Cpolygon points='12,1.6 21,6.8 21,17.2 12,22.4 3,17.2 3,6.8'/%3E%3C/clipPath%3E%3C/defs%3E%3Cpolygon points='12,2.8 21.4,8.2 21.4,18.6 12,23.6 2.6,18.6 2.6,8.2' fill='black' opacity='.5'/%3E%3Cpolygon points='12,1.6 21,6.8 21,17.2 12,22.4 3,17.2 3,6.8' fill='url(%23g)' stroke='%2316181B' stroke-width='.9'/%3E%3Crect width='24' height='24' fill='url(%23b)' clip-path='url(%23h)'/%3E%3Cpolygon points='12,1.6 21,6.8 12,12 3,6.8' fill='white' opacity='.13'/%3E%3Ccircle cx='12' cy='12' r='5.4' fill='none' stroke='white' stroke-opacity='.28' stroke-width='.7'/%3E%3Ccircle cx='12' cy='12' r='5.4' fill='none' stroke='black' stroke-opacity='.18' stroke-width='.7' transform='translate(.5 .6)'/%3E%3C/svg%3E");
   --key:linear-gradient(180deg,#4C5157,#3A3E44); --key-side:#141619; color-scheme:dark}
 :root[data-theme="mech"] #pane-diet{--intake:#ECE8DF;--burn:#FF8A3D;--protein:#3FA7D6;--gain:#5BD45B;--loss:#FF5A4A;--dslate:#474C52;--dtotal:#2A2E33}
 :root[data-theme="mech"] .mask .sheet{--bad:#FF5A4A}
@@ -1020,7 +1020,7 @@ html,body{overflow-x:clip}
 :root[data-skin="mech"] body{background-color:var(--bg);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 4px)}
 /* plates: a bevelled panel with a screw in each corner */
 :root[data-skin="mech"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat){border:1px solid #17191C;border-radius:6px;
-  background:var(--screw) 7px 7px/7px 7px no-repeat,var(--screw) calc(100% - 7px) 7px/7px 7px no-repeat,var(--screw) 7px calc(100% - 7px)/7px 7px no-repeat,var(--screw) calc(100% - 7px) calc(100% - 7px)/7px 7px no-repeat,var(--plate);
+  background:var(--screw) 5px 5px/11px 11px no-repeat,var(--screw) calc(100% - 5px) 5px/11px 11px no-repeat,var(--screw) 5px calc(100% - 5px)/11px 11px no-repeat,var(--screw) calc(100% - 5px) calc(100% - 5px)/11px 11px no-repeat,var(--plate);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.45)}
 :root[data-skin="mech"] :is(h1,.tag,.caltitle b){letter-spacing:.06em;text-transform:uppercase;text-shadow:0 -1px 0 rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.06)}
 :root[data-skin="mech"] :is(.stat b,.gh .gp,.gtile b,.chartbox h3 span){color:var(--warn);text-shadow:0 0 6px rgba(255,176,0,.35)}
@@ -1077,7 +1077,7 @@ html,body{overflow-x:clip}
 .lamp.done{background:var(--ok);box-shadow:0 0 10px var(--ok),inset 0 0 2px #fff}
 @keyframes lampBlink{50%{opacity:.25}}
 .lever{position:relative;width:46px;height:62px;padding:0;border:1px solid #111;border-radius:7px;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
-  background:var(--screw) 5px 5px/7px 7px no-repeat,var(--screw) calc(100% - 5px) calc(100% - 5px)/7px 7px no-repeat,linear-gradient(180deg,#43474D,#2E3237);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 3px 6px rgba(0,0,0,.5)}
+  background:var(--screw) 4px 4px/9px 9px no-repeat,var(--screw) calc(100% - 4px) calc(100% - 4px)/9px 9px no-repeat,linear-gradient(180deg,#43474D,#2E3237);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 3px 6px rgba(0,0,0,.5)}
 .lever:active{cursor:grabbing}
 .lever .slot{position:absolute;left:50%;top:9px;bottom:9px;width:8px;margin-left:-4px;border-radius:4px;background:#0E0F11;box-shadow:inset 0 2px 3px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.08)}
 .lever .rod{position:absolute;left:50%;top:3px;width:22px;height:22px;margin-left:-11px;transform:translateY(var(--dy,0px))}
@@ -1108,7 +1108,7 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
 :root[data-theme="mech-light"]{
   --bg:#D3D7DB; --surface:#E8EBEE; --sunk:#C7CCD1; --ink:#1C2024; --muted:#59616A; --line:#AEB5BC;
   --push:#E87511; --push-soft:#F6E1CF; --pull:#1E7BFF; --pull-soft:#D7E6FB; --ok:#16A34A; --ok-soft:#D6EEDD; --warn:#0E5FD8; --sleep:#7A5CC8; --cta:#1E7BFF; --on-cta:#FFFFFF;
-  --plate:linear-gradient(180deg,#F1F3F5,#DDE1E5); --screw:radial-gradient(circle,#F4F6F8 0 1.6px,#9AA2AA 2.2px,#5D656D 2.8px,transparent 3.2px);
+  --plate:linear-gradient(180deg,#F1F3F5,#DDE1E5); --screw:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FAFBFC'/%3E%3Cstop offset='.55' stop-color='%23C9CED3'/%3E%3Cstop offset='1' stop-color='%238F969D'/%3E%3C/linearGradient%3E%3Cpattern id='b' width='24' height='1.3' patternUnits='userSpaceOnUse' patternTransform='rotate(-25)'%3E%3Crect width='24' height='.55' fill='white' opacity='.35'/%3E%3C/pattern%3E%3CclipPath id='h'%3E%3Cpolygon points='12,1.6 21,6.8 21,17.2 12,22.4 3,17.2 3,6.8'/%3E%3C/clipPath%3E%3C/defs%3E%3Cpolygon points='12,2.8 21.4,8.2 21.4,18.6 12,23.6 2.6,18.6 2.6,8.2' fill='black' opacity='.5'/%3E%3Cpolygon points='12,1.6 21,6.8 21,17.2 12,22.4 3,17.2 3,6.8' fill='url(%23g)' stroke='%235D656D' stroke-width='.9'/%3E%3Crect width='24' height='24' fill='url(%23b)' clip-path='url(%23h)'/%3E%3Cpolygon points='12,1.6 21,6.8 12,12 3,6.8' fill='white' opacity='.13'/%3E%3Ccircle cx='12' cy='12' r='5.4' fill='none' stroke='white' stroke-opacity='.28' stroke-width='.7'/%3E%3Ccircle cx='12' cy='12' r='5.4' fill='none' stroke='black' stroke-opacity='.18' stroke-width='.7' transform='translate(.5 .6)'/%3E%3C/svg%3E");
   --key:linear-gradient(180deg,#F7F8F9,#D9DDE1); --key-side:#8E959C; color-scheme:light}
 :root[data-theme="mech-light"] #pane-diet{--intake:#1C2024;--burn:#E87511;--protein:#1E7BFF;--gain:#16A34A;--loss:#D9342B;--dslate:#59616A;--dtotal:#D3D7DB}
 :root[data-theme="mech-light"] body{background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,rgba(0,0,0,.025) 0 1px,transparent 1px 4px)}
@@ -1132,7 +1132,7 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
 :root[data-theme="mech-light"] .toast{background:#1C2024;color:#9CC8FF;border-color:#59616A}
 :root[data-theme="mech-light"] .cald.xonly{color:#fff}
 :root[data-theme="mech-light"] .caltoday{color:#fff;box-shadow:0 4px 0 #0F6B31}
-:root[data-theme="mech-light"] .lever{border-color:#6E767E;background:var(--screw) 5px 5px/7px 7px no-repeat,var(--screw) calc(100% - 5px) calc(100% - 5px)/7px 7px no-repeat,linear-gradient(180deg,#EEF1F3,#CDD2D7);box-shadow:inset 0 1px 0 #fff,0 3px 6px rgba(30,40,50,.3)}
+:root[data-theme="mech-light"] .lever{border-color:#6E767E;background:var(--screw) 4px 4px/9px 9px no-repeat,var(--screw) calc(100% - 4px) calc(100% - 4px)/9px 9px no-repeat,linear-gradient(180deg,#EEF1F3,#CDD2D7);box-shadow:inset 0 1px 0 #fff,0 3px 6px rgba(30,40,50,.3)}
 :root[data-theme="mech-light"] .lever .slot{background:#2A2F34}
 :root[data-theme="mech-light"] .lever .ball{background:radial-gradient(circle at 35% 30%,#BFE0FF 0 12%,var(--cta) 42%,#0A3F99 100%)}
 :root[data-theme="mech-light"] .lamp.ready{background:#3B8CFF;box-shadow:0 0 6px #3B8CFF}
@@ -1271,3 +1271,5 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 /* the volume step's label under the speaker: pops in, stays 1.5 s, fades */
 .volpop{position:absolute;z-index:60;transform:translateX(-50%);padding:3px 9px;border-radius:999px;background:var(--ink);color:var(--bg);font:700 13px/1.3 var(--f-num);pointer-events:none;white-space:nowrap;animation:volPop 1.85s ease forwards;box-shadow:0 4px 12px rgba(0,0,0,.25)}
 @keyframes volPop{0%{opacity:0;transform:translate(-50%,-4px) scale(.85)}10%{opacity:1;transform:translate(-50%,0) scale(1)}81%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,3px)}}
+/* machine: the privacy eye sits clear of the bottom-right bolt */
+:root[data-skin="mech"] .privbtn{right:26px;bottom:10px}
