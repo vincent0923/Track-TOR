@@ -161,7 +161,7 @@ function calendarHtml(){
   const lead=(first.getDay()+6)%7;                     /* weeks start on Monday */
   const prevDays=new Date(y,mo-1,0).getDate(), cells=Math.ceil((lead+days)/7)*7;
   const wk=T("一二三四五六日","MTWTFSS").split(""), fold=!!calState.fold;
-  const mname=T(mo+"月",new Date(y,mo-1,1).toLocaleString("en",{month:"long"}).toUpperCase());
+  const mname=T(mo+"月",new Date(y,mo-1,1).toLocaleString("en",{month:"short"}).toUpperCase());
   /* banner, left to right: fold button · previous month · month (tap also folds) · next month · today */
   const ft=fold?T("展开日历","Show calendar"):T("收起日历","Hide calendar");
   let h='<section class="cal'+(fold?" folded":"")+'" aria-label="'+T("训练日历","Training calendar")+'"><div class="calh">'

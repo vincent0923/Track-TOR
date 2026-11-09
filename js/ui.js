@@ -482,7 +482,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   btn.addEventListener("pointerdown",()=>{vHeld=false;clearTimeout(vTm);btn.classList.add("holding");
     vTm=setTimeout(()=>{vHeld=true;btn.classList.remove("holding");VOL=VOLS[(VOLS.indexOf(VOL)+1)%VOLS.length];try{localStorage.setItem(LS+"-vol",String(VOL))}catch(e){}
       if(ctx&&ctx.__out)ctx.__out.gain.setValueAtTime(VOL,ctx.currentTime);if(navigator.vibrate)navigator.vibrate(15);
-      if(!on){on=true;try{localStorage.setItem(LS+"-sound","on")}catch(e){}}paint();toast(T("音量 ","Volume ")+Math.round(VOL*100)+"%");play("sndon")},550)});
+      if(!on){on=true;try{localStorage.setItem(LS+"-sound","on")}catch(e){}}paint();play("sndon")},550)});
   ["pointerup","pointercancel","pointerleave"].forEach(t=>btn.addEventListener(t,()=>{clearTimeout(vTm);btn.classList.remove("holding")}));
   btn.addEventListener("contextmenu",e=>e.preventDefault());
   btn.addEventListener("click",e=>{if(vHeld){vHeld=false;e.stopImmediatePropagation();return}on=!on;try{localStorage.setItem(LS+"-sound",on?"on":"off")}catch(e){}paint();if(on)play("sndon")});
