@@ -617,7 +617,7 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
   :root[data-skin="toy"] .tpiece.on{transition:transform .5s var(--spring),width .5s var(--spring)}
   :root[data-skin="toy"] .tpiece.go{animation:squash .5s ease-out}
 }
-@keyframes squash{0%{scale:1 1}30%{scale:1.14 .88}65%{scale:.97 1.04}100%{scale:1 1}}
+@keyframes squash{0%{scale:1 1}30%{scale:1.04 .86}65%{scale:.98 1.05}100%{scale:1 1}}
 
 /* 14 / 30 / 60 day switch: a small track, the chosen one a raised white piece */
 :root[data-skin="toy"] .maseg{border:0;border-radius:11px;background:var(--track);padding:3px 3px 5px;gap:3px;overflow:visible;box-shadow:inset 0 2px 4px var(--pit)}
@@ -1009,3 +1009,11 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="interior"] :is(#ddelDayBtn,[data-del]).holding::before{transform:scaleX(1);transition:transform var(--hold,700ms) linear}
 :root[data-skin="interior"] :is(#ddelDayBtn,[data-del]).holding{color:#fff!important}
 :root[data-skin="interior"] :is(#ddelDayBtn,[data-del]).held{animation:pressPop .32s ease-out}
+/* chart cards never grow past the screen: the title's value wraps under the name when the font is wide */
+#pane-health>.chartbox,#pane-strength>.chartbox,.chcar>.chartbox,#pane-health,#pane-strength{min-width:0}
+.chartbox h3{flex-wrap:wrap;row-gap:0}
+.chartbox h3:has(.chic) .num{white-space:normal;min-width:0;flex:1 1 auto}
+.goals{grid-template-columns:minmax(0,1fr)}
+.goal{min-width:0}
+.gb .gr{overflow-wrap:anywhere}
+html,body{overflow-x:clip}

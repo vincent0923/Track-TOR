@@ -6,21 +6,14 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
-## [v1.32a] — 2026-11-08
+## [v1.30a] — 2026-11-08
 
 ### 新增 / Added
-- 🎨 **十二套主题，四种风格**：参考 Ovio 的四种风格全部做了。极简：白底细线、黑色胶囊标签。手作：奶油纸、胶带、柔和叠影，提示条像一张便签。玩具：原版、夜间、赛博、牛仔、霓虹五种配色。复古终端：像素字体、字会发光、扫描线，标签块一格一格跳过去，有绿屏、赛博、雨夜琥珀三种配色。
-  Twelve themes in four looks: all four of Ovio's looks are in. Minimal: white, thin rules, a black pill on the tab. Craft: cream paper, tape and soft shadows, and toasts look like a sticky note. Toy: original, night, cyber, cowboy and neon palettes. Retro terminal: a pixel font that glows, scanlines and a tab block that jumps in steps, in phosphor green, cyber and rain-amber palettes.
-- 🖌️ **主题按钮点一下换、长按选**：右上角主题按钮点一下换到下一个主题，提示条显示名字；长按打开「资料 › 主题」面板，每个主题一张预览小卡，点一下就换。
-  Theme button: tap for the next theme (a toast names it); hold it to open Profile › Theme, where every theme has a preview tile.
-- 🔊 **每种风格有自己的点按声**：复古是八位哔哔、保存是金币；手作是翻页和纸张轻拍、保存是盖章；极简是轻点；玩具是塑料声。自己选过的声音照旧。
-  Each look has its own tap sounds: 8-bit blips with a coin on save for retro, page flips and paper taps with a stamp on save for craft, a soft click for minimal, plastic for toy. Sounds you picked yourself stay.
+试穿阶段：下面的主题都是试验，以后会删掉不合适的；这段时间只改外观，版本号停在 v1.30a。
+Trying-on phase: the themes below are experiments and the ones that don't fit will be removed later; while it lasts only the look changes and the version stays at v1.30a.
 
----
-
-## [v1.31a] — 2026-11-08
-
-### 新增 / Added
+- 🧸 **玩具主题**：右上角主题按钮现在在浅色、深色、玩具三套之间切换，图标显示下一个主题。玩具主题像塑料玩具：米色点点底，按钮是凸起的塑料键，按下去会下沉、松手弹回来；打勾框也是按键，打完变绿；选中的标签是一块红色塑料片，点别的标签会滑过去；日历里的训练日像塑料钉。只换外观，数据还是同一份。
+  Toy theme: the theme button now cycles light, dark and toy, and shows the theme it switches to. Toy looks like moulded plastic: a dotted cream background, buttons are raised keys that sink when pressed and spring back, tick boxes are keys that turn green, the selected tab is a red plastic piece that slides to the tab you tap, and training days on the calendar look like plastic pegs. Only the look changes; the data stays the same.
 - 🎨 **六套主题，点调色盘选**：右上角的主题按钮换成调色盘，点开是一排色板：浅色、深色、玩具、夜间玩具、夜光玩具、牛仔。夜间玩具是同一套塑料的深色版；夜光玩具是深蓝底配荧光绿、粉、青，彩色塑料会发光，适合晚上在外训练；牛仔是奶油底配帽子棕、牛仔蓝和衬衫黄，底纹是木板线。
   Six themes, picked from a palette: the theme button is now a palette that opens a row of swatches: Light, Dark, Toy, Toy night, Toy glow and Cowboy. Toy night is the same plastic in the dark; Toy glow is glow-in-the-dark plastic (lime, pink and cyan that give off light on navy) for training outside at night; Cowboy is cream with hat brown, denim blue and shirt yellow on plank lines.
 - 🔊 **玩具主题有塑料声**：玩具一族的主题里，切换标签是塑料片滑入卡槽的声音，其他按钮是塑料按键声，保存是两块积木咔哒扣上。「资料 › 音效」里也能单独选这三个声音；自己选过的声音照旧。
@@ -29,14 +22,12 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
   Year of training heatmap: at the top of Charts › Strength, one square per day for the last 53 weeks, darker the more sets you ticked, with the number of training days beside the title. It scrolls sideways and opens on the latest weeks.
 - 🔢 **数字会滚动**：目标百分比、热量缺口和打卡天数变化时滚到新数字，打开时从 0 数上来。玩具主题里提示条会弹出来，目标进度条带回弹。
   Numbers roll: goal percentages, the calorie gap and the training-day count roll to their new value and count up from 0 when they first show. In the toy themes, toasts pop up and goal bars fill with a bounce.
-
----
-
-## [v1.30a] — 2026-11-08
-
-### 新增 / Added
-- 🧸 **玩具主题**：右上角主题按钮现在在浅色、深色、玩具三套之间切换，图标显示下一个主题。玩具主题像塑料玩具：米色点点底，按钮是凸起的塑料键，按下去会下沉、松手弹回来；打勾框也是按键，打完变绿；选中的标签是一块红色塑料片，点别的标签会滑过去；日历里的训练日像塑料钉。只换外观，数据还是同一份。
-  Toy theme: the theme button now cycles light, dark and toy, and shows the theme it switches to. Toy looks like moulded plastic: a dotted cream background, buttons are raised keys that sink when pressed and spring back, tick boxes are keys that turn green, the selected tab is a red plastic piece that slides to the tab you tap, and training days on the calendar look like plastic pegs. Only the look changes; the data stays the same.
+- 🎨 **十二套主题，四种风格**：参考 Ovio 的四种风格全部做了。极简：白底细线、黑色胶囊标签。手作：奶油纸、胶带、柔和叠影，提示条像一张便签。玩具：原版、夜间、赛博、牛仔、霓虹五种配色。复古终端：像素字体、字会发光、扫描线，标签块一格一格跳过去，有绿屏、赛博、雨夜琥珀三种配色。
+  Twelve themes in four looks: all four of Ovio's looks are in. Minimal: white, thin rules, a black pill on the tab. Craft: cream paper, tape and soft shadows, and toasts look like a sticky note. Toy: original, night, cyber, cowboy and neon palettes. Retro terminal: a pixel font that glows, scanlines and a tab block that jumps in steps, in phosphor green, cyber and rain-amber palettes.
+- 🖌️ **主题按钮点一下换、长按选**：右上角主题按钮点一下换到下一个主题，提示条显示名字；长按打开「资料 › 主题」面板，每个主题一张预览小卡，点一下就换。
+  Theme button: tap for the next theme (a toast names it); hold it to open Profile › Theme, where every theme has a preview tile.
+- 🔊 **每种风格有自己的点按声**：复古是八位哔哔、保存是金币；手作是翻页和纸张轻拍、保存是盖章；极简是轻点；玩具是塑料声。自己选过的声音照旧。
+  Each look has its own tap sounds: 8-bit blips with a coin on save for retro, page flips and paper taps with a stamp on save for craft, a soft click for minimal, plastic for toy. Sounds you picked yourself stay.
 
 ---
 
