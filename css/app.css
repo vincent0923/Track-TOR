@@ -1268,3 +1268,6 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 .caltoday .calic{display:grid;place-items:center;flex:none}
 .caltoday .calic svg{width:17px;height:17px;display:block}
 :root[data-skin="toy"] .caltoday{--icw:transparent;--icf:rgba(255,255,255,.35)}
+/* the volume step's label under the speaker: pops in, stays 1.5 s, fades */
+.volpop{position:absolute;z-index:60;transform:translateX(-50%);padding:3px 9px;border-radius:999px;background:var(--ink);color:var(--bg);font:700 13px/1.3 var(--f-num);pointer-events:none;white-space:nowrap;animation:volPop 1.85s ease forwards;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+@keyframes volPop{0%{opacity:0;transform:translate(-50%,-4px) scale(.85)}10%{opacity:1;transform:translate(-50%,0) scale(1)}81%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,3px)}}

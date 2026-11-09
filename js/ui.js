@@ -482,7 +482,11 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   btn.addEventListener("pointerdown",()=>{vHeld=false;clearTimeout(vTm);btn.classList.add("holding");
     vTm=setTimeout(()=>{vHeld=true;btn.classList.remove("holding");VOL=VOLS[(VOLS.indexOf(VOL)+1)%VOLS.length];try{localStorage.setItem(LS+"-vol",String(VOL))}catch(e){}
       if(ctx&&ctx.__out)ctx.__out.gain.setValueAtTime(VOL,ctx.currentTime);if(navigator.vibrate)navigator.vibrate(15);
-      if(!on){on=true;try{localStorage.setItem(LS+"-sound","on")}catch(e){}}paint();play("sndon")},550)});
+      if(!on){on=true;try{localStorage.setItem(LS+"-sound","on")}catch(e){}}paint();play("sndon");
+      /* a small label under the speaker says the new level, then fades by itself after 1.5 s */
+      const old=document.querySelector(".volpop");if(old)old.remove();
+      const r=btn.getBoundingClientRect(),pop=document.createElement("div");pop.className="volpop";pop.setAttribute("aria-live","polite");pop.textContent=Math.round(VOL*100)+"%";
+      pop.style.left=(r.left+r.width/2+scrollX)+"px";pop.style.top=(r.bottom+scrollY+6)+"px";document.body.append(pop);setTimeout(()=>pop.remove(),1900)},550)});
   ["pointerup","pointercancel","pointerleave"].forEach(t=>btn.addEventListener(t,()=>{clearTimeout(vTm);btn.classList.remove("holding")}));
   btn.addEventListener("contextmenu",e=>e.preventDefault());
   btn.addEventListener("click",e=>{if(vHeld){vHeld=false;e.stopImmediatePropagation();return}on=!on;try{localStorage.setItem(LS+"-sound",on?"on":"off")}catch(e){}paint();if(on)play("sndon")});
