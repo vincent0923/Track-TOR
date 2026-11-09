@@ -1142,3 +1142,10 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
 :root[data-theme="mech-light"] .lamp.ready{background:#3B8CFF;box-shadow:0 0 6px #3B8CFF}
 :root[data-theme="mech-light"] .lamp.busy{background:#5AB4FF;box-shadow:0 0 10px #5AB4FF}
 :root[data-theme="mech-light"] .lamp{background:#8A97A6}
+/* machine looks: the small round buttons are matte (bead-blasted) caps, not brushed; titanium grey on the dark one */
+:root[data-skin="mech"] :is(.iconbtn,.privbtn){color:#D9DCDF;
+  background:radial-gradient(circle at 40% 32%,#7A8086 0,#62676D 55%,#53585E 100%);
+  background-image:radial-gradient(circle at 40% 32%,rgba(255,255,255,.12),rgba(255,255,255,0) 60%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)'/%3E%3C/svg%3E"),radial-gradient(circle at 40% 32%,#767C82 0,#5E6369 60%,#50555B 100%)}
+:root[data-skin="mech"] .iconbtn.flagbtn{color:#D9DCDF}
+:root[data-theme="mech-light"] :is(.iconbtn,.privbtn),:root[data-theme="mech-light"] .iconbtn.flagbtn{color:#2A2F34;
+  background-image:radial-gradient(circle at 40% 32%,rgba(255,255,255,.5),rgba(255,255,255,0) 60%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)'/%3E%3C/svg%3E"),radial-gradient(circle at 40% 32%,#E9ECEE 0,#D3D8DC 60%,#C3C9CE 100%)}
