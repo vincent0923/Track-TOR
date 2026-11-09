@@ -417,4 +417,5 @@ function renderAll(){renderStats();renderTrain();renderData()}
 
 document.addEventListener("themeicons",()=>{if(document.getElementById("goals").innerHTML)renderGoals();
   /* charts are drawn differently per look, so redraw the visible ones */
-  if(!document.getElementById("pane-data").hidden){renderData();if(typeof renderDietAll==="function")renderDietAll()}});
+  if(!document.getElementById("pane-data").hidden){renderData();if(typeof renderDietAll==="function")renderDietAll()}
+  if(!document.getElementById("pane-train").hidden&&typeof renderTrain==="function")renderTrain()});
