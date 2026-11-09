@@ -642,33 +642,33 @@ async function withProgress(btn, work){
 })();
 
 /* ---------- machine console: the Sync button becomes a REC-style slide switch ----------
-   A metal slider with a rubber grip sits in a recessed slot, engraved SYNC beside it and a slit lamp below the label.
-   Push the slider to the end of the slot: it gets heavier as it goes and clicks over detents; at the end it latches,
-   and letting go fires Sync while the spring snaps it back. Let go early and it just snaps back. A tap or Enter pushes
-   it all the way by itself. The lamp breathes red while syncing and turns green when done; otherwise it is dark. */
+   A metal slider with a rubber grip sits at the left of a long recessed slot; SYNC is engraved in the slot's right
+   half, covered while the slider is pushed over it. Push the slider all the way right: it gets heavier as it goes and
+   clicks over detents; at the end it latches, and letting go fires Sync while the spring snaps it back. Let go early
+   and it just snaps back; a tap does nothing (Enter still works for keyboards). The red pip on the slider is the lamp:
+   dark red at rest, breathing red while syncing, green when done. */
 (function(){
   const sync=document.getElementById("syncBtn");if(!sync)return;
   const wrap=document.createElement("div");wrap.className="leverbox";
-  wrap.innerHTML='<button type="button" class="lever" aria-label="'+T("同步","Sync")+'"><span class="slot" aria-hidden="true"></span><span class="rod" aria-hidden="true"><i class="rec"></i><b class="grip"></b></span></button>'
-    +'<span class="recside" aria-hidden="true"><span class="reclabel">SYNC</span><i class="lamp"></i></span>';
+  wrap.innerHTML='<button type="button" class="lever" aria-label="'+T("同步：把滑块推到右端","Sync: push the slider to the right end")+'"><span class="slot" aria-hidden="true"><span class="slotlabel">SYNC</span></span><span class="rod" aria-hidden="true"><i class="rec lamp"></i><b class="grip"></b></span></button>';
   sync.after(wrap);
   const lever=wrap.querySelector(".lever"),rod=wrap.querySelector(".rod"),lamp=wrap.querySelector(".lamp");
-  const MAX=30,NOTCH=7.5,raw=k=>window.sfxRaw&&window.sfxRaw(k);
+  const MAX=66,NOTCH=11,raw=k=>window.sfxRaw&&window.sfxRaw(k);
   let x0=0,dx=0,down=false,notch=0,armed=false;
   const set=v=>{dx=v;rod.style.setProperty("--dx",v.toFixed(1)+"px")};
   const springBack=fire=>{rod.classList.remove("back");void rod.offsetWidth;rod.style.setProperty("--from",dx.toFixed(1)+"px");set(0);rod.classList.add("back");
     raw("spring");if(fire){raw("clunk");setTimeout(()=>sync.click(),60)}};
   lever.addEventListener("pointerdown",e=>{down=true;armed=false;notch=0;x0=e.clientX;rod.classList.remove("back");try{lever.setPointerCapture(e.pointerId)}catch(err){}});
-  lever.addEventListener("pointermove",e=>{if(!down)return;const d=Math.max(0,e.clientX-x0),v=MAX*(1-Math.exp(-d/(MAX*1.1)));set(v);
+  lever.addEventListener("pointermove",e=>{if(!down)return;const d=Math.max(0,e.clientX-x0),v=Math.min(MAX,d*(1-d/(MAX*5)));set(v);
     const n=Math.floor(v/NOTCH);if(n>notch){raw("ratchet");if(navigator.vibrate)navigator.vibrate(4)}notch=n;
     if(!armed&&v>MAX*.88){armed=true;raw("knob");if(navigator.vibrate)navigator.vibrate(12)}});
-  const up=()=>{if(!down)return;down=false;if(dx<2){autoPull();return}springBack(armed)};
+  const up=()=>{if(!down)return;down=false;if(dx<1)return;springBack(armed)};
   lever.addEventListener("pointerup",up);lever.addEventListener("pointercancel",()=>{down=false;springBack(false)});
   function autoPull(){let v=0,n=0;rod.classList.remove("back");const t0=performance.now();
     const step=now=>{v=Math.min(MAX,(now-t0)/200*MAX);set(v);const k=Math.floor(v/NOTCH);if(k>n){raw("ratchet");n=k}
       if(v<MAX)requestAnimationFrame(step);else setTimeout(()=>springBack(true),70)};requestAnimationFrame(step)}
   lever.addEventListener("click",e=>{if(e.detail===0)autoPull()});
-  const paintLamp=()=>{const c=sync.classList;lamp.className="lamp"+(c.contains("busy")?" busy":c.contains("done")?" done":"")};
+  const paintLamp=()=>{const c=sync.classList;lamp.className="rec lamp"+(c.contains("busy")?" busy":c.contains("done")?" done":"")};
   new MutationObserver(paintLamp).observe(sync,{attributes:true,attributeFilter:["class"]});paintLamp();
 })();
 
