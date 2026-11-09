@@ -1100,3 +1100,10 @@ html,body{overflow-x:clip}
 svg.ic-toy .w{fill:var(--icw,#fff)}
 :root[data-skin="toy"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{--icw:transparent;--icf:rgba(255,255,255,.32)}
 :root[data-theme="toy-cyber"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-theme="toy-glow"] .subtabs button[aria-selected="true"],:root[data-theme="woody"] .subtabs button[aria-selected="true"]{--icw:rgba(255,255,255,.55);--icf:rgba(255,255,255,.45)}
+/* machine console: the small round buttons are brushed-steel push buttons in a dark bezel (not knurled knobs);
+   pressing sinks the cap, no twist */
+:root[data-skin="mech"] :is(.iconbtn,.privbtn){border:0;color:#24272B;
+  background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.7),rgba(255,255,255,0) 42%),conic-gradient(from 20deg,#8C9298,#E4E7EA 12%,#9AA0A6 25%,#D9DCE0 38%,#858B91 50%,#E2E5E8 62%,#979DA3 75%,#DADDE1 88%,#8C9298);
+  box-shadow:0 0 0 2px #15171A,0 0 0 3px #4A4F55,0 3px 0 3px #0E0F11,0 5px 8px 3px rgba(0,0,0,.5),inset 0 -2px 3px rgba(0,0,0,.25);transition:transform .08s,box-shadow .08s}
+:root[data-skin="mech"] :is(.iconbtn,.privbtn):active{transform:translateY(2px);box-shadow:0 0 0 2px #15171A,0 0 0 3px #4A4F55,0 1px 0 3px #0E0F11,0 2px 4px 3px rgba(0,0,0,.5),inset 0 2px 4px rgba(0,0,0,.35)}
+:root[data-skin="mech"] .iconbtn.flagbtn{color:#24272B}
