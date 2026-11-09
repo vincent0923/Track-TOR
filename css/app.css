@@ -82,7 +82,7 @@
 .xadd .btn{padding:7px 12px}
 .xchips{display:flex;gap:6px;flex-wrap:wrap}
 #pane-diet{--protein:#6E8C99;--intake:#0D151C;--burn:#546638;--gain:#7E9460;--loss:#A5634F;--dslate:#545F59;--dtotal:#E1DCD3;display:grid;gap:16px;padding-top:8px}
-:root[data-theme="dark"] #pane-diet{--protein:#A9B6BA;--intake:#D9D2C6;--burn:#8BA05E;--gain:#7FAE8E;--loss:#C9806A;--dslate:#545F59;--dtotal:#1E2A31}
+:root[data-theme="dark"] #pane-diet{--protein:#7E9DB0;--intake:#D9D2C6;--burn:#8BA05E;--gain:#7FAE8E;--loss:#C9806A;--dslate:#545F59;--dtotal:#1E2A31}
 /* diet data source (Google Sheets CSV) */
 .dsrc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
 .dsrc-h{display:flex;align-items:center;gap:8px}
