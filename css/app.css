@@ -1455,3 +1455,53 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 .lever .rec.lamp{background:radial-gradient(ellipse at 40% 30%,#B0605A 0 18%,#7A1418 55%,#4A080B 100%)}
 .lever .rec.lamp.busy{background:radial-gradient(ellipse at 40% 30%,#FFC2B8 0 18%,#FF2B2B 55%,#A00D12 100%);animation:recBreathe 1.6s ease-in-out infinite}
 .lever .rec.lamp.done{background:radial-gradient(ellipse at 40% 30%,#D8FFDC 0 18%,#3EDC5C 55%,#13782A 100%);box-shadow:0 0 8px #3EDC5C,0 0 0 1px rgba(0,60,10,.4)}
+
+/* ---------- machine looks, realistic pass: powder-coated plates with grain, brushed metal on keys and the slider,
+   one light from above (top-edge highlight, bottom-edge shade), muted industrial colours, LED bars with their unlit
+   segments, calendar days as keys. The hex bolts stay on the goals panel only. ---------- */
+:root[data-skin="mech"]{--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");--brushed:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='120'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.003 .9' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .28 0'/%3E%3C/filter%3E%3Crect width='300' height='120' filter='url(%23b)'/%3E%3C/svg%3E")}
+:root[data-theme="mech"]{--push:#C9632E;--push-deep:#7E3A16;--pull:#4F86AE;--pull-deep:#2B4E68;--ok:#66A86A;--ok-deep:#3A6A3D;--warn:#E0A43F;--cta:#C9632E;
+  --plate:linear-gradient(180deg,#34373B 0,#2C2F33 100%);--bg:#1F2124}
+:root[data-theme="mech"] #pane-diet{--burn:#D07A3E;--protein:#4F86AE;--gain:#66A86A;--loss:#C9533E}
+:root[data-theme="mech-light"]{--push:#C25B24;--pull:#2F6FA8;--ok:#3F8A4C;--warn:#2F6FA8;--cta:#2F6FA8;--plate:linear-gradient(180deg,#E9ECEF 0,#D6DADE 100%)}
+:root[data-skin="mech"] body{background-image:var(--grain),repeating-linear-gradient(0deg,rgba(0,0,0,.04) 0 1px,transparent 1px 3px)}
+/* plates: grain over the powder coat; bevel light from above; the bolts only on the goals panel */
+:root[data-skin="mech"] :is(.card,.chartbox,.cal,details.fold,.stat){background:var(--grain),var(--plate)!important;border:1px solid rgba(0,0,0,.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -1px 0 rgba(0,0,0,.35),0 1px 1px rgba(0,0,0,.4),0 8px 16px -10px rgba(0,0,0,.7)}
+:root[data-skin="mech"] .goals{background:var(--screw) 5px 5px/11px 11px no-repeat,var(--screw) calc(100% - 5px) 5px/11px 11px no-repeat,var(--screw) 5px calc(100% - 5px)/11px 11px no-repeat,var(--screw) calc(100% - 5px) calc(100% - 5px)/11px 11px no-repeat,var(--grain),var(--plate)!important;
+  border:1px solid rgba(0,0,0,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -1px 0 rgba(0,0,0,.35),0 1px 1px rgba(0,0,0,.4),0 8px 16px -10px rgba(0,0,0,.7)}
+:root[data-skin="mech"][data-wear]:not([data-wear="1"]) .goals{background:var(--screw) 5px 5px/11px 11px no-repeat,var(--screw) calc(100% - 5px) 5px/11px 11px no-repeat,var(--screw) 5px calc(100% - 5px)/11px 11px no-repeat,var(--loose) calc(100% - 4px) calc(100% - 3px)/12px 12px no-repeat,var(--grain),var(--plate)!important}
+:root[data-skin="mech"][data-wear="3"] .goals{background:var(--loose) 6px 7px/12px 12px no-repeat,var(--screw) calc(100% - 5px) 5px/11px 11px no-repeat,var(--screw) 5px calc(100% - 5px)/11px 11px no-repeat,var(--loose) calc(100% - 4px) calc(100% - 3px)/12px 12px no-repeat,var(--grain),var(--plate)!important}
+:root[data-theme="mech-light"] :is(.card,.chartbox,.cal,details.fold,.stat,.goals){border-color:#9AA2AA;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(0,0,0,.08),0 1px 1px rgba(30,40,50,.18),0 8px 16px -10px rgba(30,40,50,.35)}
+/* engraved type and calmer readouts */
+:root[data-theme="mech"] :is(h1,.tag,.caltitle b,.gh b,.chartbox h3){text-shadow:0 -1px 0 rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.05)}
+:root[data-skin="mech"] :is(.stat b,.gh .gp,.gtile b,.chartbox h3 span){text-shadow:0 0 4px color-mix(in srgb,currentColor 30%,transparent)}
+:root[data-theme="mech"] .caltitle b{color:#C8CCCF}
+:root[data-theme="mech"] .caltitle small{color:#8E959B}
+/* keys: brushed caps, light from above; the chosen one sits lower with its lamp lit behind a lens */
+:root[data-skin="mech"] :is(nav.tabs,.subtabs) button,:root[data-skin="mech"] .maseg button,:root[data-skin="mech"] :is(.tbtn:not(.next):not(.rk),.cap,.btn.ghost,.btn.recedit,.dp-f button,.gi,.gchip2,.calnav,.caltoday){
+  background:var(--brushed),linear-gradient(180deg,#4A4E53 0,#3A3D42 55%,#33363A 100%)!important;border:1px solid #121315!important;color:#C9CDD1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 0 rgba(0,0,0,.25),0 3px 0 #141517,0 4px 5px rgba(0,0,0,.45)!important}
+:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-skin="mech"] .maseg button[aria-pressed="true"]{
+  background:var(--brushed),linear-gradient(180deg,#36393D 0,#3E4146 100%)!important;color:#E4E6E8;box-shadow:inset 0 2px 4px rgba(0,0,0,.55),inset 0 -1px 0 rgba(255,255,255,.06),0 1px 0 #141517!important}
+:root[data-skin="mech"] :is(nav.tabs,.subtabs) button::after{width:7px;height:7px;background:radial-gradient(circle at 35% 30%,#5A3A26,#2A1A10);box-shadow:inset 0 1px 1px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.08)}
+:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"]::after{background:radial-gradient(circle at 35% 30%,#FFE0B0 0 15%,#F0A040 45%,#9A5410 100%);box-shadow:0 0 6px rgba(240,160,64,.7),inset 0 1px 1px rgba(255,255,255,.4)}
+:root[data-skin="mech"] .caltoday{color:#D8DCDF!important;padding-left:22px!important;position:relative}
+:root[data-skin="mech"] .caltoday::after{content:"";position:absolute;left:8px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#D8FFD8 0 15%,#5CC25C 50%,#1F6A1F 100%);box-shadow:0 0 5px rgba(92,194,92,.7)}
+:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button,:root[data-theme="mech-light"] .maseg button,:root[data-theme="mech-light"] :is(.tbtn:not(.next):not(.rk),.cap,.btn.ghost,.btn.recedit,.dp-f button,.gi,.gchip2,.calnav,.caltoday){
+  background:var(--brushed),linear-gradient(180deg,#FAFBFC 0,#E1E5E8 55%,#D3D8DC 100%)!important;border:1px solid #8E959C!important;color:#2A2F34!important;
+  box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(0,0,0,.06),0 3px 0 #8E959C,0 4px 5px rgba(30,40,50,.25)!important}
+:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-theme="mech-light"] .maseg button[aria-pressed="true"]{background:var(--brushed),linear-gradient(180deg,#D0D5DA,#E2E6E9)!important;box-shadow:inset 0 2px 4px rgba(30,40,50,.3),0 1px 0 #8E959C!important}
+:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-skin="mech"] .maseg button[aria-pressed="true"]{transform:translateY(2px)}
+/* LED bar graphs: unlit segments show in the track; lit ones glow softly */
+:root[data-skin="mech"] .bar{height:12px;border-radius:2px;background:repeating-linear-gradient(90deg,#24272B 0 6px,#121315 6px 8px);box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.06)}
+:root[data-skin="mech"] .bar i{border-radius:1px;background:repeating-linear-gradient(90deg,var(--g) 0 6px,transparent 6px 8px);box-shadow:none;filter:drop-shadow(0 0 3px color-mix(in srgb,var(--g) 50%,transparent))}
+:root[data-theme="mech-light"] .bar{background:repeating-linear-gradient(90deg,#B8BEC4 0 6px,#9CA3AA 6px 8px);box-shadow:inset 0 1px 2px rgba(30,40,50,.4),0 1px 0 #fff}
+/* calendar days are small keys; trained days are tinted caps, not neon */
+:root[data-skin="mech"] .cald{border-radius:5px}
+:root[data-skin="mech"] :is(.cald.push,.cald.pull,.cald.both,.cald.xonly){box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -2px 0 rgba(0,0,0,.25),0 2px 0 rgba(0,0,0,.5),0 3px 4px rgba(0,0,0,.35)!important;color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.4)}
+:root[data-skin="mech"] .cald.push{background:linear-gradient(180deg,color-mix(in srgb,var(--push) 88%,#fff),var(--push))}
+:root[data-skin="mech"] .cald.pull{background:linear-gradient(180deg,color-mix(in srgb,var(--pull) 88%,#fff),var(--pull))}
+:root[data-skin="mech"] .cald.xonly{background:linear-gradient(180deg,color-mix(in srgb,var(--ok) 88%,#fff),var(--ok));color:#fff}
+/* the START button: an illuminated cap behind a guard ring, less candy */
+:root[data-theme="mech"] .tbtn.next{background:radial-gradient(ellipse at 50% 28%,#F2B98A 0,var(--cta) 48%,color-mix(in srgb,var(--cta) 55%,#000) 100%)}
