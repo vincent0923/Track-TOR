@@ -27,6 +27,10 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 - 🔘 **图表的范围和均线各一个按钮**：点一下换（7、14、30、60、90 天、全部；均线 7、14、30），长按回到 14 天、均线 14。图表默认也改成 14 天 + 均线 14。
   One button each for a chart's range and moving average: tap to step (7, 14, 30, 60, 90 days, all; MA 7, 14, 30), hold to go back to 14 days and MA14, which are now the defaults.
 
+### 修复 / Fixed
+- 最大引体数不再被随手的加练拉低：只算手动记录的数，和拉练日的第一组引体。其他日子加练的引体不算。
+  Max pull-ups is no longer dragged down by casual extra sets: only a number logged by hand and the first pull-up set of a pull day count; pull-ups added as extra practice on other days don't.
+
 ### 改进 / Changed
 - 「身体」标签改叫「数据」，图标换成折线图；「一年打卡」默认收起，从页面底部的 + 加回来。
   The Body tab is now Data with a chart icon; the year of training panel starts hidden and comes back from the + at the bottom.

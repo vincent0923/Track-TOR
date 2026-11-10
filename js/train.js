@@ -55,15 +55,19 @@ function moveDatedExtras(byDate){
   });
   return moved;
 }
-/* best completed pull-up set each day counts toward the pull-up trend and goal, alongside manual records */
+/* "max pull-ups" over time. Only an all-out effort counts: a number logged by hand, or the first pull-up set of a
+   pull day (the programme's strict pull-ups, else the pull-ups added to that session as extra practice).
+   Pull-ups done as extra practice on other days are casual sets and are left out. */
 function pullSeries(){
   const best={};
   Object.values(state.metrics).forEach(m=>{if(m.date&&m.pullups!=null)best[m.date]=+m.pullups});
-  xDocs().forEach(s=>{
-    const it=s&&s.xs&&s.xs.find(y=>y.id===XPULL);
-    if(!it)return;
+  Object.entries(state.sessions).forEach(([sid,s])=>{
+    if(!s||!BYID[sid]||BYID[sid].kind!=="pull")return;
+    const prog=s.sets&&s.sets[XPULL], it=s.xs&&s.xs.find(y=>y.id===XPULL);
+    const first=prog&&prog[0]&&prog[0].d?prog[0]:(it&&it.sets[0]&&it.sets[0].d?it.sets[0]:null);
+    if(!first||!(+first.v>0))return;
     const d=s.date||today();
-    it.sets.forEach(x=>{if(x.d&&(best[d]==null||+x.v>best[d]))best[d]=+x.v});
+    if(best[d]==null||+first.v>best[d])best[d]=+first.v;
   });
   return Object.keys(best).sort().map(d=>({date:d,x:dnum(d),y:best[d]}));
 }
