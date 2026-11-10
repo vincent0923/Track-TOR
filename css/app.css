@@ -1575,11 +1575,7 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 :root[data-skin="xmas"] .dsrc-row .vbtn[data-v="ok"]{box-shadow:0 0 0 3px color-mix(in srgb,#E0263F 30%,transparent)}
 
 /* ---------- impeccable pass ----------
-   The header carries 练 with the next session's name, so the first screen always has the way into the workout.
    The goals card is a compact two-by-two: icon, value, percent and a slim bar; start → goal lives in the goal panel. */
-.hrow #goNext{flex:none;gap:4px;font-size:15px;padding:8px 14px;border-radius:12px;white-space:nowrap}
-.hrow #goNext b{font-family:var(--f-num);font-size:15px;font-weight:700;color:inherit}
-.hrow #goNext[hidden]{display:none}
 @media (max-width:479px){header.top h1 .h1s{display:none}}
 .goals.goals{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;padding:10px 12px 10px;margin:12px 0 8px}
 .goals:has(.privbtn){padding-bottom:34px}

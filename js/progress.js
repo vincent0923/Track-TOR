@@ -239,8 +239,7 @@ function renderData(){
 
 function renderStats(){
   const cur=currentSid();
-  document.getElementById("stNext").textContent=cur?SHORT(BYID[cur]):"";
-  document.getElementById("goNext").hidden=!cur;
+  document.getElementById("stNext").textContent=cur?SHORT(BYID[cur]):T("全部完成","All done");
   renderGoals();
 }
 /* ---------- goals ---------- */

@@ -238,7 +238,7 @@ function renderTrain(){
   /* finished sessions without a date can't sit on the calendar; keep them reachable */
   PROGRAM.filter(p=>{const s=state.sessions[p.sid];return s&&s.done&&!s.date}).forEach(p=>{html+=cardHtml(p,cur)});
   html+='<div class="tbar"><button class="rk rk-up" data-act="all" aria-label="'+T("全部收起","Collapse all")+'" title="'+T("全部收起","Collapse all")+'"></button>'
-    +'</div>';
+    +(cur?'<button class="tbtn next" data-act="next" aria-label="'+T("跳到下一次训练","Jump to next session")+'">💪🏼'+T("练","Train")+'</button>':'')+'</div>';
   PROGRAM.filter(p=>!(state.sessions[p.sid]&&state.sessions[p.sid].done)).slice(0,5).forEach(p=>{
     html+=cardHtml(p,cur);
     if(p.kind==="pull" && (p.day===10||p.day===20)) html+='<div class="review">D'+p.day+T(' 复盘：对比引体次数、体重周均、腰围，决定下一档是否照常加量。',' review: compare pull-ups, weekly-average weight and waist, then decide whether the next tier goes ahead as planned.')+'</div>';
@@ -377,15 +377,13 @@ function setRowState(sid,ex,i){
   const bar=document.querySelector("#c-"+sid+" .prog i"); if(bar) bar.style.width=(n?Math.round(d/n*100):0)+"%";
 }
 
-/* 练 (in the header, always on the first screen): open the next session on the Train tab and scroll to it */
+/* 练: open the next session and scroll to it */
 function goNextSession(){
   const cur=currentSid();if(!cur)return;
-  if(typeof setTab==="function"&&!document.getElementById("pane-train").offsetParent)setTab("train");
   const was=openDays.has(cur);openDays.clear();keepEditing();openDays.add(cur);renderTrain();if(!was)foldIn([bodyOf(cur)],FOLD_MS);
   const fd=document.getElementById("fd-"+cur);if(fd){fd.value=today()}
   const el=document.getElementById("c-"+cur);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}
 }
-document.getElementById("goNext").addEventListener("click",goNextSession);
 document.getElementById("pane-train").addEventListener("click",e=>{
   const xt=e.target.closest("[data-xa]"); if(xt){extraAct(xt);return}
   const cd=e.target.closest("[data-cal]");

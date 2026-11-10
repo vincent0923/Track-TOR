@@ -12,8 +12,6 @@ i 代表 impeccable：按一次界面审查（启发式评分、检测器扫描�
 i for impeccable: a pass driven by an interface review (heuristic scoring, a detector scan and screenshots across the themes). The `v1.30a` branch keeps the version from before it.
 
 ### 改进 / Changed
-- 💪🏼 **「练」上了第一屏**：右上角下面那行「下一次 推D1」变成「练 推D1」按钮，一打开就能点，点了跳到训练页并打开下一次训练。列表里原来那个「练」去掉了。
-  Train on the first screen: the "Next Push D1" line under the title is now a "Train Push D1" button you can tap as soon as the app opens; it goes to the Train tab and opens the next session. The Train button further down the list is gone.
 - 🎯 **目标卡变紧凑**：四个目标排成两列，每格只有图标、名字、数值、百分比和一根细进度条；起点和目标数在点图标打开的目标面板里。没设目标的那格仍显示「设目标」。
   Compact goals: the four goals sit in two columns, each with its icon, name, value, percent and a slim bar; start and goal figures live in the goal panel behind the icon. A goal without a target still shows "Set goal".
 - 🏁 **「完成训练」是整宽按钮**：训练卡最下面的磁盘图标换成推、拉颜色的整宽按钮「🏁 完成 推练 D3」，和保存备注分开。
