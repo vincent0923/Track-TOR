@@ -55,21 +55,31 @@ function moveDatedExtras(byDate){
   });
   return moved;
 }
-/* "max pull-ups" over time. Only an all-out effort counts: a number logged by hand, or the first pull-up set of a
-   pull day (the programme's strict pull-ups, else the pull-ups added to that session as extra practice).
-   Pull-ups done as extra practice on other days are casual sets and are left out. */
+/* "max pull-ups" over time. On any day it is the larger of two numbers:
+   - the latest number logged by hand (a later, lower entry replaces an earlier one, so a tested step back shows);
+   - the best single pull-up set in the three most recent pull days (the programme's strict pull-ups and any pull-ups
+     added to those sessions).
+   Pull-ups done as extra practice on other days are casual sets and are left out. A point is drawn on every day
+   that has a manual entry or a pull day. */
 function pullSeries(){
-  const best={};
-  Object.values(state.metrics).forEach(m=>{if(m.date&&m.pullups!=null)best[m.date]=+m.pullups});
+  const manual={}, pull={};
+  Object.values(state.metrics).forEach(m=>{if(m.date&&m.pullups!=null)manual[m.date]=+m.pullups});
   Object.entries(state.sessions).forEach(([sid,s])=>{
     if(!s||!BYID[sid]||BYID[sid].kind!=="pull")return;
-    const prog=s.sets&&s.sets[XPULL], it=s.xs&&s.xs.find(y=>y.id===XPULL);
-    const first=prog&&prog[0]&&prog[0].d?prog[0]:(it&&it.sets[0]&&it.sets[0].d?it.sets[0]:null);
-    if(!first||!(+first.v>0))return;
-    const d=s.date||today();
-    if(best[d]==null||+first.v>best[d])best[d]=+first.v;
+    const it=s.xs&&s.xs.find(y=>y.id===XPULL), sets=((s.sets&&s.sets[XPULL])||[]).concat(it?it.sets:[]);
+    const top=Math.max(0,...sets.filter(x=>x.d).map(x=>+x.v||0));
+    if(!s.done&&!top)return;
+    const d=s.date||today();pull[d]=Math.max(pull[d]||0,top);
   });
-  return Object.keys(best).sort().map(d=>({date:d,x:dnum(d),y:best[d]}));
+  const days=[...new Set(Object.keys(manual).concat(Object.keys(pull)))].sort(), out=[], last3=[];
+  let man=null;
+  days.forEach(d=>{
+    if(manual[d]!=null)man=manual[d];
+    if(pull[d]!=null){last3.push(pull[d]);if(last3.length>3)last3.shift()}
+    const y=Math.max(man==null?0:man,...last3);
+    if(y>0||man!=null)out.push({date:d,x:dnum(d),y});
+  });
+  return out;
 }
 /* locked: a past day's extras are read-only until "Edit record"; today's stay open until midnight */
 function extraBlock(sid,s,locked){

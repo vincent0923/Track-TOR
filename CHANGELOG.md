@@ -28,8 +28,8 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
   One button each for a chart's range and moving average: tap to step (7, 14, 30, 60, 90 days, all; MA 7, 14, 30), hold to go back to 14 days and MA14, which are now the defaults.
 
 ### 修复 / Fixed
-- 最大引体数不再被随手的加练拉低：只算手动记录的数，和拉练日的第一组引体。其他日子加练的引体不算。
-  Max pull-ups is no longer dragged down by casual extra sets: only a number logged by hand and the first pull-up set of a pull day count; pull-ups added as extra practice on other days don't.
+- 最大引体数不再被随手的加练拉低：取最近一次手动记录的数，和最近 3 个拉练日里单组最多的引体数，哪个大算哪个。其他日子加练的引体不算。
+  Max pull-ups is no longer dragged down by casual extra sets: it is the larger of the latest number logged by hand and the best single set in the three most recent pull days; pull-ups added as extra practice on other days don't count.
 
 ### 改进 / Changed
 - 「身体」标签改叫「数据」，图标换成折线图；「一年打卡」默认收起，从页面底部的 + 加回来。
