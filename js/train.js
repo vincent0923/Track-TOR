@@ -250,7 +250,7 @@ function renderTrain(){
   /* finished sessions without a date can't sit on the calendar; keep them reachable */
   PROGRAM.filter(p=>{const s=state.sessions[p.sid];return s&&s.done&&!s.date}).forEach(p=>{html+=cardHtml(p,cur)});
   html+='<div class="tbar"><button class="rk rk-up" data-act="all" aria-label="'+T("全部收起","Collapse all")+'" title="'+T("全部收起","Collapse all")+'"></button>'
-    +(cur?'<button class="tbtn next" data-act="next" aria-label="'+T("跳到下一次训练","Jump to next session")+'">💪🏼'+T("练","Train")+'</button>':'')+'</div>';
+    +(cur?'<button class="tbtn next" data-act="next" aria-label="'+T("跳到下一次训练","Jump to next session")+'">'+(document.documentElement.getAttribute("data-skin")==="wooly"?'🧶'+T("练个毛线","Wool it"):'💪🏼'+T("练","Train"))+'</button>':'')+'</div>';
   PROGRAM.filter(p=>!(state.sessions[p.sid]&&state.sessions[p.sid].done)).slice(0,5).forEach(p=>{
     html+=cardHtml(p,cur);
     if(p.kind==="pull" && (p.day===10||p.day===20)) html+='<div class="review">D'+p.day+T(' 复盘：对比引体次数、体重周均、腰围，决定下一档是否照常加量。',' review: compare pull-ups, weekly-average weight and waist, then decide whether the next tier goes ahead as planned.')+'</div>';
@@ -544,3 +544,5 @@ function showAvail(){
   ["pointerup","pointercancel","pointerleave"].forEach(t=>pane.addEventListener(t,stop));
   pane.addEventListener("contextmenu",e=>{if(e.target.closest("[data-cal-today]"))e.preventDefault()});
 })();
+/* the Train button's wording follows the look */
+document.addEventListener("themeicons",()=>{if(typeof curTab!=="undefined"&&curTab==="train"&&document.getElementById("pane-train").innerHTML)renderTrain()});

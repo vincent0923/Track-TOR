@@ -1823,3 +1823,105 @@ nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-to
   box-shadow:inset 0 0 0 1px rgba(0,0,0,.9),0 0 0 3px color-mix(in srgb,var(--bg) 70%,#000),0 1px 0 3px var(--lip),0 12px 22px rgba(0,0,0,.5)}
 :root[data-skin="pod"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#FF4A30;--lg:#8FE3A0;--lgl:3px;--lspin:1s steps(8) infinite}
 :root[data-skin="pod"] header.top h1{letter-spacing:.02em}
+
+/* ---------- Wooly Coffee: a friend's cafe ----------
+   Day: the cafe's cream and coffee brown, wooden window frames round every panel, the green of the awning, flower
+   pinks and hydrangea blue; hand-painted plants and flowers sit faintly behind the page. Night: blue hour outside,
+   the room lit warm by the paper lantern, the same plants picked out by lamp light.
+   Fold buttons are coffee beans (whole when closed, cracked open when open); the sync button is the yarn star by day
+   and the lit shop sign by night; Train reads 练个毛线. */
+:root[data-theme="wooly"]{
+  --bg:#EFE0CA; --surface:#F8F3EB; --sunk:#EBDDC8; --ink:#4A2F24; --muted:#8A6E5C; --line:#DCC7A9; --wood:#A56B3A; --wood2:#C28A55;
+  --push:#B4506A; --push-soft:#F3DDE0; --pull:#1F5A48; --pull-soft:#D9E7DF; --ok:#5C8A4C; --ok-soft:#E0EAD6; --warn:#C0812F; --sleep:#5B79B8;
+  --cta:#553529; --on-cta:#FBF3E6; --card:rgba(248,243,235,.9); color-scheme:light}
+:root[data-theme="wooly-night"]{
+  --bg:#161F2C; --surface:#2A2119; --sunk:#1F1811; --ink:#F4E6CE; --muted:#B9A58B; --line:#4B3926; --wood:#8A5A31; --wood2:#B07A45;
+  --push:#F0A3A6; --push-soft:rgba(240,163,166,.16); --pull:#86C9AE; --pull-soft:rgba(134,201,174,.15); --ok:#A8C97A; --ok-soft:rgba(168,201,122,.15); --warn:#F2B95C; --sleep:#9DB4EA;
+  --cta:#F2B95C; --on-cta:#2A1A0C; --card:rgba(42,33,25,.9); color-scheme:dark}
+:root[data-skin="wooly"]{--r:16px;--f-body:"Bricolage Grotesque",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --rk-bg:transparent;--rk-shade:none;--rk-shade-r:none;--rk-fx:none;--rk-fx-r:none;--rk-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-13 -13 26 26'%3E%3Cg transform='rotate(28)'%3E%3Cellipse rx='8.2' ry='11.2' fill='%236B3F27'/%3E%3Cpath d='M0-11.200C5.800-11.200 8.200-5 8.200 0S5.800 11.200 0 11.200C3.500 5 3.500-5 0-11.200z' fill='%238A5636'/%3E%3Cpath d='M-.5-10.500C3-5-3 4 .800 10.500' fill='none' stroke='%233A2014' stroke-width='1.700' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E")}
+:root[data-theme="wooly"] #pane-diet{--intake:#4A2F24;--burn:#C0812F;--protein:#5B79B8;--gain:#5C8A4C;--loss:#B4506A;--dslate:#8A6E5C;--dtotal:#EBDDC8}
+:root[data-theme="wooly-night"] #pane-diet{--intake:#F4E6CE;--burn:#F2B95C;--protein:#9DB4EA;--gain:#A8C97A;--loss:#F0A3A6;--dslate:#6B5A47;--dtotal:#1F1811}
+/* the room behind the page: a vine from the top right, monstera and a jar of flowers along the floor */
+:root[data-skin="wooly"] body{position:relative;z-index:0}
+:root[data-skin="wooly"] body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:url(../img/wooly/vine-light.svg) right -18px top -6px/210px auto no-repeat,url(../img/wooly/floor-light.svg) center bottom 56px/min(100%,560px) auto no-repeat}
+:root[data-theme="wooly-night"] body{background:linear-gradient(180deg,#22304A 0,#18212F 38%,#121925 100%) fixed,var(--bg)}
+:root[data-theme="wooly-night"] body::before{
+  background:radial-gradient(60% 34% at 62% 8%,rgba(255,196,118,.3),rgba(255,180,100,.08) 60%,transparent 100%),
+    url(../img/wooly/vine-dark.svg) right -18px top -6px/210px auto no-repeat,url(../img/wooly/floor-dark.svg) center bottom 56px/min(100%,560px) auto no-repeat}
+:root[data-skin="wooly"] canvas.flame{display:none}
+/* panels are windows: a wooden frame with a thin inner line */
+:root[data-skin="wooly"] :is(.card,.chartbox,details.fold,.goals,.cal,.diet-day){background:var(--card);border:2px solid var(--wood);border-radius:16px;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wood2) 45%,transparent),0 6px 16px -10px rgba(74,47,36,.45)}
+:root[data-theme="wooly-night"] :is(.card,.chartbox,details.fold,.goals,.cal,.diet-day){
+  background:radial-gradient(120% 80% at 50% 0%,rgba(255,196,118,.1),transparent 60%),var(--card);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--wood2) 40%,transparent),0 0 26px -10px rgba(242,185,92,.4)}
+:root[data-skin="wooly"] :is(.mask .sheet,.dp){border:2px solid var(--wood);border-radius:16px}
+:root[data-skin="wooly"] .tag{letter-spacing:.02em}
+/* buttons: cream pebbles with a coffee line; the main ones are coffee brown (lamp amber at night) */
+:root[data-skin="wooly"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.syncbtn.off,.caltoday,.gchip2){background:var(--surface);border:1.6px solid color-mix(in srgb,var(--ink) 55%,transparent);color:var(--ink);border-radius:999px;box-shadow:0 2px 0 color-mix(in srgb,var(--ink) 18%,transparent)}
+:root[data-skin="wooly"] :is(.iconbtn,.privbtn,.tbtn,.cap,.btn,.caltoday,.gchip2):active{transform:translateY(2px);box-shadow:none}
+:root[data-skin="wooly"] .btn:not(.ghost):not(.recedit){background:var(--cta);color:var(--on-cta);border:0;border-radius:999px;box-shadow:0 2px 0 color-mix(in srgb,var(--cta) 60%,#000)}
+:root[data-skin="wooly"] .gchip2[aria-pressed="true"],:root[data-skin="wooly"] .gchip2.on{background:var(--g,var(--cta));color:#fff;border-color:transparent}
+:root[data-theme="wooly-night"] .gchip2[aria-pressed="true"]{color:#2A1A0C}
+/* 练个毛线: the awning, green with its scalloped white edge */
+:root[data-skin="wooly"] .tbtn.next{background:#1F4D3F;color:#FBF3E6;border:0;border-radius:10px 10px 12px 12px;padding:9px 16px 12px;font-weight:700;letter-spacing:.04em;animation:none;text-shadow:none;
+  background-image:radial-gradient(circle at 7px 100%,transparent 0 5.200px,#FBF3E6 5.600px 7px,transparent 7.400px);background-size:14px 9px;background-repeat:repeat-x;background-position:0 100%;
+  box-shadow:0 3px 0 #143629,0 8px 14px -8px rgba(20,54,41,.6)}
+:root[data-theme="wooly-night"] .tbtn.next{box-shadow:0 3px 0 #0E2A20,0 0 18px -4px rgba(242,185,92,.55)}
+:root[data-skin="wooly"] .tbtn.next:active{transform:translateY(2px);box-shadow:0 1px 0 #143629}
+:root[data-skin="wooly"] .finish .finbtn{border-radius:999px}
+/* dock: the counter, a cream board with a wooden edge; the chosen tab is a coffee-brown pebble (lamp amber at night) */
+:root[data-skin="wooly"] nav.tabs.tabs{background:var(--surface);border-top:2px solid var(--wood);border-radius:18px 18px 0 0;box-shadow:0 -8px 20px -12px rgba(74,47,36,.5)}
+:root[data-skin="wooly"] nav.tabs button{background:none;border:0;color:var(--ink);border-radius:999px}
+:root[data-skin="wooly"] nav.tabs button svg{width:28px!important;height:28px!important}
+:root[data-skin="wooly"] nav.tabs button[aria-selected="true"]{color:var(--on-cta)}
+:root[data-skin="wooly"] nav.tabs .tpiece{background:var(--cta);border-radius:999px;box-shadow:0 2px 0 color-mix(in srgb,var(--cta) 60%,#000);transition:transform .35s cubic-bezier(.3,1.3,.5,1),width .35s}
+/* fold buttons are coffee beans: whole when closed, cracked open when open; add buttons are a coffee-brown dot */
+:root[data-skin="wooly"] .rk,:root[data-skin="wooly"] details.fold>summary::after,:root[data-skin="wooly"] .dsub>summary::after,:root[data-skin="wooly"] .savefold .saveic::after,:root[data-skin="wooly"] .dtoggle::before,:root[data-skin="wooly"] .dsrc-i-r::before,:root[data-skin="wooly"] .shead::after{background-size:92%,100%!important}
+:root[data-skin="wooly"] details.fold[open]>summary::after,:root[data-skin="wooly"] .dsub[open]>summary::after,:root[data-skin="wooly"] .savefold .saveic::after,:root[data-skin="wooly"] .dtoggle[aria-expanded="true"]::before,:root[data-skin="wooly"] .calfold[aria-expanded="true"],:root[data-skin="wooly"] .dsrc-i[aria-expanded="true"] .dsrc-i-r::before,:root[data-skin="wooly"] .shead[aria-expanded="true"]::after,:root[data-skin="wooly"] .rk-up{--rk-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-13 -13 26 26'%3E%3Cg transform='rotate(28)'%3E%3Cpath transform='translate(-2.600 0) rotate(-7)' d='M-.5-11C-6-11-8.500-5-8.500 0S-6 11-.5 11L-2.200 7 .600 4-2 1 .600-2-2-5 .600-8z' fill='%236B3F27'/%3E%3Cpath transform='translate(2.600 0) rotate(7)' d='M.5-11C6-11 8.500-5 8.500 0S6 11 .5 11L-1.200 7 1.600 4-1 1 1.600-2-1-5 1.600-8z' fill='%238A5636'/%3E%3Cpath d='M-1-12.500l1.400 1.200M1.800-12l-.600 1.500' stroke='%236B3F27' stroke-width='1.400' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E");transform:rotate(0deg) scale(1.08)}
+:root[data-skin="wooly"] .calfold.rk[aria-expanded="true"]{transform:rotate(0deg) scale(1.08)}
+:root[data-skin="wooly"] .rk-plus{background-color:var(--cta)!important;background-size:58%,100%!important}
+:root[data-theme="wooly-night"] .rk-plus{background-color:#6B4A35!important}
+:root[data-skin="wooly"] .bar{background:var(--sunk);height:8px}
+:root[data-skin="wooly"] .bar i{box-shadow:none}
+:root[data-skin="wooly"] .cald.today{border-color:var(--pull)!important}
+:root[data-skin="wooly"] .toast{background:var(--cta);color:var(--on-cta);border-radius:999px}
+/* the sync button */
+.woolbox{display:none}
+:root[data-skin="wooly"] #syncBtn{display:none!important}
+:root[data-skin="wooly"] .woolbox{display:block;flex:none}
+.woolbox button{border:0;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.woolbox .wsign{display:none}
+:root[data-theme="wooly-night"] .woolbox .wstar{display:none}
+:root[data-theme="wooly-night"] .woolbox .wsign{display:grid}
+/* day: the yarn star */
+.wstar{width:60px;height:70px;margin:-8px 2px -10px 0}
+.wstar svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 8%;transition:transform .45s cubic-bezier(.3,1.4,.5,1)}
+.wstar .flat,.wstar .glint{opacity:0}
+.wstar .tassels{transform-origin:32px 51px;animation:wSway 3.6s ease-in-out infinite alternate}
+.woolbox.sleepy .wstar svg{transform:scale(.62)}
+.woolbox:is(.sleepy,.wake) .wstar .smile{opacity:0}
+.woolbox:is(.sleepy,.wake) .wstar .flat{opacity:1}
+.woolbox.wake .wstar svg{transform:scale(1.04);transition:transform 2.600s cubic-bezier(.2,.6,.3,1)}
+.woolbox.yay .wstar svg{animation:wStretch .95s cubic-bezier(.3,1.5,.5,1)}
+.woolbox.yay .wstar .glint{animation:wGlint .9s ease-out .25s}
+@keyframes wSway{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+@keyframes wStretch{0%{transform:scale(1.04)}30%{transform:scale(.86,1.2)}55%{transform:scale(1.16,.9) rotate(-6deg)}75%{transform:scale(.98,1.04) rotate(4deg)}100%{transform:none}}
+@keyframes wGlint{0%{opacity:0;transform:scale(.4)}35%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1)}}
+/* night: the shop sign, dark letters against their own back light */
+.wsign{justify-items:center;line-height:1;padding:6px 10px 5px;border-radius:10px;font-family:"Kaiti SC","STKaiti","KaiTi","Bricolage Grotesque",cursive;
+  color:#6A553D;background:radial-gradient(70% 90% at 50% 55%,rgba(245,176,74,.05),transparent 75%),
+    radial-gradient(rgba(255,255,255,.05) .6px,transparent 1px) 0 0/4px 4px,#2A2723;
+  box-shadow:0 0 0 1px rgba(0,0,0,.5),0 4px 10px -4px rgba(0,0,0,.6);transition:color .6s,text-shadow .8s,background .8s}
+.wsign-zh{font-size:21px;font-weight:700;letter-spacing:.06em;white-space:nowrap}
+.wsign-en{font-size:12px;letter-spacing:.14em;margin-top:1px;font-style:italic}
+.woolbox.flicker .wsign{animation:wFlicker 1.300s steps(1,end),wRamp 5s ease-out 1.300s forwards}
+.woolbox.lit .wsign{color:#241505;text-shadow:0 0 5px #FFE2A0,0 0 12px #F7BE5E,0 0 26px rgba(245,176,74,.9),0 0 46px rgba(245,160,60,.55);
+  background:radial-gradient(80% 100% at 50% 55%,rgba(245,176,74,.55),rgba(245,176,74,.16) 55%,transparent 85%),
+    radial-gradient(rgba(255,255,255,.05) .6px,transparent 1px) 0 0/4px 4px,#3A3329}
+@keyframes wFlicker{0%,100%{color:#6A553D;text-shadow:none}8%{color:#2B1A08;text-shadow:0 0 8px #F7BE5E,0 0 18px rgba(245,176,74,.7)}14%{color:#6A553D;text-shadow:none}
+  26%{color:#2B1A08;text-shadow:0 0 6px #F7BE5E}31%{color:#6A553D;text-shadow:none}52%{color:#2B1A08;text-shadow:0 0 10px #F7BE5E,0 0 20px rgba(245,176,74,.7)}60%{color:#5A4530;text-shadow:0 0 3px rgba(245,176,74,.5)}78%{color:#2B1A08;text-shadow:0 0 8px #F7BE5E}}
+@keyframes wRamp{from{color:#4A3824;text-shadow:0 0 3px rgba(245,176,74,.45)}to{color:#2B1A08;text-shadow:0 0 5px #FFE2A0,0 0 12px #F7BE5E,0 0 22px rgba(245,176,74,.7)}}
+@media (prefers-reduced-motion:reduce){.wstar .tassels,.woolbox.yay .wstar svg,.woolbox.flicker .wsign{animation:none}.woolbox.flicker .wsign{color:#2B1A08;text-shadow:0 0 8px #F7BE5E}}

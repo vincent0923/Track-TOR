@@ -76,6 +76,7 @@ const THEMES=[
   ["minimal","极简","Minimal","minimal","#FAFAF8 #FFFFFF #161614 #B5583A"],["minimal-warm","极简·暖","Minimal warm","minimal","#F6ECE5 #FDF8F6 #FF955F #7896CF"],
   ["xmas","圣诞","Christmas","xmas","#E9D9BF #FBF6EE #B3192E #1F5A3A"],
   ["flat","扁平","Flat","flat","#283044 #323B50 #12B5A5 #F0506E"],
+  ["wooly","毛线咖啡","Wooly Coffee","wooly","#EFE0CA #F7F2EA #553529 #1F5A48"],["wooly-night","毛线咖啡·夜","Wooly Coffee night","wooly","#161F2C #2A2119 #F2B95C #86C9AE"],
   ["pod-light","随身听·米","Pocket player sand","pod","#BDBAB2 #2B3237 #E9DCC2 #D8452B"],["pod","随身听·黑","Pocket player black","pod","#1D1E20 #0E0F10 #EFA02F #D8452B"],
   ["craft","手作","Craft","craft","#EFE7D8 #FBF7EF #E0713A #2F6F9A"],
   ["toy","玩具","Toy","toy","#E3DFD5 #F8F5EF #EF4F2B #2C55E0"],["toy-night","夜间玩具","Toy night","toy","#1C1B19 #292724 #FF5B36 #FFC23D"],
@@ -92,7 +93,7 @@ function applyTheme(t){if(!THEME_IDS.includes(t))t="light";const r=document.docu
   try{localStorage.setItem(LS+"-theme",t)}catch(e){}placePieces(false);renderThemes()}
 /* chart lines follow the look: smooth for beUI, toy and craft (monotone cubic: smooth, but never overshooting a peak
    or dipping below a trough the data doesn't have), steps for retro, straight segments otherwise. A null breaks the line. */
-const CURVE={pod:"step",beui:"monotone",toy:"monotone",craft:"monotone",xmas:"monotone",retro:"step"};
+const CURVE={wooly:"monotone",pod:"step",beui:"monotone",toy:"monotone",craft:"monotone",xmas:"monotone",retro:"step"};
 function linePath(pts){const kind=CURVE[document.documentElement.getAttribute("data-skin")]||"linear",f=v=>v.toFixed(1);
   const runs=[];let r=[];pts.forEach(p=>{if(p)r.push(p);else if(r.length){runs.push(r);r=[]}});if(r.length)runs.push(r);
   return runs.map(r=>{let d="M"+f(r[0].x)+" "+f(r[0].y);if(r.length<2)return d;
@@ -118,7 +119,7 @@ function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const 
   document.dispatchEvent(new Event("themeicons"))}
 /* Profile › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
-  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["xmas",T("节日","Holiday")],["flat",T("扁平","Flat")],["pod",T("随身听","Pocket player")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
+  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["xmas",T("节日","Holiday")],["wooly",T("毛线咖啡","Wooly Coffee")],["flat",T("扁平","Flat")],["pod",T("随身听","Pocket player")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
   let wf=0;try{wf=+localStorage.getItem(LS+"-wear")||0}catch(e){}
   const wear='<div class="thg"><h4>'+T("磨损","Wear and tear")+'</h4><div class="wearseg seg maseg" role="group" aria-label="'+T("磨损","Wear and tear")+'">'
     +[[0,"自动","Auto"],[1,"轻","Light"],[2,"中","Medium"],[3,"重","Heavy"]].map(([v,zh,en])=>'<button type="button" data-wear-force="'+v+'" aria-pressed="'+(wf===v)+'">'+T(zh,en)+'</button>').join("")+'</div></div>';
@@ -274,7 +275,7 @@ const FW=(function(){
 /* the celebration follows the look: fireworks on the plain themes, a party popper in the theme's colours on the
    toy looks, pixel bits on retro, paper scraps on craft, sparks on the machine console, a small tidy burst on the
    quiet looks. Particles come from canvas-confetti (js/confetti.js); n is how many rockets the fireworks would fire. */
-const CELEB={pod:"pixel",flat:"glow",xmas:"snow",toy:"party",retro:"pixel",craft:"paper",mech:"sparks",beui:"glow",interior:"tidy",minimal:"tidy"};
+const CELEB={wooly:"petal",pod:"pixel",flat:"glow",xmas:"snow",toy:"party",retro:"pixel",craft:"paper",mech:"sparks",beui:"glow",interior:"tidy",minimal:"tidy"};
 function themeHex(names){const c=document.createElement("canvas").getContext("2d"),cs=getComputedStyle(document.documentElement);
   return names.map(n=>{c.fillStyle="#000";c.fillStyle=cs.getPropertyValue(n).trim()||"#888";const v=c.fillStyle;
     if(v[0]==="#")return v;const m=v.match(/[\d.]+/g);return "#"+m.slice(0,3).map(x=>(+x|0).toString(16).padStart(2,"0")).join("")})}
@@ -291,6 +292,10 @@ function celebrate(kind,n,big){const cf=window.confetti;if(!cf||matchMedia("(pre
     const flakes=cf.shapeFromText?["❄️","🎁","⭐"].map(t=>cf.shapeFromText({text:t,scalar:1.6})):["circle"];
     for(let i=0;i<bursts;i++)go(i,()=>{cf(Object.assign({},base,{particleCount:24+n*4,angle:270,spread:160,startVelocity:12,origin:{x:.15+Math.random()*.7,y:-.05},colors,shapes:["circle"],scalar:.9,gravity:.45,drift:Math.random()-.5,ticks:380}));
       cf(Object.assign({},base,{particleCount:6+n,angle:270,spread:150,startVelocity:10,origin:{x:.2+Math.random()*.6,y:-.05},shapes:flakes,scalar:1.6,gravity:.4,ticks:400,flat:true}))});return}
+  if(kind==="petal"){const colors=["#F0A9B0","#C9A7DA","#FFFFFF","#F3B48C","#8DBA7E"];
+    const bits=cf.shapeFromText?["🌸","🧶","☕"].map(t=>cf.shapeFromText({text:t,scalar:1.5})):["circle"];
+    for(let i=0;i<bursts;i++)go(i,()=>{cf(Object.assign({},base,{particleCount:26+n*4,angle:270,spread:150,startVelocity:11,origin:{x:.15+Math.random()*.7,y:-.05},colors,shapes:["circle"],scalar:1,gravity:.42,drift:Math.random()*1.4-.7,ticks:380}));
+      cf(Object.assign({},base,{particleCount:5+n,angle:270,spread:140,startVelocity:9,origin:{x:.2+Math.random()*.6,y:-.05},shapes:bits,scalar:1.5,gravity:.38,ticks:400,flat:true}))});return}
   if(kind==="pixel"){const colors=themeHex(["--ink","--push","--pull","--ok"]);
     for(let i=0;i<bursts;i++)go(i,()=>cf(Object.assign({},base,{particleCount:30+n*5,spread:80,startVelocity:45,origin:{x:.2+Math.random()*.6,y:.8},colors,shapes:["square"],flat:true,scalar:.9,gravity:1.3,ticks:140,decay:.9})));return}
   if(kind==="paper"){const colors=themeHex(["--push","--pull","--ok","--tape","--surface"]);
@@ -522,6 +527,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     mech:{tab1:"clunk",tab2:"clunk",range:"knob",gap:"knob",header:"knob",other:"knob",open:"knob",close:"knob",fold:"knob",save:"clunk",untick:"toggle",set:"toggle",xtick:"toggle",xuntick:"toggle",exdone:"bell",sync:"none",syncok:"bell",syncfail:"buzz",fw:"sparks",bigfw:"sparks2",del:"clunk"},
     retro:{tab1:"blip",tab2:"blip",range:"key",gap:"key",header:"key",other:"key",open:"blip",close:"key",fold:"key",save:"coin",untick:"key",set:"coin",fw:"pixboom",bigfw:"pixboom2"},
     craft:{tab1:"tap",tab2:"tap",range:"paper",gap:"paper",header:"paper",other:"paper",open:"tap",close:"paper",fold:"paper",save:"stamp",untick:"paper",set:"pencil",fw:"rustle",bigfw:"rustle2"},
+    wooly:{tab1:"tap",tab2:"tap",range:"paper",gap:"paper",header:"paper",other:"paper",open:"tap",close:"paper",fold:"paper",save:"stamp",untick:"paper",set:"pencil",fw:"sparkle",bigfw:"glint2"},
     minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
     interior:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
     xmas:{tab1:"jingle",tab2:"jingle",range:"soft",gap:"soft",header:"soft",other:"soft",open:"jingle",close:"soft",fold:"none",untick:"soft",set:"sparkle",save:"musicbox",fw:"jingle",bigfw:"musicbox"},
@@ -593,6 +599,41 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   });
 })();
 
+/* ---------- Wooly Coffee: the sync button ----------
+   Day: a crocheted yarn star. A tap makes it shrink and go flat-faced (-_-); while syncing it slowly unfolds; when
+   the sync is done it stretches, flashes and smiles. Night: the shop sign. A tap makes it flicker like an old lamp and
+   grow brighter; when the sync is done it reaches full brightness and stays lit. Both stand in for #syncBtn and click it. */
+(function(){
+  const sync=document.getElementById("syncBtn");if(!sync)return;
+  const box=document.createElement("div");box.className="woolbox";
+  const tassel=(d,c)=>'<path d="'+d+'" stroke="'+c+'" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  box.innerHTML='<button type="button" class="wstar" aria-label="'+T("同步","Sync")+'"><svg viewBox="0 0 64 76" aria-hidden="true">'
+    +'<circle cx="32" cy="4.5" r="3.2" fill="none" stroke="#E8B92E" stroke-width="2"/><path d="M32 7.500v3" stroke="#F2DE7A" stroke-width="2.200" stroke-linecap="round"/>'
+    +'<g class="tassels">'+tassel("M30 51c-3 5 1 9-3 15","#E0483B")+tassel("M32 51c2 6-2 10 1 17","#7DBE4A")+tassel("M34 51c4 5 0 9 4 14","#F2994A")+tassel("M31 51c-1 7 3 9 0 13","#F2A7B5")+tassel("M33 51c0 5 5 8 3 12","#3F86C5")+'</g>'
+    +'<g class="body"><path d="M32 18 37.900 27.900 50.100 30.100 41.500 39.100 43.200 51.400 32 46 20.800 51.400 22.500 39.100 13.900 30.100 26.100 27.900Z" fill="#F6DC6A" stroke="#F6DC6A" stroke-width="10" stroke-linejoin="round"/>'
+    +'<g fill="none" stroke="#E3C552" stroke-width="1.300" stroke-linecap="round" opacity=".9"><path d="M22 27q2 1.500 4 0M38 27q2 1.500 4 0M17 33q2 1.500 4 0M43 33q2 1.500 4 0M24 47q2 1.500 4 0M36 47q2 1.500 4 0M30 22q2 1.500 4 0M20 40q2 1.500 4 0M40 40q2 1.500 4 0M29 50q3 1.500 6 0"/></g>'
+    +'<circle cx="32" cy="12.500" r="4.600" fill="#3F86C5"/><circle cx="54.500" cy="29" r="3.800" fill="#F2994A"/><circle cx="9.500" cy="29" r="3.800" fill="#E0483B"/><circle cx="19" cy="56" r="3.800" fill="#F2A7B5"/><circle cx="45" cy="56" r="3.800" fill="#7DBE4A"/>'
+    +'<g class="smile" fill="none" stroke="#6B3A22" stroke-width="2.200" stroke-linecap="round"><path d="M24.500 33.200l4.300 2.200M39.500 33.200l-4.300 2.200"/><path d="M26 41.500q6 5.600 12 0"/><circle cx="32" cy="38.600" r="1.900" fill="#E0483B" stroke="none"/></g>'
+    +'<g class="flat" fill="none" stroke="#6B3A22" stroke-width="2.200" stroke-linecap="round"><path d="M24 35h5.200M34.800 35h5.200M28.500 43h7"/><circle cx="32" cy="39" r="1.700" fill="#E0483B" stroke="none"/></g></g>'
+    +'<g class="glint" fill="#fff"><path d="M51 12l1.600 4.400 4.400 1.600-4.400 1.600L51 24l-1.600-4.400L45 18l4.400-1.600z"/><path d="M12 14l1 2.800 2.800 1-2.800 1-1 2.800-1-2.800-2.800-1 2.800-1z"/></g>'
+    +'</svg></button>'
+    +'<button type="button" class="wsign" aria-label="'+T("同步","Sync")+'"><span class="wsign-zh">毛线咖啡</span><span class="wsign-en">wooly</span></button>';
+  sync.after(box);
+  let started=0,doneTm=0;
+  const on=()=>document.documentElement.getAttribute("data-skin")==="wooly";
+  const press=()=>{if(sync.classList.contains("off")){sync.click();return}
+    started=Date.now();box.classList.remove("yay","lit","wake");void box.offsetWidth;box.classList.add("sleepy","flicker");
+    if(window.sfxRaw)window.sfxRaw(document.documentElement.getAttribute("data-theme")==="wooly-night"?"buzz":"soft");
+    setTimeout(()=>{if(started){box.classList.remove("sleepy");box.classList.add("wake")}},450);sync.click()};
+  box.querySelectorAll("button").forEach(b=>b.addEventListener("click",press));
+  const finish=()=>{box.classList.remove("sleepy","wake","flicker");const was=started;started=0;box.classList.add("lit");
+    if(was){box.classList.remove("yay");void box.offsetWidth;box.classList.add("yay");if(on()&&window.sfxRaw)window.sfxRaw("sparkle")}};
+  const follow=()=>{const c=sync.classList;clearTimeout(doneTm);
+    if(c.contains("done")){doneTm=setTimeout(finish,started?Math.max(0,1800-(Date.now()-started)):0)}
+    else if(c.contains("busy")){box.classList.remove("lit","yay");if(!started){started=Date.now();box.classList.add("wake","flicker")}}
+    else if(!started||Date.now()-started>1500){started=0;box.classList.remove("sleepy","wake","flicker","lit","yay")}};
+  new MutationObserver(follow).observe(sync,{attributes:true,attributeFilter:["class"]});follow();
+})();
 /* a lamp on a round sync button: it spins with breathing red arrows while its work runs (at least a moment, so a
    quick sync still shows), then stays green, or red when the work fails or returns false. Colours follow the look (css). */
 async function lampRun(btn,work){
