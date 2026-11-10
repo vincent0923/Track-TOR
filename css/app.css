@@ -1723,3 +1723,83 @@ nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-to
 .goals .pinbtn.on svg{fill:color-mix(in srgb,var(--cta) 30%,transparent)}
 #goalsTop .goals{margin:12px 0 4px}
 #goalsTop[hidden]{display:none}
+
+/* ---------- Pocket player: a small matte music player ----------
+   The page is the player's matte body (black, or warm sand grey). Every panel is a screen set into it: dark glass with
+   a fine dot matrix, light pixel type and red marks. Buttons are soft square keys with a dished top (amber and red on
+   the black one, cream and blush on the sand one); round buttons are the volume knob; the dock is a row of keys
+   beside a speaker grille. */
+:root[data-theme="pod"]{
+  --bg:#1D1E20; --body2:#26272A; --housing:#0B0B0C; --ink:#E9E7E1; --muted:#8E8F8D;
+  --keyA:#EFA02F; --keyA2:#B8721A; --keyB:#D8452B; --keyB2:#8E2412; --keyN:#2B2C2F; --keyN2:#161718; --key-ink:#E9E7E1; --keyA-ink:#2A1A05;
+  --push:#EFA02F; --pull:#E8573C; --cta:#D8452B; color-scheme:dark}
+:root[data-theme="pod-light"]{
+  --bg:#BDBAB2; --body2:#C9C6BE; --housing:#6F6D67; --ink:#2B2C2B; --muted:#66655F;
+  --keyA:#E9DCC2; --keyA2:#B9AB8E; --keyB:#E2C0B8; --keyB2:#B08E86; --keyN:#AFACA4; --keyN2:#8B8881; --key-ink:#2B2C2B; --keyA-ink:#3A2F1C;
+  --push:#E9DCC2; --pull:#E7B5AA; --cta:#D8452B; color-scheme:light}
+:root[data-skin="pod"]{
+  --screen:#0E0F10; --screen2:#17191B; --scr-ink:#ECEAE4; --scr-muted:#8C8F8E; --scr-line:rgba(255,255,255,.1);
+  --surface:var(--screen); --sunk:var(--screen2); --line:rgba(128,128,128,.28);
+  --push-soft:color-mix(in srgb,var(--push) 16%,transparent); --pull-soft:color-mix(in srgb,var(--pull) 16%,transparent);
+  --ok:#8FC79A; --ok-soft:rgba(143,199,154,.14); --warn:#EFA02F; --sleep:#B3B1CC; --on-cta:#fff; --r:12px;
+  --f-num:"VT323","Share Tech Mono",ui-monospace,monospace;
+  --f-body:"Geist",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --rk-bg:#141415;--rk-shade:radial-gradient(circle at 50% 30%,rgba(255,255,255,.16),transparent 60%);--rk-shade-r:radial-gradient(circle at 50% 70%,rgba(255,255,255,.16),transparent 60%);
+  --rk-fx:0 0 0 2px var(--housing),0 0 0 3px rgba(255,255,255,.12),0 3px 5px rgba(0,0,0,.45);--rk-fx-r:0 0 0 2px var(--housing),0 0 0 3px rgba(255,255,255,.12),0 -3px 5px rgba(0,0,0,.45)}
+:root[data-theme="pod-light"]{--screen:#2B3237;--screen2:#343C42;--rk-bg:#8F8C85}
+:root[data-skin="pod"] #pane-diet{--intake:#ECEAE4;--burn:#EFA02F;--protein:#9FB4C4;--gain:#8FC79A;--loss:#E8573C;--dslate:#5A5E60;--dtotal:#17191B}
+:root[data-skin="pod"] body{background:
+  radial-gradient(rgba(255,255,255,.035) .6px,transparent .9px) 0 0/3px 3px,
+  linear-gradient(180deg,var(--body2),var(--bg) 220px) fixed,var(--bg)}
+/* screens: everything inside reads in the screen's own light ink, on either body colour */
+:root[data-skin="pod"] :is(.card,.chartbox,details.fold,.goals,.cal,.gtile,.mask .sheet,.dp,.diet-day,.dentry-inline .sheet,.review){
+  --ink:var(--scr-ink);--muted:var(--scr-muted);--line:var(--scr-line);color:var(--scr-ink);
+  background:radial-gradient(rgba(255,255,255,.05) .7px,transparent 1px) 0 0/3px 3px,var(--screen);
+  border:2px solid var(--housing);border-radius:12px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14),inset 0 0 0 1px rgba(255,255,255,.05),inset 0 10px 26px rgba(0,0,0,.4)}
+:root[data-skin="pod"] .card .card,:root[data-skin="pod"] .cal .card{box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+:root[data-skin="pod"] :is(.chartbox h3,.tag,.calmy b,.diet-day h3,details.fold>summary .sumt,.gh .gv,.gh .gp){font-family:var(--f-num);letter-spacing:.03em}
+:root[data-skin="pod"] .tag{font-size:26px}
+:root[data-skin="pod"] :is(.chartbox h3 .num,.gtile b,.gh .gp){color:var(--cta)}
+:root[data-skin="pod"] .card.push{--k:var(--push)}:root[data-skin="pod"] .card.pull{--k:var(--pull)}
+:root[data-skin="pod"] :is(.field input,.field select,.field textarea,.dsrc-row input,.xadd input,.xadd select,.step){background:var(--screen2);border:1px solid var(--scr-line);color:var(--scr-ink);border-radius:6px}
+:root[data-skin="pod"] .step button{color:var(--scr-muted)}
+/* keys: soft squares with a rim; the big ones have a dished top */
+:root[data-skin="pod"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.syncbtn.off,.caltoday,.calnav,.gchip2,.gi,.chk,.dp-f button){
+  background:linear-gradient(180deg,color-mix(in srgb,var(--keyN) 88%,#fff),var(--keyN));color:var(--key-ink);border:0;border-radius:8px;text-shadow:none;
+  box-shadow:0 0 0 2px var(--housing),0 2px 0 2px var(--keyN2),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .08s,box-shadow .08s}
+:root[data-skin="pod"] :is(.iconbtn,.privbtn,.tbtn,.cap,.btn,.syncbtn,.caltoday,.calnav,.gchip2,.gi,.chk,.dp-f button):active{transform:translateY(2px);box-shadow:0 0 0 2px var(--housing),0 0 0 2px var(--keyN2),inset 0 2px 4px rgba(0,0,0,.3)}
+:root[data-skin="pod"] .iconbtn{border-radius:9px}
+:root[data-skin="pod"] :is(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today){
+  background:linear-gradient(180deg,color-mix(in srgb,var(--keyA) 85%,#fff),var(--keyA));color:var(--keyA-ink);border:0;border-radius:8px;font-weight:700;animation:none;
+  box-shadow:0 0 0 2px var(--housing),0 2px 0 2px var(--keyA2),inset 0 1px 0 rgba(255,255,255,.35)}
+:root[data-skin="pod"] .syncbtn.done{background:var(--keyN);color:var(--key-ink);border-radius:8px;box-shadow:0 0 0 2px var(--housing),inset 0 2px 4px rgba(0,0,0,.25)}
+:root[data-skin="pod"] .gchip2[aria-pressed="true"],:root[data-skin="pod"] .gchip2.on{background:linear-gradient(180deg,color-mix(in srgb,var(--keyA) 85%,#fff),var(--keyA));color:var(--keyA-ink);box-shadow:0 0 0 2px var(--housing),0 1px 0 2px var(--keyA2),inset 0 2px 3px rgba(0,0,0,.18);transform:translateY(1px)}
+:root[data-skin="pod"] .set.ticked .chk,:root[data-skin="pod"] .chk[aria-pressed="true"]{background:linear-gradient(180deg,color-mix(in srgb,var(--keyA) 85%,#fff),var(--keyA));box-shadow:0 0 0 2px var(--housing),0 0 0 2px var(--keyA2),inset 0 2px 4px rgba(0,0,0,.25);transform:translateY(2px)}
+:root[data-skin="pod"] .chk svg path{stroke:var(--keyA-ink)}
+/* 练: the red key, with its dish */
+:root[data-skin="pod"] .tbtn.next{color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:700;
+  background:radial-gradient(ellipse 46% 60% at 50% 54%,rgba(0,0,0,.2),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--keyB) 85%,#fff),var(--keyB));
+  box-shadow:0 0 0 2px var(--housing),0 3px 0 2px var(--keyB2),inset 0 1px 0 rgba(255,255,255,.3)}
+:root[data-theme="pod-light"] .tbtn.next{color:#3A1A14}
+:root[data-skin="pod"] .tbtn.next:active{transform:translateY(3px);box-shadow:0 0 0 2px var(--housing),0 0 0 2px var(--keyB2),inset 0 2px 5px rgba(0,0,0,.3)}
+:root[data-skin="pod"] .finish{background:var(--screen2)}
+:root[data-skin="pod"] .finish .finbtn{border-radius:10px;color:var(--keyA-ink);background:radial-gradient(ellipse 30% 70% at 50% 54%,rgba(0,0,0,.14),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--k) 85%,#fff),var(--k));box-shadow:0 0 0 2px var(--housing),0 3px 0 2px color-mix(in srgb,var(--k) 60%,#000)}
+/* dock: a row of dished keys on the body, a speaker grille behind them */
+:root[data-skin="pod"] nav.tabs.tabs{border-radius:0;padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px));gap:8px;
+  background:radial-gradient(circle,var(--housing) 2.6px,transparent 3px) 4px 4px/11px 11px,var(--bg);box-shadow:0 -2px 0 var(--housing),0 -3px 0 rgba(255,255,255,.1)}
+:root[data-skin="pod"] nav.tabs button{color:var(--key-ink);border:0;border-radius:10px;
+  background:radial-gradient(ellipse 44% 58% at 50% 54%,rgba(0,0,0,.2),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--keyN) 88%,#fff),var(--keyN));
+  box-shadow:0 0 0 2px var(--housing),0 3px 0 2px var(--keyN2),inset 0 1px 0 rgba(255,255,255,.2);transition:transform .08s,box-shadow .08s}
+:root[data-skin="pod"] nav.tabs button[aria-selected="true"]{color:var(--keyA-ink);transform:translateY(2px);
+  background:radial-gradient(ellipse 44% 58% at 50% 54%,rgba(0,0,0,.16),transparent 70%),linear-gradient(180deg,color-mix(in srgb,var(--keyA) 85%,#fff),var(--keyA));
+  box-shadow:0 0 0 2px var(--housing),0 1px 0 2px var(--keyA2),inset 0 1px 0 rgba(255,255,255,.35)}
+:root[data-skin="pod"] nav.tabs .tpiece{display:none}
+/* screen furniture */
+:root[data-skin="pod"] .bar{background:var(--screen2);border-radius:2px;height:8px;box-shadow:inset 0 0 0 1px var(--scr-line)}
+:root[data-skin="pod"] .bar i{border-radius:1px;box-shadow:none;background:repeating-linear-gradient(90deg,var(--g) 0 3px,transparent 3px 5px)}
+:root[data-skin="pod"] .bar i::after{display:none}
+:root[data-skin="pod"] .cald.today{border-color:var(--cta)!important;color:var(--cta)}
+:root[data-skin="pod"] .toast{background:var(--screen);color:var(--scr-ink);border:2px solid var(--housing);border-radius:8px;font-family:var(--f-num);font-size:18px;box-shadow:0 0 0 1px rgba(255,255,255,.14),0 8px 20px rgba(0,0,0,.5)}
+:root[data-skin="pod"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#FF4A30;--lg:#8FE3A0;--lgl:3px;--lspin:1s steps(8) infinite}
+:root[data-skin="pod"] header.top h1{letter-spacing:.02em}
