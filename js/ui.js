@@ -116,6 +116,8 @@ function areaFill(col){if(document.documentElement.getAttribute("data-skin")!=="
 /* every icon marked data-ic takes the current look's version; the original comes back on the plain themes */
 function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const sv=el.querySelector("svg");if(!sv)return;
     if(!el._ic0)el._ic0=sv.outerHTML;const n=skinIc(el.dataset.ic)||el._ic0;if(sv.outerHTML!==n)sv.outerHTML=n});
+  /* icons that move on their own stay still when the system asks for less motion */
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.querySelectorAll("[data-ic] svg animateMotion,[data-ic] svg animateTransform").forEach(a=>a.remove());
   document.dispatchEvent(new Event("themeicons"))}
 /* Profile › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");

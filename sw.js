@@ -11,6 +11,8 @@ const ASSETS = [
   "./img/wooly/vine-dark.svg",
   "./img/wooly/floor-light.svg",
   "./img/wooly/floor-dark.svg",
+  "./img/wooly/girl.png",
+  "./img/wooly/ball.png",
   "./css/app.css",
   "./js/core.js",
   "./js/zzfx.js",

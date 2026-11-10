@@ -1925,3 +1925,5 @@ nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-to
   26%{color:#2B1A08;text-shadow:0 0 6px #F7BE5E}31%{color:#6A553D;text-shadow:none}52%{color:#2B1A08;text-shadow:0 0 10px #F7BE5E,0 0 20px rgba(245,176,74,.7)}60%{color:#5A4530;text-shadow:0 0 3px rgba(245,176,74,.5)}78%{color:#2B1A08;text-shadow:0 0 8px #F7BE5E}}
 @keyframes wRamp{from{color:#4A3824;text-shadow:0 0 3px rgba(245,176,74,.45)}to{color:#2B1A08;text-shadow:0 0 5px #FFE2A0,0 0 12px #F7BE5E,0 0 22px rgba(245,176,74,.7)}}
 @media (prefers-reduced-motion:reduce){.wstar .tassels,.woolbox.yay .wstar svg,.woolbox.flicker .wsign{animation:none}.woolbox.flicker .wsign{color:#2B1A08;text-shadow:0 0 8px #F7BE5E}}
+/* the Train tab is the cafe's own drawing (line art lifted from her illustration, tinted with the tab's colour) */
+:root[data-skin="wooly"] nav.tabs button svg.ic-girl{width:50px!important;height:45px!important;margin:-10px 0 -8px;overflow:visible}
