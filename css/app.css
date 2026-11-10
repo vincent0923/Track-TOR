@@ -1428,6 +1428,7 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 
 /* machine: the REC-style sync slide switch (see ui.js). A recessed slot, a brushed-metal slider with a ribbed rubber
    grip and a red pip, engraved SYNC and a slit lamp: red breathing while syncing, green when done, dark otherwise. */
+.leverbox{display:none}
 :root[data-skin="mech"] .leverbox{display:flex;align-items:center;gap:9px;flex:none}
 .lever{position:relative;width:96px;height:40px;padding:0;border:0;background:none;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .lever:active{cursor:grabbing}
