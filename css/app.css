@@ -1511,3 +1511,64 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 #dietSyncBtn.off{opacity:.38}
 #foldDietSrc .dsrc{display:grid;gap:8px}
 #foldDietSrc #dsrcOnline>summary{display:none}
+/* Food logs sync lamp: spins with red breathing arrows while pulling, steady green after a good pull.
+   --lr/--lg = lamp colours, --lgl = glow size, --lspin = how it turns; per look below */
+#dietSyncBtn,#dsrcPull{--lr:#E5484D;--lg:#30A46C;--lgl:3px;--lspin:1.1s linear infinite;transition:box-shadow .3s,border-color .3s}
+#dietSyncBtn svg{transition:color .3s,filter .3s}
+#dietSyncBtn[data-lamp="busy"] svg{color:var(--lr);animation:dsSpin var(--lspin),dsBreath 1.4s ease-in-out infinite}
+#dietSyncBtn[data-lamp="ok"] svg{color:var(--lg);filter:drop-shadow(0 0 var(--lgl) color-mix(in srgb,var(--lg) 70%,transparent))}
+#dietSyncBtn[data-lamp="fail"] svg{color:var(--lr)}
+#dietSyncBtn[data-lamp="busy"]{border-color:color-mix(in srgb,var(--lr) 45%,transparent)}
+#dietSyncBtn[data-lamp="ok"]{border-color:color-mix(in srgb,var(--lg) 45%,transparent)}
+#dietSyncBtn.off[data-lamp] svg{color:inherit;filter:none;animation:none}
+@keyframes dsSpin{to{rotate:360deg}}
+@keyframes dsBreath{0%,100%{opacity:.5;filter:drop-shadow(0 0 0 transparent)}50%{opacity:1;filter:drop-shadow(0 0 var(--lgl) var(--lr))}}
+@media (prefers-reduced-motion:reduce){#dietSyncBtn[data-lamp="busy"] svg{animation:dsBreath 1.4s ease-in-out infinite}}
+/* toy: candy red and lime plastic, no glow, a springy wind-up turn */
+:root[data-skin="toy"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF4D5E;--lg:#4CC74C;--lgl:0px;--lspin:.9s cubic-bezier(.5,-.3,.5,1.3) infinite}
+/* retro: phosphor lamps that bleed light, a square key, turning in 8 pixel steps */
+:root[data-skin="retro"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF3B5C;--lg:var(--ok);--lgl:5px;--lspin:1s steps(8) infinite;border-radius:2px}
+/* craft: ink colours, no glow, a hand-turned wobble */
+:root[data-skin="craft"] :is(#dietSyncBtn,#dsrcPull){--lr:#C0492B;--lg:#5E8A4A;--lgl:0px;--lspin:1.6s ease-in-out infinite}
+/* minimal: plain red and green, thin, no glow */
+:root[data-skin="minimal"] :is(#dietSyncBtn,#dsrcPull){--lr:#D23C3C;--lg:#2E8B57;--lgl:0px;--lspin:1.4s linear infinite}
+/* interior: soft status LEDs on the key cap */
+:root[data-skin="interior"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF5A4E;--lg:#2FBF71;--lgl:2px}
+/* beUI: neon pink and mint with a halo round the whole button */
+:root[data-skin="beui"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF5C8A;--lg:#3DDC97;--lgl:4px;--lspin:1s cubic-bezier(.6,.1,.4,.9) infinite}
+:root[data-skin="beui"] #dietSyncBtn[data-lamp="busy"]{animation:dsHalo 1.4s ease-in-out infinite}
+:root[data-skin="beui"] #dietSyncBtn[data-lamp="ok"]{box-shadow:0 0 14px -4px var(--lg)}
+@keyframes dsHalo{50%{box-shadow:0 0 16px -3px var(--lr)}}
+/* machine: an indicator lamp behind smoked glass — the cap goes dark and the arrows light up like LEDs */
+:root[data-skin="mech"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF3B2F;--lg:#3DFF7A;--lgl:4px;--lspin:1.2s cubic-bezier(.45,0,.55,1) infinite}
+:root[data-theme="mech-light"] :is(#dietSyncBtn,#dsrcPull){--lr:#F0261A;--lg:#14D25E}
+:root[data-skin="mech"] #dietSyncBtn[data-lamp]:not(.off){background:radial-gradient(circle at 50% 40%,#2A2D31,#0D0E10 70%)}
+:root[data-skin="mech"] #dietSyncBtn[data-lamp="busy"]:not(.off){background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--lr) 22%,#141518),#0D0E10 70%)}
+:root[data-skin="mech"] #dietSyncBtn[data-lamp="ok"]:not(.off){background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--lg) 18%,#141518),#0D0E10 70%)}
+:root[data-skin="mech"] #dietSyncBtn[data-lamp="ok"] svg{filter:drop-shadow(0 0 2px var(--lg)) drop-shadow(0 0 6px color-mix(in srgb,var(--lg) 60%,transparent))}
+/* christmas: berry red and holly green, a gentle glow like tree lights */
+:root[data-skin="xmas"] :is(#dietSyncBtn,#dsrcPull){--lr:#E0263F;--lg:#1F9A52;--lgl:3px;--lspin:1.3s ease-in-out infinite}
+/* Profile › Food table: the small ✓ that checks the link. Breathes in the lamp red while reading, a filled green
+   tick when the table reads well, red when it doesn't. Shape and finish come from each look's round icon button. */
+.dsrc-row .vbtn{width:38px;height:38px;flex:none;align-self:center;min-width:0;opacity:1}
+.dsrc-row .vbtn:disabled{opacity:1;cursor:progress}
+.vbtn svg{width:18px;height:18px;transition:color .25s,filter .25s}
+:root .dsrc-row .vbtn[data-v="busy"] svg{color:var(--lr);animation:dsBreath 1.2s ease-in-out infinite}
+:root .dsrc-row .vbtn[data-v="ok"]{background:var(--lg);border-color:var(--lg);color:#fff;box-shadow:0 0 0 3px color-mix(in srgb,var(--lg) 22%,transparent)}
+:root .dsrc-row .vbtn[data-v="ok"] svg{color:#fff;stroke-width:3}
+:root .dsrc-row .vbtn[data-v="fail"]{border-color:var(--lr)}
+:root .dsrc-row .vbtn[data-v="fail"] svg{color:var(--lr)}
+.vbtn.pop{animation:vPop .5s cubic-bezier(.3,1.6,.5,1)}
+:root .dsrc-row .vbtn[data-v="fail"]:not(:disabled){animation:vShake .35s}
+@keyframes vPop{0%{transform:scale(.7)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes vShake{25%{translate:-3px}50%{translate:3px}75%{translate:-2px}}
+@media (prefers-reduced-motion:reduce){.vbtn.pop,.vbtn[data-v="fail"]:not(:disabled){animation:none}}
+:root[data-skin="toy"] .dsrc-row .vbtn[data-v="ok"]{box-shadow:0 3px 0 color-mix(in srgb,var(--lg) 60%,#000)}
+:root[data-skin="retro"] .dsrc-row .vbtn[data-v="ok"]{background:transparent;color:var(--lg);box-shadow:0 0 8px -2px var(--lg),inset 0 0 6px -2px var(--lg)}
+:root[data-skin="retro"] .dsrc-row .vbtn[data-v="ok"] svg{color:var(--lg);filter:drop-shadow(0 0 3px var(--lg))}
+:root[data-skin="craft"] .dsrc-row .vbtn[data-v="ok"]{box-shadow:0 2px 0 color-mix(in srgb,var(--lg) 60%,#3A2A1A);transform:rotate(-4deg)}
+:root[data-skin="minimal"] .dsrc-row .vbtn[data-v="ok"]{box-shadow:none}
+:root[data-skin="beui"] .dsrc-row .vbtn[data-v="ok"]{box-shadow:0 0 16px -3px var(--lg)}
+:root[data-skin="mech"] .dsrc-row .vbtn[data-v="ok"]{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--lg) 30%,#141518),#0D0E10 70%);border-color:#0D0E10}
+:root[data-skin="mech"] .dsrc-row .vbtn[data-v="ok"] svg{color:var(--lg);filter:drop-shadow(0 0 2px var(--lg)) drop-shadow(0 0 6px color-mix(in srgb,var(--lg) 60%,transparent))}
+:root[data-skin="xmas"] .dsrc-row .vbtn[data-v="ok"]{box-shadow:0 0 0 3px color-mix(in srgb,#E0263F 30%,transparent)}

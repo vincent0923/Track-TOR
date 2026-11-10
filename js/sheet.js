@@ -285,8 +285,41 @@ function extractUrl(text){
          || /(?:^|\s)((?:[a-z0-9-]+\.)+[a-z]{2,}(?::\d+)?\/[^\s<>"'，。；、【】「」（）《》]*)/i.exec(t);
   return m ? (m[1] || m[0]).replace(/[.,;:!?)\]]+$/, "") : t;
 }
-/* returns { ok, rows, days, note }; opts.silent = the caller shows the message itself */
+/* the sync icon at the right of "Food logs" is a lamp: while any pull runs it spins and its arrows breathe red;
+   a good pull leaves it a steady green (until the pull is two hours old), a failed one a steady red.
+   Colours and the way it turns follow the theme (css). It spins for at least a moment so a quick pull still shows. */
+const DIET_LAMP_MIN = 900;
+let dietLampT0 = 0, dietLampTm = 0;
+function setDietLamp(st){
+  const b = document.getElementById("dietSyncBtn"); if(!b) return;
+  clearTimeout(dietLampTm);
+  if(st === "busy"){ dietLampT0 = performance.now(); b.dataset.lamp = "busy"; b.setAttribute("aria-busy", "true"); return; }
+  const wait = b.dataset.lamp === "busy" ? Math.max(0, DIET_LAMP_MIN - (performance.now() - dietLampT0)) : 0;
+  dietLampTm = setTimeout(()=>{ b.removeAttribute("aria-busy"); if(st) b.dataset.lamp = st; else delete b.dataset.lamp; }, wait);
+}
+function paintVerify(){
+  let st = {}; try{ st = JSON.parse(localStorage.getItem(SHEET_STATUS_K) || "{}") || {}; }catch(e){}
+  const inp = document.getElementById("dsrcUrl");
+  if(st.ok && inp && validSheetUrl(inp.value)) setVerify("ok");
+}
+function paintDietLamp(){
+  const b = document.getElementById("dietSyncBtn"); if(!b || b.dataset.lamp === "busy") return;
+  let st = {}; try{ st = JSON.parse(localStorage.getItem(SHEET_STATUS_K) || "{}") || {}; }catch(e){}
+  setDietLamp(st.ok && st.ts && Date.now() - st.ts < SHEET_AUTO_MS ? "ok" : (b.dataset.lamp === "fail" ? "fail" : ""));
+}
+/* the ✓ in Profile › Food table checks the link by pulling it: it breathes while reading, then shows a green tick
+   (the link works and the table has the right columns) or turns red; typing in the box clears it */
+function setVerify(st){ const v = document.getElementById("dsrcPull"); if(!v) return; if(st) v.dataset.v = st; else delete v.dataset.v; }
 async function pullSheet(opts){
+  setDietLamp("busy"); setVerify("busy");
+  let r;
+  try{ r = await pullSheetOnce(opts); }
+  catch(e){ setDietLamp("fail"); setVerify("fail"); throw e; }
+  setDietLamp(r.ok ? "ok" : "fail"); setVerify(r.ok ? "ok" : "fail");
+  return r;
+}
+/* returns { ok, rows, days, note }; opts.silent = the caller shows the message itself */
+async function pullSheetOnce(opts){
   opts = opts || {};
   const inp = document.getElementById("dsrcUrl"), btn = document.getElementById("dsrcPull");
   let url = extractUrl(inp.value);
@@ -297,7 +330,6 @@ async function pullSheet(opts){
   if(!/^https?:\/\//i.test(url)) url = "https://" + url;
   if(navigator.onLine === false) return fail(T("没有网络，连上后再拉取", "You're offline; pull again once connected"));
   btn.disabled = true;
-  const old = btn.innerHTML; btn.textContent = T("读取中…", "Reading…");
   try{
     const res = await readSheetRows(url);
     /* ✕ = blocked or unreachable, ∅ = reply had no table, a number = HTTP status */
@@ -311,7 +343,7 @@ async function pullSheet(opts){
     const note = T("已拉取 " + rows + " 条 / " + nDays + " 天", "Pulled " + rows + " rows / " + nDays + " days");
     if(!opts.silent) toast(note);
     return { ok:true, rows, days:nDays, note };
-  }finally{ btn.disabled = false; btn.innerHTML = old; }
+  }finally{ btn.disabled = false; }
 }
 
 /* a link counts as valid when it looks like a web address (domain with a dot) */
@@ -346,7 +378,11 @@ function copyText(t){
     if(r.ok) toast(r.note + cal);
     else if(cal) toast(cal.replace(/^[；;]\s*/, ""));
   };
-  const pull = ()=>{ if(!pullBtn.disabled) withProgress(pullBtn, pullAll); };
+  const pull = async ()=>{
+    if(pullBtn.disabled) return;
+    await pullAll();
+    if(pullBtn.dataset.v === "ok"){ fireworks(2); pullBtn.classList.remove("pop"); void pullBtn.offsetWidth; pullBtn.classList.add("pop"); }
+  };
   pullBtn.addEventListener("click", pull);
   /* the sync icon at the right of "Food logs": a tap pulls straight away (or, without a link, says how to add one);
      holding it opens Profile › Food table, where the link and how it works live */
@@ -359,9 +395,9 @@ function copyText(t){
   syncBtn.addEventListener("click", e=>{
     if(held){ held = false; e.stopImmediatePropagation(); return; }
     if(syncBtn.classList.contains("off")){ toast(T("还没填同步饮食记录的链接，长按这个按钮进入设置", "No food table link yet — hold this button to set it")); return; }
-    if(!pullBtn.disabled && !syncBtn.dataset.prog) withProgress(syncBtn, pullAll);
+    if(!pullBtn.disabled && syncBtn.dataset.lamp !== "busy") pullAll();
   });
-  inp.addEventListener("input", paintSyncCap);
+  inp.addEventListener("input", ()=>{ paintSyncCap(); setVerify(""); });
   inp.addEventListener("keydown", e=>{ if(e.key === "Enter") pull(); });
   inp.addEventListener("change", ()=>{ inp.value = extractUrl(inp.value); paintSyncCap(); });
   /* paste button: every tap replaces the box with what's on the clipboard (only the link, if there is more text) */
@@ -372,7 +408,7 @@ function copyText(t){
     if(!String(t).trim()){ toast(T("剪贴板是空的", "The clipboard is empty")); return; }
     inp.value = extractUrl(t);
     try{ localStorage.setItem(SHEET_URL_K, inp.value); }catch(e){}
-    paintSyncCap();
+    paintSyncCap(); setVerify("");
   });
   /* two prompt versions: Google Sheets (global) and Tencent Docs with WorkBuddy (China) */
   let ver = null; try{ ver = localStorage.getItem(PROMPT_VER_K); }catch(e){}
@@ -432,4 +468,5 @@ function dietTabPull(){
   const inp = document.getElementById("dsrcUrl"); if(!inp.value.trim()) inp.value = saved;
   withProgress(tab, ()=>pullSheet({ silent:true }));
 }
-document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState === "visible") autoPullSheet(); });
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState === "visible"){ paintDietLamp(); autoPullSheet(); } });
+paintDietLamp(); paintVerify();
