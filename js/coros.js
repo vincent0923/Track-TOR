@@ -172,17 +172,19 @@ async function syncSleep(){
 /* the sync button on a chart pulls only that chart's data */
 const CHART_SYNC={sleep:()=>syncSleep(),hrv:()=>syncHrv(),rhr:()=>syncRhr()};
 document.addEventListener("click",e=>{
-  const b=e.target.closest("[data-csync]");if(!b||b.dataset.prog||syncing)return;
+  const b=e.target.closest("[data-csync]");if(!b||b.dataset.lamp==="busy"||syncing)return;
   if(!mcp){promptCorosToken();return}
-  withProgress(b,async()=>{
+  lampRun(b,async()=>{
     syncing=true;syncUI();
     try{
       const msg=(await CHART_SYNC[b.dataset.csync]()).replace(/^[；;]\s*/,"");
-      lsSave();renderAll();syncMsg(msg);sfx(/失败|未识别|没有读到|failed|unrecognised|no sleep/i.test(msg)?"syncfail":"syncok");
+      const bad=/失败|未识别|没有读到|failed|unrecognised|no sleep/i.test(msg);
+      lsSave();renderAll();syncMsg(msg);sfx(bad?"syncfail":"syncok");return !bad;
     }catch(err){
       sfx("syncfail");
       if(err&&err.code==="needs_reauth"){syncMsg(T("高驰授权已失效，请重新授权。","COROS authorization expired — please authorize again."));promptCorosToken()}
       else syncMsg(T("同步失败（"+((err&&err.code)||"未知原因")+"），稍后再试。","Sync failed ("+((err&&err.code)||"unknown")+"), try again later."));
+      return false;
     }finally{syncing=false;syncUI()}
   });
 });

@@ -163,21 +163,27 @@ function scrub(el,c){
 }
 
 /* every chart has its own range (7/30/90/all days) and moving average (3/7/14/30); Reset puts all back to 30 days + MA7 */
-const CH_DEF={rg:30,ma:7}, CH_KEYS=["pull","wt","waist","sleep","hrv","rhr"];
+const CH_DEF={rg:14,ma:14}, CH_RG=[7,14,30,60,90,0], CH_MA=[7,14,30], CH_KEYS=["pull","wt","waist","sleep","hrv","rhr"];
 let CH={};CH_KEYS.forEach(k=>CH[k]=Object.assign({},CH_DEF));
 try{const j=JSON.parse(localStorage.getItem(LS+"-charts")||"null");if(j)CH_KEYS.forEach(k=>{if(j[k]){
-  if([0,7,30,60,90].includes(+j[k].rg))CH[k].rg=+j[k].rg;if([7,14,30].includes(+j[k].ma))CH[k].ma=+j[k].ma}})}catch(e){}
+  if(CH_RG.includes(+j[k].rg))CH[k].rg=+j[k].rg;if([7,14,30].includes(+j[k].ma))CH[k].ma=+j[k].ma}})}catch(e){}
 function saveCH(){try{localStorage.setItem(LS+"-charts",JSON.stringify(CH))}catch(e){}}
-document.addEventListener("click",e=>{
-  const b=e.target.closest(".maline [data-rg],.maline [data-ma]");if(!b)return;
-  const ch=b.closest(".maline").dataset.ch;if(!CH[ch])return;
-  if(b.dataset.rg!=null)CH[ch].rg=+b.dataset.rg;else CH[ch].ma=+b.dataset.ma;
-  saveCH();renderData();
-});
-document.getElementById("chReset").addEventListener("click",()=>{CH_KEYS.forEach(k=>CH[k]=Object.assign({},CH_DEF));saveCH();renderData();toast(T("图表已重置为 30 天 + MA7","Charts reset to 30 days + MA7"))});
+/* each chart has one range button and (where it has a moving average) one MA button:
+   a tap steps to the next value, holding it (0.5 s) goes back to 14 days / MA14 */
+(function(){let tm=0,held=false;
+  const of=b=>{const ch=b.closest(".maline").dataset.ch;return CH[ch]?[CH[ch],b.dataset.cyc]:null};
+  document.addEventListener("pointerdown",e=>{const b=e.target.closest(".chcyc");if(!b)return;held=false;clearTimeout(tm);
+    tm=setTimeout(()=>{const o=of(b);if(!o)return;held=true;o[0][o[1]]=CH_DEF[o[1]];if(navigator.vibrate)navigator.vibrate(15);if(window.sfxRaw)window.sfxRaw("pop");saveCH();renderData()},500)});
+  ["pointerup","pointercancel","pointerleave"].forEach(t=>document.addEventListener(t,()=>clearTimeout(tm),true));
+  document.addEventListener("contextmenu",e=>{if(e.target.closest(".chcyc"))e.preventDefault()});
+  document.addEventListener("click",e=>{const b=e.target.closest(".chcyc");if(!b)return;if(held){held=false;return}
+    const o=of(b);if(!o)return;const list=o[1]==="rg"?CH_RG:CH_MA;o[0][o[1]]=list[(list.indexOf(o[0][o[1]])+1)%list.length];saveCH();renderData()});
+})();
+document.getElementById("chReset").addEventListener("click",()=>{CH_KEYS.forEach(k=>CH[k]=Object.assign({},CH_DEF));saveCH();renderData();toast(T("图表已重置为 14 天 + 均线 14","Charts reset to 14 days + MA14"))});
 /* which COROS data to sync; what is off isn't pulled and its chart is hidden (saved data stays) */
-const SYNC_KEYS=["sleep","hrv","rhr","weight"], SYNC_CHART={sleep:"cbSleep",hrv:"cbHrv",rhr:"cbRhr",weight:"cbWt"};
-function syncOn(k){const s=state.settings.sync;return !s||s[k]!==false}
+/* "heat" (the year of training panel) is a display switch only and starts off; the rest also decide what is synced */
+const SYNC_KEYS=["sleep","hrv","rhr","weight","heat"], SYNC_CHART={sleep:"cbSleep",hrv:"cbHrv",rhr:"cbRhr",weight:"cbWt",heat:"cbHeat"};
+function syncOn(k){const s=state.settings.sync;if(k==="heat")return !!(s&&s.heat===true);return !s||s[k]!==false}
 function paintSync(){
   SYNC_KEYS.forEach(k=>{const on=syncOn(k);
     const b=document.querySelector('#syncShow [data-sync="'+k+'"]');if(b){b.setAttribute("aria-pressed",String(on));b.classList.toggle("on",on)}
@@ -250,8 +256,9 @@ function renderData(){
   chart(document.getElementById("chRhr"),rh,{color:"var(--push)",line:rma,range:CH.rhr.rg,lineLabel:L("rhr"),minPad:2,lineDec:0,unit:" bpm",label:T("静息心率与移动平均","Resting heart rate and moving average")});
   document.getElementById("cvRhr").textContent=rh.length?Math.round(rma[rma.length-1].y)+" bpm"+tag("rhr"):"—";
   document.querySelectorAll(".maline[data-ch]").forEach(row=>{const c=CH[row.dataset.ch];
-    row.querySelectorAll("[data-rg]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.rg===c.rg));
-    row.querySelectorAll("[data-ma]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.ma===c.ma))});
+    row.querySelectorAll(".chcyc").forEach(b=>{const rg=b.dataset.cyc==="rg";
+      b.textContent=rg?(c.rg?T(c.rg+" 天",c.rg+"D"):T("全部","All")):T("均线 "+c.ma,"MA"+c.ma);
+      b.setAttribute("aria-label",rg?T("时间范围：点一下换，长按回到 14 天","Range: tap to change, hold for 14 days"):T("均线：点一下换，长按回到 14","Moving average: tap to change, hold for MA14"))})});
   const rows=Object.values(state.metrics).filter(m=>m.date&&BODY_KEYS.some(k=>m[k]!=null)).sort((a,b)=>a.date<b.date?1:-1);
   document.getElementById("logCount").textContent=rows.length?"("+rows.length+")":"";
   document.getElementById("logBody").innerHTML=rows.length?rows.map(m=>'<tr><td>'+md(m.date)+'</td><td>'+(m.pullups??"—")+'</td><td>'+(m.weight!=null?m.weight:m.weightC!=null?'<span style="color:var(--muted)">'+m.weightC+' C</span>':"—")+'</td><td>'+(m.waist??"—")+'</td><td>'+(m.sleep??"—")+'</td><td><button class="x" style="font-size:13px" data-del="'+m.date+'">'+T('删除','Delete')+'</button></td></tr>').join(""):'<tr><td colspan="6" class="empty">'+T('暂无记录','No records')+'</td></tr>';
@@ -299,6 +306,14 @@ function openGoalField(k){
   setTimeout(()=>{(inp||f).scrollIntoView({behavior:"smooth",block:"center"});if(inp)setTimeout(()=>{try{inp.focus({preventScroll:true})}catch(e){}},350)},60);
 }
 let PRIV=false;try{PRIV=localStorage.getItem(LS+"-priv")==="1"}catch(e){}
+/* the pin on the goals card keeps it at the top of every tab except Settings; unpinned it lives on the Goals tab */
+const PIN_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>';
+let GPIN=false;try{GPIN=localStorage.getItem(LS+"-goalpin")==="1"}catch(e){}
+function placeGoals(){
+  const box=document.getElementById("goals"),top=document.getElementById("goalsTop"),pane=document.getElementById("pane-goals");
+  if(GPIN){if(box.parentElement!==top)top.appendChild(box)}else if(box.parentElement!==pane)pane.prepend(box);
+  top.hidden=!GPIN||(typeof curTab!=="undefined"&&curTab==="me");
+}
 /* hold a goal (0.5 s) for its own sheet: the goal, a manual record (pull-ups, waist, weight) and whether it shows on the panel */
 let goalHeld=false;
 (function(){const box=document.getElementById("goals");let tm=0,sx=0,sy=0;
@@ -342,6 +357,8 @@ document.getElementById("goals").addEventListener("click",e=>{
   if(ag){const cur=goalShowList(),k=ag.dataset.addgoal;state.settings.goalShow=GOAL_KEYS.filter(x=>x===k||cur.includes(x));saveSettings();renderGoals();return}
   const sg=e.target.closest("[data-setgoal]");
   if(sg){openGoalField(sg.dataset.setgoal);return}
+  if(e.target.closest("[data-gpin]")){GPIN=!GPIN;try{localStorage.setItem(LS+"-goalpin",GPIN?"1":"0")}catch(err){}
+    renderGoals();toast(GPIN?T("目标已固定在顶端","Goals pinned to the top"):T("已取消固定","Unpinned"));return}
   if(!e.target.closest("[data-priv]"))return;
   PRIV=!PRIV;try{localStorage.setItem(LS+"-priv",PRIV?"1":"0")}catch(err){}
   renderGoals();
@@ -398,7 +415,8 @@ function renderGoals(){
     +'<div class="addmenu" hidden>'+off.map(g=>'<button type="button" class="gchip2" data-addgoal="'+g.k+'" style="--g:'+g.color+'">'+(skinIc('g-'+g.k)||IC[g.k])+g.name+'</button>').join("")+'</div></div>';
   box.hidden=false;
   if(show.some(k=>k==="waist"||k==="weight"||k==="fat"))h+='<button type="button" class="privbtn'+(PRIV?' on':'')+'" data-priv="1" aria-pressed="'+PRIV+'" aria-label="'+T('隐私模式','Privacy view')+'">'+(PRIV?EYE_OFF:EYE_ON)+'</button>';
-  box.innerHTML=h;
+  h+='<button type="button" class="privbtn pinbtn'+(GPIN?' on':'')+'" data-gpin="1" aria-pressed="'+GPIN+'" aria-label="'+T('固定在顶端','Pin to the top')+'" title="'+T('固定在顶端','Pin to the top')+'">'+PIN_ICON+'</button>';
+  box.innerHTML=h;placeGoals();
   box.querySelectorAll(".goal").forEach(g=>rollNum(g.querySelector(".gp"),"goal-"+g.querySelector("[data-setgoal]").dataset.setgoal));
   renderGoalPanel();
 }

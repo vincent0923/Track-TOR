@@ -1514,41 +1514,41 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 #foldDietSrc #dsrcOnline>summary{display:none}
 /* Food logs sync lamp: spins with red breathing arrows while pulling, steady green after a good pull.
    --lr/--lg = lamp colours, --lgl = glow size, --lspin = how it turns; per look below */
-#dietSyncBtn,#dsrcPull{--lr:#E5484D;--lg:#30A46C;--lgl:3px;--lspin:1.1s linear infinite;transition:box-shadow .3s,border-color .3s}
-#dietSyncBtn svg{transition:color .3s,filter .3s}
-#dietSyncBtn[data-lamp="busy"] svg{color:var(--lr);animation:dsSpin var(--lspin),dsBreath 1.4s ease-in-out infinite}
-#dietSyncBtn[data-lamp="ok"] svg{color:var(--lg);filter:drop-shadow(0 0 var(--lgl) color-mix(in srgb,var(--lg) 70%,transparent))}
-#dietSyncBtn[data-lamp="fail"] svg{color:var(--lr)}
-#dietSyncBtn[data-lamp="busy"]{border-color:color-mix(in srgb,var(--lr) 45%,transparent)}
-#dietSyncBtn[data-lamp="ok"]{border-color:color-mix(in srgb,var(--lg) 45%,transparent)}
-#dietSyncBtn.off[data-lamp] svg{color:inherit;filter:none;animation:none}
+#dietSyncBtn,#dsrcPull,[data-csync]{--lr:#E5484D;--lg:#30A46C;--lgl:3px;--lspin:1.1s linear infinite;transition:box-shadow .3s,border-color .3s}
+:is(#dietSyncBtn,[data-csync]) svg{transition:color .3s,filter .3s}
+:is(#dietSyncBtn,[data-csync])[data-lamp="busy"] svg{color:var(--lr);animation:dsSpin var(--lspin),dsBreath 1.4s ease-in-out infinite}
+:is(#dietSyncBtn,[data-csync])[data-lamp="ok"] svg{color:var(--lg);filter:drop-shadow(0 0 var(--lgl) color-mix(in srgb,var(--lg) 70%,transparent))}
+:is(#dietSyncBtn,[data-csync])[data-lamp="fail"] svg{color:var(--lr)}
+:is(#dietSyncBtn,[data-csync])[data-lamp="busy"]{border-color:color-mix(in srgb,var(--lr) 45%,transparent)}
+:is(#dietSyncBtn,[data-csync])[data-lamp="ok"]{border-color:color-mix(in srgb,var(--lg) 45%,transparent)}
+:is(#dietSyncBtn,[data-csync]).off[data-lamp] svg{color:inherit;filter:none;animation:none}
 @keyframes dsSpin{to{rotate:360deg}}
 @keyframes dsBreath{0%,100%{opacity:.5;filter:drop-shadow(0 0 0 transparent)}50%{opacity:1;filter:drop-shadow(0 0 var(--lgl) var(--lr))}}
-@media (prefers-reduced-motion:reduce){#dietSyncBtn[data-lamp="busy"] svg{animation:dsBreath 1.4s ease-in-out infinite}}
+@media (prefers-reduced-motion:reduce){:is(#dietSyncBtn,[data-csync])[data-lamp="busy"] svg{animation:dsBreath 1.4s ease-in-out infinite}}
 /* toy: candy red and lime plastic, no glow, a springy wind-up turn */
-:root[data-skin="toy"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF4D5E;--lg:#4CC74C;--lgl:0px;--lspin:.9s cubic-bezier(.5,-.3,.5,1.3) infinite}
+:root[data-skin="toy"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#FF4D5E;--lg:#4CC74C;--lgl:0px;--lspin:.9s cubic-bezier(.5,-.3,.5,1.3) infinite}
 /* retro: phosphor lamps that bleed light, a square key, turning in 8 pixel steps */
-:root[data-skin="retro"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF3B5C;--lg:var(--ok);--lgl:5px;--lspin:1s steps(8) infinite;border-radius:2px}
+:root[data-skin="retro"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#FF3B5C;--lg:var(--ok);--lgl:5px;--lspin:1s steps(8) infinite;border-radius:2px}
 /* craft: ink colours, no glow, a hand-turned wobble */
-:root[data-skin="craft"] :is(#dietSyncBtn,#dsrcPull){--lr:#C0492B;--lg:#5E8A4A;--lgl:0px;--lspin:1.6s ease-in-out infinite}
+:root[data-skin="craft"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#C0492B;--lg:#5E8A4A;--lgl:0px;--lspin:1.6s ease-in-out infinite}
 /* minimal: plain red and green, thin, no glow */
-:root[data-skin="minimal"] :is(#dietSyncBtn,#dsrcPull){--lr:#D23C3C;--lg:#2E8B57;--lgl:0px;--lspin:1.4s linear infinite}
+:root[data-skin="minimal"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#D23C3C;--lg:#2E8B57;--lgl:0px;--lspin:1.4s linear infinite}
 /* interior: soft status LEDs on the key cap */
-:root[data-skin="interior"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF5A4E;--lg:#2FBF71;--lgl:2px}
+:root[data-skin="interior"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#FF5A4E;--lg:#2FBF71;--lgl:2px}
 /* beUI: neon pink and mint with a halo round the whole button */
-:root[data-skin="beui"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF5C8A;--lg:#3DDC97;--lgl:4px;--lspin:1s cubic-bezier(.6,.1,.4,.9) infinite}
-:root[data-skin="beui"] #dietSyncBtn[data-lamp="busy"]{animation:dsHalo 1.4s ease-in-out infinite}
-:root[data-skin="beui"] #dietSyncBtn[data-lamp="ok"]{box-shadow:0 0 14px -4px var(--lg)}
+:root[data-skin="beui"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#FF5C8A;--lg:#3DDC97;--lgl:4px;--lspin:1s cubic-bezier(.6,.1,.4,.9) infinite}
+:root[data-skin="beui"] :is(#dietSyncBtn,[data-csync])[data-lamp="busy"]{animation:dsHalo 1.4s ease-in-out infinite}
+:root[data-skin="beui"] :is(#dietSyncBtn,[data-csync])[data-lamp="ok"]{box-shadow:0 0 14px -4px var(--lg)}
 @keyframes dsHalo{50%{box-shadow:0 0 16px -3px var(--lr)}}
 /* machine: an indicator lamp behind smoked glass — the cap goes dark and the arrows light up like LEDs */
-:root[data-skin="mech"] :is(#dietSyncBtn,#dsrcPull){--lr:#FF3B2F;--lg:#3DFF7A;--lgl:4px;--lspin:1.2s cubic-bezier(.45,0,.55,1) infinite}
-:root[data-theme="mech-light"] :is(#dietSyncBtn,#dsrcPull){--lr:#F0261A;--lg:#14D25E}
-:root[data-skin="mech"] #dietSyncBtn[data-lamp]:not(.off){background:radial-gradient(circle at 50% 40%,#2A2D31,#0D0E10 70%)}
-:root[data-skin="mech"] #dietSyncBtn[data-lamp="busy"]:not(.off){background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--lr) 22%,#141518),#0D0E10 70%)}
-:root[data-skin="mech"] #dietSyncBtn[data-lamp="ok"]:not(.off){background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--lg) 18%,#141518),#0D0E10 70%)}
-:root[data-skin="mech"] #dietSyncBtn[data-lamp="ok"] svg{filter:drop-shadow(0 0 2px var(--lg)) drop-shadow(0 0 6px color-mix(in srgb,var(--lg) 60%,transparent))}
+:root[data-skin="mech"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#FF3B2F;--lg:#3DFF7A;--lgl:4px;--lspin:1.2s cubic-bezier(.45,0,.55,1) infinite}
+:root[data-theme="mech-light"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#F0261A;--lg:#14D25E}
+:root[data-skin="mech"] :is(#dietSyncBtn,[data-csync])[data-lamp]:not(.off){background:radial-gradient(circle at 50% 40%,#2A2D31,#0D0E10 70%)}
+:root[data-skin="mech"] :is(#dietSyncBtn,[data-csync])[data-lamp="busy"]:not(.off){background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--lr) 22%,#141518),#0D0E10 70%)}
+:root[data-skin="mech"] :is(#dietSyncBtn,[data-csync])[data-lamp="ok"]:not(.off){background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--lg) 18%,#141518),#0D0E10 70%)}
+:root[data-skin="mech"] :is(#dietSyncBtn,[data-csync])[data-lamp="ok"] svg{filter:drop-shadow(0 0 2px var(--lg)) drop-shadow(0 0 6px color-mix(in srgb,var(--lg) 60%,transparent))}
 /* christmas: berry red and holly green, a gentle glow like tree lights */
-:root[data-skin="xmas"] :is(#dietSyncBtn,#dsrcPull){--lr:#E0263F;--lg:#1F9A52;--lgl:3px;--lspin:1.3s ease-in-out infinite}
+:root[data-skin="xmas"] :is(#dietSyncBtn,#dsrcPull,[data-csync]){--lr:#E0263F;--lg:#1F9A52;--lgl:3px;--lspin:1.3s ease-in-out infinite}
 /* Profile › Food table: the small ✓ that checks the link. Breathes in the lamp red while reading, a filled green
    tick when the table reads well, red when it doesn't. Shape and finish come from each look's round icon button. */
 .dsrc-row .vbtn{width:38px;height:38px;flex:none;align-self:center;min-width:0;opacity:1}
@@ -1710,3 +1710,16 @@ nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-to
 :root[data-skin="flat"] .calh .caltoday{background:rgba(255,255,255,.18);color:#fff}
 :root[data-skin="flat"] .toast{background:var(--cta);color:#fff;border-radius:4px;box-shadow:none}
 :root[data-skin="flat"] .tag{letter-spacing:.04em}
+/* chart buttons (edit, sync) are the look's round icon button, like the food sync button; the icon keeps the accent */
+.chedit.iconbtn{flex:none;align-self:center;color:var(--cta)}
+/* one button for the range and one for the moving average: tap steps, hold resets */
+.maline.maline{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start}
+.maline .chcyc{min-width:64px;justify-content:center;font-family:var(--f-num);font-weight:600;font-size:14px;padding:7px 12px;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+/* goals: the pin sits left of the privacy eye; pinned, the card rides at the top of every tab but Settings */
+.goals .pinbtn{right:44px}
+.goals .pinbtn:only-of-type{right:8px}
+.goals:not(:has([data-priv])) .pinbtn{right:8px}
+.goals .pinbtn.on{color:var(--cta);border-color:var(--cta)}
+.goals .pinbtn.on svg{fill:color-mix(in srgb,var(--cta) 30%,transparent)}
+#goalsTop .goals{margin:12px 0 4px}
+#goalsTop[hidden]{display:none}

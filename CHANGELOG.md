@@ -11,7 +11,7 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 ### 新增 / Added
 - 🧭 **底部 Dock，五个标签**：训练、饮食、身体、目标、设定挪到屏幕底部，大屏手机拇指够得着。中间那格最大、写着名字，是首页，打开推拉机就停在这里。长按一个标签拿起来，左右拖到别的位置松手，像 macOS 的 Dock；顺序会记住。
   A dock at the bottom with five tabs: Train, Diet, Body, Goals and Settings sit along the bottom edge, within thumb reach on a big phone. The middle slot is the biggest, shows its name and is the home page the app opens on. Hold a tab to pick it up and drag it to a new place, like the macOS Dock; the order is remembered.
-- 🫀 **身体仪表盘**：「身体」标签把一年打卡、引体、体重、腰围和睡眠、HRV、静息心率放在一页。关掉过的图，在最下面有一个带 + 的圆形按钮，点开就能加回来。
+- 🫀 **身体仪表盘**：「数据」标签把引体、体重、腰围和睡眠、HRV、静息心率放在一页。关掉过的图，在最下面有一个带 + 的圆形按钮，点开就能加回来。
   Body dashboard: the Body tab puts the year of training, pull-ups, weight, waist, sleep, HRV and resting HR on one page. Charts you switched off can be added back from a round + at the bottom.
 - 🎯 **目标标签**：目标卡和目标设定有了自己的标签。长按一个目标打开它的小面板：改目标、手动记录（引体、腰围、体重）、是否在面板显示。没显示的目标，卡片最下面有带 + 的圆形按钮加回来。隐私模式下，减脂显示热量缺口（kcal）而不是脂肪公斤数。
   Goals tab: the goal card and goal settings have their own tab. Hold a goal for its sheet: the goal, a manual record (pull-ups, waist, weight) and whether it shows on the panel. Goals not on the panel come back from a round + at the bottom. In privacy view, fat loss shows the calorie gap in kcal instead of kilograms of fat.
@@ -22,7 +22,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 - 🟦 **扁平主题**：海军蓝底、石板蓝面板，没有阴影，大块青绿、粉红、天蓝、琥珀；目标是一圈进度环，今天是粉红实心圆。
   Flat theme: navy page and slate panels with no shadows, solid teal, pink, sky and amber blocks; goals are progress rings and today is a pink dot.
 
+- 📌 **目标图钉**：目标卡右下角的图钉按下后，目标卡固定在顶端，除了设定以外每个标签都看得到。
+  Goals pin: press the pin on the goals card and it stays at the top of every tab except Settings.
+- 🔘 **图表的范围和均线各一个按钮**：点一下换（7、14、30、60、90 天、全部；均线 7、14、30），长按回到 14 天、均线 14。图表默认也改成 14 天 + 均线 14。
+  One button each for a chart's range and moving average: tap to step (7, 14, 30, 60, 90 days, all; MA 7, 14, 30), hold to go back to 14 days and MA14, which are now the defaults.
+
 ### 改进 / Changed
+- 「身体」标签改叫「数据」，图标换成折线图；「一年打卡」默认收起，从页面底部的 + 加回来。
+  The Body tab is now Data with a chart icon; the year of training panel starts hidden and comes back from the + at the bottom.
+- 图表上的手动记录和同步按钮跟当前主题的饮食同步按钮一个样；同步按钮带指示灯。
+  The edit and sync buttons on charts match the look's food sync button; sync buttons carry the lamp.
 - 右上角的全屏按钮去掉了。
   The fullscreen button is gone.
 

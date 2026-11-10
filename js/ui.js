@@ -25,9 +25,10 @@ function setTab(tab){
   placePiece(document.querySelector("nav.tabs"),true);
   if(tab==="diet"){renderDietAll();dietTabPull()}
   if(tab==="body"||tab==="me"||tab==="goals")renderData();
-  if(tab==="goals"&&typeof renderGoals==="function")renderGoals();
+  if(typeof renderGoals==="function")renderGoals();
   if(tab==="train")renderTrain();
   if(typeof paintAddPanel==="function")paintAddPanel();
+  if(typeof placeGoals==="function")placeGoals();
   try{localStorage.setItem(LS+"-tab",tab)}catch(err){}
 }
 applyDock();
@@ -590,6 +591,14 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   });
 })();
 
+/* a lamp on a round sync button: it spins with breathing red arrows while its work runs (at least a moment, so a
+   quick sync still shows), then stays green, or red when the work fails or returns false. Colours follow the look (css). */
+async function lampRun(btn,work){
+  const t0=performance.now();btn.dataset.lamp="busy";btn.setAttribute("aria-busy","true");let ok=false;
+  try{ok=(await work())!==false}catch(e){ok=false}
+  setTimeout(()=>{btn.removeAttribute("aria-busy");btn.dataset.lamp=ok?"ok":"fail"},Math.max(0,900-(performance.now()-t0)));
+  return ok;
+}
 /* i pills (i | round chevron): open and close the panel they name; the chevron turns up while it is open */
 document.addEventListener("click", e=>{
   const b = e.target.closest("[data-itoggle]"); if(!b) return;
