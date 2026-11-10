@@ -89,7 +89,7 @@ function extraBlock(sid,s,locked){
     if(!locked)h+='<button class="rk rk-plus addset" data-xa="addset"'+D+' data-k="'+k+'" aria-label="'+T('加一组','Add set')+'" title="'+T('加一组','Add set')+'"></button>';
     h+='</div>';
   });
-  if(locked)return h+'</div>';
+  if(locked)return list.length?h+'</div>':'';
   const past=new Map();
   if(!list.some(it=>it.id===XPULL))past.set(XPULL,{id:XPULL,name:"引体向上",unit:"个"});
   xDocs().forEach(doc=>((doc&&doc.xs)||[]).forEach(it=>{
@@ -238,7 +238,7 @@ function renderTrain(){
   /* finished sessions without a date can't sit on the calendar; keep them reachable */
   PROGRAM.filter(p=>{const s=state.sessions[p.sid];return s&&s.done&&!s.date}).forEach(p=>{html+=cardHtml(p,cur)});
   html+='<div class="tbar"><button class="rk rk-up" data-act="all" aria-label="'+T("全部收起","Collapse all")+'" title="'+T("全部收起","Collapse all")+'"></button>'
-    +(cur?'<button class="tbtn next" data-act="next" aria-label="'+T("跳到下一次训练","Jump to next session")+'">💪🏼'+T("练","Train")+'</button>':'')+'</div>';
+    +'</div>';
   PROGRAM.filter(p=>!(state.sessions[p.sid]&&state.sessions[p.sid].done)).slice(0,5).forEach(p=>{
     html+=cardHtml(p,cur);
     if(p.kind==="pull" && (p.day===10||p.day===20)) html+='<div class="review">D'+p.day+T(' 复盘：对比引体次数、体重周均、腰围，决定下一档是否照常加量。',' review: compare pull-ups, weekly-average weight and waist, then decide whether the next tier goes ahead as planned.')+'</div>';
@@ -268,7 +268,7 @@ function sessionBody(p){
         +'<div class="step"><button data-act="dec" data-sid="'+p.sid+'" data-ex="'+e.id+'" data-i="'+i+'" aria-label="'+T("减少","Decrease")+'"'+dis+'>−</button>'
         +'<input id="v-'+p.sid+'-'+e.id+'-'+i+'" type="number" inputmode="numeric" value="'+x.v+'" data-act="val" data-sid="'+p.sid+'" data-ex="'+e.id+'" data-i="'+i+'" aria-label="'+N(e)+' '+T('第 '+no+' 组','set '+no)+'"'+dis+'>'
         +'<button data-act="inc" data-sid="'+p.sid+'" data-ex="'+e.id+'" data-i="'+i+'" aria-label="'+T("增加","Increase")+'"'+dis+'>+</button></div>'
-        +'<span class="lab">'+U(e.unit)+' '+esc(NS(e))+'<em>'+T('第 '+no+' 组','set '+no)+(extra?T(' · 加组',' · extra'):'')+'</em></span>'
+        +'<span class="lab">'+U(e.unit)+'<em>'+T('第 '+no+' 组','set '+no)+(extra?T(' · 加组',' · extra'):'')+'</em></span>'
         +(extra&&!locked?'<button class="x" data-act="rm" data-sid="'+p.sid+'" data-ex="'+e.id+'" data-i="'+i+'" aria-label="'+T("删除这一组","Remove set")+'">×</button>':'')
         +'</div>';
     });
@@ -284,7 +284,7 @@ function sessionBody(p){
       +'<div class="field"><label for="fp-'+p.sid+'">'+T('标准引体（个，可空）','Strict pull-ups (optional)')+'</label><input id="fp-'+p.sid+'" type="number" inputmode="numeric" min="0" step="1" value="'+(m.pullups??"")+'" placeholder="—"></div>'
       +'<div class="field"><label for="fw-'+p.sid+'">'+T('体重 kg（可空）','Weight kg (optional)')+'</label><input id="fw-'+p.sid+'" type="number" inputmode="decimal" step="0.1" value="'+(m.weight??"")+'" placeholder="—"></div>'
       +'<div class="field"><label for="fz-'+p.sid+'">'+T('腰围 cm（可空）','Waist cm (optional)')+'</label><input id="fz-'+p.sid+'" type="number" inputmode="decimal" step="0.1" value="'+(m.waist??"")+'" placeholder="—"></div>'
-      +'</div><div class="savebar"><button class="btn recsave" data-act="finish" data-sid="'+p.sid+'" aria-label="'+T('完成并记录','Finish & log')+'" title="'+T('完成并记录','Finish & log')+'">'+SAVE_ICON+'</button></div></div>';
+      +'</div><button class="btn finbtn" data-act="finish" data-sid="'+p.sid+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V4"/><path d="M4 4h13l-2.5 4L17 12H4"/></svg>'+T('完成 ','Finish ')+LAB(p)+'</button></div>';
   }else if(s.done){
     h+='<div class="row" style="margin-top:12px"><div class="field" style="flex:1"><label for="ed-'+p.sid+'">'+T('完成日期','Completed on')+'</label><input id="ed-'+p.sid+'" type="date" value="'+(s.date||"")+'" data-act="date" data-sid="'+p.sid+'"></div>'
       +(unlocked.has(p.sid)
@@ -377,6 +377,15 @@ function setRowState(sid,ex,i){
   const bar=document.querySelector("#c-"+sid+" .prog i"); if(bar) bar.style.width=(n?Math.round(d/n*100):0)+"%";
 }
 
+/* 练 (in the header, always on the first screen): open the next session on the Train tab and scroll to it */
+function goNextSession(){
+  const cur=currentSid();if(!cur)return;
+  if(typeof setTab==="function"&&!document.getElementById("pane-train").offsetParent)setTab("train");
+  const was=openDays.has(cur);openDays.clear();keepEditing();openDays.add(cur);renderTrain();if(!was)foldIn([bodyOf(cur)],FOLD_MS);
+  const fd=document.getElementById("fd-"+cur);if(fd){fd.value=today()}
+  const el=document.getElementById("c-"+cur);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}
+}
+document.getElementById("goNext").addEventListener("click",goNextSession);
 document.getElementById("pane-train").addEventListener("click",e=>{
   const xt=e.target.closest("[data-xa]"); if(xt){extraAct(xt);return}
   const cd=e.target.closest("[data-cal]");
@@ -396,9 +405,7 @@ document.getElementById("pane-train").addEventListener("click",e=>{
     if(openDays.has(sid)){const b=document.querySelector("#c-"+sid+" .sbody");foldOut(b?[b]:[],FOLD_MS).then(()=>{openDays.delete(sid);renderTrain()});return}
     openDays.add(sid);renderTrain();foldIn([bodyOf(sid)],FOLD_MS);return}
   if(t.dataset.act==="all"){t.classList.remove("pop");void t.offsetWidth;t.classList.add("pop");setTimeout(collapseAll,120);return}
-  if(t.dataset.act==="next"){const cur=currentSid();if(!cur)return;const was=openDays.has(cur);openDays.clear();keepEditing();openDays.add(cur);renderTrain();if(!was)foldIn([bodyOf(cur)],FOLD_MS);
-    const fd=document.getElementById("fd-"+cur);if(fd){fd.value=today()}
-    const el=document.getElementById("c-"+cur);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash")}return}
+  if(t.dataset.act==="next"){goNextSession();return}
   const {act,sid,ex}=t.dataset; const i=+t.dataset.i;
   if(act==="val"||act==="note"||act==="date") return;
   if(act==="dxedit"){confirmEdit("d:"+t.dataset.day);return}

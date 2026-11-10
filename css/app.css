@@ -209,8 +209,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--pull);outline-o
 @keyframes pressPop{0%{transform:scale(1)}35%{transform:translateY(1px) scale(.92);box-shadow:inset 0 3px 6px rgba(0,0,0,.28)}70%{transform:scale(1.04)}100%{transform:scale(1)}}
 .tbtn[data-act="all"].pop{animation:pressPop .32s ease-out}
 .tbtn.next{position:relative;overflow:visible;isolation:isolate;color:#fff;font-weight:700;border:0;padding:7px 14px;
-  background:linear-gradient(0deg,#C2260C 0%,#F2541B 40%,#FF9A1F 75%,#FFD34E 100%);background-size:100% 220%;background-position:0 100%;
-  box-shadow:0 0 8px rgba(255,110,20,.6),0 0 18px rgba(255,60,0,.35);text-shadow:0 1px 2px rgba(120,20,0,.6)}
+  background:linear-gradient(0deg,#9E1A06 0%,#C93A0E 40%,#E2621A 75%,#F59A2C 100%);background-size:100% 220%;background-position:0 100%;
+  box-shadow:0 2px 8px rgba(255,110,20,.55),0 4px 18px rgba(255,60,0,.3);text-shadow:0 1px 2px rgba(90,14,0,.75)}
 /* the flames themselves are drawn by a particle canvas (see "flame" in the script); CSS only keeps the hot, flickering button */
 @media (prefers-reduced-motion:no-preference){
   .tbtn.next{animation:fireBg 1.6s ease-in-out infinite alternate,fireGlow 1.7s linear infinite}
@@ -240,7 +240,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--pull);outline-o
 .pill.now{background:var(--ks);color:var(--k);font-weight:600}
 .pill.later{color:var(--muted)}
 .card.isdone .tag{opacity:.75}
-.card.future .tag,.card.future .meta{opacity:.5}
+.card.future .tag,.card.future .meta{opacity:.72}
 svg.lk{width:12px;height:12px;vertical-align:-1px;margin-right:3px}
 .lockbar svg.lk{flex:none;width:14px;height:14px}
 .sbody{border-top:1px solid var(--line);padding:4px 14px 14px}
@@ -1573,3 +1573,50 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 :root[data-skin="mech"] .dsrc-row .vbtn[data-v="ok"]{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--lg) 30%,#141518),#0D0E10 70%);border-color:#0D0E10}
 :root[data-skin="mech"] .dsrc-row .vbtn[data-v="ok"] svg{color:var(--lg);filter:drop-shadow(0 0 2px var(--lg)) drop-shadow(0 0 6px color-mix(in srgb,var(--lg) 60%,transparent))}
 :root[data-skin="xmas"] .dsrc-row .vbtn[data-v="ok"]{box-shadow:0 0 0 3px color-mix(in srgb,#E0263F 30%,transparent)}
+
+/* ---------- impeccable pass ----------
+   The header carries 练 with the next session's name, so the first screen always has the way into the workout.
+   The goals card is a compact two-by-two: icon, value, percent and a slim bar; start → goal lives in the goal panel. */
+.hrow #goNext{flex:none;gap:4px;font-size:15px;padding:8px 14px;border-radius:12px;white-space:nowrap}
+.hrow #goNext b{font-family:var(--f-num);font-size:15px;font-weight:700;color:inherit}
+.hrow #goNext[hidden]{display:none}
+@media (max-width:479px){header.top h1 .h1s{display:none}}
+.goals.goals{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;padding:10px 12px 10px;margin:12px 0 8px}
+.goals:has(.privbtn){padding-bottom:34px}
+.goals .goal{gap:8px;align-items:flex-start}
+.goals .gi{width:30px;height:30px;border-radius:9px}
+.goals .gi svg{width:18px;height:18px}
+.goals .gh{gap:4px;flex-wrap:wrap;align-items:baseline}
+.goals .gh b{font-size:12px;color:var(--muted);font-weight:600;width:100%;line-height:1.2}
+.goals .gh .gv{font-size:16px;flex:1}
+.goals .gh .gp{font-size:15px}
+.goals .gx{display:none}
+.goals .bar{height:6px;margin:4px 0 0}
+.goals .goal:not(.not) .gr{display:none}
+.goals .goal.not .gr{font-size:11px;margin-top:2px}
+.goals .privbtn{bottom:4px;right:6px}
+/* finishing a session is the peak of the workout: a full-width, kind-coloured button that names the session,
+   not the save icon used for notes. Each look restyles .btn, and this keeps the kind colour on top of it. */
+.finish .finbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:54px;font-size:19px;font-weight:800;letter-spacing:.02em;
+  background:var(--k);color:#fff;border:0;border-radius:12px;box-shadow:0 3px 0 color-mix(in srgb,var(--k) 60%,#000),0 8px 18px -8px color-mix(in srgb,var(--k) 70%,transparent)}
+.finish .finbtn svg{width:20px;height:20px;flex:none}
+.finish .finbtn:active{transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--k) 60%,#000)}
+:root[data-skin="retro"] .finish .finbtn{background:transparent;color:var(--k);border:2px solid var(--k);box-shadow:0 0 10px -2px var(--k);border-radius:0;text-transform:uppercase}
+:root[data-skin="minimal"] .finish .finbtn{border-radius:999px;box-shadow:none}
+:root[data-skin="beui"] .finish .finbtn{border-radius:999px;box-shadow:0 8px 24px -10px var(--k)}
+:root[data-skin="craft"] .finish .finbtn{border-radius:6px;outline:1.5px dashed rgba(255,255,255,.6);outline-offset:-5px;transform:rotate(-1deg)}
+/* thumb-sized set controls: the tick and the stepper are 44 px tall so a sweaty thumb between sets lands on the right one */
+.sets .chk,.chk{width:44px;height:44px}
+.chk svg{width:22px;height:22px}
+.step button{width:40px;height:42px;font-size:20px}
+.totop{opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1),visibility 0s .25s}
+.totop.show{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1),visibility 0s}
+:is(:root[data-theme="dark"],:root[data-theme="interior-dark"],:root[data-theme="beui-dark"],:root[data-theme="minimal-warm"],:root[data-theme="toy-glow"]) .finish .finbtn{color:color-mix(in srgb,var(--k) 15%,#0B0B0B)}
+.set .lab em,.lab em{white-space:nowrap}
+/* consistency: the tab bar stays pinned under the top in every look, and an open fold's chevron points up in every look */
+:root[data-skin] nav.tabs.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+:root[data-skin] .calfold.rk[aria-expanded="true"]{transform:rotate(180deg)}
+:root[data-skin] .calfold.rk[aria-expanded="true"]:active{transform:rotate(180deg) scale(.9)}
+/* contrast: the gap pill's figure leans toward the ink; the dark theme's goal tracks get a visible groove */
+#pane-diet .pill.g,#pane-diet .pill.g b{color:color-mix(in srgb,var(--gain) 62%,var(--ink))}
+:root[data-theme="dark"] .bar{background:#26323A}

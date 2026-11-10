@@ -6,6 +6,35 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.30i] — 2026-11-10
+
+i 代表 impeccable：按一次界面审查（启发式评分、检测器扫描、多主题截图）改的一版。想退回改动前，可以用仓库里的 `v1.30a` 分支。
+i for impeccable: a pass driven by an interface review (heuristic scoring, a detector scan and screenshots across the themes). The `v1.30a` branch keeps the version from before it.
+
+### 改进 / Changed
+- 💪🏼 **「练」上了第一屏**：右上角下面那行「下一次 推D1」变成「练 推D1」按钮，一打开就能点，点了跳到训练页并打开下一次训练。列表里原来那个「练」去掉了。
+  Train on the first screen: the "Next Push D1" line under the title is now a "Train Push D1" button you can tap as soon as the app opens; it goes to the Train tab and opens the next session. The Train button further down the list is gone.
+- 🎯 **目标卡变紧凑**：四个目标排成两列，每格只有图标、名字、数值、百分比和一根细进度条；起点和目标数在点图标打开的目标面板里。没设目标的那格仍显示「设目标」。
+  Compact goals: the four goals sit in two columns, each with its icon, name, value, percent and a slim bar; start and goal figures live in the goal panel behind the icon. A goal without a target still shows "Set goal".
+- 🏁 **「完成训练」是整宽按钮**：训练卡最下面的磁盘图标换成推、拉颜色的整宽按钮「🏁 完成 推练 D3」，和保存备注分开。
+  Finishing is a full-width button: the disk icon at the bottom of a session is now a full-width, push- or pull-coloured "Finish Push D3" button, no longer the same as saving a note.
+- 👍 **组间更好按**：打勾框和加减按钮放大到 44px 左右；每组那行不再重复动作名，只写单位和第几组。
+  Easier between sets: the tick box and the − / + buttons are about 44 px; each set row no longer repeats the exercise name.
+- ⬆️ **回到顶部按钮滚过一屏才出现**，不再挡住第一屏和「加一组」。
+  Back to top only appears after a screen of scrolling, so it no longer covers the first screen.
+- 📌 **标签栏所有主题都钉在顶部**；展开的面板箭头在所有主题里都朝上（玩具、Interior 之前朝下）。
+  The tab bar stays pinned in every theme, and an open fold's chevron points up in every theme (toy and Interior pointed down).
+- 🔍 **对比度**：默认主题「练」按钮的火焰色调深，白字更清楚；饮食「缺口」小标签、未解锁训练卡的字、深色主题目标进度条底槽都更看得清。
+  Contrast: the default Train button's flame colours are deeper so the white label reads; the diet gap pill, locked session text and the dark theme's goal-bar groove are easier to see.
+
+### 修复 / Fixed
+- 机械主题的同步推杆在其他主题里也显示出来了，现在只在机械主题里出现。
+  The machine looks' sync lever showed in every theme; it now appears only in the machine looks.
+- 过去的日子没有加练时，不再显示一个空的「加练」标题。
+  Past days without extra practice no longer show an empty Extra practice heading.
+- 欢迎页把「资料 › 个人资料」写成了「数据 › 个人资料」。
+  The welcome screen pointed to the profile under the wrong tab name.
+
 ## [v1.30a] — 2026-11-08
 
 ### 新增 / Added

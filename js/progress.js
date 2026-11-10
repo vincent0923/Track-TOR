@@ -239,7 +239,8 @@ function renderData(){
 
 function renderStats(){
   const cur=currentSid();
-  document.getElementById("stNext").textContent=cur?SHORT(BYID[cur]):T("全部完成","All done");
+  document.getElementById("stNext").textContent=cur?SHORT(BYID[cur]):"";
+  document.getElementById("goNext").hidden=!cur;
   renderGoals();
 }
 /* ---------- goals ---------- */
@@ -306,10 +307,10 @@ function renderGoals(){
       if(m){cur=+(m.s/7700).toFixed(2);curTxt=cur.toFixed(2)+" kg"}
     }else if(g.k==="weight"){
       const all=wtMerged(); if(all.length){start=all[0].y;const a=avg7(all);cur=+a[a.length-1].y.toFixed(1);
-        curTxt=PRIV?"<small>BMI</small> "+bmi(cur).toFixed(1):cur.toFixed(1)+" kg <small>"+par("BMI "+bmi(cur).toFixed(1))+"</small>"}
+        curTxt=PRIV?"<small>BMI</small> "+bmi(cur).toFixed(1):cur.toFixed(1)+" kg <small class=\"gx\">"+par("BMI "+bmi(cur).toFixed(1))+"</small>"}
     }else{
       const sr=g.k==="pullups"?pullSeries():series(g.k); if(g.start!=null)start=g.start; if(sr.length){if(g.start==null)start=sr[0].y;cur=sr[sr.length-1].y;curTxt=cur+" "+g.unit;
-        if(g.k==="waist")curTxt=PRIV?"<small>"+WL+"</small> "+wr(cur):curTxt+" <small>"+par(WL+" "+wr(cur))+"</small>"}
+        if(g.k==="waist")curTxt=PRIV?"<small>"+WL+"</small> "+wr(cur):curTxt+" <small class=\"gx\">"+par(WL+" "+wr(cur))+"</small>"}
     }
     let pct=0;
     const noT=g.target==null;
@@ -326,7 +327,7 @@ function renderGoals(){
       :PRIV&&pv
       ?(g.k==="weight"?(start==null?"—":"BMI "+bmi(start).toFixed(1))+' → BMI '+bmi(g.target).toFixed(1):(start==null?"—":WL+" "+wr(start))+' → '+WL+' '+wr(g.target))
       :T('起点 ','Start ')+startTxt+T(' → 目标 ',' → Goal ')+g.target+' '+g.unit+(g.k==="weight"?par('BMI '+bmi(g.target).toFixed(1)):g.k==="waist"?par(WL+' '+wr(g.target)):'');
-    h+='<div class="goal" style="--g:'+g.color+'">'+icon+'<div class="gb">'
+    h+='<div class="goal'+(noT?' not':'')+'" style="--g:'+g.color+'">'+icon+'<div class="gb">'
       +'<div class="gh"><b>'+g.name+'</b><span class="gv">'+curTxt+'</span><span class="gp">'+(start==null||noT?"—":pct+"%")+'</span></div>'
       +'<div class="bar" role="progressbar" aria-label="'+g.name+T('进度',' progress')+'" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+pct+'%"></i></div>'
       +'<div class="gr">'+range+'</div></div></div>';

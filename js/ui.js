@@ -157,7 +157,8 @@ function flameOn(sel,k,green){
     const r=b&&b.getBoundingClientRect();
     const nav=document.querySelector("nav.tabs"), nb=nav?nav.getBoundingClientRect().bottom:0;
     /* hidden, off screen, or slid under the sticky tab bar: no flames */
-    if(!r||!r.width||document.hidden||r.top<nb-2||r.top>innerHeight){if(cw){c.clearRect(0,0,cv.width,cv.height)}parts=[];return}
+    const under=nav&&b&&(nav.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING)&&r.top<nb-2;
+    if(!r||!r.width||document.hidden||under||r.bottom<0||r.top>innerHeight){if(cw){c.clearRect(0,0,cv.width,cv.height)}parts=[];return}
     const w=Math.round(r.width+PADX*2), h=Math.round(UP+r.height+DOWN);
     size(w,h);cv.style.transform="translate("+Math.round(r.left-PADX)+"px,"+Math.round(r.top-UP)+"px)";
     let n=3.2*k*dt;while(n>0){if(Math.random()<n)spawn(r.width,false);n--}
@@ -307,6 +308,10 @@ const metalFx=(function(){let cv=null,ctx=null,ps=[],arcs=[],flash=0,raf=0,W=0,H
 /* set / exercise / day outcomes used for the fireworks */
 function exDone(s,e){const a=s.sets[e.id]||[];return a.length>0&&a.every(x=>x.d)}
 function exOver(s,e){const a=s.sets[e.id]||[];return a.length>e.sets||a.some(x=>x.d&&+x.v>e.target)}
+/* the back-to-top button only shows once the page has scrolled a screen down, so it never covers the first screen */
+(function(){const b=document.getElementById("toTop");let on=null;
+  const paint=()=>{const v=(window.scrollY||document.documentElement.scrollTop)>innerHeight*.9;if(v!==on){on=v;b.classList.toggle("show",v);b.tabIndex=v?0:-1}};
+  addEventListener("scroll",paint,{passive:true});addEventListener("resize",paint);paint()})();
 document.getElementById("toTop").addEventListener("click",()=>{
   const smooth=!window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   window.scrollTo({top:0,behavior:smooth?"smooth":"auto"});
