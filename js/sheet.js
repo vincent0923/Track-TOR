@@ -461,7 +461,7 @@ function dietTabPull(){
   let saved = ""; try{ saved = localStorage.getItem(SHEET_URL_K) || ""; }catch(e){}
   saved = extractUrl(saved);
   if(!validSheetUrl(saved) || navigator.onLine === false) return;
-  const tab = document.querySelector('.subtabs [data-sub="diet"]'), pullBtn = document.getElementById("dsrcPull");
+  const tab = document.querySelector('nav.tabs [data-tab="diet"]'), pullBtn = document.getElementById("dsrcPull");
   if(!tab || tab.dataset.prog || pullBtn.disabled) return;
   let st = {}; try{ st = JSON.parse(localStorage.getItem(SHEET_STATUS_K) || "{}") || {}; }catch(e){}
   if(st.ok && st.ts && Date.now() - st.ts < SHEET_TAB_MS) return;

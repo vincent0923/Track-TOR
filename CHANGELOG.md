@@ -6,6 +6,26 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.31a] — 2026-11-10
+
+### 新增 / Added
+- 🧭 **底部 Dock，五个标签**：训练、饮食、身体、目标、设定挪到屏幕底部，大屏手机拇指够得着。中间那格最大、写着名字，是首页，打开推拉机就停在这里。长按一个标签拿起来，左右拖到别的位置松手，像 macOS 的 Dock；顺序会记住。
+  A dock at the bottom with five tabs: Train, Diet, Body, Goals and Settings sit along the bottom edge, within thumb reach on a big phone. The middle slot is the biggest, shows its name and is the home page the app opens on. Hold a tab to pick it up and drag it to a new place, like the macOS Dock; the order is remembered.
+- 🫀 **身体仪表盘**：「身体」标签把一年打卡、引体、体重、腰围和睡眠、HRV、静息心率放在一页。关掉过的图，在最下面有一个带 + 的圆形按钮，点开就能加回来。
+  Body dashboard: the Body tab puts the year of training, pull-ups, weight, waist, sleep, HRV and resting HR on one page. Charts you switched off can be added back from a round + at the bottom.
+- 🎯 **目标标签**：目标卡和目标设定有了自己的标签。长按一个目标打开它的小面板：改目标、手动记录（引体、腰围、体重）、是否在面板显示。没显示的目标，卡片最下面有带 + 的圆形按钮加回来。隐私模式下，减脂显示热量缺口（kcal）而不是脂肪公斤数。
+  Goals tab: the goal card and goal settings have their own tab. Hold a goal for its sheet: the goal, a manual record (pull-ups, waist, weight) and whether it shows on the panel. Goals not on the panel come back from a round + at the bottom. In privacy view, fat loss shows the calorie gap in kcal instead of kilograms of fat.
+- 📅 **日历手势**：长按练过的日子，确认后就能修改那天的记录；过去日子的备注随时能改，不用另开面板。长按今天那一格打开今天的加练。在月份大字上左右滑动换月。
+  Calendar gestures: hold a trained day and confirm to edit that day's records; notes on past days can be edited at any time without a separate panel. Hold today's square for today's extra practice. Swipe the month name left or right to change month.
+- 💪🏼 **长按「练」**：滚到现在能练的两次训练（下一次推、下一次拉），卡片边上有一圈暗暗的光跑两圈。
+  Hold Train: the page scrolls to the two sessions you can train now (the next push and the next pull day) and a dim ring of light runs round each card twice.
+- 🟦 **扁平主题**：海军蓝底、石板蓝面板，没有阴影，大块青绿、粉红、天蓝、琥珀；目标是一圈进度环，今天是粉红实心圆。
+  Flat theme: navy page and slate panels with no shadows, solid teal, pink, sky and amber blocks; goals are progress rings and today is a pink dot.
+
+### 改进 / Changed
+- 右上角的全屏按钮去掉了。
+  The fullscreen button is gone.
+
 ## [v1.30i] — 2026-11-10
 
 i 代表 impeccable：按一次界面审查（启发式评分、检测器扫描、多主题截图）改的一版。想退回改动前，可以用仓库里的 `v1.30a` 分支。

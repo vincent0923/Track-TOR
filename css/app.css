@@ -196,7 +196,7 @@ header.top h1 .h1s{display:block;font-size:12px;font-weight:600;color:var(--mute
 nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:4px;background:var(--bg);padding-block:8px}
 nav.tabs button{flex:1;font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:10px;padding:9px 0;cursor:pointer}
 nav.tabs .t-train{flex:2;font-size:17px;padding:11px 0}
-nav.tabs .t-data{flex:1;font-size:20px;padding:9px 0}
+nav.tabs :is(.t-diet,.t-body,.t-me){flex:1;font-size:17px;padding:11px 0}
 nav.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 button{font:inherit;color:inherit}
 button:focus-visible,input:focus-visible{outline:2px solid var(--pull);outline-offset:2px}
@@ -1609,10 +1609,104 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 .totop.show{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1),visibility 0s}
 :is(:root[data-theme="dark"],:root[data-theme="interior-dark"],:root[data-theme="beui-dark"],:root[data-theme="minimal-warm"],:root[data-theme="toy-glow"]) .finish .finbtn{color:color-mix(in srgb,var(--k) 15%,#0B0B0B)}
 .set .lab em,.lab em{white-space:nowrap}
-/* consistency: the tab bar stays pinned under the top in every look, and an open fold's chevron points up in every look */
-:root[data-skin] nav.tabs.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+/* consistency: an open fold's chevron points up in every look */
 :root[data-skin] .calfold.rk[aria-expanded="true"]{transform:rotate(180deg)}
 :root[data-skin] .calfold.rk[aria-expanded="true"]:active{transform:rotate(180deg) scale(.9)}
 /* contrast: the gap pill's figure leans toward the ink; the dark theme's goal tracks get a visible groove */
 #pane-diet .pill.g,#pane-diet .pill.g b{color:color-mix(in srgb,var(--gain) 62%,var(--ink))}
 :root[data-theme="dark"] .bar{background:#26323A}
+/* ---------- bottom tab bar ----------
+   Train / Diet / Body / Settings sit in a bar along the bottom edge, where the thumb rests on a big phone.
+   The selected tab widens and shows its name; the others are icons. Each look keeps its own bar styling. */
+html:root nav.tabs.tabs{position:fixed!important;left:0;right:0;bottom:0;top:auto!important;z-index:30;margin:0 auto;max-width:560px;
+  padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));background:var(--bg);box-shadow:0 -1px 0 var(--line),0 -10px 24px -14px rgba(0,0,0,.25)}
+html:root[data-skin] nav.tabs.tabs{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));border-radius:18px 18px 0 0}
+/* five slots; the middle one is the biggest and shows its name: it is the home page */
+html:root nav.tabs.tabs{gap:6px;align-items:end}
+html:root nav.tabs.tabs button{flex:1 1 0;min-width:0;padding:10px 0;font-size:15px}
+html:root nav.tabs.tabs button:nth-of-type(3){flex:1.9 1 0;padding:13px 0;font-size:16px}
+nav.tabs button .tl{display:none}
+nav.tabs button:nth-of-type(3) .tl{display:inline}
+html:root nav.tabs.tabs button svg{width:22px;height:22px}
+html:root nav.tabs.tabs button:nth-of-type(3) svg{width:24px;height:24px}
+/* picking a tab up to reorder: it lifts and the others make room */
+nav.tabs.docking button{touch-action:none}
+nav.tabs button.lift{position:relative;z-index:3;box-shadow:0 10px 22px -8px rgba(0,0,0,.45)!important;transition:none}
+nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.wrap{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
+.totop{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+.toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+/* Body tab: a round + at the very bottom when some data panels are switched off */
+.addpanel{display:grid;justify-items:center;gap:10px;margin:18px 0 4px}
+.addpanel[hidden]{display:none}
+.addpanel .rk{width:44px;height:44px}
+.addmenu{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.addmenu[hidden]{display:none}
+/* goals: the round + for goals not on the panel spans the card; the goal sheet's row of actions */
+.goals .addgoal{grid-column:1/-1;display:grid;justify-items:center;gap:8px;margin-top:2px}
+.goals .addgoal .rk{width:34px;height:34px}
+.goalsheet .gsrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.goalsheet .gsrow .btn{display:inline-flex;align-items:center;gap:6px}
+.goalsheet .gsrow svg{width:16px;height:16px}
+.goals .goal{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#pane-goals{display:grid;gap:4px}
+#pane-goals .goals{margin-top:4px}
+/* hold 练: a dim ring of light runs round each session that can be trained now, twice */
+@property --ra{syntax:"<angle>";inherits:false;initial-value:0deg}
+.card.ringflash{position:relative}
+.card.ringflash::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;padding:2.5px;
+  background:conic-gradient(from var(--ra),transparent 0 62%,color-mix(in srgb,var(--k,var(--cta)) 55%,transparent) 80%,color-mix(in srgb,var(--k,var(--cta)) 90%,#fff) 88%,transparent 92%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  opacity:.55;animation:ringRun .95s linear 2 both}
+@keyframes ringRun{0%{--ra:0deg;opacity:0}12%{opacity:.55}88%{opacity:.55}100%{--ra:360deg;opacity:0}}
+@media (prefers-reduced-motion:reduce){.card.ringflash::after{animation:ringDim .5s ease-in-out 2 both;background:none;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--k,var(--cta)) 55%,transparent);padding:0;-webkit-mask:none;mask:none}}
+@keyframes ringDim{0%,100%{opacity:0}50%{opacity:.6}}
+
+/* ---------- Flat: a navy flat-UI kit ----------
+   Navy page, slate panels with no shadows or borders, square-ish corners, solid colour blocks (teal, pink, sky,
+   amber), white figures, small letter-spaced headings, goals as progress rings round their icons, today a pink dot. */
+:root[data-theme="flat"]{
+  --bg:#283044; --surface:#323B50; --sunk:#2A3246; --ink:#F2F5FA; --muted:#93A0B8; --line:#3D4760; --line2:#46516B;
+  --push:#F0506E; --push-soft:rgba(240,80,110,.16); --pull:#22B4E6; --pull-soft:rgba(34,180,230,.15); --ok:#12B5A5; --ok-soft:rgba(18,181,165,.16);
+  --warn:#F5B82E; --sleep:#8F7CF0; --cta:#12B5A5; --on-cta:#FFFFFF; --r:4px; color-scheme:dark;
+  --f-body:"Geist",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --rk-bg:#46516B;--rk-shade:none;--rk-shade-r:none;--rk-fx:none;--rk-fx-r:none}
+:root[data-theme="flat"] #pane-diet{--intake:#F2F5FA;--burn:#F5B82E;--protein:#8F7CF0;--gain:#12B5A5;--loss:#F0506E;--dslate:#46516B;--dtotal:#2A3246}
+:root[data-skin="flat"] :is(.card,.chartbox,details.fold,.goals,.cal,.gtile,.sheet,.dp){border:0!important;border-radius:4px;box-shadow:none!important;background:var(--surface)}
+:root[data-skin="flat"] :is(.chartbox h3,details.fold>summary .sumt){letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+:root[data-skin="flat"] :is(.btn,.tbtn,.iconbtn,.privbtn,.cap,.gchip2,.calfold,.calnav,.caltoday,.chk,.step,.syncbtn,.gi){box-shadow:none!important;text-shadow:none}
+:root[data-skin="flat"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.syncbtn.off,.caltoday,.gchip2){background:#3D4760;border:0;color:var(--ink);border-radius:4px}
+:root[data-skin="flat"] .iconbtn{border-radius:50%}
+:root[data-skin="flat"] .btn:not(.ghost):not(.recedit){background:var(--cta);color:#fff;border:0;border-radius:4px}
+:root[data-skin="flat"] .syncbtn:not(.off):not(.done){background:var(--push);color:#fff;border-radius:4px;animation:none}
+:root[data-skin="flat"] .syncbtn.done{background:var(--ok-soft);color:var(--ok);border-radius:4px}
+:root[data-skin="flat"] .gchip2[aria-pressed="true"],:root[data-skin="flat"] .gchip2.on{background:var(--g,var(--cta));color:#fff}
+:root[data-skin="flat"] :is(.field input,.field select,.field textarea,.dsrc-row input,.xadd input,.xadd select){background:var(--sunk);border:0;border-radius:4px;color:var(--ink)}
+:root[data-skin="flat"] .step{background:var(--sunk);border:0;border-radius:4px}
+:root[data-skin="flat"] .chk{background:var(--sunk);border:2px solid #46516B;border-radius:4px}
+:root[data-skin="flat"] .set.ticked .chk,:root[data-skin="flat"] .chk[aria-pressed="true"]{background:var(--ok);border-color:var(--ok)}
+/* the bottom dock: a darker strip; the chosen tab is a lighter block with a teal bar along its top */
+:root[data-skin="flat"] nav.tabs.tabs{background:#20273A;border-radius:0;box-shadow:none}
+:root[data-skin="flat"] nav.tabs button{background:none;border:0;border-radius:0;color:var(--muted)}
+:root[data-skin="flat"] nav.tabs button[aria-selected="true"]{color:#fff;background:none}
+:root[data-skin="flat"] nav.tabs .tpiece{background:#323B50;box-shadow:inset 0 3px 0 var(--cta);transition:transform .25s cubic-bezier(.2,.8,.2,1),width .25s}
+/* 练: a flat pink block */
+:root[data-skin="flat"] .tbtn.next{background:var(--push);color:#fff;border:0;border-radius:4px;padding:8px 16px}
+:root[data-skin="flat"] .tbtn.next:active{background:#D8405D}
+:root[data-skin="flat"] .finish .finbtn{border-radius:4px;box-shadow:none}
+/* goals: a progress ring round each icon; the bar is not needed */
+:root[data-skin="flat"] .goals .gi{width:46px;height:46px;border-radius:50%;color:var(--g);
+  background:radial-gradient(closest-side,var(--surface) 78%,transparent 80%),conic-gradient(var(--g) calc(var(--pct,0)*1%),#46516B 0)}
+:root[data-skin="flat"] .goals .gi svg{width:20px;height:20px}
+:root[data-skin="flat"] .goals .bar{display:none}
+:root[data-skin="flat"] .goals .gh .gp{color:var(--g)}
+:root[data-skin="flat"] .bar{background:#2A3246;border-radius:2px;height:8px}
+:root[data-skin="flat"] .bar i{border-radius:2px;box-shadow:none}
+:root[data-skin="flat"] .bar i::after{display:none}
+/* calendar: today is a pink dot, as in the kit's date picker */
+:root[data-skin="flat"] .cald.today{background:var(--push)!important;color:#fff!important;border-color:transparent!important;border-radius:50%}
+:root[data-skin="flat"] .calh{background:#2C9FD6;margin:-16px -14px 12px;padding:12px 14px;align-items:center;border-radius:4px 4px 0 0;color:#fff}
+:root[data-skin="flat"] .calh :is(.calnav,.caltitle,.calmy b,.calmy small){color:#fff}
+:root[data-skin="flat"] .calh .caltoday{background:rgba(255,255,255,.18);color:#fff}
+:root[data-skin="flat"] .toast{background:var(--cta);color:#fff;border-radius:4px;box-shadow:none}
+:root[data-skin="flat"] .tag{letter-spacing:.04em}

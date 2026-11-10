@@ -36,7 +36,7 @@
 1. 打开 [网页](https://vincent0923.github.io/Track-TOR/)，想要的话装到手机主屏：
    - Android（Chrome）：菜单 →「安装应用」
    - iPhone（Safari）：分享 →「添加到主屏幕」
-2. 第一次打开时填性别、出生年月、身高、体重和目标，都可以留空，以后在数据页的「个人资料」和「目标」里改。
+2. 第一次打开时填性别、出生年月、身高、体重和目标，都可以留空，以后在「设定 › 个人资料」和「目标」标签里改。
 3. 有高驰手表的话，点「连接高驰」，选账号所在区域，登录授权一次。授权后会自动同步，并填好性别、出生年月和身高。授权不成功就换个区域再试。不用高驰也能记训练和饮食。
 
 ## 你的数据
@@ -51,7 +51,7 @@
 
 产品定位、设计取向和现有功能见 [产品说明](docs/PRODUCT.md)，版本记录见 [更新日志](CHANGELOG.md)。
 
-当前版本 **v1.30i**。Alpha 表示已经在日常使用，还在持续打磨。
+当前版本 **v1.31a**。Alpha 表示已经在日常使用，还在持续打磨。
 
 © 2026 vincent0923，保留所有权利。见 [LICENSE](LICENSE)。数字字体 Barlow Condensed 和各主题用的字体 Archivo、Geist、Geist Mono、Share Tech Mono、Bricolage Grotesque、VT323 按 SIL Open Font License 附带，许可见 [fonts/](fonts/) 下的 OFL 文件。主题的风格参考了 [Ovio](https://github.com/JanaSundar/ovio)（MIT）、[Interior](https://github.com/ddoemonn/interior)（MIT）和 [beUI](https://github.com/starc007/ui-components)（MIT）的设计，用纯 CSS/JS 重写。庆祝用的彩带和粒子来自 [canvas-confetti](https://github.com/catdad/canvas-confetti)（ISC，见 [docs/CANVAS-CONFETTI-LICENSE.txt](docs/CANVAS-CONFETTI-LICENSE.txt)）。各风格的图标来自 Streamline Plump Color（CC BY 4.0）、Pixelarticons（MIT）和 Doodle Icons（MIT），见 [docs/ICONS-CREDITS.txt](docs/ICONS-CREDITS.txt)。部分图标来自 [Lucide](https://lucide.dev)（ISC 许可，见 [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)）。部分音效用 [ZzFX](https://github.com/KilledByAPixel/ZzFX) 合成（MIT 许可，见 [docs/ZZFX-LICENSE.txt](docs/ZZFX-LICENSE.txt)），部分用 [jsfxr](https://github.com/chr15m/jsfxr) 的合成方法（公有领域，见 [docs/JSFXR-UNLICENSE.txt](docs/JSFXR-UNLICENSE.txt)）。
 
@@ -93,7 +93,7 @@ Most people don't need another training plan. They need a reason to keep going. 
 1. Open the [web app](https://vincent0923.github.io/Track-TOR/). You can also add it to your home screen:
    - Android (Chrome): Menu → Install app
    - iPhone (Safari): Share → Add to Home Screen
-2. On first open, fill in your sex, birth month, height, weight, and goals. Any of them can stay blank; change them later under Profile and Goals on the Data page.
+2. On first open, fill in your sex, birth month, height, weight, and goals. Any of them can stay blank; change them later under Settings › Profile and on the Goals tab.
 3. If you have a COROS watch, tap **Connect COROS**, choose your account region, and authorize once. It syncs right away and fills in your sex, birth month, and height. If authorization fails, try another region. Training and diet logging work without COROS.
 
 ## Your data
@@ -108,6 +108,6 @@ Most people don't need another training plan. They need a reason to keep going. 
 
 See the [product notes](docs/PRODUCT.md) (in Chinese) for positioning, design principles, and how things work today, and the [changelog](CHANGELOG.md) for version history.
 
-Current version: **v1.30i**. Alpha means it's in daily use and still being refined.
+Current version: **v1.31a**. Alpha means it's in daily use and still being refined.
 
 © 2026 vincent0923. All rights reserved. See [LICENSE](LICENSE). The Barlow Condensed number font and the theme fonts Archivo, Geist, Geist Mono, Share Tech Mono, Bricolage Grotesque and VT323 are included under the SIL Open Font License; see the OFL files in [fonts/](fonts/). The theme looks follow the design of [Ovio](https://github.com/JanaSundar/ovio) (MIT) [Interior](https://github.com/ddoemonn/interior) (MIT) and [beUI](https://github.com/starc007/ui-components) (MIT), rewritten in plain CSS/JS. Celebration confetti comes from [canvas-confetti](https://github.com/catdad/canvas-confetti) (ISC; see [docs/CANVAS-CONFETTI-LICENSE.txt](docs/CANVAS-CONFETTI-LICENSE.txt)). Their icons come from Streamline Plump Color (CC BY 4.0), Pixelarticons (MIT) and Doodle Icons (MIT); see [docs/ICONS-CREDITS.txt](docs/ICONS-CREDITS.txt). Some icons come from [Lucide](https://lucide.dev) (ISC license; see [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)). Some sound effects are synthesised with [ZzFX](https://github.com/KilledByAPixel/ZzFX) (MIT license; see [docs/ZZFX-LICENSE.txt](docs/ZZFX-LICENSE.txt)), and some with the [jsfxr](https://github.com/chr15m/jsfxr) synth (public domain; see [docs/JSFXR-UNLICENSE.txt](docs/JSFXR-UNLICENSE.txt)).

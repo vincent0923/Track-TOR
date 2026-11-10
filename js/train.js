@@ -227,10 +227,8 @@ function renderTrain(){
     if(calState.panel){
     const dn=(state.dayx[sel]&&state.dayx[sel].note)||"", dl=dayLocked(sel);
     html+='<article class="card dayx"><div class="sbody'+(dl?' locked':'')+'">'+extraBlock("d:"+sel,state.dayx[sel],dl)
-      +'<div class="field" style="margin-top:14px"><label for="dxn-'+sel+'">'+T('备注','Notes')+'</label><textarea id="dxn-'+sel+'" rows="2" data-dxnote="'+sel+'"'+(dl?' disabled':'')+' placeholder="'+T('比如：酒店健身房，高位下拉 40 kg','e.g. hotel gym, lat pulldown 40 kg')+'">'+esc(dn)+'</textarea></div>'
-      +'<div class="savebar">'+(dl
-        ?editBtn('data-act="dxedit" data-day="'+sel+'"')
-        :'<button class="btn recsave" data-act="dxsave" data-day="'+sel+'" aria-label="'+T('保存','Save')+'" title="'+T('保存','Save')+'">'+SAVE_ICON+'</button>')+'</div>'
+      +'<div class="field" style="margin-top:14px"><label for="dxn-'+sel+'">'+T('备注','Notes')+'</label><textarea id="dxn-'+sel+'" rows="2" data-dxnote="'+sel+'" placeholder="'+T('比如：酒店健身房，高位下拉 40 kg','e.g. hotel gym, lat pulldown 40 kg')+'">'+esc(dn)+'</textarea></div>'
+      +(dl?'':'<div class="savebar"><button class="btn recsave" data-act="dxsave" data-day="'+sel+'" aria-label="'+T('保存','Save')+'" title="'+T('保存','Save')+'">'+SAVE_ICON+'</button></div>')
       +'</div></article>';
     }
     html+='</section>';
@@ -351,10 +349,11 @@ function confirmEdit(sid){
       if(e.target===m||e.target.closest("[data-edx]")){m.hidden=true;return}
       const ok=e.target.closest("[data-edok]");
       if(ok){const id=ok.dataset.edok;m.hidden=true;
-        if(id.startsWith("d:"))dxUnlocked.add(id.slice(2));else{unlocked.add(id);openDays.add(id)}
+        if(id.startsWith("day:")){const d=id.slice(4);dxUnlocked.add(d);PROGRAM.forEach(p=>{const s=state.sessions[p.sid];if(s&&s.done&&s.date===d){unlocked.add(p.sid);openDays.add(p.sid)}})}
+        else if(id.startsWith("d:"))dxUnlocked.add(id.slice(2));else{unlocked.add(id);openDays.add(id)}
         renderTrain()}
     })}
-  m.innerHTML='<div class="dp" role="alertdialog" aria-modal="true" aria-labelledby="edT"><div class="dp-h"><b id="edT">'+T("修改记录","Edit record")+' · '+(sid.startsWith("d:")?md(sid.slice(2)):LAB(BYID[sid]))+'</b></div>'
+  m.innerHTML='<div class="dp" role="alertdialog" aria-modal="true" aria-labelledby="edT"><div class="dp-h"><b id="edT">'+T("修改记录","Edit record")+' · '+(sid.startsWith("day:")?md(sid.slice(4)):sid.startsWith("d:")?md(sid.slice(2)):LAB(BYID[sid]))+'</b></div>'
     +'<p class="edmsg">'+T("已完成的记录，按实际训练顺序排列。不建议修改过往记录：改动可能打乱训练顺序。","This record is shown in the order you trained. Editing past records is not recommended: changes can alter the training order.")+'</p>'
     +'<div class="dp-f"><button type="button" data-edx="1">'+T("取消","Cancel")+'</button><button type="button" class="dp-today" data-edok="'+sid+'">'+T("仍要修改","Edit anyway")+'</button></div></div>';
   m.hidden=false;
@@ -386,6 +385,7 @@ function goNextSession(){
 }
 document.getElementById("pane-train").addEventListener("click",e=>{
   const xt=e.target.closest("[data-xa]"); if(xt){extraAct(xt);return}
+  if(calHeld){calHeld=false;return}
   const cd=e.target.closest("[data-cal]");
   if(cd){const d=cd.dataset.cal;
     /* a new day: choose it and open its panel; the chosen day again: open its panel if it was closed, else close it */
@@ -403,7 +403,7 @@ document.getElementById("pane-train").addEventListener("click",e=>{
     if(openDays.has(sid)){const b=document.querySelector("#c-"+sid+" .sbody");foldOut(b?[b]:[],FOLD_MS).then(()=>{openDays.delete(sid);renderTrain()});return}
     openDays.add(sid);renderTrain();foldIn([bodyOf(sid)],FOLD_MS);return}
   if(t.dataset.act==="all"){t.classList.remove("pop");void t.offsetWidth;t.classList.add("pop");setTimeout(collapseAll,120);return}
-  if(t.dataset.act==="next"){goNextSession();return}
+  if(t.dataset.act==="next"){if(nextHeld){nextHeld=false;return}goNextSession();return}
   const {act,sid,ex}=t.dataset; const i=+t.dataset.i;
   if(act==="val"||act==="note"||act==="date") return;
   if(act==="dxedit"){confirmEdit("d:"+t.dataset.day);return}
@@ -488,7 +488,41 @@ function goToday(openPanel){calState.month=null;calState.sel=today();calState.pa
   const first=box&&box.querySelector(openPanel?".card.dayx":".card");
   (first||document.querySelector("#pane-train .cal")).scrollIntoView({behavior:smooth,block:first?"center":"start"});
   if(openPanel&&box)foldIn([box],FOLD_MS)}
-let todayHeld=false;
+let todayHeld=false,calHeld=false,nextHeld=false;
+/* hold 练: show both sessions that can be trained now (the next push day and the next pull day): the page scrolls
+   to them and a dim ring of light runs round each card twice */
+(function(){let tm=0,sx=0;const pane=document.getElementById("pane-train");
+  pane.addEventListener("pointerdown",e=>{const b=e.target.closest('.tbtn.next[data-act="next"]');if(!b)return;sx=e.clientX;clearTimeout(tm);
+    tm=setTimeout(()=>{nextHeld=true;if(navigator.vibrate)navigator.vibrate(15);showAvail()},500)});
+  ["pointerup","pointercancel","pointerleave"].forEach(t=>pane.addEventListener(t,()=>clearTimeout(tm)));
+  pane.addEventListener("contextmenu",e=>{if(e.target.closest(".tbtn.next"))e.preventDefault()});
+})();
+function showAvail(){
+  const cards=PROGRAM.filter(p=>isAvail(p.sid)&&!(state.sessions[p.sid]&&state.sessions[p.sid].done)).map(p=>document.getElementById("c-"+p.sid)).filter(Boolean);
+  if(!cards.length)return;
+  const smooth=window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+  cards[0].scrollIntoView({behavior:smooth,block:"center"});
+  cards.forEach(c=>{c.classList.remove("ringflash");void c.offsetWidth;c.classList.add("ringflash");setTimeout(()=>c.classList.remove("ringflash"),2200)});
+}
+/* calendar gestures: hold today's square = today's extra practice; hold a day with records = ask before editing it
+   (notes stay editable without asking); swipe the month name left or right = next or previous month */
+(function(){let tm=0,sx=0,sy=0,cell=null,swipe=null;const pane=document.getElementById("pane-train");
+  const clear=()=>{clearTimeout(tm);if(cell)cell.classList.remove("holding");cell=null};
+  pane.addEventListener("pointerdown",e=>{calHeld=false;nextHeld=false;
+    const t=e.target.closest(".caltitle");if(t){swipe={x:e.clientX,y:e.clientY};return}
+    const c=e.target.closest("[data-cal]");if(!c||c.disabled)return;clear();
+    const d=c.dataset.cal,f=dayHas(d);if(d!==today()&&!(f.push||f.pull||f.x))return;
+    cell=c;sx=e.clientX;sy=e.clientY;c.classList.add("holding");
+    tm=setTimeout(()=>{clear();calHeld=true;if(navigator.vibrate)navigator.vibrate(18);if(window.sfxRaw)window.sfxRaw("pop");
+      if(d===today()){goToday(true);return}
+      calState.sel=d;calState.panel=true;renderTrain();confirmEdit("day:"+d)},550)});
+  pane.addEventListener("pointermove",e=>{if(cell&&Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>10)clear()});
+  pane.addEventListener("pointerup",e=>{clear();if(!swipe)return;const dx=e.clientX-swipe.x,dy=e.clientY-swipe.y;swipe=null;
+    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.3){const b=document.querySelector('#pane-train [data-cal-nav="'+(dx<0?1:-1)+'"]');
+      if(b&&!b.disabled)b.click();calHeld=true;setTimeout(()=>{calHeld=false},80)}});
+  pane.addEventListener("pointercancel",()=>{clear();swipe=null});
+  pane.addEventListener("contextmenu",e=>{if(e.target.closest("[data-cal]"))e.preventDefault()});
+})();
 (function(){let tm=0,el=null;const pane=document.getElementById("pane-train");
   const stop=()=>{clearTimeout(tm);if(el)el.classList.remove("holding");el=null};
   pane.addEventListener("pointerdown",e=>{const b=e.target.closest("[data-cal-today]");if(!b)return;stop();todayHeld=false;el=b;b.classList.add("holding");

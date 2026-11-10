@@ -186,7 +186,27 @@ function paintSync(){
 document.getElementById("syncShow").addEventListener("click",e=>{
   const b=e.target.closest("[data-sync]");if(!b)return;
   const s=Object.assign({},state.settings.sync||{});s[b.dataset.sync]=!syncOn(b.dataset.sync);
-  state.settings.sync=s;saveSettings();paintSync();
+  state.settings.sync=s;saveSettings();paintSync();paintAddPanel();
+});
+/* Body tab: when some data panels are switched off, a round + at the bottom shows that more can be added;
+   it opens a row of the hidden panels, and tapping one turns it back on (the same switch as in Settings). */
+function paintAddPanel(){
+  const box=document.getElementById("addPanel");if(!box)return;
+  const off=SYNC_KEYS.filter(k=>!syncOn(k));
+  box.hidden=!(curTab==="body"&&off.length);
+  const menu=document.getElementById("addMenu"),btn=document.getElementById("addPanelBtn");
+  menu.innerHTML=off.map(k=>{const src=document.querySelector('#syncShow [data-sync="'+k+'"]');
+    return '<button type="button" class="gchip2" data-addp="'+k+'"'+(src?' style="'+(src.getAttribute("style")||"")+'"':'')+'>'+(src?src.innerHTML:k)+'</button>'}).join("");
+  if(!off.length){menu.hidden=true;btn.setAttribute("aria-expanded","false")}
+}
+document.getElementById("addPanelBtn").addEventListener("click",e=>{
+  const menu=document.getElementById("addMenu"),open=menu.hidden;menu.hidden=!open;e.currentTarget.setAttribute("aria-expanded",String(open));
+});
+document.getElementById("addMenu").addEventListener("click",e=>{
+  const b=e.target.closest("[data-addp]");if(!b)return;const k=b.dataset.addp;
+  const s=Object.assign({},state.settings.sync||{});s[k]=true;state.settings.sync=s;saveSettings();paintSync();renderData();
+  document.getElementById("addMenu").hidden=true;document.getElementById("addPanelBtn").setAttribute("aria-expanded","false");paintAddPanel();
+  const c=document.getElementById(SYNC_CHART[k]);if(c){c.scrollIntoView({behavior:"smooth",block:"center"});c.classList.remove("flash");void c.offsetWidth;c.classList.add("flash")}
 });
 /* ---------- year heatmap: one square per day for the last 53 weeks, darker the more sets were ticked ---------- */
 function daySets(d){let n=0;const cnt=doc=>{if(!doc)return;
@@ -273,13 +293,53 @@ const GOAL_KEYS=["pullups","waist","weight","fat"], GOAL_FIELD={pullups:"gP",wai
 function goalShowList(){const s=state.settings.goalShow;return Array.isArray(s)?GOAL_KEYS.filter(k=>s.includes(k)):GOAL_KEYS.slice()}
 /* a goal's icon (or its "Set goal" link) takes you to that goal's box in the Goals panel */
 function openGoalField(k){
-  setTab("me");
+  setTab("goals");
   const f=document.getElementById("foldGoal");f.open=true;
   const inp=document.getElementById(GOAL_FIELD[k]);
   setTimeout(()=>{(inp||f).scrollIntoView({behavior:"smooth",block:"center"});if(inp)setTimeout(()=>{try{inp.focus({preventScroll:true})}catch(e){}},350)},60);
 }
 let PRIV=false;try{PRIV=localStorage.getItem(LS+"-priv")==="1"}catch(e){}
+/* hold a goal (0.5 s) for its own sheet: the goal, a manual record (pull-ups, waist, weight) and whether it shows on the panel */
+let goalHeld=false;
+(function(){const box=document.getElementById("goals");let tm=0,sx=0,sy=0;
+  box.addEventListener("pointerdown",e=>{const g=e.target.closest(".goal");if(!g)return;goalHeld=false;sx=e.clientX;sy=e.clientY;clearTimeout(tm);
+    tm=setTimeout(()=>{goalHeld=true;if(navigator.vibrate)navigator.vibrate(15);openGoalSheet(g.querySelector("[data-setgoal]").dataset.setgoal)},500)});
+  box.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>10)clearTimeout(tm)});
+  ["pointerup","pointercancel","pointerleave"].forEach(t=>box.addEventListener(t,()=>clearTimeout(tm)));
+  box.addEventListener("contextmenu",e=>{if(e.target.closest(".goal"))e.preventDefault()});
+})();
+const GOAL_SET={pullups:"p",waist:"z",weight:"w",fat:"fat"};
+function openGoalSheet(k){
+  const names={pullups:T("引体","Pull-ups"),waist:T("腰围","Waist"),weight:T("体重","Weight"),fat:T("减脂","Fat loss")};
+  const units={pullups:T("个","reps"),waist:"cm",weight:"kg",fat:"kg"};
+  const key=GOAL_SET[k],st=state.settings,on=goalShowList().includes(k);
+  const m=document.createElement("div");m.className="mask";
+  m.innerHTML='<div class="sheet goalsheet" role="dialog" aria-modal="true" aria-label="'+esc(names[k])+'" style="max-width:360px">'
+    +'<h3><span>'+esc(names[k])+'</span><button class="iconbtn" type="button" data-close aria-label="'+T("关闭","Close")+'">'+CLOSE_ICON+'</button></h3>'
+    +'<div class="form-body"><label class="flabel">'+T("目标","Goal")+'（'+units[k]+'）<input id="gsVal" type="number" inputmode="decimal" step="'+(k==="pullups"?1:0.1)+'" min="0" value="'+(+st[key]>0?st[key]:"")+'"></label>'
+    +'<div class="gsrow">'+(k!=="fat"?'<button type="button" class="btn ghost" data-gsrec>'+PENCIL_ICON+T("手动记录","Log by hand")+'</button>':'')
+    +'<button type="button" class="gchip2'+(on?' on':'')+'" data-gson aria-pressed="'+on+'">'+T("在面板显示","Show on the panel")+'</button></div></div>'
+    +'<div class="row" style="justify-content:flex-end"><button class="btn recsave" type="button" data-gssave aria-label="'+T("保存并关闭","Save and close")+'" title="'+T("保存并关闭","Save and close")+'">'+SAVE_ICON+'</button></div></div>';
+  document.body.appendChild(m);
+  const close=()=>m.remove(),tog=m.querySelector("[data-gson]");
+  m.querySelector("[data-close]").addEventListener("click",close);
+  m.addEventListener("click",e=>{if(e.target===m)close()});
+  tog.addEventListener("click",()=>{const v=tog.getAttribute("aria-pressed")!=="true";tog.setAttribute("aria-pressed",String(v));tog.classList.toggle("on",v)});
+  const save=()=>{const v=m.querySelector("#gsVal").value.trim(),n=Number(v);
+    if(v===""||!(n>0))delete st[key];else st[key]=k==="pullups"?Math.round(n):n;
+    const cur=goalShowList(),want=tog.getAttribute("aria-pressed")==="true";
+    st.goalShow=GOAL_KEYS.filter(x=>x===k?want:cur.includes(x));
+    saveSettings();renderGoals();close();toast(T("目标已保存","Goal saved"))};
+  m.querySelector("[data-gssave]").addEventListener("click",save);
+  const rec=m.querySelector("[data-gsrec]");if(rec)rec.addEventListener("click",()=>{save();openRecord(k)});
+  setTimeout(()=>{try{m.querySelector("#gsVal").focus()}catch(e){}},60);
+}
 document.getElementById("goals").addEventListener("click",e=>{
+  if(goalHeld){goalHeld=false;e.preventDefault();return}
+  const ao=e.target.closest("[data-addgoal-open]");
+  if(ao){const mn=ao.nextElementSibling;mn.hidden=!mn.hidden;ao.setAttribute("aria-expanded",String(!mn.hidden));return}
+  const ag=e.target.closest("[data-addgoal]");
+  if(ag){const cur=goalShowList(),k=ag.dataset.addgoal;state.settings.goalShow=GOAL_KEYS.filter(x=>x===k||cur.includes(x));saveSettings();renderGoals();return}
   const sg=e.target.closest("[data-setgoal]");
   if(sg){openGoalField(sg.dataset.setgoal);return}
   if(!e.target.closest("[data-priv]"))return;
@@ -303,7 +363,7 @@ function renderGoals(){
     if(g.k==="fat"){
       /* fat burned so far: the calorie gap of every finished, fully logged day since the first log, at 7700 kcal per kg */
       const m=gapAllTime(); start=0;
-      if(m){cur=+(m.s/7700).toFixed(2);curTxt=cur.toFixed(2)+" kg"}
+      if(m){cur=+(m.s/7700).toFixed(2);curTxt=PRIV?Math.round(m.s)+" kcal":cur.toFixed(2)+" kg"}
     }else if(g.k==="weight"){
       const all=wtMerged(); if(all.length){start=all[0].y;const a=avg7(all);cur=+a[a.length-1].y.toFixed(1);
         curTxt=PRIV?"<small>BMI</small> "+bmi(cur).toFixed(1):cur.toFixed(1)+" kg <small class=\"gx\">"+par("BMI "+bmi(cur).toFixed(1))+"</small>"}
@@ -322,18 +382,22 @@ function renderGoals(){
     const setBtn='<button type="button" class="gset" data-setgoal="'+g.k+'">'+T('设目标','Set goal')+'</button>';
     const range=noT
       ?(PRIV&&pv?'':T('起点 ','Start ')+startTxt+' → ')+setBtn
-      :PRIV&&g.k==="fat"?''                        /* nothing to rewrite for fat loss: the line is left out */
+      :PRIV&&g.k==="fat"?T('起点 0 → 目标 ','Start 0 → Goal ')+Math.round(g.target*7700)+' kcal'   /* privacy view: fat loss as the calorie gap behind it */
       :PRIV&&pv
       ?(g.k==="weight"?(start==null?"—":"BMI "+bmi(start).toFixed(1))+' → BMI '+bmi(g.target).toFixed(1):(start==null?"—":WL+" "+wr(start))+' → '+WL+' '+wr(g.target))
       :T('起点 ','Start ')+startTxt+T(' → 目标 ',' → Goal ')+g.target+' '+g.unit+(g.k==="weight"?par('BMI '+bmi(g.target).toFixed(1)):g.k==="waist"?par(WL+' '+wr(g.target)):'');
-    h+='<div class="goal'+(noT?' not':'')+'" style="--g:'+g.color+'">'+icon+'<div class="gb">'
+    h+='<div class="goal'+(noT?' not':'')+'" style="--g:'+g.color+';--pct:'+pct+'">'+icon+'<div class="gb">'
       +'<div class="gh"><b>'+g.name+'</b><span class="gv">'+curTxt+'</span><span class="gp">'+(start==null||noT?"—":pct+"%")+'</span></div>'
       +'<div class="bar" role="progressbar" aria-label="'+g.name+T('进度',' progress')+'" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+pct+'%"></i></div>'
       +'<div class="gr">'+range+'</div></div></div>';
   });
   const box=document.getElementById("goals");
-  box.hidden=!show.length;
-  if(show.some(k=>k==="waist"||k==="weight"))h+='<button type="button" class="privbtn'+(PRIV?' on':'')+'" data-priv="1" aria-pressed="'+PRIV+'" aria-label="'+T('隐私模式','Privacy view')+'">'+(PRIV?EYE_OFF:EYE_ON)+'</button>';
+  /* goals not on the panel: a round + at the bottom shows that more can be added */
+  const off=GOALS.filter(g=>!show.includes(g.k));
+  if(off.length)h+='<div class="addgoal"><button type="button" class="rk rk-plus" data-addgoal-open aria-expanded="false" aria-label="'+T('添加目标','Add a goal')+'" title="'+T('添加目标','Add a goal')+'"></button>'
+    +'<div class="addmenu" hidden>'+off.map(g=>'<button type="button" class="gchip2" data-addgoal="'+g.k+'" style="--g:'+g.color+'">'+(skinIc('g-'+g.k)||IC[g.k])+g.name+'</button>').join("")+'</div></div>';
+  box.hidden=false;
+  if(show.some(k=>k==="waist"||k==="weight"||k==="fat"))h+='<button type="button" class="privbtn'+(PRIV?' on':'')+'" data-priv="1" aria-pressed="'+PRIV+'" aria-label="'+T('隐私模式','Privacy view')+'">'+(PRIV?EYE_OFF:EYE_ON)+'</button>';
   box.innerHTML=h;
   box.querySelectorAll(".goal").forEach(g=>rollNum(g.querySelector(".gp"),"goal-"+g.querySelector("[data-setgoal]").dataset.setgoal));
   renderGoalPanel();

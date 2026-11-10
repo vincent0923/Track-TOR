@@ -6,8 +6,8 @@ syncUI(); connectMcp(); handleCorosCallback();
 if(FRESH && !/[?&]code=/.test(location.search)) showWelcome(); else maybeRemindBackup();
 initDiet();
 autoPullSheet();
-/* reopen the tab the user was on (needs every pane's render functions, so it runs last) */
-try{let t=localStorage.getItem(LS+"-tab");if(t==="diet")t="data";if(["train","data","me"].includes(t))setTab(t)}catch(e){}
+/* open on the home tab: whatever sits in the middle of the dock (needs every pane's render functions, so it runs last) */
+setTab(homeTab());
 
 
 let deferredPrompt = null;

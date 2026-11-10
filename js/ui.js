@@ -1,30 +1,65 @@
-/* ---------- screen-level UI: tabs, theme, language, effects (flame, fireworks), sound, fullscreen ---------- */
-/* ---------- tabs ----------
-   Level 1: Train / Charts / Profile. Charts has three views: Diet, Health (sleep, HRV, resting HR)
-   and Strength (pull-ups, weight, waist: the body numbers you log yourself). Older installs saved "charts" for the old single chart view. */
-const SUBS=["diet","health","strength"];
-let dataSub="diet";
-try{let t=localStorage.getItem(LS+"-sub");if(t==="charts")t="health";if(SUBS.includes(t))dataSub=t}catch(e){}
-function setDataSub(sub){
-  dataSub=sub;
-  document.querySelectorAll(".subtabs button").forEach(x=>x.setAttribute("aria-selected",x.dataset.sub===sub));
-  SUBS.forEach(k=>{document.getElementById("pane-"+k).hidden=k!==sub});
-  placePiece(document.querySelector(".subtabs"),true);
-  if(sub==="diet"){renderDietAll();dietTabPull()}else renderData();
-  try{localStorage.setItem(LS+"-sub",sub)}catch(e){}
-}
+/* ---------- screen-level UI: tabs, theme, language, effects (flame, fireworks), sound ---------- */
+/* ---------- tabs: a dock along the bottom ----------
+   Five tabs sit in a dock at the bottom of the screen, where the thumb rests on a big phone: Train, Diet, Body,
+   Goals and Settings. The middle slot is the biggest and is the home page: the app opens on whatever sits there.
+   Hold a tab and drag it sideways to reorder the dock (like the macOS Dock); the order is remembered.
+   Diet and Body share the data pane: Diet is the intake chart and food logs; Body is a dashboard of the body numbers
+   (year of training, pull-ups, weight, waist) followed by sleep, HRV and resting HR. */
+const TABS=["train","diet","body","goals","me"], DOCK_K=LS+"-dock", DOCK_DEF=["diet","body","train","goals","me"];
+let curTab="train";
+function dockOrder(){try{const a=JSON.parse(localStorage.getItem(DOCK_K)||"null");if(Array.isArray(a)&&a.length===TABS.length&&TABS.every(t=>a.includes(t)))return a}catch(e){}return DOCK_DEF.slice()}
+function homeTab(){return dockOrder()[2]}
+function applyDock(){const nav=document.querySelector("nav.tabs");dockOrder().forEach(t=>{const b=nav.querySelector('[data-tab="'+t+'"]');if(b)nav.appendChild(b)})}
 function setTab(tab){
-  document.body.dataset.tab=tab;
+  if(!TABS.includes(tab))tab="train";
+  curTab=tab;document.body.dataset.tab=tab;
   document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.tab===tab)));
-  ["train","data","me"].forEach(k=>{document.getElementById("pane-"+k).hidden=k!==tab});
+  const data=tab==="diet"||tab==="body";
+  document.getElementById("pane-train").hidden=tab!=="train";
+  document.getElementById("pane-goals").hidden=tab!=="goals";
+  document.getElementById("pane-me").hidden=tab!=="me";
+  document.getElementById("pane-data").hidden=!data;
+  document.getElementById("pane-diet").hidden=tab!=="diet";
+  document.getElementById("pane-strength").hidden=tab!=="body";
+  document.getElementById("pane-health").hidden=tab!=="body";
   placePiece(document.querySelector("nav.tabs"),true);
-  if(tab==="data")setDataSub(dataSub);
+  if(tab==="diet"){renderDietAll();dietTabPull()}
+  if(tab==="body"||tab==="me"||tab==="goals")renderData();
+  if(tab==="goals"&&typeof renderGoals==="function")renderGoals();
   if(tab==="train")renderTrain();
-  if(tab==="me")renderData();
+  if(typeof paintAddPanel==="function")paintAddPanel();
   try{localStorage.setItem(LS+"-tab",tab)}catch(err){}
 }
-document.querySelector(".subtabs").addEventListener("click",e=>{const b=e.target.closest("[data-sub]");if(b)setDataSub(b.dataset.sub)});
-document.querySelector("nav.tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)setTab(b.dataset.tab)});
+applyDock();
+/* tap = switch; hold (0.4 s) = pick the tab up and drag it to a new place in the dock */
+(function(){
+  const nav=document.querySelector("nav.tabs");let tm=0,drag=null,sx=0,moved=false,justDragged=false;
+  const btns=()=>[...nav.querySelectorAll("button[data-tab]")];
+  const flip=(els,fn)=>{const r0=new Map(els.map(e=>[e,e.getBoundingClientRect().left]));fn();
+    els.forEach(e=>{if(e===drag)return;const dx=r0.get(e)-e.getBoundingClientRect().left;if(!dx)return;
+      e.style.transition="none";e.style.transform="translateX("+dx+"px)";void e.offsetWidth;e.style.transition="transform .22s cubic-bezier(.2,.8,.2,1)";e.style.transform=""})};
+  const place=x=>{const b=drag;b.style.transform="translateX("+(x-sx)+"px) translateY(-6px) scale(1.12)"};
+  nav.addEventListener("pointerdown",e=>{const b=e.target.closest("button[data-tab]");if(!b)return;sx=e.clientX;moved=false;clearTimeout(tm);
+    tm=setTimeout(()=>{drag=b;nav.classList.add("docking");b.classList.add("lift");try{b.setPointerCapture(e.pointerId)}catch(err){}
+      if(navigator.vibrate)navigator.vibrate(12);if(window.sfxRaw)window.sfxRaw("soft");place(sx)},400)});
+  nav.addEventListener("pointermove",e=>{
+    if(!drag){if(Math.abs(e.clientX-sx)>10)clearTimeout(tm);return}
+    e.preventDefault();moved=true;
+    const all=btns(),i=all.indexOf(drag);
+    /* the slot under the finger: compare with the neighbours' centres */
+    const prev=all[i-1],next=all[i+1],cx=r=>r.left+r.width/2;
+    if(next&&e.clientX>cx(next.getBoundingClientRect())){flip(all,()=>{next.after(drag)});const r=drag.getBoundingClientRect();sx=e.clientX-(e.clientX-r.left-r.width/2)}
+    else if(prev&&e.clientX<cx(prev.getBoundingClientRect())){flip(all,()=>{prev.before(drag)});const r=drag.getBoundingClientRect();sx=e.clientX-(e.clientX-r.left-r.width/2)}
+    drag.style.transform="";const r=drag.getBoundingClientRect();sx=r.left+r.width/2;place(e.clientX)});
+  const end=()=>{clearTimeout(tm);if(!drag)return;const b=drag;drag=null;nav.classList.remove("docking");b.classList.remove("lift");
+    b.style.transition="transform .25s cubic-bezier(.2,.8,.2,1)";b.style.transform="";setTimeout(()=>{b.style.transition=""},260);
+    justDragged=true;setTimeout(()=>{justDragged=false},50);
+    const order=btns().map(x=>x.dataset.tab);try{localStorage.setItem(DOCK_K,JSON.stringify(order))}catch(err){}
+    placePiece(nav,false)};
+  nav.addEventListener("pointerup",end);nav.addEventListener("pointercancel",end);
+  nav.addEventListener("contextmenu",e=>e.preventDefault());
+  nav.addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b||justDragged)return;setTab(b.dataset.tab)});
+})();
 
 /* ---------- theme (manual, does not follow the phone) ---------- */
 const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
@@ -39,6 +74,7 @@ const THEMES=[
   ["mech-light","亮色机械","Machine light","mech","#D9DCDF #ECEEF0 #1E7BFF #E87511"],["mech","暗色机械","Machine dark","mech","#25282C #3A3E44 #FF6A13 #5BD45B"],
   ["minimal","极简","Minimal","minimal","#FAFAF8 #FFFFFF #161614 #B5583A"],["minimal-warm","极简·暖","Minimal warm","minimal","#F6ECE5 #FDF8F6 #FF955F #7896CF"],
   ["xmas","圣诞","Christmas","xmas","#E9D9BF #FBF6EE #B3192E #1F5A3A"],
+  ["flat","扁平","Flat","flat","#283044 #323B50 #12B5A5 #F0506E"],
   ["craft","手作","Craft","craft","#EFE7D8 #FBF7EF #E0713A #2F6F9A"],
   ["toy","玩具","Toy","toy","#E3DFD5 #F8F5EF #EF4F2B #2C55E0"],["toy-night","夜间玩具","Toy night","toy","#1C1B19 #292724 #FF5B36 #FFC23D"],
   ["toy-cyber","赛博玩具","Cyber toy","toy","#180E6A #241A7E #F3D21A #D8B9E1"],["woody","牛仔","Cowboy","toy","#E6E2DC #F5F2ED #7B4A2D #F0C050"],
@@ -80,14 +116,14 @@ function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const 
   document.dispatchEvent(new Event("themeicons"))}
 /* Profile › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
-  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["xmas",T("节日","Holiday")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
+  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["xmas",T("节日","Holiday")],["flat",T("扁平","Flat")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
   let wf=0;try{wf=+localStorage.getItem(LS+"-wear")||0}catch(e){}
   const wear='<div class="thg"><h4>'+T("磨损","Wear and tear")+'</h4><div class="wearseg seg maseg" role="group" aria-label="'+T("磨损","Wear and tear")+'">'
     +[[0,"自动","Auto"],[1,"轻","Light"],[2,"中","Medium"],[3,"重","Heavy"]].map(([v,zh,en])=>'<button type="button" data-wear-force="'+v+'" aria-pressed="'+(wf===v)+'">'+T(zh,en)+'</button>').join("")+'</div></div>';
   box.innerHTML=groups.map(([k,name])=>'<div class="thg"><h4>'+name+'</h4><div class="throw">'+THEMES.filter(t=>t[3]===k).map(([id,zh,en,,c])=>{const [bg,sf,a1,a2]=c.split(" ");
     return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+T(zh,en)+'</span></button>'}).join("")+'</div></div>').join("")+wear}
 /* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
-function placePiece(bar,anim){if(!bar||!bar.offsetParent)return;let pc=bar.querySelector(".tpiece");
+function placePiece(bar,anim){if(!bar||!bar.getClientRects().length)return;let pc=bar.querySelector(".tpiece");
   if(!pc){pc=document.createElement("i");pc.className="tpiece";pc.setAttribute("aria-hidden","true");bar.prepend(pc)}
   const b=bar.querySelector('[aria-selected="true"]');if(!b)return;
   const was=pc.style.getPropertyValue("--px"),moved=was!==b.offsetLeft+"px";if(!was)anim=false;
@@ -95,7 +131,7 @@ function placePiece(bar,anim){if(!bar||!bar.offsetParent)return;let pc=bar.query
   pc.style.setProperty("--px",b.offsetLeft+"px");pc.style.setProperty("--py",b.offsetTop+"px");
   pc.style.setProperty("--pw",b.offsetWidth+"px");pc.style.setProperty("--ph",b.offsetHeight+"px");
   if(anim&&moved){pc.classList.remove("go");void pc.offsetWidth;pc.classList.add("go")}}
-function placePieces(anim){if(!document.documentElement.getAttribute("data-skin"))return;document.querySelectorAll("nav.tabs,.subtabs").forEach(x=>placePiece(x,anim))}
+function placePieces(anim){if(!document.documentElement.getAttribute("data-skin"))return;document.querySelectorAll("nav.tabs").forEach(x=>placePiece(x,anim))}
 addEventListener("resize",()=>placePieces(false));
 if(document.fonts)document.fonts.ready.then(()=>placePieces(false));
 let theme="light";try{theme=localStorage.getItem(LS+"-theme")||"light"}catch(e){}if(!THEME_IDS.includes(theme))theme="light";
@@ -155,9 +191,9 @@ function flameOn(sel,k,green){
     const dt=Math.min(2.5,(now-last)/16.7);last=now;
     const b=document.querySelector(sel);
     const r=b&&b.getBoundingClientRect();
-    const nav=document.querySelector("nav.tabs"), nb=nav?nav.getBoundingClientRect().bottom:0;
-    /* hidden, off screen, or slid under the sticky tab bar: no flames */
-    const under=nav&&b&&(nav.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING)&&r.top<nb-2;
+    const nav=document.querySelector("nav.tabs"), nt=nav?nav.getBoundingClientRect().top:innerHeight;
+    /* hidden, off screen, or behind the bottom tab bar: no flames */
+    const under=!!r&&r.bottom>nt+2;
     if(!r||!r.width||document.hidden||under||r.bottom<0||r.top>innerHeight){if(cw){c.clearRect(0,0,cv.width,cv.height)}parts=[];return}
     const w=Math.round(r.width+PADX*2), h=Math.round(UP+r.height+DOWN);
     size(w,h);cv.style.transform="translate("+Math.round(r.left-PADX)+"px,"+Math.round(r.top-UP)+"px)";
@@ -236,7 +272,7 @@ const FW=(function(){
 /* the celebration follows the look: fireworks on the plain themes, a party popper in the theme's colours on the
    toy looks, pixel bits on retro, paper scraps on craft, sparks on the machine console, a small tidy burst on the
    quiet looks. Particles come from canvas-confetti (js/confetti.js); n is how many rockets the fireworks would fire. */
-const CELEB={xmas:"snow",toy:"party",retro:"pixel",craft:"paper",mech:"sparks",beui:"glow",interior:"tidy",minimal:"tidy"};
+const CELEB={flat:"glow",xmas:"snow",toy:"party",retro:"pixel",craft:"paper",mech:"sparks",beui:"glow",interior:"tidy",minimal:"tidy"};
 function themeHex(names){const c=document.createElement("canvas").getContext("2d"),cs=getComputedStyle(document.documentElement);
   return names.map(n=>{c.fillStyle="#000";c.fillStyle=cs.getPropertyValue(n).trim()||"#888";const v=c.fillStyle;
     if(v[0]==="#")return v;const m=v.match(/[\d.]+/g);return "#"+m.slice(0,3).map(x=>(+x|0).toString(16).padStart(2,"0")).join("")})}
@@ -487,7 +523,8 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     minimal:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
     interior:{tab1:"soft",tab2:"soft",range:"soft",gap:"soft",header:"soft",other:"soft",open:"soft",close:"soft",fold:"none",untick:"soft",fw:"glint",bigfw:"glint2"},
     xmas:{tab1:"jingle",tab2:"jingle",range:"soft",gap:"soft",header:"soft",other:"soft",open:"jingle",close:"soft",fold:"none",untick:"soft",set:"sparkle",save:"musicbox",fw:"jingle",bigfw:"musicbox"},
-    beui:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft",fw:"sparkle",bigfw:"glint2"}};
+    beui:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft",fw:"sparkle",bigfw:"glint2"},
+    flat:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft",fw:"sparkle",bigfw:"glint2"}};
   const THEME_SFX={mech:{fw:"ironfl",bigfw:"ironfl2"},"mech-light":{fw:"zap",bigfw:"zap2"}};
   const defOf=id=>{const r=document.documentElement,th=THEME_SFX[r.getAttribute("data-theme")],k=SKIN_SFX[r.getAttribute("data-skin")];return th&&th[id]||k&&k[id]||SDEF[id]};
   const pickOf=id=>{const k=defOf(id);return S[k]?k:SDEF[id]};
@@ -551,27 +588,6 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     if(!on||!e.target.matches("input:not([type=date]):not([type=checkbox]),textarea"))return;
     const n=performance.now();if(n-last<35)return;last=n;play("type");
   });
-})();
-
-/* ---------- fullscreen: its own button, left of the language button; nothing else triggers it ---------- */
-(function(){
-  const de=document.documentElement, btn=document.getElementById("fsBtn");
-  const req=de.requestFullscreen||de.webkitRequestFullscreen, exit=document.exitFullscreen||document.webkitExitFullscreen;
-  if(!req||!(document.fullscreenEnabled||document.webkitFullscreenEnabled)){btn.hidden=true;return}
-  const ENTER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
-  const EXIT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
-  const isFs=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
-  document.addEventListener("themeicons",()=>paint());
-  function paint(){const f=isFs();btn.innerHTML=f?(skinIc("fsx")||EXIT):(skinIc("fs")||ENTER);btn.setAttribute("aria-label",f?T("退出全屏","Exit full screen"):T("全屏","Full screen"));btn.setAttribute("aria-pressed",f)}
-  paint();
-  btn.addEventListener("click",()=>{
-    try{
-      if(isFs()){const r=exit&&exit.call(document);if(r&&r.catch)r.catch(()=>{})}
-      else{const r=req.call(de,{navigationUI:"hide"});if(r&&r.catch)r.catch(()=>toast(T("这里不允许全屏","Full screen isn't allowed here")))}
-    }catch(e){toast(T("这里不允许全屏","Full screen isn't allowed here"))}
-  });
-  document.addEventListener("fullscreenchange",paint);document.addEventListener("webkitfullscreenchange",paint);
-  document.getElementById("langBtn").addEventListener("click",()=>setTimeout(paint,0));
 })();
 
 /* i pills (i | round chevron): open and close the panel they name; the chevron turns up while it is open */

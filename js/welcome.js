@@ -10,7 +10,7 @@ function showWelcome(){
       <button type="button" data-close class="iconbtn" aria-label="${T("关闭","Close")}">${CLOSE_ICON}</button>
     </div>
     <div style="overflow:auto;display:grid;gap:12px">
-      <p class="sub" style="margin:0">${T("填几项，热量和目标进度才算得准。可以留空，以后在「资料 › 个人资料」和「目标」里改。","Fill in a few things so calories and goal progress are accurate. Anything can stay blank; change it later under Profile and Goals.")}</p>
+      <p class="sub" style="margin:0">${T("填几项，热量和目标进度才算得准。可以留空，以后在「设定 › 个人资料」和「目标」里改。","Fill in a few things so calories and goal progress are accurate. Anything can stay blank; change it later under Settings › Profile and Goals.")}</p>
       <div class="mode-tabs" id="wSex" role="group" aria-label="${T("性别","Sex")}"><button type="button" data-v="m" style="font-size:22px;padding:4px" aria-label="${T("男","Male")}">♂</button><button type="button" data-v="f" style="font-size:22px;padding:4px" aria-label="${T("女","Female")}">♀</button></div>
       <div class="fgrid">
         ${fld("wB","出生年月","Birth month",'type="month"')}
