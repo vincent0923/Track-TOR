@@ -129,8 +129,8 @@ function maybeRemindBackup(){
           <button type="button" data-close class="iconbtn" aria-label="${T("关闭","Close")}">${CLOSE_ICON}</button>
         </div>
         <p class="sub" style="margin:0 0 12px">${T(
-          "浏览器偶尔会清空本地数据。建议每 5 天备份一次：在「资料」里打开「备份进度」，保存进度文件，需要时选这个文件恢复。",
-          "Browsers occasionally clear local data. Every 5 days or so, open Back up progress under Profile and save a progress file. Pick that file to restore."
+          "浏览器偶尔会清空本地数据。建议每 5 天备份一次：在「设定」里打开「备份进度」，保存进度文件，需要时选这个文件恢复。",
+          "Browsers occasionally clear local data. Every 5 days or so, open Back up progress under Settings and save a progress file. Pick that file to restore."
         )}</p>
         <button id="bkRemindOk" type="button" class="btn" style="width:100%;background:var(--cta);font-size:15px;padding:12px">${T("确定","OK")}</button>
       </div>`;

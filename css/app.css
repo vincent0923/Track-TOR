@@ -12,7 +12,7 @@
 .dtoggle[aria-expanded="true"] svg{transform:rotate(90deg)}
 .dbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .dbar h2{margin:0;font-size:15px}
-.dbar-actions{display:flex;gap:6px;align-items:center}
+
 .pills{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .pill.g{background:var(--ok-soft);color:var(--ok)}.pill.g b{color:var(--ok)}
 .pill.r{background:var(--push-soft);color:var(--push)}.pill.r b{color:var(--push)}
@@ -55,9 +55,7 @@
 .fd-more summary{font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)}
 .fd-more[open] summary{margin-bottom:8px}
 .fd-more .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.subtabs{display:flex;gap:6px;margin-top:8px}
-.subtabs button{flex:1;font-size:20px;line-height:1;padding:8px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer}
-.subtabs button[aria-selected="true"]{background:var(--sunk);border-color:var(--ink)}
+
 .chartbox h3 .num{margin-left:auto}
 .chedit{flex:none;align-self:center;width:32px;height:32px;display:grid;place-items:center;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--cta);cursor:pointer}
 .chedit svg{width:17px;height:17px;display:block}
@@ -85,8 +83,7 @@
 :root[data-theme="dark"] #pane-diet{--protein:#7E9DB0;--intake:#D9D2C6;--burn:#8BA05E;--gain:#7FAE8E;--loss:#C9806A;--dslate:#545F59;--dtotal:#1E2A31}
 /* diet data source (Google Sheets CSV) */
 .dsrc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
-.dsrc-h{display:flex;align-items:center;gap:8px}
-.dsrc-h h3{margin:0;font-size:15px;font-weight:700}
+
 .dsrc-i{display:inline-flex;align-items:stretch;height:24px;border:1px solid var(--line);border-radius:999px;background:var(--sunk);color:var(--muted);padding:0;cursor:pointer;overflow:hidden;font:700 13px/1 var(--f-body)}
 .dsrc-i>span{display:grid;place-items:center;min-width:22px;padding:0 6px}
 .dsrc-i-l{font:italic 700 13px/1 Georgia,serif;border-right:1px solid var(--line)}
@@ -99,7 +96,7 @@
 .dsrc-info li{margin:2px 0}
 .dsrc-info code{font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:0 4px}
 .dsrc-ver{margin-bottom:10px}
-.dsrc-tip{margin:0 0 8px;color:var(--muted)}
+
 .dsrc-code{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:8px}
 .dsrc-code pre{margin:0;padding:10px 12px;padding-top:34px;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;max-height:300px;overflow:auto}
 .dsrc-copy{position:absolute;top:6px;right:6px;border:1px solid var(--line);background:var(--sunk);color:var(--ink);font-size:12px;font-weight:600;border-radius:6px;padding:3px 10px;cursor:pointer}
@@ -114,9 +111,7 @@
 .dsrc-hint{margin:6px 0 0;font-size:14px;color:var(--muted)}
 .dsrc-status{margin:4px 0 0;font-size:14px;color:var(--ink)}
 .dsrc-status.err{color:var(--push)}
-#pane-diet .diet-add{background:var(--burn);color:#fff;font-size:13px;font-weight:600;padding:7px 12px;white-space:nowrap}
-#pane-diet .stat{padding:10px 12px;border-radius:12px;min-width:0}
-#pane-diet .stat b{font-size:28px;line-height:1.05;white-space:nowrap}
+
 #pane-diet .chartbox{position:relative;margin:0;border-radius:14px;padding:12px 12px 8px}
 #pane-diet .chartbox h3{margin:0;font-size:15px;font-weight:700}
 #pane-diet .chartbox h3 span{font:inherit}
@@ -190,9 +185,7 @@ header.top h1{font-size:20px;line-height:1.2;letter-spacing:0;white-space:normal
 .hrow .sub{margin:0;white-space:nowrap}
 header.top h1 .h1s{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
 .hbtns{flex:none}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
-.stat b{display:block;font-family:var(--f-num);font-size:24px;font-weight:600;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stat span{font-size:11px;color:var(--muted);letter-spacing:.04em}
+
 nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:4px;background:var(--bg);padding-block:8px}
 nav.tabs button{flex:1;font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:10px;padding:9px 0;cursor:pointer}
 nav.tabs .t-train{flex:2;font-size:17px;padding:11px 0}
@@ -407,7 +400,7 @@ h1 .ver{font-family:var(--f-num);font-size:12px;font-weight:400;color:var(--mute
 .scale svg{width:100%;height:auto;display:block}
 .scale text{font-family:var(--f-num);font-size:11px;fill:var(--muted)}
 .scale .lab{font-size:12px;font-weight:600}
-.legend{font-size:11px;color:var(--muted);margin-top:2px}
+
 .hsrc{font-size:11px;color:var(--muted)}
 .hsrc button{border:0;background:none;color:var(--pull);font-size:11px;padding:0;cursor:pointer;text-decoration:underline}
 @media (prefers-reduced-motion:no-preference){.prog i{transition:width .25s}.set{transition:background .15s}}
@@ -460,28 +453,16 @@ html[data-lang="en"] .dsrc-row .btn{min-width:106px}
 nav.tabs button{display:flex;align-items:center;justify-content:center;gap:6px}
 nav.tabs button svg{width:22px;height:22px;flex:0 0 auto}
 nav.tabs .t-me svg{width:24px;height:24px}
-.subtabs button{display:flex;align-items:center;justify-content:center;color:var(--ink)}
-.subtabs button svg{width:22px;height:22px}
+
 #pane-me{display:grid;gap:12px;padding-top:8px}
 #pane-health,#pane-strength{display:grid;gap:12px;padding-top:8px}
 
 /* the Diet tab shows the background table pull as a fill in the accent colour */
-body .subtabs button[data-prog][data-prog]{background-image:linear-gradient(90deg,color-mix(in srgb,var(--burn) 35%,transparent) var(--p),transparent var(--p))}
 
 /* capsule buttons: an icon or words on the left, + / − on the right */
-.cap{display:inline-flex;align-items:stretch;height:36px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--burn);padding:0;overflow:hidden;font:inherit;cursor:pointer;flex:none}
-button.cap>span,.cap>button{display:grid;place-items:center;padding:0 10px;border:0;background:none;color:inherit;font:inherit;cursor:pointer;margin:0}
-.cap .cap-l svg{width:20px;height:20px}
-.cap .cap-r{min-width:30px;padding:0 9px;font-size:18px;font-weight:600;line-height:1;border-left:1px solid var(--line)}
-.cap-txt{color:var(--ink);font-size:15px;font-weight:700}
-.cap[aria-expanded="true"] .cap-r,.cap .cap-r[aria-expanded="true"]{background:var(--burn);color:#fff;border-left-color:var(--burn)}
-.cap-txt[aria-expanded="true"] .cap-r{background:var(--ink);color:var(--bg);border-left-color:var(--ink)}
-.cap button:disabled,button.cap:disabled{cursor:default}
-.cap>button:disabled{color:var(--muted);opacity:.45}
-button.cap:disabled{opacity:.5}
+
 #dietBar h2{flex-wrap:wrap}
-.dentry-inline .sheet{max-width:none;max-height:none;border:1px solid var(--line);--bad:#C9372C}
-body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,color-mix(in srgb,var(--burn) 35%,transparent) var(--p),transparent var(--p))}
+
 #foldMe>summary .meeye{margin-left:auto;margin-right:8px;width:32px;height:32px}
 #foldMe:not([open])>summary .meeye{display:none}
 #foldMe>summary .saveic{margin-left:0}
@@ -547,10 +528,10 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
 :root[data-skin="toy"] #pane-diet{--intake:#2A3A44;--burn:#EF6A2B;--protein:#7B5BD6;--gain:#22A06B;--loss:#E0442A;--dtotal:#E8E2D5}
 
 /* surfaces: a soft lip under each card instead of a border */
-:root[data-skin="toy"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat,.review,.sheet){border:0;box-shadow:0 3px 0 var(--side),0 14px 20px -16px rgba(40,28,10,.5)}
+:root[data-skin="toy"] :is(.card,.chartbox,.goals,details.fold,.cal,.review,.sheet){border:0;box-shadow:0 3px 0 var(--side),0 14px 20px -16px rgba(40,28,10,.5)}
 :root[data-skin="toy"] :is(.card,.chartbox,.goals,details.fold,.cal){border-radius:var(--r)}
 :root[data-skin="toy"] #pane-diet :is(.chartbox,.diet-day){border-radius:var(--r)}
-:root[data-skin="toy"] :is(h1,.tag,.stat b,.caltitle b,.gtile b,.gh .gp,.chartbox h3 span,.calc b){font-weight:800}
+:root[data-skin="toy"] :is(h1,.tag,.caltitle b,.gtile b,.gh .gp,.chartbox h3 span,.calc b){font-weight:800}
 :root[data-skin="toy"] .tag{font-stretch:105%}
 
 /* sunken: inputs, set rows, steppers, bars */
@@ -560,25 +541,23 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
 :root[data-skin="toy"] .bar i{box-shadow:inset 0 2px 0 rgba(255,255,255,.35),inset 0 -2px 0 rgba(0,0,0,.15)}
 
 /* raised white keys */
-:root[data-skin="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.dp-f button,.cap,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile){
+:root[data-skin="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.dp-f button,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile){
   border:0;background:var(--key);box-shadow:0 4px 0 var(--side),var(--drop);transform:translateY(0);
   transition:transform .32s var(--spring),box-shadow .32s var(--spring)}
-:root[data-skin="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.dp-f button,.cap,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile):active{
+:root[data-skin="toy"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.calfold,.dp-f button,.gchip2,.btn.ghost,.btn.recedit,.syncbtn.off,.addset,.gi,.gtile):active{
   transform:translateY(3px);box-shadow:0 1px 0 var(--side),0 2px 3px -2px rgba(40,28,10,.35);transition-duration:.06s}
 :root[data-skin="toy"] .gi{background:color-mix(in srgb,var(--g) 16%,var(--key));box-shadow:0 3px 0 color-mix(in srgb,var(--g) 35%,var(--side)),var(--drop)}
 :root[data-skin="toy"] .gchip2.on{background:color-mix(in srgb,var(--g) 16%,var(--key));box-shadow:0 4px 0 var(--g),var(--drop)}
 :root[data-skin="toy"] .btn.recedit{color:var(--cta-ink)}
-:root[data-skin="toy"] .cap .cap-r{border-left-color:var(--line)}
-:root[data-skin="toy"] .cap{margin-bottom:4px}
 
 /* raised coloured keys: the side is the same plastic, darker */
-:root[data-skin="toy"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,#pane-diet .diet-add,#pwaInstallBtn,.caltoday){
+:root[data-skin="toy"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,#pwaInstallBtn,.caltoday){
   --kc:var(--k,var(--ink));border:0;background:var(--kc);box-shadow:0 4px 0 color-mix(in srgb,var(--kc) 62%,#000),var(--drop),inset 0 2px 0 rgba(255,255,255,.25);
   transform:translateY(0);transition:transform .32s var(--spring),box-shadow .32s var(--spring)}
-:root[data-skin="toy"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,#pane-diet .diet-add,#pwaInstallBtn,.caltoday):active{
+:root[data-skin="toy"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,#pwaInstallBtn,.caltoday):active{
   transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--kc) 62%,#000),0 2px 3px -2px rgba(40,28,10,.35);transition-duration:.06s}
 :root[data-skin="toy"] :is(.syncbtn,.dp-f .dp-today,#pwaInstallBtn){--kc:var(--cta);color:var(--on-cta)!important;text-shadow:none}
-:root[data-skin="toy"] #pane-diet .diet-add{--kc:var(--burn)}
+
 :root[data-skin="toy"] .caltoday{--kc:var(--ok);color:#fff}
 :root[data-skin="toy"] .syncbtn{animation:none}
 :root[data-skin="toy"] .syncbtn.done{background:var(--ok-soft);box-shadow:var(--sink)}
@@ -589,15 +568,15 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
 :root[data-skin="toy"] .set.ticked .chk{background:var(--ok);box-shadow:0 4px 0 var(--ok-deep),var(--drop),inset 0 2px 0 rgba(255,255,255,.3)}
 
 /* tracks with a sliding piece: main tabs (red piece), chart views (blue piece) */
-:root[data-skin="toy"] :is(nav.tabs,.subtabs){position:relative;gap:0;padding:6px 6px 10px;background:var(--track);border-radius:20px;box-shadow:inset 0 3px 7px var(--pit),0 1px 0 var(--hl)}
+:root[data-skin="toy"] :is(nav.tabs){position:relative;gap:0;padding:6px 6px 10px;background:var(--track);border-radius:20px;box-shadow:inset 0 3px 7px var(--pit),0 1px 0 var(--hl)}
 :root[data-skin="toy"] nav.tabs{top:calc(env(safe-area-inset-top,0px) + 6px);margin-block:8px}
-:root[data-skin="toy"] :is(nav.tabs,.subtabs) button{position:relative;z-index:1;border:0;background:none;color:var(--tab-ink);transition:color .2s}
-:root[data-skin="toy"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:var(--piece-ink,#fff)}
-:root[data-skin="toy"] .subtabs button[aria-selected="true"]{color:var(--piece2-ink,#fff)}
+:root[data-skin="toy"] :is(nav.tabs) button{position:relative;z-index:1;border:0;background:none;color:var(--tab-ink);transition:color .2s}
+:root[data-skin="toy"] :is(nav.tabs) button[aria-selected="true"]{background:none;color:var(--piece-ink,#fff)}
+
 :root[data-skin="toy"] .tpiece{display:block;position:absolute;left:0;top:0;z-index:0;pointer-events:none;border-radius:14px;
   width:var(--pw,0);height:var(--ph,0);transform:translate(var(--px,0),var(--py,0));background:var(--piece);
   box-shadow:0 4px 0 var(--piece-deep),0 10px 12px -5px rgba(40,28,10,.4),inset 0 2px 0 rgba(255,255,255,.3)}
-:root[data-skin="toy"] .subtabs .tpiece{background:var(--piece2);box-shadow:0 4px 0 var(--piece2-deep),0 10px 12px -5px rgba(40,28,10,.4),inset 0 2px 0 rgba(255,255,255,.3)}
+
 @media (prefers-reduced-motion:no-preference){
   :root[data-skin="toy"] .tpiece.on{transition:transform .5s var(--spring),width .5s var(--spring)}
   :root[data-skin="toy"] .tpiece.go{animation:squash .5s ease-out}
@@ -638,7 +617,7 @@ body .cap>button[data-prog][data-prog]{background-image:linear-gradient(90deg,co
 :root:is([data-theme="toy-night"],[data-theme="toy-glow"]) .mask .sheet{--bad:#FF6B5E}
 /* glow: coloured plastic gives off light */
 :root[data-theme="toy-glow"] .tpiece{box-shadow:0 4px 0 var(--piece-deep),0 0 16px color-mix(in srgb,var(--piece) 55%,transparent),inset 0 2px 0 rgba(255,255,255,.3)}
-:root[data-theme="toy-glow"] .subtabs .tpiece{box-shadow:0 4px 0 var(--piece2-deep),0 0 16px color-mix(in srgb,var(--piece2) 55%,transparent),inset 0 2px 0 rgba(255,255,255,.3)}
+
 :root[data-theme="toy-glow"] .cald.push{box-shadow:0 3px 0 var(--push-deep),0 0 10px color-mix(in srgb,var(--push) 50%,transparent)}
 :root[data-theme="toy-glow"] .cald.pull{color:#0D1220;box-shadow:0 3px 0 var(--pull-deep),0 0 10px color-mix(in srgb,var(--pull) 50%,transparent)}
 :root[data-theme="toy-glow"] .cald.xonly{color:#0D1220;box-shadow:0 3px 0 var(--ok-deep),0 0 10px color-mix(in srgb,var(--ok) 50%,transparent)}
@@ -700,8 +679,8 @@ svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
 
 /* the sliding piece under the selected tab is shared by every look; each look shapes it */
 :root[data-skin] .tpiece{display:block;position:absolute;left:0;top:0;z-index:0;pointer-events:none;width:var(--pw,0);height:var(--ph,0);transform:translate(var(--px,0),var(--py,0))}
-:root[data-skin] :is(nav.tabs,.subtabs){position:relative}
-:root[data-skin] :is(nav.tabs,.subtabs) button{position:relative;z-index:1}
+:root[data-skin] :is(nav.tabs){position:relative}
+:root[data-skin] :is(nav.tabs) button{position:relative;z-index:1}
 
 /* Cyber toy: indigo plastic, yellow and lilac pieces */
 :root[data-theme="toy-cyber"]{
@@ -723,11 +702,11 @@ svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
   --push:#B5583A; --push-soft:#F6E9E3; --pull:#44609E; --pull-soft:#E6EBF5; --ok:#2F7D58; --ok-soft:#E3F1E9; --warn:#A35D00; --sleep:#6B5FA8; --cta:#161614; --on-cta:#F5F4F0;
   --track:#EFEDE8; color-scheme:light}
 :root[data-skin="minimal"]{--f-num:"Geist","Barlow Condensed",sans-serif;--f-body:"Geist",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:10px}
-:root[data-skin="minimal"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat){box-shadow:none;border:1px solid var(--line)}
-:root[data-skin="minimal"] :is(h1,.tag,.stat b,.caltitle b,.gh .gp){font-weight:600;letter-spacing:-.01em}
-:root[data-skin="minimal"] :is(nav.tabs,.subtabs){gap:0;padding:4px;background:var(--track);border-radius:14px}
-:root[data-skin="minimal"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:#4A4944}
-:root[data-skin="minimal"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:#F5F4F0}
+:root[data-skin="minimal"] :is(.card,.chartbox,.goals,details.fold,.cal){box-shadow:none;border:1px solid var(--line)}
+:root[data-skin="minimal"] :is(h1,.tag,.caltitle b,.gh .gp){font-weight:600;letter-spacing:-.01em}
+:root[data-skin="minimal"] :is(nav.tabs){gap:0;padding:4px;background:var(--track);border-radius:14px}
+:root[data-skin="minimal"] :is(nav.tabs) button{border:0;background:none;color:#4A4944}
+:root[data-skin="minimal"] :is(nav.tabs) button[aria-selected="true"]{background:none;color:#F5F4F0}
 :root[data-skin="minimal"] .tpiece{background:var(--ink);border-radius:999px}
 :root[data-skin="minimal"] .syncbtn:not(.off):not(.done){background:var(--ink);color:#F5F4F0;box-shadow:none;animation:none}
 :root[data-skin="minimal"] .bar i{box-shadow:none}
@@ -743,19 +722,19 @@ svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
 :root[data-theme="craft"] #pane-diet{--intake:#2A1F14;--burn:#E0713A;--protein:#7A5CC8;--gain:#2F9A45;--loss:#B8471F;--dtotal:#EADFCB}
 :root[data-skin="craft"]{--f-num:"Bricolage Grotesque","Barlow Condensed",sans-serif;--f-body:"Bricolage Grotesque",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:10px}
 :root[data-skin="craft"] body{background-image:radial-gradient(ellipse at 20% 0%,rgba(255,255,255,.5),transparent 60%),repeating-linear-gradient(0deg,rgba(70,45,20,.025) 0 1px,transparent 1px 3px)}
-:root[data-skin="craft"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat){border:0;box-shadow:var(--paper-shadow)}
-:root[data-skin="craft"] :is(h1,.tag,.stat b,.caltitle b,.gh .gp){font-weight:800;letter-spacing:-.02em}
+:root[data-skin="craft"] :is(.card,.chartbox,.goals,details.fold,.cal){border:0;box-shadow:var(--paper-shadow)}
+:root[data-skin="craft"] :is(h1,.tag,.caltitle b,.gh .gp){font-weight:800;letter-spacing:-.02em}
 /* a strip of tape on the big cards */
 :root[data-skin="craft"] :is(.goals,.cal,#pane-strength>.chartbox:first-child){position:relative;overflow:visible}
 :root[data-skin="craft"] :is(.goals,.cal,#pane-strength>.chartbox:first-child)::before{content:"";position:absolute;top:-9px;right:28px;width:74px;height:20px;background:var(--tape);transform:rotate(5deg);box-shadow:0 1px 2px rgba(70,45,20,.15);z-index:2;pointer-events:none}
 :root[data-skin="craft"] .cal::before{right:auto;left:30px;transform:rotate(-4deg)}
-:root[data-skin="craft"] :is(nav.tabs,.subtabs){gap:0;padding:5px;background:var(--track);border-radius:18px;box-shadow:inset 0 2px 4px rgba(70,45,20,.15),0 1px 0 rgba(255,255,255,.8)}
-:root[data-skin="craft"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:#6E5A45}
-:root[data-skin="craft"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:#FFF6EA}
+:root[data-skin="craft"] :is(nav.tabs){gap:0;padding:5px;background:var(--track);border-radius:18px;box-shadow:inset 0 2px 4px rgba(70,45,20,.15),0 1px 0 rgba(255,255,255,.8)}
+:root[data-skin="craft"] :is(nav.tabs) button{border:0;background:none;color:#6E5A45}
+:root[data-skin="craft"] :is(nav.tabs) button[aria-selected="true"]{background:none;color:#FFF6EA}
 :root[data-skin="craft"] .tpiece{background:var(--push);border-radius:999px;box-shadow:0 2px 0 #B8471F,0 6px 10px -4px rgba(70,45,20,.4)}
-:root[data-skin="craft"] .subtabs .tpiece{background:var(--pull);box-shadow:0 2px 0 #1F4E6E,0 6px 10px -4px rgba(70,45,20,.4)}
-:root[data-skin="craft"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost){border:1px solid var(--line);background:var(--surface);box-shadow:0 1px 2px rgba(70,45,20,.15)}
-:root[data-skin="craft"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn):active{transform:translateY(1px) rotate(-1deg)}
+
+:root[data-skin="craft"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost){border:1px solid var(--line);background:var(--surface);box-shadow:0 1px 2px rgba(70,45,20,.15)}
+:root[data-skin="craft"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost,.btn):active{transform:translateY(1px) rotate(-1deg)}
 :root[data-skin="craft"] .syncbtn:not(.off):not(.done){animation:none;box-shadow:0 2px 0 #B8471F,0 6px 10px -4px rgba(70,45,20,.4);transform:rotate(-1.5deg)}
 :root[data-skin="craft"] .toast{background:var(--tape);color:var(--ink);border-radius:2px;transform:translateX(-50%) rotate(-1.5deg);box-shadow:0 2px 6px rgba(70,45,20,.25)}
 @media (prefers-reduced-motion:no-preference){:root[data-skin="craft"] .tpiece.on{transition:transform .45s cubic-bezier(.34,1.35,.5,1),width .45s cubic-bezier(.34,1.35,.5,1)}}
@@ -780,16 +759,16 @@ svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
 :root[data-skin="retro"] body{text-shadow:var(--glow)}
 :root[data-skin="retro"] *,:root[data-skin="retro"] *::before,:root[data-skin="retro"] *::after{border-radius:0!important}
 :root[data-skin="retro"] body::after{content:"";position:fixed;inset:0;z-index:90;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px)}
-:root[data-skin="retro"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat,.sheet,.dp){border:1px solid var(--line);box-shadow:none}
+:root[data-skin="retro"] :is(.card,.chartbox,.goals,details.fold,.cal,.sheet,.dp){border:1px solid var(--line);box-shadow:none}
 :root[data-skin="retro"] :is(.goals,.cal){border:3px double var(--rule)}
-:root[data-skin="retro"] :is(h1,.tag,.caltitle b,.stat b){font-weight:400;letter-spacing:.04em;text-transform:uppercase}
-:root[data-skin="retro"] :is(nav.tabs,.subtabs){gap:0;padding:4px;background:var(--surface);border:3px double var(--rule)}
-:root[data-skin="retro"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:var(--ink);text-transform:uppercase}
-:root[data-skin="retro"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:var(--on-cta);text-shadow:none}
+:root[data-skin="retro"] :is(h1,.tag,.caltitle b){font-weight:400;letter-spacing:.04em;text-transform:uppercase}
+:root[data-skin="retro"] :is(nav.tabs){gap:0;padding:4px;background:var(--surface);border:3px double var(--rule)}
+:root[data-skin="retro"] :is(nav.tabs) button{border:0;background:none;color:var(--ink);text-transform:uppercase}
+:root[data-skin="retro"] :is(nav.tabs) button[aria-selected="true"]{background:none;color:var(--on-cta);text-shadow:none}
 :root[data-skin="retro"] .tpiece{background:var(--cta)}
-:root[data-skin="retro"] .subtabs .tpiece{background:var(--pull)}
-:root[data-skin="retro"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.calfold,.syncbtn.off,.gi,.dp-f button,.chk,.step,.field input,.field select,.field textarea){background:transparent;border:1px solid var(--rule);box-shadow:none;color:var(--ink)}
-:root[data-skin="retro"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn,.calfold,.syncbtn,.gi,.dp-f button,.chk):active{background:var(--ink);color:var(--bg);text-shadow:none}
+
+:root[data-skin="retro"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost,.calfold,.syncbtn.off,.gi,.dp-f button,.chk,.step,.field input,.field select,.field textarea){background:transparent;border:1px solid var(--rule);box-shadow:none;color:var(--ink)}
+:root[data-skin="retro"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn,.calfold,.syncbtn,.gi,.dp-f button,.chk):active{background:var(--ink);color:var(--bg);text-shadow:none}
 :root[data-skin="retro"] .btn:not(.ghost){background:var(--k,var(--cta));color:var(--on-cta);text-shadow:none;box-shadow:none}
 :root[data-skin="retro"] .syncbtn:not(.off):not(.done){background:var(--cta);color:var(--on-cta);box-shadow:none;animation:none;text-shadow:none}
 :root[data-skin="retro"] .syncbtn.done{background:transparent;color:var(--ok);border:1px dashed var(--ok)}
@@ -811,18 +790,18 @@ svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
 #themeBtn{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 /* themed icons (js/icons.js): toy icons are an outline with a coloured fill, like moulded plastic */
 svg.ic-toy .f{fill:var(--icf,var(--cta))}
-:root[data-skin="toy"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{--icf:rgba(255,255,255,.4)}
+:root[data-skin="toy"] :is(nav.tabs) button[aria-selected="true"]{--icf:rgba(255,255,255,.4)}
 :root[data-skin="toy"] .gi{--icf:color-mix(in srgb,var(--g) 40%,var(--key))}
 :root[data-skin="toy"] .iconbtn svg{width:22px;height:22px}
-:root[data-skin="toy"] :is(nav.tabs,.subtabs) button svg.ic{width:26px;height:26px}
+:root[data-skin="toy"] :is(nav.tabs) button svg.ic{width:26px;height:26px}
 svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="retro"] .iconbtn svg{width:20px;height:20px}
 /* themed icons (js/icons.js): toy icons are an outline with a coloured fill, like moulded plastic */
 svg.ic-toy .f{fill:var(--icf,var(--cta))}
-:root[data-skin="toy"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{--icf:rgba(255,255,255,.4)}
+:root[data-skin="toy"] :is(nav.tabs) button[aria-selected="true"]{--icf:rgba(255,255,255,.4)}
 :root[data-skin="toy"] .gi{--icf:color-mix(in srgb,var(--g) 40%,var(--key))}
 :root[data-skin="toy"] .iconbtn svg{width:22px;height:22px}
-:root[data-skin="toy"] :is(nav.tabs,.subtabs) button svg.ic{width:26px;height:26px}
+:root[data-skin="toy"] :is(nav.tabs) button svg.ic{width:26px;height:26px}
 svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="retro"] .iconbtn svg{width:20px;height:20px}
 
@@ -832,13 +811,13 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-theme="interior"]{
   --bg:#FAFAFA; --surface:#FFFFFF; --sunk:#F5F5F4; --ink:#131313; --muted:#6E6E6E; --line:#E7E5E4;
   --push:#C0442F; --push-soft:#FBECE9; --pull:#4568FF; --pull-soft:#EDF1FF; --ok:#3D7A4E; --ok-soft:#E8F2EB; --warn:#A35D00; --sleep:#6B5FA8; --cta:#292524; --on-cta:#FAFAF9;
-  --hair:#00000024; --plate:#D6D3D1; --thumb:#292524; --on-thumb:#FAFAF9; --track:rgba(245,245,244,.7);
+  --plate:#D6D3D1; --thumb:#292524; --on-thumb:#FAFAF9; --track:rgba(245,245,244,.7);
   --lift:0 1px 2px rgba(28,25,23,.06),0 4px 10px -8px rgba(28,25,23,.45); --cap:inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(28,25,23,.06);
   --well:inset 0 1px 2px rgba(28,25,23,.07); --focus:#4568FF; color-scheme:light}
 :root[data-theme="interior-dark"]{
   --bg:#141312; --surface:#1D1D1A; --sunk:#252522; --ink:#F8F8F4; --muted:#93938B; --line:rgba(255,255,255,.16);
   --push:#F5897F; --push-soft:#3A2320; --pull:#93B0FF; --pull-soft:rgba(147,176,255,.14); --ok:#5BD79C; --ok-soft:rgba(91,215,156,.14); --warn:#E3A13F; --sleep:#B49CF2; --cta:#F5F5F4; --on-cta:#1C1917;
-  --hair:#ffffff29; --plate:rgba(255,255,255,.25); --thumb:#F5F5F4; --on-thumb:#1C1917; --track:#1D1D1A;
+  --plate:rgba(255,255,255,.25); --thumb:#F5F5F4; --on-thumb:#1C1917; --track:#1D1D1A;
   --lift:0 1px 6px rgba(0,0,0,.45); --cap:inset 0 1.5px 0 rgba(255,255,255,.09);
   --well:inset 0 1px 2px rgba(0,0,0,.45); --focus:#93B0FF; color-scheme:dark}
 :root[data-theme="interior"] #pane-diet{--intake:#292524;--burn:#C2662D;--protein:#7A5CC8;--gain:#3D7A4E;--loss:#C0442F;--dslate:#44403C;--dtotal:#E7E5E4}
@@ -846,14 +825,14 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-theme="interior-dark"] .mask .sheet{--bad:#F5897F}
 :root[data-skin="interior"]{--f-num:"Geist","Barlow Condensed",sans-serif;--f-body:"Geist",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:12px;--spr:cubic-bezier(.3,1.25,.5,1)}
 :root[data-skin="interior"] body{-webkit-font-smoothing:antialiased}
-:root[data-skin="interior"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat,.sheet){border:1px solid var(--line);box-shadow:var(--lift)}
-:root[data-skin="interior"] :is(h1,.tag,.stat b,.caltitle b,.gh .gp){font-weight:600;letter-spacing:-.02em}
+:root[data-skin="interior"] :is(.card,.chartbox,.goals,details.fold,.cal,.sheet){border:1px solid var(--line);box-shadow:var(--lift)}
+:root[data-skin="interior"] :is(h1,.tag,.caltitle b,.gh .gp){font-weight:600;letter-spacing:-.02em}
 :root[data-skin="interior"] :is(button,input,select,textarea,summary):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 /* keys: a white cap on a stone base plate; pressing drops the cap onto the plate */
-:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.dp-f button,.gi,.addset,.gchip2){
+:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.dp-f button,.gi,.addset,.gchip2){
   border:1px solid var(--line);background:var(--surface);color:var(--ink);box-shadow:var(--cap),0 2px 0 var(--plate);transform:translateY(0);
   transition:transform .28s var(--spr),box-shadow .28s var(--spr),background .15s}
-:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.dp-f button,.gi,.addset,.gchip2):active{transform:translateY(2px);box-shadow:var(--cap),0 0 0 var(--plate);transition-duration:.05s}
+:root[data-skin="interior"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.dp-f button,.gi,.addset,.gchip2):active{transform:translateY(2px);box-shadow:var(--cap),0 0 0 var(--plate);transition-duration:.05s}
 :root[data-skin="interior"] .gi{color:var(--g)}
 :root[data-skin="interior"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,.caltoday){border:0;box-shadow:0 2px 0 color-mix(in srgb,var(--k,var(--cta)) 55%,#000),0 1px 2px rgba(28,25,23,.2);transform:translateY(0);transition:transform .28s var(--spr),box-shadow .28s var(--spr)}
 :root[data-skin="interior"] :where(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,.caltoday):active{transform:translateY(2px);box-shadow:0 0 0 transparent;transition-duration:.05s}
@@ -871,13 +850,12 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-skin="interior"] .bar i{box-shadow:none}
 :root[data-skin="interior"] .bar i::after{opacity:.45}
 /* segmented tracks: main tabs, chart views and the day ranges; a dark thumb slides under the choice */
-:root[data-skin="interior"] :is(nav.tabs,.subtabs){gap:0;padding:3px;background:var(--track);border:1px solid var(--line);border-radius:12px;box-shadow:var(--well)}
+:root[data-skin="interior"] :is(nav.tabs){gap:0;padding:3px;background:var(--track);border:1px solid var(--line);border-radius:12px;box-shadow:var(--well)}
 :root[data-theme="interior"] :is(nav.tabs){background:#F5F5F4}
-:root[data-skin="interior"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:var(--muted);transition:color .2s}
-:root[data-skin="interior"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:var(--on-thumb)}
+:root[data-skin="interior"] :is(nav.tabs) button{border:0;background:none;color:var(--muted);transition:color .2s}
+:root[data-skin="interior"] :is(nav.tabs) button[aria-selected="true"]{background:none;color:var(--on-thumb)}
 :root[data-skin="interior"] .tpiece{background:var(--thumb);border-radius:9px;box-shadow:0 1px 2px rgba(28,25,23,.28)}
-:root[data-skin="interior"] .subtabs .tpiece{background:var(--pull)}
-:root[data-skin="interior"] .subtabs button[aria-selected="true"]{color:var(--surface)}
+
 @media (prefers-reduced-motion:no-preference){:root[data-skin="interior"] .tpiece.on{transition:transform .34s var(--spr),width .34s var(--spr)}}
 :root[data-skin="interior"] .maseg{border:1px solid var(--line);border-radius:9px;padding:3px;gap:0;background:var(--track);box-shadow:var(--well)}
 :root[data-skin="interior"] .maseg button{background:none;border:0!important;border-radius:6px;color:var(--muted);transition:background .2s,color .2s}
@@ -915,20 +893,19 @@ svg.ic-retro{shape-rendering:crispEdges}
 :root[data-theme="beui-dark"] .mask .sheet{--bad:#FF5A5F}
 :root[data-skin="beui"]{--f-num:"Geist Mono","Geist",ui-monospace,monospace;--f-body:"Geist",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:18px}
 :root[data-skin="beui"] body{background-image:radial-gradient(120% 60% at 100% 0%,color-mix(in srgb,var(--cta) 7%,transparent),transparent 60%);background-attachment:fixed;-webkit-font-smoothing:antialiased}
-:root[data-skin="beui"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat,.sheet){border:1px solid var(--line);box-shadow:var(--soft-shadow)}
+:root[data-skin="beui"] :is(.card,.chartbox,.goals,details.fold,.cal,.sheet){border:1px solid var(--line);box-shadow:var(--soft-shadow)}
 :root[data-skin="beui"] :is(h1,.tag,.caltitle b){font-family:"Geist",sans-serif;font-weight:600;letter-spacing:-.03em}
-:root[data-skin="beui"] :is(.stat b,.gh .gp,.gtile b,.chartbox h3 span){letter-spacing:-.04em;font-weight:500}
+:root[data-skin="beui"] :is(.gh .gp,.gtile b,.chartbox h3 span){letter-spacing:-.04em;font-weight:500}
 /* glass tab bars with a pill thumb */
-:root[data-skin="beui"] :is(nav.tabs,.subtabs){gap:0;padding:4px;border-radius:999px;border:1px solid var(--line2);background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4)}
-:root[data-skin="beui"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:var(--muted);border-radius:999px;transition:color .2s}
-:root[data-skin="beui"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:var(--on-tip)}
+:root[data-skin="beui"] :is(nav.tabs){gap:0;padding:4px;border-radius:999px;border:1px solid var(--line2);background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4)}
+:root[data-skin="beui"] :is(nav.tabs) button{border:0;background:none;color:var(--muted);border-radius:999px;transition:color .2s}
+:root[data-skin="beui"] :is(nav.tabs) button[aria-selected="true"]{background:none;color:var(--on-tip)}
 :root[data-skin="beui"] .tpiece{background:var(--tip);border-radius:999px;box-shadow:0 4px 14px -4px rgba(0,0,0,.35)}
-:root[data-skin="beui"] .subtabs .tpiece{background:var(--grad)}
-:root[data-skin="beui"] .subtabs button[aria-selected="true"]{color:#fff}
+
 @media (prefers-reduced-motion:no-preference){:root[data-skin="beui"] .tpiece.on{transition:transform .45s cubic-bezier(.32,1.3,.5,1),width .45s cubic-bezier(.32,1.3,.5,1)}}
 /* pills */
-:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.dp-f button,.addset,.gchip2){border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:999px;box-shadow:none;transition:transform .2s cubic-bezier(.32,1.3,.5,1),background .15s}
-:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn,.calfold,.syncbtn,.dp-f button,.gi,.chk):active{transform:scale(.94)}
+:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost,.btn.recedit,.calfold,.syncbtn.off,.dp-f button,.addset,.gchip2){border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:999px;box-shadow:none;transition:transform .2s cubic-bezier(.32,1.3,.5,1),background .15s}
+:root[data-skin="beui"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn,.calfold,.syncbtn,.dp-f button,.gi,.chk):active{transform:scale(.94)}
 :root[data-skin="beui"] .btn:not(.ghost):not(.recedit){border-radius:999px}
 :root[data-skin="beui"] :is(.syncbtn:not(.off):not(.done),.dp-f .dp-today){background:var(--grad);color:#fff;border:0;box-shadow:0 6px 20px -8px color-mix(in srgb,var(--cta) 70%,transparent);animation:none}
 :root[data-skin="beui"] .syncbtn.done{background:var(--ok-soft);color:var(--ok);box-shadow:none}
@@ -1023,20 +1000,20 @@ html,body{overflow-x:clip}
 :root[data-skin="mech"]{--f-num:"Share Tech Mono","Barlow Condensed",ui-monospace,monospace;--r:6px}
 :root[data-skin="mech"] body{background-color:var(--bg);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 1px,transparent 1px 4px)}
 /* plates: a bevelled panel with a screw in each corner */
-:root[data-skin="mech"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat){border:1px solid #17191C;border-radius:6px;
+:root[data-skin="mech"] :is(.card,.chartbox,.goals,details.fold,.cal){border:1px solid #17191C;border-radius:6px;
   background:var(--screw) 5px 5px/11px 11px no-repeat,var(--screw) calc(100% - 5px) 5px/11px 11px no-repeat,var(--screw) 5px calc(100% - 5px)/11px 11px no-repeat,var(--screw) calc(100% - 5px) calc(100% - 5px)/11px 11px no-repeat,var(--plate);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -1px 0 rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.45)}
 :root[data-skin="mech"] :is(h1,.tag,.caltitle b){letter-spacing:.06em;text-transform:uppercase;text-shadow:0 -1px 0 rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.06)}
-:root[data-skin="mech"] :is(.stat b,.gh .gp,.gtile b,.chartbox h3 span){color:var(--warn);text-shadow:0 0 6px rgba(255,176,0,.35)}
+:root[data-skin="mech"] :is(.gh .gp,.gtile b,.chartbox h3 span){color:var(--warn);text-shadow:0 0 6px rgba(255,176,0,.35)}
 :root[data-skin="mech"] .gh .gp{color:var(--g)}
 /* latching keys: raised until chosen; the chosen one is pressed in and its lamp is lit */
 :root[data-skin="mech"] .tpiece{display:none!important}
-:root[data-skin="mech"] :is(nav.tabs,.subtabs){gap:6px;padding:6px;background:#1A1C1F;border-radius:8px;box-shadow:inset 0 2px 6px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.06)}
-:root[data-skin="mech"] :is(nav.tabs,.subtabs) button,:root[data-skin="mech"] .maseg button{position:relative;border:1px solid #17191C;border-radius:5px;background:var(--key);color:var(--muted);
+:root[data-skin="mech"] :is(nav.tabs){gap:6px;padding:6px;background:#1A1C1F;border-radius:8px;box-shadow:inset 0 2px 6px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.06)}
+:root[data-skin="mech"] :is(nav.tabs) button,:root[data-skin="mech"] .maseg button{position:relative;border:1px solid #17191C;border-radius:5px;background:var(--key);color:var(--muted);
   box-shadow:0 5px 0 var(--key-side),inset 0 1px 0 rgba(255,255,255,.14);transform:translateY(-3px);transition:transform .12s cubic-bezier(.3,1.6,.5,1),box-shadow .12s,color .2s}
-:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-skin="mech"] .maseg button[aria-pressed="true"]{transform:translateY(1px);background:linear-gradient(180deg,#3A3E44,#33373C);color:var(--ink);box-shadow:0 1px 0 var(--key-side),inset 0 2px 4px rgba(0,0,0,.45)}
-:root[data-skin="mech"] :is(nav.tabs,.subtabs) button::after{content:"";position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:#4A2A18;box-shadow:inset 0 1px 1px rgba(0,0,0,.6)}
-:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"]::after{background:var(--cta);box-shadow:0 0 6px var(--cta),0 0 2px #fff inset}
+:root[data-skin="mech"] :is(nav.tabs) button[aria-selected="true"],:root[data-skin="mech"] .maseg button[aria-pressed="true"]{transform:translateY(1px);background:linear-gradient(180deg,#3A3E44,#33373C);color:var(--ink);box-shadow:0 1px 0 var(--key-side),inset 0 2px 4px rgba(0,0,0,.45)}
+:root[data-skin="mech"] :is(nav.tabs) button::after{content:"";position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:#4A2A18;box-shadow:inset 0 1px 1px rgba(0,0,0,.6)}
+:root[data-skin="mech"] :is(nav.tabs) button[aria-selected="true"]::after{background:var(--cta);box-shadow:0 0 6px var(--cta),0 0 2px #fff inset}
 :root[data-skin="mech"] .maseg{border:0;gap:5px;padding:5px 5px 7px;background:#1A1C1F;border-radius:6px;overflow:visible;box-shadow:inset 0 2px 5px rgba(0,0,0,.7)}
 :root[data-skin="mech"] .maseg button{border:1px solid #17191C!important;font-size:12px;padding:4px 7px}
 /* knurled knobs for the small round buttons: a twist when pressed */
@@ -1045,8 +1022,8 @@ html,body{overflow-x:clip}
   box-shadow:0 3px 5px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
 :root[data-skin="mech"] :is(.iconbtn,.privbtn):active{transform:rotate(35deg) scale(.96)}
 /* plain buttons: chunky push buttons */
-:root[data-skin="mech"] :is(.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.dp-f button,.addset,.gi,.gchip2,.calnav){border:1px solid #17191C;background:var(--key);color:var(--ink);box-shadow:0 4px 0 var(--key-side),inset 0 1px 0 rgba(255,255,255,.14);transition:transform .1s,box-shadow .1s}
-:root[data-skin="mech"] :is(.tbtn:not(.next),.cap,.btn,.calfold,.dp-f button,.addset,.gi,.gchip2,.caltoday):active{transform:translateY(3px);box-shadow:0 1px 0 var(--key-side),inset 0 2px 4px rgba(0,0,0,.4)}
+:root[data-skin="mech"] :is(.tbtn:not(.next),.btn.ghost,.btn.recedit,.calfold,.dp-f button,.addset,.gi,.gchip2,.calnav){border:1px solid #17191C;background:var(--key);color:var(--ink);box-shadow:0 4px 0 var(--key-side),inset 0 1px 0 rgba(255,255,255,.14);transition:transform .1s,box-shadow .1s}
+:root[data-skin="mech"] :is(.tbtn:not(.next),.btn,.calfold,.dp-f button,.addset,.gi,.gchip2,.caltoday):active{transform:translateY(3px);box-shadow:0 1px 0 var(--key-side),inset 0 2px 4px rgba(0,0,0,.4)}
 :root[data-skin="mech"] .btn:not(.ghost):not(.recedit){border:1px solid #17191C;box-shadow:0 4px 0 color-mix(in srgb,var(--k,var(--cta)) 45%,#000),inset 0 1px 0 rgba(255,255,255,.25)}
 :root[data-skin="mech"] .caltoday{border:1px solid #17191C;background:var(--ok);color:#10200F;box-shadow:0 4px 0 #1E5A1E}
 :root[data-skin="mech"] .gi{color:var(--g)}
@@ -1082,8 +1059,8 @@ html,body{overflow-x:clip}
 /* toy icons have white inner parts (a face, a medal); on a coloured piece those melt into the white outline,
    so there the inner parts turn see-through and the fill turns translucent white */
 svg.ic-toy .w{fill:var(--icw,#fff)}
-:root[data-skin="toy"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{--icw:transparent;--icf:rgba(255,255,255,.32)}
-:root[data-theme="toy-cyber"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-theme="toy-glow"] .subtabs button[aria-selected="true"],:root[data-theme="woody"] .subtabs button[aria-selected="true"]{--icw:rgba(255,255,255,.55);--icf:rgba(255,255,255,.45)}
+:root[data-skin="toy"] :is(nav.tabs) button[aria-selected="true"]{--icw:transparent;--icf:rgba(255,255,255,.32)}
+:root[data-theme="toy-cyber"] :is(nav.tabs) button[aria-selected="true"]{--icw:rgba(255,255,255,.55);--icf:rgba(255,255,255,.45)}
 /* machine console: the small round buttons are brushed-steel push buttons in a dark bezel (not knurled knobs);
    pressing sinks the cap, no twist */
 :root[data-skin="mech"] :is(.iconbtn,.privbtn){border:0;color:#24272B;
@@ -1100,15 +1077,15 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
   --key:linear-gradient(180deg,#F7F8F9,#D9DDE1); --key-side:#8E959C; color-scheme:light}
 :root[data-theme="mech-light"] #pane-diet{--intake:#1C2024;--burn:#E87511;--protein:#1E7BFF;--gain:#16A34A;--loss:#D9342B;--dslate:#59616A;--dtotal:#D3D7DB}
 :root[data-theme="mech-light"] body{background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,rgba(0,0,0,.025) 0 1px,transparent 1px 4px)}
-:root[data-theme="mech-light"] :is(.card,.chartbox,.goals,details.fold,.cal,.stat){border-color:#9AA2AA;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(0,0,0,.08),0 2px 5px rgba(40,50,60,.22)}
+:root[data-theme="mech-light"] :is(.card,.chartbox,.goals,details.fold,.cal){border-color:#9AA2AA;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(0,0,0,.08),0 2px 5px rgba(40,50,60,.22)}
 :root[data-theme="mech-light"] :is(h1,.tag,.caltitle b){text-shadow:0 1px 0 rgba(255,255,255,.8)}
-:root[data-theme="mech-light"] :is(.stat b,.gh .gp,.gtile b,.chartbox h3 span){text-shadow:none}
-:root[data-theme="mech-light"] :is(nav.tabs,.subtabs),:root[data-theme="mech-light"] .maseg{background:#AEB5BC;box-shadow:inset 0 2px 5px rgba(30,40,50,.45),0 1px 0 rgba(255,255,255,.7)}
-:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button,:root[data-theme="mech-light"] .maseg button{border-color:#8E959C!important;color:var(--muted);box-shadow:0 5px 0 var(--key-side),inset 0 1px 0 #fff}
-:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-theme="mech-light"] .maseg button[aria-pressed="true"]{background:linear-gradient(180deg,#D5DADF,#E3E7EA);color:var(--ink);box-shadow:0 1px 0 var(--key-side),inset 0 2px 4px rgba(30,40,50,.3)}
-:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button::after{background:#9DB4D3}
-:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button[aria-selected="true"]::after{background:var(--cta);box-shadow:0 0 7px var(--cta),0 0 2px #fff inset}
-:root[data-theme="mech-light"] :is(.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.calfold,.dp-f button,.addset,.gi,.gchip2,.calnav){border-color:#8E959C;box-shadow:0 4px 0 var(--key-side),inset 0 1px 0 #fff}
+:root[data-theme="mech-light"] :is(.gh .gp,.gtile b,.chartbox h3 span){text-shadow:none}
+:root[data-theme="mech-light"] :is(nav.tabs),:root[data-theme="mech-light"] .maseg{background:#AEB5BC;box-shadow:inset 0 2px 5px rgba(30,40,50,.45),0 1px 0 rgba(255,255,255,.7)}
+:root[data-theme="mech-light"] :is(nav.tabs) button,:root[data-theme="mech-light"] .maseg button{border-color:#8E959C!important;color:var(--muted);box-shadow:0 5px 0 var(--key-side),inset 0 1px 0 #fff}
+:root[data-theme="mech-light"] :is(nav.tabs) button[aria-selected="true"],:root[data-theme="mech-light"] .maseg button[aria-pressed="true"]{background:linear-gradient(180deg,#D5DADF,#E3E7EA);color:var(--ink);box-shadow:0 1px 0 var(--key-side),inset 0 2px 4px rgba(30,40,50,.3)}
+:root[data-theme="mech-light"] :is(nav.tabs) button::after{background:#9DB4D3}
+:root[data-theme="mech-light"] :is(nav.tabs) button[aria-selected="true"]::after{background:var(--cta);box-shadow:0 0 7px var(--cta),0 0 2px #fff inset}
+:root[data-theme="mech-light"] :is(.tbtn:not(.next),.btn.ghost,.btn.recedit,.calfold,.dp-f button,.addset,.gi,.gchip2,.calnav){border-color:#8E959C;box-shadow:0 4px 0 var(--key-side),inset 0 1px 0 #fff}
 :root[data-theme="mech-light"] :is(.iconbtn,.privbtn){box-shadow:0 0 0 2px #6E767E,0 0 0 3px #C4CAD0,0 3px 0 3px #5D656D,0 5px 8px 3px rgba(30,40,50,.3),inset 0 -2px 3px rgba(0,0,0,.18)}
 :root[data-theme="mech-light"] :is(.iconbtn,.privbtn):active{box-shadow:0 0 0 2px #6E767E,0 0 0 3px #C4CAD0,0 1px 0 3px #5D656D,0 2px 4px 3px rgba(30,40,50,.3),inset 0 2px 4px rgba(0,0,0,.3)}
 :root[data-theme="mech-light"] :is(.field input,.field textarea,.field select,.step){border-color:#8E959C;background:#F4F6F8;color:var(--warn);box-shadow:inset 0 2px 4px rgba(30,40,50,.25)}
@@ -1168,14 +1145,14 @@ svg.ic-toy .w{fill:var(--icw,#fff)}
   --rk-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 9.5 12 15l5.5-5.5'/%3E%3C/svg%3E");
   --rk-plus:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M12 6v12M6 12h12'/%3E%3C/svg%3E")}
 :root:is([data-theme="interior-dark"],[data-theme="beui-dark"],[data-theme="mech"],[data-theme="toy-night"],[data-theme="toy-glow"],[data-theme="toy-cyber"],[data-theme="retro"],[data-theme="retro-cyber"],[data-theme="retro-amber"]){--rk-bg:#62666D}
-:root .rk,:root details.fold>summary::after,:root .dsub>summary::after,:root .savefold .saveic::after,:root .dtoggle::before,:root #dietAllBtn .cap-r::before,:root #dietSrcToggle::before,:root #dietAddBtn .cap-r::before,:root .dsrc-i-r::before,:root .shead::after{
+:root .rk,:root details.fold>summary::after,:root .dsub>summary::after,:root .savefold .saveic::after,:root .dtoggle::before,:root .dsrc-i-r::before,:root .shead::after{
   content:"";display:inline-block;flex:none;box-sizing:border-box;width:26px;height:26px;margin:0;padding:0;
   border:0!important;border-radius:50%!important;background-color:var(--rk-bg)!important;background-image:var(--rk-chev),var(--rk-shade)!important;background-position:center!important;background-repeat:no-repeat!important;background-size:58%,100%!important;box-shadow:var(--rk-fx)!important;
   transform:none;transition:transform .18s ease;cursor:pointer;vertical-align:middle;text-shadow:none;color:transparent}
-:root .rk-plus,:root #dietAddBtn .cap-r::before{background-image:var(--rk-plus),var(--rk-shade)!important}
+:root .rk-plus{background-image:var(--rk-plus),var(--rk-shade)!important}
 /* open: the chevron points up */
-:root details.fold[open]>summary::after,:root .dsub[open]>summary::after,:root .savefold .saveic::after,:root .dtoggle[aria-expanded="true"]::before,:root .calfold[aria-expanded="true"],:root #dietAllBtn[aria-expanded="true"] .cap-r::before,:root #dietSrcToggle[aria-expanded="true"]::before,:root .dsrc-i[aria-expanded="true"] .dsrc-i-r::before,:root .shead[aria-expanded="true"]::after,:root .rk-up{transform:rotate(180deg);background-image:var(--rk-chev),var(--rk-shade-r)!important;box-shadow:var(--rk-fx-r)!important}
-#dietAddBtn[aria-expanded="true"] .cap-r::before{transform:rotate(45deg)}
+:root details.fold[open]>summary::after,:root .dsub[open]>summary::after,:root .savefold .saveic::after,:root .dtoggle[aria-expanded="true"]::before,:root .calfold[aria-expanded="true"],:root .dsrc-i[aria-expanded="true"] .dsrc-i-r::before,:root .shead[aria-expanded="true"]::after,:root .rk-up{transform:rotate(180deg);background-image:var(--rk-chev),var(--rk-shade-r)!important;box-shadow:var(--rk-fx-r)!important}
+
 :root .rk:active{transform:scale(.9)}
 :root .rk-up:active{transform:rotate(180deg) scale(.9)}
 :root .rk-up{background-image:var(--rk-chev),var(--rk-shade-r)!important;box-shadow:var(--rk-fx-r)!important}
@@ -1185,8 +1162,7 @@ details.fold>summary::after{margin-right:0}
 .savefold .saveic::after{margin:0}
 .dtoggle svg{display:none}
 .dtoggle::before{width:24px;height:24px}
-.cap .cap-r,.cap>button.cap-r{font-size:0;background:none!important;color:transparent;padding:0 6px;display:grid;place-items:center}
-.cap .cap-r::before{width:24px;height:24px}
+
 .dsrc-i .dsrc-i-r{font-size:0;display:grid;place-items:center;padding:0 4px}
 .dsrc-i .dsrc-i-r::before{width:22px;height:22px}
 .dsrc-i[aria-expanded="true"]{background:none;color:var(--ink);border-color:var(--line)}
@@ -1225,11 +1201,10 @@ details.fold>summary::after{margin-right:0}
 :root[data-theme="beui-dark"]{--rk-bg:#3A3A3A}
 :root[data-skin="craft"]{--rk-bg:#5B4A3A;--rk-fx:0 2px 3px rgba(70,45,20,.3),0 0 0 1.5px rgba(255,246,234,.5) inset;--rk-fx-r:0 -2px 3px rgba(70,45,20,.3),0 0 0 1.5px rgba(255,246,234,.5) inset}
 :root[data-skin="retro"]{--rk-bg:var(--surface);--rk-fx:0 0 0 1px var(--rule),0 0 6px color-mix(in srgb,var(--ink) 35%,transparent);--rk-fx-r:var(--rk-fx)}
-:root[data-skin="retro"] :is(.rk,.cap-r,.dsrc-i-r){border-radius:50%!important}
-:root[data-skin="retro"] details.fold>summary::after,:root[data-skin="retro"] .dsub>summary::after,:root[data-skin="retro"] .shead::after,:root[data-skin="retro"] .dtoggle::before,:root[data-skin="retro"] .savefold .saveic::after,:root[data-skin="retro"] .cap-r::before,:root[data-skin="retro"] .dsrc-i-r::before,:root[data-skin="retro"] #dietSrcToggle::before{border-radius:50%!important}
+:root[data-skin="retro"] :is(.rk,.dsrc-i-r){border-radius:50%!important}
+:root[data-skin="retro"] details.fold>summary::after,:root[data-skin="retro"] .dsub>summary::after,:root[data-skin="retro"] .shead::after,:root[data-skin="retro"] .dtoggle::before,:root[data-skin="retro"] .savefold .saveic::after,:root[data-skin="retro"] .dsrc-i-r::before{border-radius:50%!important}
 /* sizes */
-.cap .cap-r::before,#dietSrcToggle::before{width:21px!important;height:21px!important}
-.cap .cap-r,.cap>button.cap-r{padding:0 8px}
+
 .dsrc-i .dsrc-i-r::before{width:18px!important;height:18px!important}
 .dsrc-i .dsrc-i-r{padding:0 5px}
 .xchip .rk{width:18px!important;height:18px!important}
@@ -1357,8 +1332,6 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
   --push:#F07A3C; --push-soft:#FCE3D3; --pull:#5F7FC0; --pull-soft:#E3EAF7; --ok:#6E9A6A; --ok-soft:#E5EFE2; --warn:#B8961F; --sleep:#8C7AB0; --cta:#3B2F2A; --on-cta:#FDF8F6;
   --track:#F1E4DA; color-scheme:light}
 :root[data-theme="minimal-warm"] #pane-diet{--intake:#3B2F2A;--burn:#F07A3C;--protein:#5F7FC0;--gain:#8DB389;--loss:#F7A57A;--dslate:#8A7A70;--dtotal:#F1E4DA}
-:root[data-theme="minimal-warm"] .subtabs .tpiece{background:var(--push)}
-:root[data-theme="minimal-warm"] .subtabs button[aria-selected="true"]{color:#fff}
 
 /* ---------- Christmas: warm knitted wool behind everything, snow on the buttons, red and pine green ---------- */
 :root[data-theme="xmas"]{
@@ -1368,22 +1341,22 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 :root[data-theme="xmas"] #pane-diet{--intake:#5A3E2C;--burn:#B3192E;--protein:#1F5A3A;--gain:#2E7D4F;--loss:#B3192E;--dslate:#7A5A44;--dtotal:#F1E6D4}
 :root[data-skin="xmas"]{--r:16px}
 :root[data-skin="xmas"] body{background-color:var(--bg);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='16' viewBox='0 0 14 16'%3E%3Cg fill='rgba(120,85,55,.16)'%3E%3Cellipse cx='4' cy='8' rx='2.7' ry='6.4' transform='rotate(-30 4 8)'/%3E%3Cellipse cx='10' cy='8' rx='2.7' ry='6.4' transform='rotate(30 10 8)'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(255,250,240,.35)' stroke-width='.8'%3E%3Cpath d='M2.6 3.5c1 2.4 2.2 5 3 8.2'/%3E%3Cpath d='M11.4 3.5c-1 2.4-2.2 5-3 8.2'/%3E%3C/g%3E%3C/svg%3E");background-size:14px 16px}
-:root[data-skin="xmas"] :is(.card,.goals,.cal,details.fold,.stat){border:1px solid var(--line);box-shadow:0 2px 0 #D9C6A6,0 10px 18px -12px rgba(80,50,20,.4)}
+:root[data-skin="xmas"] :is(.card,.goals,.cal,details.fold){border:1px solid var(--line);box-shadow:0 2px 0 #D9C6A6,0 10px 18px -12px rgba(80,50,20,.4)}
 :root[data-skin="xmas"] .chartbox{border:1px solid var(--line);background-color:#F7EFE3;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='16' viewBox='0 0 14 16'%3E%3Cg fill='rgba(150,115,80,.08)'%3E%3Cellipse cx='4' cy='8' rx='2.7' ry='6.4' transform='rotate(-30 4 8)'/%3E%3Cellipse cx='10' cy='8' rx='2.7' ry='6.4' transform='rotate(30 10 8)'/%3E%3C/g%3E%3Cg fill='none' stroke='rgba(255,255,255,.5)' stroke-width='.8'%3E%3Cpath d='M2.6 3.5c1 2.4 2.2 5 3 8.2'/%3E%3Cpath d='M11.4 3.5c-1 2.4-2.2 5-3 8.2'/%3E%3C/g%3E%3C/svg%3E");background-size:14px 16px;box-shadow:0 2px 0 #D9C6A6,0 10px 18px -12px rgba(80,50,20,.4)}
 :root[data-skin="xmas"] :is(h1,.tag,.caltitle b){color:var(--push)}
-:root[data-skin="xmas"] :is(nav.tabs,.subtabs){gap:0;padding:5px;background:#F3E7D3;border-radius:16px;border:1px solid var(--line)}
-:root[data-skin="xmas"] :is(nav.tabs,.subtabs) button{border:0;background:none;color:var(--muted)}
-:root[data-skin="xmas"] :is(nav.tabs,.subtabs) button[aria-selected="true"]{background:none;color:#fff}
+:root[data-skin="xmas"] :is(nav.tabs){gap:0;padding:5px;background:#F3E7D3;border-radius:16px;border:1px solid var(--line)}
+:root[data-skin="xmas"] :is(nav.tabs) button{border:0;background:none;color:var(--muted)}
+:root[data-skin="xmas"] :is(nav.tabs) button[aria-selected="true"]{background:none;color:#fff}
 :root[data-skin="xmas"] .tpiece{background:var(--push);border-radius:12px;box-shadow:0 3px 0 #7E0F20}
-:root[data-skin="xmas"] .subtabs .tpiece{background:var(--pull);box-shadow:0 3px 0 #123A25}
+
 @media (prefers-reduced-motion:no-preference){:root[data-skin="xmas"] .tpiece.on{transition:transform .4s cubic-bezier(.3,1.4,.5,1),width .4s cubic-bezier(.3,1.4,.5,1)}}
 :root[data-skin="xmas"] .bar i{background:repeating-linear-gradient(135deg,var(--g) 0 7px,color-mix(in srgb,var(--g) 55%,#fff) 7px 10px)}
 :root[data-skin="xmas"] .bar i::after{display:none}
 /* snow on buttons and bars: shaken off by a press (--snow drops to 0), settling back over five minutes */
-:root[data-skin="xmas"] :is(.iconbtn,.tbtn:not(.next),.cap,nav.tabs,.subtabs,.caltoday,.btn,.calnav,.maseg){position:relative;overflow:visible}
-:root[data-skin="xmas"] :is(.iconbtn,.tbtn:not(.next),.cap,nav.tabs,.subtabs,.caltoday,.btn,.calnav,.maseg)::before{content:"";position:absolute;left:6%;right:6%;top:-6px;height:10px;z-index:3;pointer-events:none;
+:root[data-skin="xmas"] :is(.iconbtn,.tbtn:not(.next),nav.tabs,.caltoday,.btn,.calnav,.maseg){position:relative;overflow:visible}
+:root[data-skin="xmas"] :is(.iconbtn,.tbtn:not(.next),nav.tabs,.caltoday,.btn,.calnav,.maseg)::before{content:"";position:absolute;left:6%;right:6%;top:-6px;height:10px;z-index:3;pointer-events:none;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 14' preserveAspectRatio='none'%3E%3Cpath d='M0 14C1 9 4 7.5 8 8.5C10 4.5 15 3 19 5.5C22 1.5 29 .8 33 4.5C37 2 43 2.5 46 6C50 4.5 55 6 57 9.5C59 10.5 60 12 60 14Z' fill='%2523DCE6F0'/%3E%3Cpath d='M0 13C1 8.5 4 6.8 8 7.6C10 3.8 15 2.2 19 4.6C22 .8 29 0 33 3.6C37 1.2 43 1.6 46 5.2C50 3.8 55 5.2 57 8.6C59 9.6 60 11 60 13Z' fill='white'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat;filter:drop-shadow(0 1px .5px rgba(90,110,140,.3));transform-origin:50% 100%;transform:scaleY(var(--snow,1));opacity:calc(var(--snow,1)*1.4);transition:transform .25s,opacity .25s}
-:root[data-skin="xmas"] :is(nav.tabs,.subtabs)::before{left:12px;right:12px;top:-7px;height:11px}
+:root[data-skin="xmas"] :is(nav.tabs)::before{left:12px;right:12px;top:-7px;height:11px}
 :root[data-skin="xmas"] .iconbtn::before{left:20%;right:20%;top:-3px;height:7px}
 :root[data-skin="xmas"] :is(.caltoday,.calnav)::before{left:14%;right:14%;top:-5px;height:8px}
 @media (prefers-reduced-motion:no-preference){:root[data-skin="xmas"] .shake{animation:snowShake .32s ease-out}}
@@ -1467,33 +1440,33 @@ details.fold>summary::after,.dsub>summary::after,.shead::after,.dtoggle::before{
 :root[data-theme="mech-light"]{--push:#C25B24;--pull:#2F6FA8;--ok:#3F8A4C;--warn:#2F6FA8;--cta:#2F6FA8;--plate:linear-gradient(180deg,#E9ECEF 0,#D6DADE 100%)}
 :root[data-skin="mech"] body{background-image:var(--grain),repeating-linear-gradient(0deg,rgba(0,0,0,.04) 0 1px,transparent 1px 3px)}
 /* plates: grain over the powder coat; bevel light from above; the bolts only on the goals panel */
-:root[data-skin="mech"] :is(.card,.chartbox,.cal,details.fold,.stat){background:var(--grain),var(--plate)!important;border:1px solid rgba(0,0,0,.55);
+:root[data-skin="mech"] :is(.card,.chartbox,.cal,details.fold){background:var(--grain),var(--plate)!important;border:1px solid rgba(0,0,0,.55);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -1px 0 rgba(0,0,0,.35),0 1px 1px rgba(0,0,0,.4),0 8px 16px -10px rgba(0,0,0,.7)}
 :root[data-skin="mech"] .goals{background:var(--screw) 5px 5px/11px 11px no-repeat,var(--screw) calc(100% - 5px) 5px/11px 11px no-repeat,var(--screw) 5px calc(100% - 5px)/11px 11px no-repeat,var(--screw) calc(100% - 5px) calc(100% - 5px)/11px 11px no-repeat,var(--grain),var(--plate)!important;
   border:1px solid rgba(0,0,0,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -1px 0 rgba(0,0,0,.35),0 1px 1px rgba(0,0,0,.4),0 8px 16px -10px rgba(0,0,0,.7)}
 :root[data-skin="mech"][data-wear]:not([data-wear="1"]) .goals{background:var(--screw) 5px 5px/11px 11px no-repeat,var(--screw) calc(100% - 5px) 5px/11px 11px no-repeat,var(--screw) 5px calc(100% - 5px)/11px 11px no-repeat,var(--loose) calc(100% - 4px) calc(100% - 3px)/12px 12px no-repeat,var(--grain),var(--plate)!important}
 :root[data-skin="mech"][data-wear="3"] .goals{background:var(--loose) 6px 7px/12px 12px no-repeat,var(--screw) calc(100% - 5px) 5px/11px 11px no-repeat,var(--screw) 5px calc(100% - 5px)/11px 11px no-repeat,var(--loose) calc(100% - 4px) calc(100% - 3px)/12px 12px no-repeat,var(--grain),var(--plate)!important}
-:root[data-theme="mech-light"] :is(.card,.chartbox,.cal,details.fold,.stat,.goals){border-color:#9AA2AA;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(0,0,0,.08),0 1px 1px rgba(30,40,50,.18),0 8px 16px -10px rgba(30,40,50,.35)}
+:root[data-theme="mech-light"] :is(.card,.chartbox,.cal,details.fold,.goals){border-color:#9AA2AA;box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(0,0,0,.08),0 1px 1px rgba(30,40,50,.18),0 8px 16px -10px rgba(30,40,50,.35)}
 /* engraved type and calmer readouts */
 :root[data-theme="mech"] :is(h1,.tag,.caltitle b,.gh b,.chartbox h3){text-shadow:0 -1px 0 rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.05)}
-:root[data-skin="mech"] :is(.stat b,.gh .gp,.gtile b,.chartbox h3 span){text-shadow:0 0 4px color-mix(in srgb,currentColor 30%,transparent)}
+:root[data-skin="mech"] :is(.gh .gp,.gtile b,.chartbox h3 span){text-shadow:0 0 4px color-mix(in srgb,currentColor 30%,transparent)}
 :root[data-theme="mech"] .caltitle b{color:#C8CCCF}
 :root[data-theme="mech"] .caltitle small{color:#8E959B}
 /* keys: brushed caps, light from above; the chosen one sits lower with its lamp lit behind a lens */
-:root[data-skin="mech"] :is(nav.tabs,.subtabs) button,:root[data-skin="mech"] .maseg button,:root[data-skin="mech"] :is(.tbtn:not(.next):not(.rk),.cap,.btn.ghost,.btn.recedit,.dp-f button,.gi,.gchip2,.calnav,.caltoday){
+:root[data-skin="mech"] :is(nav.tabs) button,:root[data-skin="mech"] .maseg button,:root[data-skin="mech"] :is(.tbtn:not(.next):not(.rk),.btn.ghost,.btn.recedit,.dp-f button,.gi,.gchip2,.calnav,.caltoday){
   background:var(--brushed),linear-gradient(180deg,#4A4E53 0,#3A3D42 55%,#33363A 100%)!important;border:1px solid #121315!important;color:#C9CDD1;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 0 rgba(0,0,0,.25),0 3px 0 #141517,0 4px 5px rgba(0,0,0,.45)!important}
-:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-skin="mech"] .maseg button[aria-pressed="true"]{
+:root[data-skin="mech"] :is(nav.tabs) button[aria-selected="true"],:root[data-skin="mech"] .maseg button[aria-pressed="true"]{
   background:var(--brushed),linear-gradient(180deg,#36393D 0,#3E4146 100%)!important;color:#E4E6E8;box-shadow:inset 0 2px 4px rgba(0,0,0,.55),inset 0 -1px 0 rgba(255,255,255,.06),0 1px 0 #141517!important}
-:root[data-skin="mech"] :is(nav.tabs,.subtabs) button::after{width:7px;height:7px;background:radial-gradient(circle at 35% 30%,#5A3A26,#2A1A10);box-shadow:inset 0 1px 1px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.08)}
-:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"]::after{background:radial-gradient(circle at 35% 30%,#FFE0B0 0 15%,#F0A040 45%,#9A5410 100%);box-shadow:0 0 6px rgba(240,160,64,.7),inset 0 1px 1px rgba(255,255,255,.4)}
+:root[data-skin="mech"] :is(nav.tabs) button::after{width:7px;height:7px;background:radial-gradient(circle at 35% 30%,#5A3A26,#2A1A10);box-shadow:inset 0 1px 1px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.08)}
+:root[data-skin="mech"] :is(nav.tabs) button[aria-selected="true"]::after{background:radial-gradient(circle at 35% 30%,#FFE0B0 0 15%,#F0A040 45%,#9A5410 100%);box-shadow:0 0 6px rgba(240,160,64,.7),inset 0 1px 1px rgba(255,255,255,.4)}
 :root[data-skin="mech"] .caltoday{color:#D8DCDF!important;padding-left:22px!important;position:relative}
 :root[data-skin="mech"] .caltoday::after{content:"";position:absolute;left:8px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#D8FFD8 0 15%,#5CC25C 50%,#1F6A1F 100%);box-shadow:0 0 5px rgba(92,194,92,.7)}
-:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button,:root[data-theme="mech-light"] .maseg button,:root[data-theme="mech-light"] :is(.tbtn:not(.next):not(.rk),.cap,.btn.ghost,.btn.recedit,.dp-f button,.gi,.gchip2,.calnav,.caltoday){
+:root[data-theme="mech-light"] :is(nav.tabs) button,:root[data-theme="mech-light"] .maseg button,:root[data-theme="mech-light"] :is(.tbtn:not(.next):not(.rk),.btn.ghost,.btn.recedit,.dp-f button,.gi,.gchip2,.calnav,.caltoday){
   background:var(--brushed),linear-gradient(180deg,#FAFBFC 0,#E1E5E8 55%,#D3D8DC 100%)!important;border:1px solid #8E959C!important;color:#2A2F34!important;
   box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(0,0,0,.06),0 3px 0 #8E959C,0 4px 5px rgba(30,40,50,.25)!important}
-:root[data-theme="mech-light"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-theme="mech-light"] .maseg button[aria-pressed="true"]{background:var(--brushed),linear-gradient(180deg,#D0D5DA,#E2E6E9)!important;box-shadow:inset 0 2px 4px rgba(30,40,50,.3),0 1px 0 #8E959C!important}
-:root[data-skin="mech"] :is(nav.tabs,.subtabs) button[aria-selected="true"],:root[data-skin="mech"] .maseg button[aria-pressed="true"]{transform:translateY(2px)}
+:root[data-theme="mech-light"] :is(nav.tabs) button[aria-selected="true"],:root[data-theme="mech-light"] .maseg button[aria-pressed="true"]{background:var(--brushed),linear-gradient(180deg,#D0D5DA,#E2E6E9)!important;box-shadow:inset 0 2px 4px rgba(30,40,50,.3),0 1px 0 #8E959C!important}
+:root[data-skin="mech"] :is(nav.tabs) button[aria-selected="true"],:root[data-skin="mech"] .maseg button[aria-pressed="true"]{transform:translateY(2px)}
 /* LED bar graphs: unlit segments show in the track; lit ones glow softly */
 :root[data-skin="mech"] .bar{height:12px;border-radius:2px;background:repeating-linear-gradient(90deg,#24272B 0 6px,#121315 6px 8px);box-shadow:inset 0 1px 2px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.06)}
 :root[data-skin="mech"] .bar i{border-radius:1px;background:repeating-linear-gradient(90deg,var(--g) 0 6px,transparent 6px 8px);box-shadow:none;filter:drop-shadow(0 0 3px color-mix(in srgb,var(--g) 50%,transparent))}
@@ -1674,8 +1647,8 @@ nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-to
 :root[data-theme="flat"] #pane-diet{--intake:#F2F5FA;--burn:#F5B82E;--protein:#8F7CF0;--gain:#12B5A5;--loss:#F0506E;--dslate:#46516B;--dtotal:#2A3246}
 :root[data-skin="flat"] :is(.card,.chartbox,details.fold,.goals,.cal,.gtile,.sheet,.dp){border:0!important;border-radius:4px;box-shadow:none!important;background:var(--surface)}
 :root[data-skin="flat"] :is(.chartbox h3,details.fold>summary .sumt){letter-spacing:.06em;text-transform:uppercase;font-size:13px}
-:root[data-skin="flat"] :is(.btn,.tbtn,.iconbtn,.privbtn,.cap,.gchip2,.calfold,.calnav,.caltoday,.chk,.step,.syncbtn,.gi){box-shadow:none!important;text-shadow:none}
-:root[data-skin="flat"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.syncbtn.off,.caltoday,.gchip2){background:#3D4760;border:0;color:var(--ink);border-radius:4px}
+:root[data-skin="flat"] :is(.btn,.tbtn,.iconbtn,.privbtn,.gchip2,.calfold,.calnav,.caltoday,.chk,.step,.syncbtn,.gi){box-shadow:none!important;text-shadow:none}
+:root[data-skin="flat"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost,.btn.recedit,.syncbtn.off,.caltoday,.gchip2){background:#3D4760;border:0;color:var(--ink);border-radius:4px}
 :root[data-skin="flat"] .iconbtn{border-radius:50%}
 :root[data-skin="flat"] .btn:not(.ghost):not(.recedit){background:var(--cta);color:#fff;border:0;border-radius:4px}
 :root[data-skin="flat"] .syncbtn:not(.off):not(.done){background:var(--push);color:#fff;border-radius:4px;animation:none}
@@ -1765,7 +1738,7 @@ nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-to
   radial-gradient(120% 70% at 20% 0%,var(--body-hi),transparent 60%) fixed,
   linear-gradient(180deg,var(--bg),var(--body-lo)) fixed,var(--bg)}
 /* screens: glass set below the surface. A bezel ring, a lit lower lip, deep inner shadow, a faint diagonal reflection */
-:root[data-skin="pod"] :is(.card,.chartbox,details.fold,.goals,.cal,.gtile,.mask .sheet,.dp,.diet-day,.dentry-inline .sheet,.review){
+:root[data-skin="pod"] :is(.card,.chartbox,details.fold,.goals,.cal,.gtile,.mask .sheet,.dp,.diet-day,.review){
   --ink:var(--scr-ink);--muted:var(--scr-muted);--line:var(--scr-line);color:var(--scr-ink);border:0;border-radius:14px;
   background:linear-gradient(118deg,rgba(255,255,255,.075) 0,rgba(255,255,255,.02) 22%,transparent 36%),
     radial-gradient(rgba(255,255,255,.045) .7px,transparent 1px) 0 0/3px 3px,
@@ -1780,10 +1753,10 @@ nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-to
 :root[data-skin="pod"] :is(.field input,.field select,.field textarea,.dsrc-row input,.xadd input,.xadd select,.step){background:var(--screen2);border:0;color:var(--scr-ink);border-radius:7px;box-shadow:inset 0 2px 4px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.06)}
 :root[data-skin="pod"] .step button{color:var(--scr-muted)}
 /* keys */
-:root[data-skin="pod"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.syncbtn.off,.caltoday,.calnav,.gchip2,.gi,.chk,.dp-f button){
+:root[data-skin="pod"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost,.btn.recedit,.syncbtn.off,.caltoday,.calnav,.gchip2,.gi,.chk,.dp-f button){
   background:var(--gloss),linear-gradient(180deg,var(--keyN-hi),var(--keyN) 40%,var(--keyN-lo));color:var(--key-ink);border:0;border-radius:10px;text-shadow:none;
   box-shadow:var(--key-fx);transition:transform .09s cubic-bezier(.3,.7,.4,1),box-shadow .09s}
-:root[data-skin="pod"] :is(.iconbtn,.privbtn,.tbtn,.cap,.btn,.syncbtn,.caltoday,.calnav,.gchip2,.gi,.chk,.dp-f button):active{transform:translateY(1.5px);box-shadow:var(--key-fx-dn)}
+:root[data-skin="pod"] :is(.iconbtn,.privbtn,.tbtn,.btn,.syncbtn,.caltoday,.calnav,.gchip2,.gi,.chk,.dp-f button):active{transform:translateY(1.5px);box-shadow:var(--key-fx-dn)}
 :root[data-skin="pod"] .iconbtn{border-radius:11px}
 :root[data-skin="pod"] :is(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today){
   background:var(--gloss),linear-gradient(180deg,var(--keyA-hi),var(--keyA) 40%,var(--keyA-lo));color:var(--keyA-ink);border:0;border-radius:10px;font-weight:700;animation:none;box-shadow:var(--key-fx)}
@@ -1860,8 +1833,8 @@ nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-to
 :root[data-skin="wooly"] :is(.mask .sheet,.dp){border:2px solid var(--wood);border-radius:16px}
 :root[data-skin="wooly"] .tag{letter-spacing:.02em}
 /* buttons: cream pebbles with a coffee line; the main ones are coffee brown (lamp amber at night) */
-:root[data-skin="wooly"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.cap,.btn.ghost,.btn.recedit,.syncbtn.off,.caltoday,.gchip2){background:var(--surface);border:1.6px solid color-mix(in srgb,var(--ink) 55%,transparent);color:var(--ink);border-radius:999px;box-shadow:0 2px 0 color-mix(in srgb,var(--ink) 18%,transparent)}
-:root[data-skin="wooly"] :is(.iconbtn,.privbtn,.tbtn,.cap,.btn,.caltoday,.gchip2):active{transform:translateY(2px);box-shadow:none}
+:root[data-skin="wooly"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost,.btn.recedit,.syncbtn.off,.caltoday,.gchip2){background:var(--surface);border:1.6px solid color-mix(in srgb,var(--ink) 55%,transparent);color:var(--ink);border-radius:999px;box-shadow:0 2px 0 color-mix(in srgb,var(--ink) 18%,transparent)}
+:root[data-skin="wooly"] :is(.iconbtn,.privbtn,.tbtn,.btn,.caltoday,.gchip2):active{transform:translateY(2px);box-shadow:none}
 :root[data-skin="wooly"] .btn:not(.ghost):not(.recedit){background:var(--cta);color:var(--on-cta);border:0;border-radius:999px;box-shadow:0 2px 0 color-mix(in srgb,var(--cta) 60%,#000)}
 :root[data-skin="wooly"] .gchip2[aria-pressed="true"],:root[data-skin="wooly"] .gchip2.on{background:var(--g,var(--cta));color:#fff;border-color:transparent}
 :root[data-theme="wooly-night"] .gchip2[aria-pressed="true"]{color:#2A1A0C}

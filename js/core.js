@@ -63,7 +63,7 @@ const BYID = Object.fromEntries(PROGRAM.map(s=>[s.sid,s]));
 
 /* ---------- storage layout ----------
    Everything lives in localStorage under the "tracktor-" prefix:
-     tracktor-data   {sessions, metrics, diet, settings}: all the user's records in one place
+     tracktor-data   {sessions, metrics, diet, settings, dayx}: all the user's records in one place
      tracktor-<name> small preferences and flags (lang, theme, tab, lastbackup, ...)
      tracktor-coros-token / tracktor-coros-region: the COROS connection
    metrics[date] holds every per-day number: pullups, weight (manual), weightC (COROS), waist,
@@ -118,9 +118,6 @@ const U=u=>T(u,{"个":"reps","秒":"s","分钟":"min"}[u]||u);
 const LAB=p=>T((p.kind==="push"?"推练":"拉练")+" D"+p.day,(p.kind==="push"?"Push":"Pull")+" D"+p.day);
 const SHORT=p=>T((p.kind==="push"?"推":"拉")+"D"+p.day,(p.kind==="push"?"Push":"Pull")+" D"+p.day);
 function today(){const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
-/* date fields use the browser's native <input type="date"> picker: light, localized, and reliable. */
-/* flame: particle fire rising off the top edge of the 练 button. One fixed canvas follows the button
-   (it is re-rendered often), skips drawing while the button is off screen or hidden. */
 /* ---------- state & storage ---------- */
 /* nothing personal by default: the welcome sheet or a COROS sync fills these in */
 const GDEF={h:null,hC:null,hSrc:"coros",w:null,z:null,p:null,b:null,sex:null};
@@ -145,10 +142,6 @@ function lsSave(){
   try{localStorage.setItem(DATA_K,JSON.stringify(state));lsOk=true}catch(e){if(lsOk){lsOk=false;toast(T("这个浏览器不允许保存，请先保存进度文件","This browser can't save data — save a progress file now"))}}
 }
 
-async function loadTrainData(){
-  lsLoad();
-  renderAll();
-}
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 
 function sessionDoc(sid){

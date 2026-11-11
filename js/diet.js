@@ -1,6 +1,4 @@
-/* =========================================================================
-   DIET LEDGER MODULE (饮食账本) - Integrated into 推拉机 track-TOR
-   ========================================================================= */
+/* ---------- diet: intake, burn, the gap, the intake chart and the daily food logs ---------- */
 function latestDietOpenSet(days){
   const ks = Object.keys(days||{}).sort();
   return new Set(ks.length ? [ks[ks.length-1]] : []);
@@ -20,7 +18,7 @@ const STEP_KCAL = 0.00055, STEP_MARGIN = 1.5, STEP_EXTRA = 120;
 function everydayCap(date){
   const m = state.metrics[date], st = m ? numVal(m.steps) : null;
   if(st === null || st <= 0) return Infinity;
-  const kg = weightAtDate(date) || 65;
+  const kg = weightAtDate(date) || W_DEFAULT;
   return st * kg * STEP_KCAL * STEP_MARGIN + STEP_EXTRA;
 }
 function watchBurn(date, act){
@@ -93,7 +91,7 @@ function activeOf(date){ const m = state.metrics[date]; return m ? numVal(m.acti
 
 /* Mifflin-St Jeor: +5 for men, -161 for women, the midpoint when sex is not set */
 function bmrOfDate(date){
-  const p = profile(), h = p.h ? p.h : 170 /* = H_FALLBACK */, sx = p.sex==="m" ? 5 : p.sex==="f" ? -161 : -78;
+  const p = profile(), h = p.h ? p.h : H_FALLBACK, sx = p.sex==="m" ? 5 : p.sex==="f" ? -161 : -78;
   return 10 * weightAtDate(date) + 6.25 * h - 5 * ageAtDate(date) + sx;
 }
 
@@ -309,11 +307,11 @@ function initDiet(){
 
 
 const CALC_WARN_DIFF = 100;
-/* the food log form: a pop-up, or (with host) a panel inside the page; onClose runs whenever it closes */
-function openDietEntryModal(initDate, host, onClose){
+/* the food log form for one day (a pop-up) */
+function openDietEntryModal(initDate){
   const m = document.createElement("div");
-  m.className = host ? "dentry-inline" : "mask";
-  const closeIt = ()=>{ m.remove(); if(onClose) onClose(); };
+  m.className = "mask";
+  const closeIt = ()=>{ m.remove(); };
 
   const TOTAL_NAME = () => T("当日合计（手动录入）","Daily total (manual)");
   const emptyTotal = () => ({ kcal:"", p:"", f:"", c:"", veg:"" });
@@ -597,118 +595,9 @@ function openDietEntryModal(initDate, host, onClose){
     });
   }
 
-  (host || document.body).appendChild(m);
+  document.body.appendChild(m);
   renderModal();
   return m;
-}
-
-
-function parseMcpResponseText(ct, raw){
-  if(!raw || !raw.trim()) return {};
-  if(ct && ct.toLowerCase().includes("text/event-stream")){
-    const payloads = [];
-    let cur = [];
-    for(const line of raw.split(/\r?\n/)){
-      if(!line.trim()){
-        if(cur.length){ payloads.push(cur.join("\n")); cur = []; }
-        continue;
-      }
-      if(line.startsWith("data:")) cur.push(line.slice(5).trimStart());
-    }
-    if(cur.length) payloads.push(cur.join("\n"));
-    return payloads.length ? JSON.parse(payloads[payloads.length - 1]) : {};
-  }
-  return JSON.parse(raw);
-}
-
-/* 用 refresh_token 换新令牌。失败时保留现有令牌，下次再试 */
-async function refreshCorosToken(tk){
-  if(!tk || !tk.refresh_token) return false;
-  try{
-    const issuer = (tk.issuer || "https://mcpus.coros.com").replace(/\/+$/, "");
-    const r = await fetch(issuer + "/oauth2/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ grant_type: "refresh_token", client_id: tk.client_id || "", refresh_token: tk.refresh_token }).toString()
-    });
-    if(!r.ok) return false;
-    const j = await r.json();
-    if(!j.access_token) return false;
-    tk.access_token = j.access_token;
-    if(j.refresh_token) tk.refresh_token = j.refresh_token;
-    if(j.expires_in) tk.expires_at_epoch = Math.floor(Date.now()/1000) + Number(j.expires_in);
-    localStorage.setItem("tracktor-coros-token", JSON.stringify(tk));
-    return true;
-  }catch(e){ return false; }
-}
-
-async function callCorosDirectBrowser(toolName, args){
-  let tk = null;
-  try{ tk = JSON.parse(localStorage.getItem("tracktor-coros-token") || "null"); }catch(e){}
-  if(!tk || !tk.access_token){
-    const err = new Error("needs_reauth"); err.code = "needs_reauth"; throw err;
-  }
-  const issuer = (tk.issuer || "https://mcpus.coros.com").replace(/\/+$/, "");
-  if(tk.expires_at_epoch && Date.now()/1000 >= tk.expires_at_epoch - 60) await refreshCorosToken(tk);
-  const send = async () => {
-    const headers = {
-      "Authorization": (tk.token_type || "Bearer") + " " + tk.access_token,
-      "Content-Type": "application/json",
-      "Accept": "application/json, text/event-stream"
-    };
-    await fetch(issuer + "/mcp", {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 1,
-        method: "initialize",
-        params: { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "COROS MCP Gateway CLI", version: "1.0.0" } }
-      })
-    });
-    return fetch(issuer + "/mcp", {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 2,
-        method: "tools/call",
-        params: { name: toolName, arguments: args || {} }
-      })
-    });
-  };
-  let callResp = await send();
-  /* 令牌被拒就先自动续期再试一次，续期也失败才需要用户重新授权 */
-  if(callResp.status === 401 && await refreshCorosToken(tk)) callResp = await send();
-  const raw = await callResp.text();
-  if(callResp.status === 401){
-    const err = new Error("needs_reauth"); err.code = "needs_reauth"; throw err;
-  }
-  const rpc = parseMcpResponseText(callResp.headers.get("content-type") || "", raw);
-  if(!callResp.ok || rpc.error || !rpc.result){
-    const err = new Error((rpc.error && rpc.error.message) || "mcp call failed");
-    err.code = "mcp_error";
-    throw err;
-  }
-  return rpc.result;
-}
-
-function parseDailyHealthText(text){
-  const out = {};
-  const re = /---\s*(\d{4})(\d{2})(\d{2})\s*---([\s\S]*?)(?=---\s*\d{8}\s*---|$)/g;
-  let m;
-  while((m = re.exec(text))){
-    const body = m[4];
-    const cal = body.match(/Calories:\s*([\d,]+)\s*kcal/i);
-    const st = body.match(/Steps:\s*([\d,]+)/i);
-    if(cal){
-      out[`${m[1]}-${m[2]}-${m[3]}`] = {
-        active: +cal[1].replace(/,/g,""),
-        steps: st ? +st[1].replace(/,/g,"") : null
-      };
-    }
-  }
-  return out;
 }
 
 document.addEventListener("click", e=>{

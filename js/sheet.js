@@ -1,6 +1,6 @@
 /* ---------- diet data source: an online table ----------
    The user pastes the table's ordinary share link (shared so anyone with the link can view).
-   Columns date,item,p,f,c,veg,kcal, one food per row. Pulled only when the user taps Pull.
+   Columns date,item,p,f,c,veg,kcal, one food per row.
    Days found in the sheet replace the local diet for those dates; other dates, and every
    non-diet record (weight, waist, heart rate, training), are left alone. */
 const SHEET_URL_K = "dietSheetUrl", SHEET_STATUS_K = LS + "-sheet-status";
@@ -307,7 +307,7 @@ function paintDietLamp(){
   let st = {}; try{ st = JSON.parse(localStorage.getItem(SHEET_STATUS_K) || "{}") || {}; }catch(e){}
   setDietLamp(st.ok && st.ts && Date.now() - st.ts < SHEET_AUTO_MS ? "ok" : (b.dataset.lamp === "fail" ? "fail" : ""));
 }
-/* the ✓ in Profile › Food table checks the link by pulling it: it breathes while reading, then shows a green tick
+/* the ✓ in Settings › Food table checks the link by pulling it: it breathes while reading, then shows a green tick
    (the link works and the table has the right columns) or turns red; typing in the box clears it */
 function setVerify(st){ const v = document.getElementById("dsrcPull"); if(!v) return; if(st) v.dataset.v = st; else delete v.dataset.v; }
 async function pullSheet(opts){
@@ -385,7 +385,7 @@ function copyText(t){
   };
   pullBtn.addEventListener("click", pull);
   /* the sync icon at the right of "Food logs": a tap pulls straight away (or, without a link, says how to add one);
-     holding it opens Profile › Food table, where the link and how it works live */
+     holding it opens Settings › Food table, where the link and how it works live */
   const syncBtn = document.getElementById("dietSyncBtn");
   let held = false, tm = 0;
   const openSettings = ()=>{ setTab("me"); const f = document.getElementById("foldDietSrc"); if(f){ f.open = true; f.scrollIntoView({ behavior:"smooth", block:"start" }); } };

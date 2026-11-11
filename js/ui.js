@@ -24,7 +24,7 @@ function setTab(tab){
   document.getElementById("pane-health").hidden=tab!=="body";
   placePiece(document.querySelector("nav.tabs"),true);
   if(tab==="diet"){renderDietAll();dietTabPull()}
-  if(tab==="body"||tab==="me"||tab==="goals")renderData();
+  if(tab==="body"||tab==="me")renderData();
   if(typeof renderGoals==="function")renderGoals();
   if(tab==="train")renderTrain();
   if(typeof paintAddPanel==="function")paintAddPanel();
@@ -63,8 +63,6 @@ applyDock();
 })();
 
 /* ---------- theme (manual, does not follow the phone) ---------- */
-const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
-const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
 const THEME_IC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3" width="15" height="15" rx="2.5"/><path d="M6 7h8"/><path d="M6 11v3.5h2.5V11z"/><path d="M21.5 5 13.5 13"/><path d="M13.5 13c-1.6-.4-3 .7-3 2.4 0 1.2-.6 2.1-1.6 2.6 2.6 1 5.8-.2 5.6-3.3"/></svg>';
 /* themes: [id, Chinese name, English name, look, preview colours (page, card, accent, second accent)].
    The four looks follow Ovio's worlds (minimal, craft, toy, retro); each look can come in several palettes. */
@@ -119,7 +117,7 @@ function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const 
   /* icons that move on their own stay still when the system asks for less motion */
   if(matchMedia("(prefers-reduced-motion: reduce)").matches)document.querySelectorAll("[data-ic] svg animateMotion,[data-ic] svg animateTransform").forEach(a=>a.remove());
   document.dispatchEvent(new Event("themeicons"))}
-/* Profile › Theme: a preview tile for every theme, grouped by look */
+/* Settings › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
   const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["xmas",T("节日","Holiday")],["wooly",T("毛线咖啡","Wooly Coffee")],["flat",T("扁平","Flat")],["pod",T("随身听","Pocket player")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
   let wf=0;try{wf=+localStorage.getItem(LS+"-wear")||0}catch(e){}
@@ -145,7 +143,7 @@ function applyLang(l){LANG=l;document.documentElement.setAttribute("data-lang",l
   document.getElementById("langBtn").textContent=l==="en"?"EN":"CH";try{localStorage.setItem(LS+"-lang",l)}catch(e){}}
 applyLang(LANG);
 document.getElementById("langBtn").addEventListener("click",()=>{applyLang(LANG==="en"?"zh":"en");applyTheme(document.documentElement.getAttribute("data-theme")||"light");renderAll();renderDietAll();paintSheetLang();syncUI()});
-/* theme button: a tap moves to the next theme, holding it opens Profile › Theme */
+/* theme button: a tap moves to the next theme, holding it opens Settings › Theme */
 (function(){const b=document.getElementById("themeBtn");let held=false,tm=0;
   const go=()=>{held=true;setTab("me");const f=document.getElementById("foldTheme");if(f){f.open=true;f.scrollIntoView({behavior:"smooth",block:"start"})}};
   b.addEventListener("pointerdown",()=>{held=false;clearTimeout(tm);tm=setTimeout(go,550)});
@@ -559,7 +557,6 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
   /* which kind of tap an element is */
   function kindOf(el){
     if(el.closest("nav.tabs"))return "tab1";
-    if(el.closest(".subtabs"))return "tab2";
     if(el.matches("summary"))return "fold";
     if(el.id==="dietGapTile")return "gap";
     if(el.matches("#syncBtn,#dsrcPull,#dietSyncBtn,[data-csync]"))return "sync";
@@ -567,7 +564,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     if(el.matches("[data-close]"))return "close";
     if(el.matches("[data-del],[data-ddel],#ddelDayBtn,[data-act=rm],[data-xa=rmset]"))return "del";
     if(el.matches(".chedit,[data-dedit],[data-rec]"))return "open";
-    if(el.closest(".seg,.maseg,.rgseg"))return "range";
+    if(el.closest(".seg,.maseg,.chcyc"))return "range";
     if(el.closest(".hbtns"))return "header";
     return "other";
   }
@@ -666,7 +663,7 @@ async function withProgress(btn, work){
 }
 
 /* ---------- Interior extras ----------
-   Charts › Health and Strength: on the Interior look the charts are a stacked deck. The top card shows; the next two
+   Data tab: on the Interior look the charts are two stacked decks. The top card shows; the next two
    peek out behind it. Fling it left or right and it flies off and goes to the back; a bar per chart under the deck
    shows which is on top, and tapping a bar brings that chart to the top. Tap a chart to read a day. On the other
    looks the charts are laid out as before, top to bottom. */
@@ -788,7 +785,7 @@ const bugs=(function(){
    Snow lies on the buttons and bars. Pressing one shakes its snow off (a puff of flakes falls); it settles back over
    five minutes. Sync is a floppy Santa hat: tap it and it slowly fills out while syncing, then becomes Santa. */
 (function(){
-  const SNOWY=".iconbtn,.tbtn:not(.next),.cap,nav.tabs,.subtabs,.caltoday,.btn,.calnav,.maseg,.hatbox .hat";
+  const SNOWY=".iconbtn,.tbtn:not(.next),nav.tabs,.caltoday,.btn,.calnav,.maseg,.hatbox .hat";
   const on=()=>document.documentElement.getAttribute("data-skin")==="xmas";
   const shaken=new Map();
   document.addEventListener("pointerdown",e=>{if(!on())return;const el=e.target.closest(SNOWY);if(!el)return;

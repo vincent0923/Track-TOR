@@ -1,5 +1,5 @@
 // Service Worker for 推拉机 track-TOR PWA
-const CACHE_NAME = "tracktor-pwa-v5";
+const CACHE_NAME = "tracktor-pwa-v6";
 const ASSETS = [
   "./",
   "./index.html",
@@ -57,21 +57,25 @@ self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;   // COROS and other sites go straight to the network
-  // Network first for the page and its code; the cached copy is used only when offline.
-  // Scripts and styles carry a ?v= stamp from tools/stamp.py, so a new page can't pick up old ones.
-  if (e.request.mode === "navigate" || /\.(html|js|css)$/.test(url.pathname) || url.pathname.endsWith("/")) {
+  // Network first for the page, its code and the theme pictures (img/ can be redrawn in place); the cached copy
+  // is used only when offline. Scripts and styles carry a ?v= stamp from tools/stamp.py, so a new page can't
+  // pick up old ones; when a newly stamped copy is stored, the copies with older stamps are dropped.
+  if (e.request.mode === "navigate" || /\.(html|js|css)$/.test(url.pathname) || url.pathname.includes("/img/") || url.pathname.endsWith("/")) {
     e.respondWith(
       fetch(e.request).then((resp) => {
         if (resp && resp.status === 200) {
           const copy = resp.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, copy));
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, copy).then(() => {
+            if (!url.search) return;
+            return cache.keys().then((keys) => Promise.all(keys.filter((k) => { const u = new URL(k.url); return u.pathname === url.pathname && u.search !== url.search; }).map((k) => cache.delete(k))));
+          }));
         }
         return resp;
       }).catch(() => caches.match(e.request, { ignoreSearch: false }).then(cached => cached || caches.match(e.request, { ignoreSearch: true })).then(cached => cached || (e.request.mode === "navigate" ? caches.match("./index.html") : Response.error())))
     );
     return;
   }
-  // Cache first for files that never change in place (icons, fonts, manifest)
+  // Cache first for files that never change in place (app icons, fonts, manifest)
   e.respondWith(
     caches.match(e.request).then((cached) => cached || fetch(e.request).then((resp) => {
       if (resp && resp.status === 200) {

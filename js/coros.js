@@ -11,7 +11,6 @@ function syncUI(){
   if(ls.slice(0,10)===today()){b.className="syncbtn done";b.textContent=T("已同步 ","Synced ")+ls.slice(11,16)}
   else{b.className="syncbtn";b.textContent=T("同步高驰mcp","Sync COROS")}
 }
-let msgT;
 function syncMsg(t){const el=document.getElementById("toast");el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,5000)}
 function ymdOffset(days){const d=new Date();d.setDate(d.getDate()+days);return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())}
 function parseSleep(text){
@@ -50,7 +49,8 @@ async function backfill(flag,first,fetchRange,saveRow,has,what){
     syncMsg(T("正在回填更早的"+what+"："+ymdOf(start).slice(0,6)+"…","Backfilling older "+what+": "+ymdOf(start).slice(0,6)+"…"));
     let rows;try{rows=await fetchRange(ymdOf(start),ymdOf(end))}catch(e){break}
     if(!rows.length){try{localStorage.setItem(LS+flag,"done")}catch(e){}break}
-    for(const x of rows){if(!has(x)){await saveRow(x);added++}}
+    for(const x of rows){if(!has(x)){saveRow(x);added++}}
+    if(added)lsSave();
     earliest=rows.map(x=>x.date).sort()[0];
     end=new Date(start);end.setDate(end.getDate()-1);
   }
@@ -75,7 +75,8 @@ async function syncRhr(){
     if(!rows.length){
       return T("；静息心率读到了数据但格式未识别。","; resting HR came back in an unrecognised format.");
     }
-    let n=0;for(const x of rows){const m=state.metrics[x.date];if(!(m&&m.rhr===x.rhr)){await saveMetric(x.date,{rhr:x.rhr});n++}}
+    let n=0;for(const x of rows){const m=state.metrics[x.date];if(!(m&&m.rhr===x.rhr)){setMetric(x.date,{rhr:x.rhr});n++}}
+    if(n)lsSave();
     try{localStorage.setItem(LS+"-rhrbf2","done")}catch(e){}
     const l=rows[rows.length-1];
     return T("；静息心率 "+rows.length+" 天（更新 "+n+" 天），最早 "+md(rows[0].date)+"，最近 "+md(l.date)+"："+l.rhr+" bpm","; resting HR "+rows.length+" days ("+n+" updated), earliest "+md(rows[0].date)+", latest "+md(l.date)+": "+l.rhr+" bpm");
@@ -87,9 +88,10 @@ async function syncHrv(){
     if(!rows.length){
       return T("；HRV 读到了数据但格式未识别。","; HRV data came back in an unrecognised format.");
     }
-    for(const x of rows){await saveMetric(x.date,{hrv:x.hrv})}
+    for(const x of rows)setMetric(x.date,{hrv:x.hrv});
+    lsSave();
     const l=rows[rows.length-1];
-    const bf=await backfill("-hrvbf",series("hrv")[0],async(f,t)=>(await hrvRange(f,t)).rows,x=>saveMetric(x.date,{hrv:x.hrv}),x=>state.metrics[x.date]&&state.metrics[x.date].hrv!=null,"HRV");
+    const bf=await backfill("-hrvbf",series("hrv")[0],async(f,t)=>(await hrvRange(f,t)).rows,x=>setMetric(x.date,{hrv:x.hrv}),x=>state.metrics[x.date]&&state.metrics[x.date].hrv!=null,"HRV");
     const back=bf?T("，回填 "+bf.added+" 晚（最早 "+bf.earliest+"）",", backfilled "+bf.added+" nights (earliest "+bf.earliest+")"):"";
     return T("；HRV "+rows.length+" 晚，最近 "+md(l.date)+"："+l.hrv+" ms","; HRV "+rows.length+" nights, latest "+md(l.date)+": "+l.hrv+" ms")+back;
   }catch(e){return T("；HRV 读取失败（"+((e&&e.code)||"未知原因")+"）","; HRV read failed ("+((e&&e.code)||"unknown")+")")}
@@ -145,9 +147,10 @@ async function syncCalories(){
          workouts as everyday movement at full value), so that day falls back to "workouts unknown" (×0.7) */
       const stale = !split && old && old.ex != null && old.active !== v.active;
       if(split){ const s = split[date] || { ex:0, exP:0, exL:0 }; patch.ex = s.ex; patch.exP = s.exP; patch.exL = s.exL; }
-      saveMetric(date, patch);
-      if(stale){ delete state.metrics[date].ex; delete state.metrics[date].exP; delete state.metrics[date].exL; lsSave(); }
+      setMetric(date, patch);
+      if(stale){ delete state.metrics[date].ex; delete state.metrics[date].exP; delete state.metrics[date].exL; }
     }
+    lsSave();
     renderDietAll();
     return T("；已同步 "+dates.length+" 天活动热量", "; synced "+dates.length+" days of activity calories");
   }catch(e){}
@@ -164,8 +167,9 @@ async function syncSleep(){
   const text=toText(r);
   const rows=parseSleep(text);
   if(!rows.length)return T("COROS 返回了数据，但没有读到睡眠评分（开头：","COROS replied but no sleep scores were found (starts: ")+text.slice(0,120)+T("）。",").");
-  for(const x of rows){await saveMetric(x.date,{sleep:x.sleep,sleepH:x.sleepH})}
-  const sbf=await backfill("-sleepbf",series("sleep")[0],sleepRange,x=>saveMetric(x.date,{sleep:x.sleep,sleepH:x.sleepH}),x=>state.metrics[x.date]&&state.metrics[x.date].sleep!=null,T("睡眠","sleep"));
+  for(const x of rows)setMetric(x.date,{sleep:x.sleep,sleepH:x.sleepH});
+  lsSave();
+  const sbf=await backfill("-sleepbf",series("sleep")[0],sleepRange,x=>setMetric(x.date,{sleep:x.sleep,sleepH:x.sleepH}),x=>state.metrics[x.date]&&state.metrics[x.date].sleep!=null,T("睡眠","sleep"));
   return T("已同步 "+rows.length+" 晚睡眠，最近一晚 "+md(rows[rows.length-1].date)+"："+rows[rows.length-1].sleep+" 分","Synced "+rows.length+" nights; latest "+md(rows[rows.length-1].date)+": "+rows[rows.length-1].sleep)
     +(sbf?T("，回填 "+sbf.added+" 晚（最早 "+sbf.earliest+"）",", backfilled "+sbf.added+" nights (earliest "+sbf.earliest+")"):"");
 }
@@ -208,13 +212,12 @@ async function doSync(){
       if(gm&&!state.settings.sex)state.settings.sex=gm[1].toLowerCase()==="female"?"f":"m";
       if(bm||gm){saveSettings();renderDietAll()}
       const wm=/Weight:\s*([\d.]+)\s*kg/i.exec(ut);
-      if(!syncOn("weight")){}
-      else if(wm){
+      if(syncOn("weight")&&wm){
         const w=+(+wm[1]).toFixed(1), td=today();
         const prev=Object.values(state.metrics).filter(m=>m.weightC!=null&&m.date<td).sort((a,b)=>a.date<b.date?1:-1)[0];
         if(prev&&prev.weightC===w&&!(state.metrics[td]&&state.metrics[td].weightC!=null)){msg+=T("；COROS 体重仍是 "+w+" kg，和 "+md(prev.date)+" 相同，未重复记录","; COROS weight still "+w+" kg, same as "+md(prev.date)+", not logged again")}
-        else{await saveMetric(td,{weightC:w});const hasM=state.metrics[td]&&state.metrics[td].weight!=null;msg+=T("；COROS 体重 "+w+" kg 记入 "+md(td)+(hasM?"（当天有手动体重，以手动为准）":""),"; COROS weight "+w+" kg logged for "+md(td)+(hasM?" (manual entry for that day takes priority)":""))}
-      }else msg+=T("；没有读到 COROS 体重","; no COROS weight found");
+        else{saveMetric(td,{weightC:w});const hasM=state.metrics[td]&&state.metrics[td].weight!=null;msg+=T("；COROS 体重 "+w+" kg 记入 "+md(td)+(hasM?"（当天有手动体重，以手动为准）":""),"; COROS weight "+w+" kg logged for "+md(td)+(hasM?" (manual entry for that day takes priority)":""))}
+      }else if(syncOn("weight"))msg+=T("；没有读到 COROS 体重","; no COROS weight found");
     }catch(e2){msg+=T("；体重读取失败（"+((e2&&e2.code)||"未知原因")+"）","; weight read failed ("+((e2&&e2.code)||"unknown")+")")}
     /* a diet table link is filled in: pull it too */
     const sheetUrl = typeof extractUrl === "function" ? extractUrl(document.getElementById("dsrcUrl").value) : "";
@@ -532,4 +535,113 @@ async function handleCorosCallback(){
     syncMsg(T("获取令牌失败：","Token fetch failed: ") + (e.message||e));
     return false;
   }
+}
+
+/* ---------- talking to COROS: token refresh, one MCP tool call, and the daily-health reply ---------- */
+function parseMcpResponseText(ct, raw){
+  if(!raw || !raw.trim()) return {};
+  if(ct && ct.toLowerCase().includes("text/event-stream")){
+    const payloads = [];
+    let cur = [];
+    for(const line of raw.split(/\r?\n/)){
+      if(!line.trim()){
+        if(cur.length){ payloads.push(cur.join("\n")); cur = []; }
+        continue;
+      }
+      if(line.startsWith("data:")) cur.push(line.slice(5).trimStart());
+    }
+    if(cur.length) payloads.push(cur.join("\n"));
+    return payloads.length ? JSON.parse(payloads[payloads.length - 1]) : {};
+  }
+  return JSON.parse(raw);
+}
+
+/* 用 refresh_token 换新令牌。失败时保留现有令牌，下次再试 */
+async function refreshCorosToken(tk){
+  if(!tk || !tk.refresh_token) return false;
+  try{
+    const issuer = (tk.issuer || "https://mcpus.coros.com").replace(/\/+$/, "");
+    const r = await fetch(issuer + "/oauth2/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ grant_type: "refresh_token", client_id: tk.client_id || "", refresh_token: tk.refresh_token }).toString()
+    });
+    if(!r.ok) return false;
+    const j = await r.json();
+    if(!j.access_token) return false;
+    tk.access_token = j.access_token;
+    if(j.refresh_token) tk.refresh_token = j.refresh_token;
+    if(j.expires_in) tk.expires_at_epoch = Math.floor(Date.now()/1000) + Number(j.expires_in);
+    localStorage.setItem("tracktor-coros-token", JSON.stringify(tk));
+    return true;
+  }catch(e){ return false; }
+}
+
+async function callCorosDirectBrowser(toolName, args){
+  let tk = null;
+  try{ tk = JSON.parse(localStorage.getItem("tracktor-coros-token") || "null"); }catch(e){}
+  if(!tk || !tk.access_token){
+    const err = new Error("needs_reauth"); err.code = "needs_reauth"; throw err;
+  }
+  const issuer = (tk.issuer || "https://mcpus.coros.com").replace(/\/+$/, "");
+  if(tk.expires_at_epoch && Date.now()/1000 >= tk.expires_at_epoch - 60) await refreshCorosToken(tk);
+  const send = async () => {
+    const headers = {
+      "Authorization": (tk.token_type || "Bearer") + " " + tk.access_token,
+      "Content-Type": "application/json",
+      "Accept": "application/json, text/event-stream"
+    };
+    await fetch(issuer + "/mcp", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "initialize",
+        params: { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "COROS MCP Gateway CLI", version: "1.0.0" } }
+      })
+    });
+    return fetch(issuer + "/mcp", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 2,
+        method: "tools/call",
+        params: { name: toolName, arguments: args || {} }
+      })
+    });
+  };
+  let callResp = await send();
+  /* 令牌被拒就先自动续期再试一次，续期也失败才需要用户重新授权 */
+  if(callResp.status === 401 && await refreshCorosToken(tk)) callResp = await send();
+  const raw = await callResp.text();
+  if(callResp.status === 401){
+    const err = new Error("needs_reauth"); err.code = "needs_reauth"; throw err;
+  }
+  const rpc = parseMcpResponseText(callResp.headers.get("content-type") || "", raw);
+  if(!callResp.ok || rpc.error || !rpc.result){
+    const err = new Error((rpc.error && rpc.error.message) || "mcp call failed");
+    err.code = "mcp_error";
+    throw err;
+  }
+  return rpc.result;
+}
+
+function parseDailyHealthText(text){
+  const out = {};
+  const re = /---\s*(\d{4})(\d{2})(\d{2})\s*---([\s\S]*?)(?=---\s*\d{8}\s*---|$)/g;
+  let m;
+  while((m = re.exec(text))){
+    const body = m[4];
+    const cal = body.match(/Calories:\s*([\d,]+)\s*kcal/i);
+    const st = body.match(/Steps:\s*([\d,]+)/i);
+    if(cal){
+      out[`${m[1]}-${m[2]}-${m[3]}`] = {
+        active: +cal[1].replace(/,/g,""),
+        steps: st ? +st[1].replace(/,/g,"") : null
+      };
+    }
+  }
+  return out;
 }

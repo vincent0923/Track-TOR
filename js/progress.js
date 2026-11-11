@@ -1,9 +1,12 @@
 /* ---------- metrics ---------- */
-function saveMetric(date,patch){
+/* setMetric changes one day in memory; saveMetric also writes it to storage. A sync that touches many days
+   uses setMetric for each and saves once at the end. */
+function setMetric(date,patch){
   const m=Object.assign({date},state.metrics[date]||{});
   Object.keys(patch).forEach(k=>{if(patch[k]!=null)m[k]=patch[k]});
-  state.metrics[date]=m; lsSave();
+  state.metrics[date]=m;
 }
+function saveMetric(date,patch){setMetric(date,patch);lsSave()}
 /* pencil on a chart: enter one number for a chosen date; the disk saves and closes */
 function openRecord(key){
   /* hint: how to measure, shown faintly inside the empty box */
@@ -162,7 +165,7 @@ function scrub(el,c){
   svg.addEventListener("contextmenu",e=>e.preventDefault());
 }
 
-/* every chart has its own range (7/30/90/all days) and moving average (3/7/14/30); Reset puts all back to 30 days + MA7 */
+/* every chart has its own range (7/14/30/60/90 days or all) and moving average (7/14/30); Reset puts all back to 14 days + MA14 */
 const CH_DEF={rg:14,ma:14}, CH_RG=[7,14,30,60,90,0], CH_MA=[7,14,30], CH_KEYS=["pull","wt","waist","sleep","hrv","rhr"];
 let CH={};CH_KEYS.forEach(k=>CH[k]=Object.assign({},CH_DEF));
 try{const j=JSON.parse(localStorage.getItem(LS+"-charts")||"null");if(j)CH_KEYS.forEach(k=>{if(j[k]){
@@ -234,6 +237,8 @@ function renderHeat(){const box=document.getElementById("heat");if(!box)return;
   const cv=document.getElementById("cvHeat");cv.textContent=days+T(" 天"," days");rollNum(cv,"heat")}
 function renderData(){
   paintSync();
+  renderRecords();
+  if(curTab!=="body")return;          /* the charts are only on the Data tab; switching to it draws them */
   renderHeat();
   const L=k=>T(CH[k].ma+"日均",CH[k].ma+"-day avg"), tag=k=>T("（MA"+CH[k].ma+"）"," (MA"+CH[k].ma+")");
   const pu=pullSeries();
@@ -259,6 +264,9 @@ function renderData(){
     row.querySelectorAll(".chcyc").forEach(b=>{const rg=b.dataset.cyc==="rg";
       b.textContent=rg?(c.rg?T(c.rg+" 天",c.rg+"D"):T("全部","All")):T("均线 "+c.ma,"MA"+c.ma);
       b.setAttribute("aria-label",rg?T("时间范围：点一下换，长按回到 14 天","Range: tap to change, hold for 14 days"):T("均线：点一下换，长按回到 14","Moving average: tap to change, hold for MA14"))})});
+}
+/* Settings › All records: one row per day that has body numbers */
+function renderRecords(){
   const rows=Object.values(state.metrics).filter(m=>m.date&&BODY_KEYS.some(k=>m[k]!=null)).sort((a,b)=>a.date<b.date?1:-1);
   document.getElementById("logCount").textContent=rows.length?"("+rows.length+")":"";
   document.getElementById("logBody").innerHTML=rows.length?rows.map(m=>'<tr><td>'+md(m.date)+'</td><td>'+(m.pullups??"—")+'</td><td>'+(m.weight!=null?m.weight:m.weightC!=null?'<span style="color:var(--muted)">'+m.weightC+' C</span>':"—")+'</td><td>'+(m.waist??"—")+'</td><td>'+(m.sleep??"—")+'</td><td><button class="x" style="font-size:13px" data-del="'+m.date+'">'+T('删除','Delete')+'</button></td></tr>').join(""):'<tr><td colspan="6" class="empty">'+T('暂无记录','No records')+'</td></tr>';

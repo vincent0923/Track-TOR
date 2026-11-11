@@ -28,6 +28,14 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
   One button each for a chart's range and moving average: tap to step (7, 14, 30, 60, 90 days, all; MA 7, 14, 30), hold to go back to 14 days and MA14, which are now the defaults.
 
 ### 修复 / Fixed
+- 主题的背景图改过以后，手机上不再一直显示旧图；每次更新也不再把上一版的脚本和样式留在手机缓存里越积越多。
+  Theme pictures that were redrawn no longer stay stale on the phone, and old copies of scripts and styles are dropped from the offline cache on each update instead of piling up.
+- 长按「练」或「今天」时手指滑开，不再误触发。
+  Sliding the finger away while holding Train or Today no longer triggers the hold.
+- 图表的范围和均线按钮有了切换范围的点按声；给某天写备注时，日历上的标记用和平时一样的画法更新。
+  The range and MA buttons play the range sound; typing a day note updates that day's calendar mark the same way the calendar draws it.
+- 同步高驰时每类数据只写一次存储（原来每一天写一次）；不在「数据」页时不再白画六张图表。
+  A COROS sync writes storage once per kind of data instead of once per day; charts are no longer drawn while the Data tab is hidden.
 - 有功率计的骑行热量不再打九折，按高驰给的数全算（功率是实测的）。
   Rides measured by a power meter now count in full instead of at 0.9: the work is measured, not estimated.
 - 最大引体数不再被随手的加练拉低：取最近一次手动记录的数，和最近 3 个拉练日里单组最多的引体数，哪个大算哪个。其他日子加练的引体不算。
