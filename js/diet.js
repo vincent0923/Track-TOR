@@ -11,8 +11,8 @@ const AGE_DEFAULT = 30, W_DEFAULT = 65, TEF = 0.09, TEF_DEFAULT = 1850;
 /* watch calories (COROS active calories, resting metabolism not included): everyday movement counts in full;
    logged workouts at 0.7 (heart-rate estimates run high); low-intensity ones (walks, housework and other custom
    activities, yoga) at 0.5, since a heart rate barely above resting is where the estimate is worst; rides
-   measured by a power meter at 0.9. A day whose workouts are unknown counts at 0.7 throughout. */
-const EX_FACTOR = 0.7, LOW_FACTOR = 0.5, POWER_FACTOR = 0.9;
+   measured by a power meter in full (the work is measured, not estimated from heart rate). A day whose workouts are unknown counts at 0.7 throughout. */
+const EX_FACTOR = 0.7, LOW_FACTOR = 0.5, POWER_FACTOR = 1;
 /* everyday movement (watch calories outside logged workouts) is capped by the day's steps: about 0.00055 kcal per kg
    per step, times 1.5, plus 120 kcal for standing and chores. A watch that reads a raised heart rate all day (a loose
    strap, heat, a long day) can report several times what the steps allow; normal days stay under the cap. */
