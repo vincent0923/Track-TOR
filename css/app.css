@@ -2033,3 +2033,71 @@ html:root[data-skin="splitflow"] nav.tabs.tabs{left:12px;right:12px;bottom:calc(
 :root[data-skin="splitflow"] details.fold[open]>summary{border-bottom-color:var(--line)}
 :root[data-skin="splitflow"] .chartbox h3 span{font-weight:700;letter-spacing:-.03em}
 :root[data-skin="splitflow"] .chartbox h3:has(.chic) .num{font-size:17px}
+/* SplitFlow refinement: restraint. Colour only where it means something, three weights (500 labels, 700 titles,
+   800 figures), smaller and lighter secondary text, softer hairlines, roomier cards, one easing for every motion. */
+:root[data-theme="sf-emerald"]{--line:rgba(0,0,0,.045);--muted:#86868C}
+:root[data-theme="sf-persimmon"]{--line:rgba(110,75,45,.08);--muted:#8E8075}
+:root[data-skin="splitflow"]{--sf-ease:cubic-bezier(.22,1,.36,1);--ok:var(--cta-text)}
+:root[data-skin="splitflow"] body{font-size:14px;letter-spacing:-.005em}
+:root[data-skin="splitflow"] :is(button,.pill,.chk,.cald,.gi,.bar i){transition:transform .25s var(--sf-ease),background-color .25s var(--sf-ease),color .25s var(--sf-ease),box-shadow .25s var(--sf-ease)}
+/* header */
+:root[data-skin="splitflow"] header.top h1{font-weight:800;letter-spacing:-.03em}
+:root[data-skin="splitflow"] .ver{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0}
+:root[data-skin="splitflow"] .hrow .sub{font-size:12px;font-weight:500}
+:root[data-skin="splitflow"] .iconbtn{width:34px;height:34px;color:color-mix(in srgb,var(--ink) 75%,transparent)}
+:root[data-skin="splitflow"] .card,:root[data-skin="splitflow"] details.fold{margin-top:12px}
+/* session cards: ink titles led by a small dot in the session's colour; quiet meta; a soft badge */
+:root[data-skin="splitflow"] .shead{padding:16px;gap:12px}
+:root[data-skin="splitflow"] .tag{font-family:var(--f-body);font-size:17px;font-weight:800;letter-spacing:-.02em;color:var(--ink);min-width:84px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+:root[data-skin="splitflow"] .shead .tag::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--k);box-shadow:0 0 0 3px var(--ks)}
+:root[data-skin="splitflow"] .shead .meta{font-size:12px;line-height:1.45;font-weight:500}
+:root[data-skin="splitflow"] .prog{height:6px;border-radius:999px;margin-top:8px;background:var(--sunk)}
+:root[data-skin="splitflow"] .prog i{border-radius:999px}
+:root[data-skin="splitflow"] .pill{font-size:11px;font-weight:700;padding:3px 9px;letter-spacing:.01em}
+:root[data-skin="splitflow"] .pill.now{background:var(--push-soft);color:var(--cta-text)}
+:root[data-skin="splitflow"] .pill.later{background:var(--sunk);font-weight:600}
+:root[data-skin="splitflow"] .sbody{padding:4px 16px 16px}
+:root[data-skin="splitflow"] .exh h3{font-size:14px;font-weight:700;letter-spacing:-.01em}
+:root[data-skin="splitflow"] .exh small{font-size:11px;font-weight:500}
+:root[data-skin="splitflow"] .set{padding:6px 10px 6px 6px;margin-top:6px}
+:root[data-skin="splitflow"] .set .lab{font-size:13px;font-weight:500}
+:root[data-skin="splitflow"] .step{background:none;border:0}
+:root[data-skin="splitflow"] .step button{width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+:root[data-skin="splitflow"] .step button:active{transform:scale(.88)}
+:root[data-skin="splitflow"] .step input{font-weight:800;font-size:20px}
+:root[data-skin="splitflow"] .chk{width:30px;height:30px;border-width:1.5px}
+:root[data-skin="splitflow"] .chk svg{width:16px;height:16px}
+/* calendar: light, small figures; the month in ink; a subtle round nav */
+:root[data-skin="splitflow"] .cal{padding:16px}
+:root[data-skin="splitflow"] :is(.caltitle,.caltitle b,.caltitle small){color:var(--ink)}
+:root[data-skin="splitflow"] .caltitle b{font-family:var(--f-body);font-size:20px;font-weight:800;letter-spacing:-.03em}
+:root[data-skin="splitflow"] .caltitle small{font-size:11px;font-weight:600;letter-spacing:.02em;color:var(--muted);opacity:1;margin-top:2px}
+:root[data-skin="splitflow"] .calnav{width:30px;height:30px;border-radius:50%;background:var(--sunk);color:var(--muted);font-size:17px}
+:root[data-skin="splitflow"] .calw{font-size:11px;font-weight:600;color:var(--muted)}
+:root[data-skin="splitflow"] .calg{row-gap:6px}
+:root[data-skin="splitflow"] .cald{width:36px;height:36px;font:500 14px/1 var(--f-body);color:color-mix(in srgb,var(--ink) 85%,transparent)}
+:root[data-skin="splitflow"] .cald.out{opacity:.3}
+:root[data-skin="splitflow"] .cald:disabled{opacity:.35}
+:root[data-skin="splitflow"] :is(.cald.push,.cald.pull,.cald.both,.cald.xonly,.cald.today){font-weight:700}
+:root[data-skin="splitflow"] .caltoday{font-size:12px;padding:6px 11px}
+/* folds and panels */
+:root[data-skin="splitflow"] details.fold>summary{padding:14px 16px;font-size:15px;font-weight:700;letter-spacing:-.01em}
+:root[data-skin="splitflow"] details.fold .fbody{padding:0 16px 16px}
+:root[data-skin="splitflow"] .sumt svg{width:18px;height:18px;padding:7px;box-sizing:content-box;border-radius:50%;background:var(--push-soft);color:var(--cta-text)}
+:root[data-skin="splitflow"] :is(.chartbox,.goals){padding-inline:16px}
+:root[data-skin="splitflow"] .chartbox h3{font-size:15px;font-weight:700;letter-spacing:-.01em}
+:root[data-skin="splitflow"] .chartbox h3 span{font-weight:800}
+:root[data-skin="splitflow"] .field label,:root[data-skin="splitflow"] .flabel{font-size:11px;font-weight:600;letter-spacing:.01em}
+:root[data-skin="splitflow"] .gtile .gl{font-size:12px;font-weight:500}
+:root[data-skin="splitflow"] .gtile b{font-size:28px}
+:root[data-skin="splitflow"] .chartbox h3>span:not(.num){font-family:var(--f-body);font-size:16px;font-weight:700;letter-spacing:-.02em}
+:root[data-skin="splitflow"] .chartbox h3 .num{font-size:19px;font-weight:800;letter-spacing:-.03em}
+:root[data-skin="splitflow"] .chartbox h3:has(.chic) .num{font-size:16px}
+:root[data-skin="splitflow"] .chartbox h3 .num small{font-size:12px;font-weight:500;color:var(--muted)}
+:root[data-skin="splitflow"] .maline .chcyc{min-width:0;font-family:var(--f-body);font-size:12px;font-weight:700;padding:6px 12px}
+:root[data-skin="splitflow"] .chedit{width:32px;height:32px}
+:root[data-skin="splitflow"] .chedit svg{width:15px;height:15px}
+:root[data-skin="splitflow"] .dtoggle{font-family:var(--f-body);font-size:17px;font-weight:800;letter-spacing:-.02em}
+:root[data-skin="splitflow"] .dhead{padding:14px 16px}
+:root[data-skin="splitflow"] #pane-diet .pill{font-size:11px}
+:root[data-skin="splitflow"] #pane-diet .pill b{font-family:var(--f-body);font-size:13px;font-weight:800}
