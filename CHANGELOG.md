@@ -28,6 +28,8 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
   One button each for a chart's range and moving average: tap to step (7, 14, 30, 60, 90 days, all; MA 7, 14, 30), hold to go back to 14 days and MA14, which are now the defaults.
 
 ### 修复 / Fixed
+- 饮食表格里只填了一行「当日合计」的日子（事后回填）现在能同步了，原来合计行一律跳过；「备注：」开头的行变成这一天的备注，不再当成一样食物。
+  Days entered in the food table as a single "daily total" row now sync (total rows used to be skipped always); a row starting with "备注：" / "Note:" becomes the day's note instead of a food.
 - 主题的背景图改过以后，手机上不再一直显示旧图；每次更新也不再把上一版的脚本和样式留在手机缓存里越积越多。
   Theme pictures that were redrawn no longer stay stale on the phone, and old copies of scripts and styles are dropped from the offline cache on each update instead of piling up.
 - 长按「练」或「今天」时手指滑开，不再误触发。

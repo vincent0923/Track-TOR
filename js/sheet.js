@@ -83,7 +83,11 @@ function headerMap(row){
   return idx.date != null && (idx.item != null || idx.kcal != null) ? idx : null;
 }
 const TOTAL_ROW = /^(当日合计|今日合计|合计|总计|小计|共计|汇总|total|subtotal|sum)(?=$|[\s:：(（,，])/i;
-/* rows → { days: {date: [items]}, rows: n } */
+const NOTE_ROW = /^(备注|说明|注|notes?|remarks?)\s*[:：]\s*/i;
+/* rows → { days: {date: [items]}, notes: {date: text}, rows: n }
+   A total row is skipped when the day also has itemised rows (it would count the day twice); when it is the only
+   food row of its day (a day filled in afterwards as one total) it is that day's record. A row that starts with
+   "备注：" / "Note:" and carries no numbers is the day's note, not a food. */
 function sheetDays(rows){
   rows = (rows||[]).map(r=>(r||[]).map(x=>x==null?"":String(x)));
   let idx = null, start = 0;
@@ -94,29 +98,38 @@ function sheetDays(rows){
     if(!full.length || full.filter(r=>sheetDate(r[0])).length < full.length * 0.6) return { days:{}, rows:0 };
     idx = {date:0,item:1,p:2,f:3,c:4,veg:5,kcal:6};
   }
-  const days = {}; let n = 0, lastDate = null;
+  const days = {}, totals = {}, notes = {}; let n = 0, lastDate = null;
   for(let r = start; r < rows.length; r++){
     const row = rows[r], get = k => idx[k] != null ? (row[idx[k]] || "") : "";
     const rawDate = get("date").trim(), name = get("item").trim();
     const date = rawDate ? sheetDate(rawDate) : lastDate;     /* a blank date continues the day above */
     if(!date){ if(rawDate) lastDate = null; continue; }
     lastDate = date;
-    if(TOTAL_ROW.test(name)) continue;
     const it = { name, p: sheetNum(get("p")), f: sheetNum(get("f")), c: sheetNum(get("c")), veg: sheetNum(get("veg")), kcal: sheetNum(get("kcal")) };
     if(!it.kcal && (it.p || it.f || it.c)) it.kcal = Math.round(it.p*4 + it.f*9 + it.c*4);
+    if(NOTE_ROW.test(name) && !it.kcal && !it.veg){ const t = name.replace(NOTE_ROW, "").trim(); if(t) notes[date] = notes[date] ? notes[date] + " " + t : t; continue; }
+    if(TOTAL_ROW.test(name)){ if(it.kcal) (totals[date] = totals[date] || []).push(it); continue; }
     if(!name && !it.kcal && !it.veg) continue;
     (days[date] = days[date] || []).push(it);
     n++;
   }
-  return { days, rows: n };
+  for(const [date, list] of Object.entries(totals)){
+    if((days[date] || []).some(it=>it.kcal)) continue;          /* itemised: the total would double it */
+    days[date] = (days[date] || []).concat(list[list.length - 1]); n++;
+  }
+  for(const date of Object.keys(notes)) if(!days[date]) delete notes[date];
+  return { days, notes, rows: n };
 }
 
-/* replace only the food of the pulled dates; a manual burn override on that day stays */
-function applySheetDays(days){
+/* replace only the food of the pulled dates; a manual burn override on that day stays, and so does a note written
+   in the app (the table's own note for the day is used when there is none) */
+function applySheetDays(days, notes){
   for(const [date, items] of Object.entries(days)){
     const local = state.diet[date] || {};
     const doc = { items, src: "sheet" };
-    if(local.note) doc.note = local.note;
+    const tn = notes && notes[date];
+    if(local.note && local.noteSrc !== "sheet") doc.note = local.note;
+    else if(tn){ doc.note = tn; doc.noteSrc = "sheet"; }
     if(numVal(local.expendOverride) !== null) doc.expendOverride = local.expendOverride;
     state.diet[date] = doc;
   }
@@ -334,9 +347,9 @@ async function pullSheetOnce(opts){
     const res = await readSheetRows(url);
     /* ✕ = blocked or unreachable, ∅ = reply had no table, a number = HTTP status */
     if(!res.rows) return fail(T("读不到表格数据。请确认：① 表格设成了所有人（知道链接的任何人）可查看；② 表格里有「日期」和「食物」这两列。", "Couldn't read table data. Check: ① anyone with the link can view the sheet; ② it has Date and Food columns.") + "（" + res.notes.join(" · ") + "）");
-    const { days, rows } = sheetDays(res.rows);
+    const { days, notes, rows } = sheetDays(res.rows);
     const nDays = Object.keys(days).length;
-    applySheetDays(days);
+    applySheetDays(days, notes);
     lsSave(); dietState.open = latestDietOpenSet(state.diet); renderDietAll();
     const d = new Date();
     setSheetStatus({ ok:true, msg:"", ts: Date.now(), at: pad(d.getMonth()+1) + "-" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes()), rows, days: nDays });
