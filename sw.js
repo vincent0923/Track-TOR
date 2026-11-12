@@ -14,6 +14,8 @@ const ASSETS = [
   "./img/wooly/girl.png",
   "./img/wooly/ball.png",
   "./rings/index.html",
+  "./proto/index.html",
+  "./proto/proto.js",
   "./css/app.css",
   "./js/core.js",
   "./js/zzfx.js",
