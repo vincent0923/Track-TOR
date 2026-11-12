@@ -665,7 +665,7 @@ svg.heat rect.ht{stroke:var(--ink);stroke-width:1.2}
 .thg h4{margin:0 0 6px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em}
 .throw{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
 .thtile{display:grid;gap:5px;justify-items:center;padding:6px 6px 8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:12px;cursor:pointer;min-width:0}
-.thtile span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.thtile span{overflow:hidden;max-width:100%;text-align:center;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .thtile[aria-pressed="true"]{outline:2px solid var(--ink);outline-offset:1px}
 .thprev{position:relative;display:block;width:100%;height:46px;border-radius:8px;background:var(--a);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(127,127,127,.25)}
 .thprev b{position:absolute;left:8%;right:8%;top:9px;height:12px;border-radius:4px;background:var(--b)}
@@ -1900,3 +1900,136 @@ nav.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-to
 @media (prefers-reduced-motion:reduce){.wstar .tassels,.woolbox.yay .wstar svg,.woolbox.flicker .wsign{animation:none}.woolbox.flicker .wsign{color:#2B1A08;text-shadow:0 0 8px #F7BE5E}}
 /* the Train tab is the cafe's own drawing (line art lifted from her illustration, tinted with the tab's colour) */
 :root[data-skin="wooly"] nav.tabs button svg.ic-girl{width:50px!important;height:45px!important;margin:-10px 0 -8px;overflow:visible}
+
+/* ---------- SplitFlow: bento cards (big radius, hairline border, soft shadow with a lit top edge) on a warm or
+   inky canvas with a faint glow; one vivid accent with dark text on it; a near-black "contrast" surface for the
+   bottom bar, the goals panel, the toast and chart tips; pill buttons and segments; progress bars filled with
+   moving diagonal stripes; goal icons wrapped in rings; heavy tabular figures. Four palettes: two light, two dark. ---------- */
+:root[data-theme="sf-emerald"]{
+  --bg:#F2F2EE; --surface:#FFFFFF; --sunk:#F4F4F1; --seg:#EAEAE5; --ink:#18181B; --muted:#76767C; --line:rgba(0,0,0,.06); --line2:rgba(0,0,0,.1);
+  --push:#16A34A; --push-soft:rgba(50,215,75,.15); --pull:#EA580C; --pull-soft:rgba(234,88,12,.12); --ok:#16A34A; --ok-soft:rgba(50,215,75,.15); --warn:#D97706; --sleep:#8B5CF6;
+  --cta:#32D74B; --on-cta:#081109; --cta-text:#15803D;
+  --sf-glow:radial-gradient(circle at 20% 0%,rgba(50,215,75,.07),transparent 50%);
+  --sf-dark:linear-gradient(145deg,#1E1E22 0%,#141417 100%); --sf-dark-solid:#18181B; --sf-dark-line:rgba(255,255,255,.08); --sf-track:#27272A;
+  --sf-st1:rgba(50,215,75,.3); --sf-st2:rgba(50,215,75,.75); --sf-on:#FFFFFF;
+  --sf-shadow:0 6px 20px -6px rgba(0,0,0,.05),0 2px 5px rgba(0,0,0,.02); --sf-lit:inset 0 1px 0 rgba(255,255,255,.85); color-scheme:light}
+:root[data-theme="sf-persimmon"]{
+  --bg:#F5EFE8; --surface:#FFFDF9; --sunk:#F2EBE1; --seg:#E8DFD3; --ink:#1F1A17; --muted:#85776C; --line:rgba(110,75,45,.09); --line2:rgba(110,75,45,.15);
+  --push:#E5461F; --push-soft:rgba(255,82,43,.14); --pull:#2F4A7A; --pull-soft:rgba(47,74,122,.12); --ok:#2F8F5B; --ok-soft:rgba(47,143,91,.13); --warn:#C98A1A; --sleep:#6B5FA8;
+  --cta:#FF522B; --on-cta:#FFFFFF; --cta-text:#C83212;
+  --sf-glow:radial-gradient(circle at 15% 5%,rgba(255,82,43,.08),transparent 50%);
+  --sf-dark:linear-gradient(145deg,#222B3C 0%,#151B26 100%); --sf-dark-solid:#1B2230; --sf-dark-line:rgba(255,255,255,.1); --sf-track:#2E3748;
+  --sf-st1:rgba(255,82,43,.3); --sf-st2:rgba(255,82,43,.72); --sf-on:#FFFFFF;
+  --sf-shadow:0 8px 24px -6px rgba(92,64,38,.07),0 2px 5px rgba(92,64,38,.03); --sf-lit:inset 0 1px 0 rgba(255,255,255,.95); color-scheme:light}
+:root[data-theme="sf-aurora"]{
+  --bg:#070A10; --surface:#101520; --sunk:#182030; --seg:#151C2B; --ink:#F1F5F9; --muted:#8392A8; --line:rgba(148,163,184,.11); --line2:rgba(148,163,184,.18);
+  --push:#00F5D4; --push-soft:rgba(0,245,212,.15); --pull:#A78BFA; --pull-soft:rgba(167,139,250,.15); --ok:#34D399; --ok-soft:rgba(52,211,153,.14); --warn:#FBBF24; --sleep:#818CF8;
+  --cta:#00F5D4; --on-cta:#041311; --cta-text:#00F5D4;
+  --sf-glow:radial-gradient(circle at 20% 10%,rgba(0,245,212,.12),transparent 45%),radial-gradient(circle at 85% 85%,rgba(56,189,248,.08),transparent 45%);
+  --sf-dark:linear-gradient(145deg,#16293B 0%,#0E1724 100%); --sf-dark-solid:#162336; --sf-dark-line:rgba(0,245,212,.25); --sf-track:#1E293B;
+  --sf-st1:rgba(0,245,212,.22); --sf-st2:rgba(0,245,212,.6); --sf-on:#263247;
+  --sf-shadow:0 12px 28px -8px rgba(0,0,0,.65); --sf-lit:inset 0 1px 0 rgba(255,255,255,.07); color-scheme:dark}
+:root[data-theme="sf-gold"]{
+  --bg:#0B0908; --surface:#161311; --sunk:#221D1A; --seg:#1E1916; --ink:#FAF5F0; --muted:#9A8C82; --line:rgba(255,220,180,.09); --line2:rgba(255,220,180,.15);
+  --push:#FFB020; --push-soft:rgba(255,176,32,.16); --pull:#FB7185; --pull-soft:rgba(251,113,133,.15); --ok:#4ADE80; --ok-soft:rgba(74,222,128,.13); --warn:#FB923C; --sleep:#C4B5FD;
+  --cta:#FFB020; --on-cta:#140D02; --cta-text:#FFB020;
+  --sf-glow:radial-gradient(circle at 18% 12%,rgba(255,176,32,.12),transparent 45%),radial-gradient(circle at 82% 85%,rgba(244,63,94,.08),transparent 45%);
+  --sf-dark:linear-gradient(145deg,#2D2018 0%,#16100D 100%); --sf-dark-solid:#261C16; --sf-dark-line:rgba(255,176,32,.28); --sf-track:#2E241E;
+  --sf-st1:rgba(255,176,32,.24); --sf-st2:rgba(255,176,32,.62); --sf-on:#352B24;
+  --sf-shadow:0 12px 28px -8px rgba(0,0,0,.72); --sf-lit:inset 0 1px 0 rgba(255,230,200,.07); color-scheme:dark}
+:root[data-theme="sf-emerald"] #pane-diet{--intake:#18181B;--burn:#F97316;--protein:#8B5CF6;--gain:#16A34A;--loss:#EF4444;--dslate:#27272A;--dtotal:#EAEAE5}
+:root[data-theme="sf-persimmon"] #pane-diet{--intake:#1F1A17;--burn:#E59A2F;--protein:#7A5CC8;--gain:#2F8F5B;--loss:#C83212;--dslate:#1B2230;--dtotal:#E8DFD3}
+:root[data-theme="sf-aurora"] #pane-diet{--intake:#F1F5F9;--burn:#FBBF24;--protein:#A78BFA;--gain:#34D399;--loss:#FB7185;--dslate:#1E293B;--dtotal:#182030}
+:root[data-theme="sf-gold"] #pane-diet{--intake:#FAF5F0;--burn:#FFB020;--protein:#C4B5FD;--gain:#4ADE80;--loss:#FB7185;--dslate:#2E241E;--dtotal:#221D1A}
+:root:is([data-theme="sf-aurora"],[data-theme="sf-gold"]) .mask .sheet{--bad:#FB7185}
+:root[data-skin="splitflow"]{--f-num:-apple-system,BlinkMacSystemFont,"Inter","Geist","Segoe UI",sans-serif;--f-body:-apple-system,BlinkMacSystemFont,"Inter","Geist","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--r:22px;
+  --rk-bg:var(--sf-dark-solid);--rk-shade:linear-gradient(rgba(255,255,255,.12),transparent 55%);--rk-shade-r:linear-gradient(transparent 45%,rgba(255,255,255,.12));
+  --rk-fx:0 0 0 1px var(--sf-dark-line),0 4px 10px -4px rgba(0,0,0,.35);--rk-fx-r:0 0 0 1px var(--sf-dark-line),0 -4px 10px -4px rgba(0,0,0,.35)}
+:root[data-skin="splitflow"] body{background-image:var(--sf-glow);background-attachment:fixed;-webkit-font-smoothing:antialiased}
+/* figures: heavy, tabular, tight */
+:root[data-skin="splitflow"] :is(.num,.gtile b,.step input,.field input[type=number],.cald,.maseg button){font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+:root[data-skin="splitflow"] :is(h1,.tag,.caltitle b,.gh .gp,.gtile b){font-weight:800;letter-spacing:-.03em}
+/* bento surfaces */
+:root[data-skin="splitflow"] :is(.card,.chartbox,details.fold,.cal,.sheet,.diet-day,.dp){border:1px solid var(--line);box-shadow:var(--sf-shadow),var(--sf-lit)}
+:root[data-skin="splitflow"] #pane-diet .diet-day{border-radius:var(--r)}
+:root[data-skin="splitflow"] .gtile{border-radius:16px}
+/* the contrast surface: the goals panel is the dark card, with its own light ink */
+:root[data-skin="splitflow"] .goals{background:var(--sf-dark);border:1px solid var(--sf-dark-line);box-shadow:var(--sf-shadow);
+  --ink:#FFFFFF;--muted:rgba(255,255,255,.6);--line:rgba(255,255,255,.1);--sunk:var(--sf-track);--surface:var(--sf-dark-solid);color:#fff}
+:root[data-skin="splitflow"] .goals .gi{width:44px;height:44px;border-radius:50%;color:var(--g);
+  background:radial-gradient(closest-side,var(--sf-dark-solid) 76%,transparent 79%),conic-gradient(var(--g) calc(var(--pct,0)*1%),var(--sf-track) 0)}
+:root[data-skin="splitflow"] .goals .gi svg{width:19px;height:19px}
+:root[data-skin="splitflow"] .goals :is(.iconbtn,.privbtn){background:rgba(255,255,255,.1);border:0;color:#fff}
+/* pills: quiet buttons sit on the sunken tone, the main ones take the accent */
+:root[data-skin="splitflow"] :is(.iconbtn,.privbtn,.tbtn:not(.next),.btn.ghost,.btn.recedit,.syncbtn.off,.dp-f button,.addset,.gchip2,.chedit){border:0;background:var(--sunk);color:var(--ink);border-radius:999px;box-shadow:none;transition:transform .2s cubic-bezier(.34,1.56,.64,1),background .15s}
+:root[data-skin="splitflow"] .chedit.iconbtn{color:var(--cta-text)}
+:root[data-skin="splitflow"] :is(.iconbtn,.privbtn,.tbtn,.btn,.syncbtn,.dp-f button,.gi,.chk,.gchip2,.caltoday):active{transform:scale(.92)}
+:root[data-skin="splitflow"] :is(.btn:not(.ghost):not(.recedit),.syncbtn:not(.off):not(.done),.dp-f .dp-today,.btn.recsave){background:var(--cta);color:var(--on-cta);border:0;border-radius:999px;box-shadow:0 6px 16px -8px var(--cta);animation:none}
+:root[data-skin="splitflow"] .syncbtn.done{background:var(--ok-soft);color:var(--ok);box-shadow:none}
+:root[data-skin="splitflow"] .gchip2[aria-pressed="true"],:root[data-skin="splitflow"] .gchip2.on{background:var(--push-soft);color:var(--cta-text);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--cta) 45%,transparent)}
+/* 练: the accent pill with a breathing glow */
+:root[data-skin="splitflow"] .tbtn.next{background:var(--cta);color:var(--on-cta);text-shadow:none;border-radius:999px;padding:8px 16px;box-shadow:0 0 0 4px var(--push-soft),0 8px 20px -8px var(--cta)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="splitflow"] .tbtn.next{animation:sfBreath 2.4s ease-in-out infinite}}
+@keyframes sfBreath{50%{box-shadow:0 0 0 8px transparent,0 8px 20px -8px var(--cta)}}
+/* finishing a session: the dark pay-style pill, its icon in an accent dot */
+:root[data-skin="splitflow"] .finish .finbtn{background:var(--sf-dark);color:#fff;border:1px solid var(--sf-dark-line);border-radius:999px;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
+:root[data-skin="splitflow"] .finish .finbtn svg{box-sizing:content-box;padding:5px;border-radius:50%;background:var(--cta);color:var(--on-cta);stroke:var(--on-cta)}
+/* inputs, steppers, set rows and ticks */
+:root[data-skin="splitflow"] :is(.field input,.field textarea,.field select,.step,.dsrc-row input,.xadd input,.xadd select,.flabel input,.flabel textarea,.flabel select){border:1px solid transparent;background:var(--sunk);border-radius:14px;box-shadow:none}
+:root[data-skin="splitflow"] :is(.field input,.field textarea,.flabel input,.flabel textarea):focus{outline:none;border-color:var(--cta);background:var(--surface)}
+:root[data-skin="splitflow"] .set{background:var(--sunk);border-radius:16px}
+:root[data-skin="splitflow"] .set.ticked{background:var(--push-soft)}
+:root[data-skin="splitflow"] .chk{border:2px solid var(--line2);border-radius:50%;background:var(--surface);transition:transform .2s cubic-bezier(.34,1.56,.64,1),background .15s}
+:root[data-skin="splitflow"] .set.ticked .chk{background:var(--cta);border-color:var(--cta)}
+:root[data-skin="splitflow"] .set.ticked .chk svg path{stroke:var(--on-cta)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="splitflow"] .set.ticked .chk{animation:sfPop .3s cubic-bezier(.34,1.56,.64,1)}}
+@keyframes sfPop{40%{transform:scale(1.15)}}
+/* progress: a track with moving diagonal stripes in the goal's own colour */
+:root[data-skin="splitflow"] .bar{background:var(--sunk);height:10px;border-radius:999px}
+:root[data-skin="splitflow"] .bar i{border-radius:999px;box-shadow:none;background-color:var(--g);
+  background-image:repeating-linear-gradient(-45deg,color-mix(in srgb,var(--g) 45%,transparent) 0 6px,var(--g) 6px 12px);background-size:17px 17px}
+:root[data-skin="splitflow"] .bar i::after{display:none}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="splitflow"] .bar i{animation:sfStripes 1.2s linear infinite}}
+@keyframes sfStripes{to{background-position:17px 0}}
+/* segments: a pill track; the chosen one is a raised pill */
+:root[data-skin="splitflow"] .maseg{border:0;border-radius:999px;padding:3px;gap:0;background:var(--seg);overflow:hidden}
+:root[data-skin="splitflow"] .maseg button{background:none;border:0!important;border-radius:999px;color:var(--muted);transition:background .2s,color .2s}
+:root[data-skin="splitflow"] .maseg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+:root:is([data-theme="sf-aurora"],[data-theme="sf-gold"]) .maseg button[aria-pressed="true"]{background:var(--sf-on)}
+/* the bottom bar: a floating dark pill; the chosen tab slides under an accent pill */
+html:root[data-skin="splitflow"] nav.tabs.tabs{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));padding:6px;gap:2px;align-items:stretch;
+  background:var(--sf-dark);border:1px solid var(--sf-dark-line);border-radius:999px;box-shadow:0 14px 34px -12px rgba(0,0,0,.55)}
+:root[data-skin="splitflow"] nav.tabs button{border:0;background:none;border-radius:999px;color:rgba(255,255,255,.55);transition:color .2s}
+:root[data-skin="splitflow"] nav.tabs button[aria-selected="true"]{background:none;color:var(--on-cta)}
+:root[data-skin="splitflow"] .tpiece{background:var(--cta);border-radius:999px;box-shadow:0 4px 14px -4px var(--cta)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="splitflow"] .tpiece.on{transition:transform .4s cubic-bezier(.34,1.56,.64,1),width .4s cubic-bezier(.34,1.56,.64,1)}}
+/* calendar: training days in the two colours, today an accent disc, the picked day ringed */
+:root[data-skin="splitflow"] .cald.push{background:var(--push)}
+:root[data-skin="splitflow"] .cald.pull{background:var(--pull)}
+:root[data-skin="splitflow"] .cald.both{background:linear-gradient(135deg,var(--push) 50%,var(--pull) 50%)}
+:root[data-skin="splitflow"] .cald.xonly{background:var(--ok)}
+:root[data-skin="splitflow"] :is(.cald.push,.cald.pull,.cald.both,.cald.xonly){color:var(--on-cta)}
+:root[data-theme="sf-persimmon"] :is(.cald.push,.cald.pull,.cald.both,.cald.xonly){color:#fff}
+:root[data-skin="splitflow"] .cald.today:not(.push):not(.pull):not(.both):not(.xonly){background:var(--cta);color:var(--on-cta);box-shadow:none}
+:root[data-skin="splitflow"] .cald.sel{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--cta)}
+:root[data-skin="splitflow"] .caltoday{background:var(--sf-dark);border:0;color:#fff}
+/* contrast pills: toast, chart tips, the diet tip */
+:root[data-skin="splitflow"] :is(.toast,.xtip,#dietTip){background:var(--sf-dark-solid);color:#fff;border:1px solid var(--sf-dark-line);box-shadow:0 12px 32px -12px rgba(0,0,0,.5)}
+:root[data-skin="splitflow"] :is(.toast,.xtip){border-radius:999px}
+:root[data-skin="splitflow"] .xtip{padding:4px 12px}
+:root[data-skin="splitflow"] #dietTip{border-radius:16px}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="splitflow"] .toast:not([hidden]){animation:ivToast .35s cubic-bezier(.34,1.56,.64,1)}}
+/* charts: faint grid, small mono labels, smooth lines with a fading fill (see linePath/areaFill) */
+:root[data-skin="splitflow"] .chart .grid{stroke:var(--ink);stroke-opacity:.06}
+:root[data-skin="splitflow"] #dietChart line:not(#dxh){stroke:var(--ink);stroke-opacity:.06}
+:root[data-skin="splitflow"] .chart text{font-family:"Geist Mono",ui-monospace,monospace;font-size:10px;fill:var(--muted)}
+:root[data-skin="splitflow"] .chart .xh-l{stroke:var(--ink);stroke-opacity:.3;stroke-dasharray:2 3}
+:root[data-skin="splitflow"] #pane-diet .dlegend>span{padding:3px 10px 3px 8px;border-radius:999px;background:var(--sunk)}
+:root[data-skin="splitflow"] svg.heat rect{rx:4}
+:root[data-skin="splitflow"] svg.heat rect.h0{stroke:none;fill:var(--sunk)}
+:root[data-skin="splitflow"] svg.heat rect.h1{fill:color-mix(in srgb,var(--cta) 30%,var(--surface))}
+:root[data-skin="splitflow"] svg.heat rect.h2{fill:color-mix(in srgb,var(--cta) 65%,var(--surface))}
+:root[data-skin="splitflow"] svg.heat rect.h3{fill:var(--cta)}
+:root[data-skin="splitflow"] details.fold[open]>summary{border-bottom-color:var(--line)}
+:root[data-skin="splitflow"] .chartbox h3 span{font-weight:700;letter-spacing:-.03em}
+:root[data-skin="splitflow"] .chartbox h3:has(.chic) .num{font-size:17px}

@@ -81,7 +81,9 @@ const THEMES=[
   ["toy-cyber","赛博玩具","Cyber toy","toy","#180E6A #241A7E #F3D21A #D8B9E1"],["woody","牛仔","Cowboy","toy","#E6E2DC #F5F2ED #7B4A2D #F0C050"],
   ["toy-glow","霓虹玩具","Neon toy","toy","#0D1220 #161D30 #B6F23E #FF5FA2"],
   ["retro","复古绿屏","Phosphor","retro","#061108 #0A1F0E #6DFF8A #FFD34D"],["retro-cyber","赛博终端","Cyber terminal","retro","#0C0730 #150D45 #F3D21A #D8B9E1"],
-  ["retro-amber","雨夜琥珀","Rain amber","retro","#0B0806 #15100C #FFB347 #2EC4B6"]];
+  ["retro-amber","雨夜琥珀","Rain amber","retro","#0B0806 #15100C #FFB347 #2EC4B6"],
+  ["sf-emerald","SplitFlow Light·草绿","SplitFlow Light·Emerald","splitflow","#F2F2EE #FFFFFF #32D74B #18181B"],["sf-persimmon","SplitFlow Light·柿橙","SplitFlow Light·Persimmon","splitflow","#F5EFE8 #FFFDF9 #FF522B #1B2230"],
+  ["sf-aurora","SplitFlow Dark·极光","SplitFlow Dark·Aurora","splitflow","#070A10 #101520 #00F5D4 #A78BFA"],["sf-gold","SplitFlow Dark·流金","SplitFlow Dark·Gold","splitflow","#0B0908 #161311 #FFB020 #FB7185"]];
 const THEME_IDS=THEMES.map(t=>t[0]);
 function skinOf(t){const r=THEMES.find(x=>x[0]===t);return r?r[3]:""}
 function applyTheme(t){if(!THEME_IDS.includes(t))t="light";const r=document.documentElement;r.setAttribute("data-theme",t);
@@ -91,7 +93,7 @@ function applyTheme(t){if(!THEME_IDS.includes(t))t="light";const r=document.docu
   try{localStorage.setItem(LS+"-theme",t)}catch(e){}placePieces(false);renderThemes()}
 /* chart lines follow the look: smooth for beUI, toy and craft (monotone cubic: smooth, but never overshooting a peak
    or dipping below a trough the data doesn't have), steps for retro, straight segments otherwise. A null breaks the line. */
-const CURVE={wooly:"monotone",pod:"step",beui:"monotone",toy:"monotone",craft:"monotone",xmas:"monotone",retro:"step"};
+const CURVE={splitflow:"monotone",wooly:"monotone",pod:"step",beui:"monotone",toy:"monotone",craft:"monotone",xmas:"monotone",retro:"step"};
 function linePath(pts){const kind=CURVE[document.documentElement.getAttribute("data-skin")]||"linear",f=v=>v.toFixed(1);
   const runs=[];let r=[];pts.forEach(p=>{if(p)r.push(p);else if(r.length){runs.push(r);r=[]}});if(r.length)runs.push(r);
   return runs.map(r=>{let d="M"+f(r[0].x)+" "+f(r[0].y);if(r.length<2)return d;
@@ -109,7 +111,7 @@ function serOpen(W,H,L){if(document.documentElement.getAttribute("data-skin")!==
   const id="cf"+(++CFX),a=L/W;
   return '<defs><linearGradient id="'+id+'g" x1="0" x2="1"><stop offset="'+a+'" stop-color="#fff" stop-opacity=".15"/><stop offset="'+(a+.08)+'" stop-color="#fff"/></linearGradient>'
     +'<mask id="'+id+'m" maskUnits="userSpaceOnUse" x="0" y="-10" width="'+W+'" height="'+(H+20)+'"><rect y="-10" width="'+W+'" height="'+(H+20)+'" fill="url(#'+id+'g)"/></mask></defs><g class="ser" mask="url(#'+id+'m)">'}
-function areaFill(col){if(document.documentElement.getAttribute("data-skin")!=="beui")return null;const id="af"+(++CFX);
+function areaFill(col){if(!["beui","splitflow"].includes(document.documentElement.getAttribute("data-skin")))return null;const id="af"+(++CFX);
   return {def:'<defs><linearGradient id="'+id+'" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:'+col+';stop-opacity:.32"/><stop offset="1" style="stop-color:'+col+';stop-opacity:0"/></linearGradient></defs>',fill:'url(#'+id+')'}}
 /* every icon marked data-ic takes the current look's version; the original comes back on the plain themes */
 function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const sv=el.querySelector("svg");if(!sv)return;
@@ -119,12 +121,12 @@ function paintIcons(){document.querySelectorAll("[data-ic]").forEach(el=>{const 
   document.dispatchEvent(new Event("themeicons"))}
 /* Settings › Theme: a preview tile for every theme, grouped by look */
 function renderThemes(){const box=document.getElementById("themePanel");if(!box)return;const cur=document.documentElement.getAttribute("data-theme");
-  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["mech",T("机械","Mechanical")],["xmas",T("节日","Holiday")],["wooly",T("毛线咖啡","Wooly Coffee")],["flat",T("扁平","Flat")],["pod",T("随身听","Pocket player")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
+  const groups=[["",T("默认","Default")],["interior","Interior"],["beui","beUI"],["splitflow","SplitFlow"],["mech",T("机械","Mechanical")],["xmas",T("节日","Holiday")],["wooly",T("毛线咖啡","Wooly Coffee")],["flat",T("扁平","Flat")],["pod",T("随身听","Pocket player")],["minimal",T("极简","Minimal")],["craft",T("手作","Craft")],["toy",T("玩具","Toy")],["retro",T("复古","Retro")]];
   let wf=0;try{wf=+localStorage.getItem(LS+"-wear")||0}catch(e){}
   const wear='<div class="thg"><h4>'+T("磨损","Wear and tear")+'</h4><div class="wearseg seg maseg" role="group" aria-label="'+T("磨损","Wear and tear")+'">'
     +[[0,"自动","Auto"],[1,"轻","Light"],[2,"中","Medium"],[3,"重","Heavy"]].map(([v,zh,en])=>'<button type="button" data-wear-force="'+v+'" aria-pressed="'+(wf===v)+'">'+T(zh,en)+'</button>').join("")+'</div></div>';
   box.innerHTML=groups.map(([k,name])=>'<div class="thg"><h4>'+name+'</h4><div class="throw">'+THEMES.filter(t=>t[3]===k).map(([id,zh,en,,c])=>{const [bg,sf,a1,a2]=c.split(" ");
-    return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+T(zh,en)+'</span></button>'}).join("")+'</div></div>').join("")+wear}
+    return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+(n=>n.length>12?n.replace(" ","<br>"):n)(T(zh,en))+'</span></button>'}).join("")+'</div></div>').join("")+wear}
 /* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
 function placePiece(bar,anim){if(!bar||!bar.getClientRects().length)return;let pc=bar.querySelector(".tpiece");
   if(!pc){pc=document.createElement("i");pc.className="tpiece";pc.setAttribute("aria-hidden","true");bar.prepend(pc)}
@@ -275,7 +277,7 @@ const FW=(function(){
 /* the celebration follows the look: fireworks on the plain themes, a party popper in the theme's colours on the
    toy looks, pixel bits on retro, paper scraps on craft, sparks on the machine console, a small tidy burst on the
    quiet looks. Particles come from canvas-confetti (js/confetti.js); n is how many rockets the fireworks would fire. */
-const CELEB={wooly:"petal",pod:"pixel",flat:"glow",xmas:"snow",toy:"party",retro:"pixel",craft:"paper",mech:"sparks",beui:"glow",interior:"tidy",minimal:"tidy"};
+const CELEB={wooly:"petal",pod:"pixel",flat:"glow",xmas:"snow",toy:"party",retro:"pixel",craft:"paper",mech:"sparks",beui:"glow",splitflow:"glow",interior:"tidy",minimal:"tidy"};
 function themeHex(names){const c=document.createElement("canvas").getContext("2d"),cs=getComputedStyle(document.documentElement);
   return names.map(n=>{c.fillStyle="#000";c.fillStyle=cs.getPropertyValue(n).trim()||"#888";const v=c.fillStyle;
     if(v[0]==="#")return v;const m=v.match(/[\d.]+/g);return "#"+m.slice(0,3).map(x=>(+x|0).toString(16).padStart(2,"0")).join("")})}
@@ -533,6 +535,7 @@ function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t
     xmas:{tab1:"jingle",tab2:"jingle",range:"soft",gap:"soft",header:"soft",other:"soft",open:"jingle",close:"soft",fold:"none",untick:"soft",set:"sparkle",save:"musicbox",fw:"jingle",bigfw:"musicbox"},
     beui:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft",fw:"sparkle",bigfw:"glint2"},
     pod:{tab1:"clack",tab2:"clack",range:"key",gap:"key",header:"clack",other:"clack",open:"key",close:"key",fold:"key",save:"snap",untick:"key",set:"blip",fw:"pixboom",bigfw:"pixboom2"},
+    splitflow:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft",fw:"sparkle",bigfw:"glint2"},
     flat:{tab1:"pop",tab2:"pop",range:"soft",gap:"soft",header:"soft",other:"soft",open:"pop",close:"soft",fold:"none",untick:"soft",fw:"sparkle",bigfw:"glint2"}};
   const THEME_SFX={mech:{fw:"ironfl",bigfw:"ironfl2"},"mech-light":{fw:"zap",bigfw:"zap2"}};
   const defOf=id=>{const r=document.documentElement,th=THEME_SFX[r.getAttribute("data-theme")],k=SKIN_SFX[r.getAttribute("data-skin")];return th&&th[id]||k&&k[id]||SDEF[id]};
