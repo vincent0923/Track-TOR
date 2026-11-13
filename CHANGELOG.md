@@ -6,6 +6,28 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.37a] — 2026-11-13
+
+### 新增 / Added
+- 🧠 **训练引擎**：不靠 AI，App 自己排训练。每类训练（推、拉）看你前 3 次的做组表现，排下 2 次：每组都做到 10 个（核心动作 15 个），就换动作阶梯上更难的一级（例如钻石俯卧撑 → 弓箭手俯卧撑）或改成慢速 3-1-1，再不行加一组；上次全部达标就加次数，起点按你实际做到的最少那组算，进步快的人跟得上；连着没达标就减次数或退一级；后面几组掉得太多就先保持；连续两次多个动作没达标，下一次减量。每个动作 2–4 组，每次 5–12 组，超了先减支撑和核心，引体最后减。每练完一次重新排；开练过（打过勾或改过数）的那次不动。训练卡上「按你前 3 次调整 · 为什么」打开每个动作的安排和理由，第二次标「预告」。取代原来固定的 20 天推拉计划，练过的记录照常保留。
+  **Training engine**: the app plans training itself, no AI. Each kind (push, pull) looks at your last 3 sessions to plan the next 2: every set at 10 reps (15 for core moves) moves you up the exercise ladder (e.g. diamond → archer push-ups) or to a slow 3-1-1 tempo, then adds a set; every set on target adds reps, starting from your weakest set so fast progress keeps up; missing twice eases off or steps back; a big drop-off over the sets holds; two rough sessions in a row bring a lighter one. 2–4 sets a move and 5–12 a session, trimming holds and core first and pull-ups last. It replans after every session and leaves a started session alone. "Tuned to your last 3 · why" on the training card shows each move's plan and reason, with the second session marked as a preview. It replaces the fixed 20-day programme; past records stay.
+- 🙂 **每个动作练完问感觉**：轻松、刚好、很难，可以跳过；引擎优先用它判断。
+  **How did that feel?** after each move: easy, right or hard, skippable; the engine weighs it first.
+- 🌐 **新界面英文版**：头像 › 语言切换中文和 English。英文用户不再被转到经典界面。
+  **The new interface in English**: switch under the avatar › Language. English users are no longer sent to the classic interface.
+
+### 改进 / Changed
+- 积分改名「G」（Grind），「开始」改成「开练」（Grind）。
+  Points are now called G (for Grind); Start is now 开练 / Grind.
+- 饮食页缺口卡片高度固定，切换天数时柱子在固定高度里缩放，卡片不再跳；下面的小点更明显，暗色下也看得清。
+  The Diet gap card keeps a fixed height: bars scale inside it when the period changes; the dots below are clearer, also in dark.
+- 进展页图表面板里的涨跌跟着选的天数走（14、30、90 天或全部）。
+  The change shown in a Progress chart panel follows the period you pick (14, 30, 90 days or all).
+- 进度文件追加 `pe` 字段，保存引擎排的动作和每个动作的感觉；旧进度文件照常导入。
+  Progress files gain a `pe` field holding the engine's exercises and how each felt; older files import as before.
+
+---
+
 ## [v1.36a] — 2026-11-13
 
 ### 新增 / Added

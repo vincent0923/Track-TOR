@@ -43,8 +43,12 @@ function pullSeries(){
 lsLoad();
 
 /* ---------- training data ---------- */
-function nextOf(kind){return PROGRAM.find(p=>p.kind===kind&&!(state.sessions[p.sid]&&state.sessions[p.sid].done))}
-function firstOpen(){return PROGRAM.find(p=>!(state.sessions[p.sid]&&state.sessions[p.sid].done))}
+/* the next session of a kind is the first one after the last finished day of that kind (a day skipped earlier stays
+   behind); the next session overall is the kind trained less recently */
+function lastDoneOf(kind){let d=0,date="";PROGRAM.forEach(p=>{const s=state.sessions[p.sid];if(p.kind===kind&&s&&s.done){if(p.day>d)d=p.day;if((s.date||"")>date)date=s.date||""}});return {day:d,date}}
+function nextOf(kind){const l=lastDoneOf(kind).day;return PROGRAM.filter(p=>p.kind===kind&&p.day>l&&!(state.sessions[p.sid]&&state.sessions[p.sid].done)).sort((a,b)=>a.day-b.day)[0]}
+function firstOpen(){const a=nextOf("push"),b=nextOf("pull");if(!a||!b)return a||b;
+  const la=lastDoneOf("push"),lb=lastDoneOf("pull");if(la.date!==lb.date)return la.date<lb.date?a:b;return la.day<=lb.day?a:b}
 function setsOf(sid){const s=state.sessions[sid];const p=BYID[sid];
   return p.ex.map(e=>{const a=s&&s.sets&&s.sets[e.id];return a?a.map(x=>({v:+x.v,d:!!x.d})):Array.from({length:e.sets},()=>({v:e.target,d:false}))})}
 function dayMarks(){const m={};const add=(d,k)=>{(m[d]=m[d]||new Set()).add(k)};
@@ -108,7 +112,7 @@ function openRecord(key){
   check();valEl.focus();
 }
 
-/* ---------- 推拉币: points for real progress in strength, fat loss and waist ----------
+/* ---------- G (Grind): points for real progress in strength, fat loss and waist ----------
    Worked out from the records every time, never stored, so restoring a progress file brings them back and the backup
    format is untouched. Each badge pays once. Values follow the plan: training 10, a week with 3 training days 30 (+5
    per week in a row, up to 60), a new strict pull-up best 50 per rep (ticked sets in training only), every 0.5 kg of
@@ -136,12 +140,12 @@ function coinBadges(){
   const pb=pullBestTrained(),fat=fatKgSure(),wd=waistDrop(),wt=avg7(wtMerged()),wNow=wt.length?wt[wt.length-1].y:null,zz=series("waist");
   const zNow=zz.length?zz.slice(-3).reduce((s,p)=>s+p.y,0)/Math.min(3,zz.length):null,g=gapAllTime(),fatNow=g?g.s/7700:0;
   return [
-    {k:"train",ic:"dumbbell",name:"出勤",what:"每练完一次计划里的训练",pts:done*10,have:done,unit:"次",step:1,per:10},
-    {k:"week",ic:"flame",name:"周连练",what:"一周练够 3 天；连着几周越给越多",pts:weekPts,have:weeks,unit:"周",step:1,per:30},
-    {k:"pr",ic:"pullup",name:"引体纪录",what:"训练里打勾的引体单组每多 1 个",pts:pb*50,have:pb,unit:"个",step:1,per:50},
-    {k:"fat",ic:"drop",name:"减脂",what:"每减 0.5 kg 脂肪（估算和体重变化取小的）",pts:Math.floor(fat/0.5)*50,have:+fat.toFixed(2),unit:"kg",step:0.5,per:50},
-    {k:"waist",ic:"tape",name:"腰围",what:"比第一次记录每少 1 cm",pts:Math.floor(wd)*50,have:+wd.toFixed(1),unit:"cm",step:1,per:50},
-    {k:"plan",ic:"flag",name:"计划里程碑",what:"计划完成 10、20、40 次",pts:(done>=10?100:0)+(done>=20?200:0)+(done>=40?400:0),have:done,unit:"次",tiers:[10,20,40]},
-    {k:"goal",ic:"target",name:"达成目标",what:"引体、腰围、体重、减脂，每达成一个自己设的目标",pts:500*[+st.p>0&&pb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,
-      have:[+st.p>0&&pb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,unit:"个",tiers:[1,2,3,4]}]}
+    {k:"train",ic:"dumbbell",name:T("出勤","Turn up"),what:T("每练完一次训练","Every finished session"),pts:done*10,have:done,unit:T("次",""),step:1,per:10},
+    {k:"week",ic:"flame",name:T("周连练","Weekly run"),what:T("一周练够 3 天；连着几周越给越多","3 training days in a week; more for each week in a row"),pts:weekPts,have:weeks,unit:T("周","wk"),step:1,per:30},
+    {k:"pr",ic:"pullup",name:T("引体纪录","Pull-up best"),what:T("训练里打勾的引体单组每多 1 个","Each extra rep in your best pull-up set, ticked in training"),pts:pb*50,have:pb,unit:T("个","reps"),step:1,per:50},
+    {k:"fat",ic:"drop",name:T("减脂","Fat loss"),what:T("每减 0.5 kg 脂肪（估算和体重变化取小的）","Every 0.5 kg of fat (the smaller of the estimate and the weight trend)"),pts:Math.floor(fat/0.5)*50,have:+fat.toFixed(2),unit:"kg",step:0.5,per:50},
+    {k:"waist",ic:"tape",name:T("腰围","Waist"),what:T("比第一次记录每少 1 cm","Every cm off since your first record"),pts:Math.floor(wd)*50,have:+wd.toFixed(1),unit:"cm",step:1,per:50},
+    {k:"plan",ic:"flag",name:T("累计训练","Sessions"),what:T("累计练完 10、20、40 次","10, 20 and 40 sessions finished"),pts:(done>=10?100:0)+(done>=20?200:0)+(done>=40?400:0),have:done,unit:T("次",""),tiers:[10,20,40]},
+    {k:"goal",ic:"target",name:T("达成目标","Goals reached"),what:T("引体、腰围、体重、减脂，每达成一个自己设的目标","Each goal you set and reach: pull-ups, waist, weight, fat loss"),pts:500*[+st.p>0&&pb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,
+      have:[+st.p>0&&pb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,unit:T("个",""),tiers:[1,2,3,4]}]}
 function coinTotal(){return coinBadges().reduce((a,b)=>a+b.pts,0)}

@@ -340,3 +340,23 @@ h1,h2,h3,p{margin:0}
 .ptr.ready i{opacity:1;transform:rotate(180deg)}
 .syncdot.spin{background:none;box-shadow:none;width:14px;height:14px;border:2.5px solid var(--seg);border-top-color:var(--ac);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* engine plan sheet, feel picker */
+.plan1{padding:12px 14px;border-radius:18px;background:var(--sub);margin-bottom:10px}
+.plan1>.row{margin-bottom:6px}.plan1>.row b{font-size:15px;font-weight:800}
+.pex{padding:8px 0;border-top:1px solid var(--line)}
+.pex .row{font-size:14px;font-weight:600}.pex b{font-size:15px;font-weight:800}
+.pex p{font-size:12px;margin-top:2px}
+.feel{display:flex;gap:8px}
+.feel button{height:46px;padding:0 20px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);font-size:15px;font-weight:700;transition:transform .2s var(--spring)}
+.feel button:active{transform:scale(.92)}
+.feel button[data-f="easy"]{background:var(--ac-soft);color:var(--ac-text)}
+.hero-alt+.hero-alt{margin-top:8px}
+.hero-alt svg{width:14px;height:14px}
+/* gap card dots: clearer, especially in dark */
+.dots button{width:7px;height:7px;background:color-mix(in srgb,var(--ink) 22%,transparent)}
+.dots button[aria-pressed="true"]{width:20px;background:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
+/* a fixed card: the bars scale inside a fixed area so changing the period never resizes it */
+.gapcard .bars7{height:110px}
+.gapcard .bl{min-height:16px}
+.exl .slow{font-style:normal;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.12);margin-left:6px;vertical-align:2px}

@@ -17,7 +17,7 @@
 - 只写以后一直有效的约定和找东西的线索，保持简短。做过什么看 `git log` 和 `CHANGELOG.md`，产品现在什么样看 `docs/PRODUCT.md`，打算做什么看私人文档「推拉机：私人规划与施工清单」。
 
 ## 每次发版
-- 现在是「试穿阶段」：主题都是试验，以后会删掉不合适的。新主题、图标、音效、图表画法不升版本号、不写 CHANGELOG，直接提交推送。现在的版本号是 v1.36a。往新界面迁移经典功能算新功能，要升版本号。
+- 现在是「试穿阶段」：主题都是试验，以后会删掉不合适的。新主题、图标、音效、图表画法不升版本号、不写 CHANGELOG，直接提交推送。现在的版本号是 v1.37a。往新界面迁移经典功能算新功能，要升版本号。
 - 只有加了新功能才升版本号。只改视觉或音效、没有新功能的改动，不升版本号、不写 CHANGELOG，测试通过后直接提交推送，不用问。
 - 版本号四处同步：`index.html` 里的 `#ver`，`classic.html` 里的 `.ver`，`README.md` 中英文各一处。
 - `CHANGELOG.md` 加一条，中英双语。
@@ -31,16 +31,17 @@
 
 ## 代码结构
 - 静态网页，无构建。两个界面，读写同一份数据：
-  - `index.html`：新界面，默认打开，**以后的开发都从这里开始**。样式 `css/p1.css`，脚本 `js/p1data.js`（从经典界面搬来、不依赖它页面的逻辑）和 `js/p1.js`（界面），另外加载共用的 `js/core.js`、`js/diet.js`、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/confetti.js`。
+  - `index.html`：新界面，默认打开，**以后的开发都从这里开始**。样式 `css/p1.css`，脚本 `js/p1data.js`（从经典界面搬来、不依赖它页面的逻辑，还有 G 的计算）、`js/engine.js`（训练引擎）和 `js/p1.js`（界面），中英双语都用 `T(中文, English)`，另外加载共用的 `js/core.js`、`js/diet.js`、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/confetti.js`。
   - `classic.html`：经典界面和 29 套主题，保留到用户说可以删。样式 `css/app.css`，`js/` 其余文件按 `classic.html` 里的顺序加载，共享全局作用域；启动步骤在 `js/main.js`。
   - 迁移做减法：保留经典界面真正有用的功能，样子按新界面重做，用得少的可以不搬。
   - 新界面还没有的功能跳到 `classic.html?go=…`（处理在 `js/main.js`，可用的值见 `docs/PRODUCT.md`「界面」）。搬一项功能到新界面时，把对应的跳转删掉。
-  - `index.html` 头部有一段转跳：高驰登录回调、选了经典界面的人、英文用户（除非选了新界面）去 `classic.html`。
+  - `index.html` 头部有一段转跳：高驰登录回调和选了经典界面的人去 `classic.html`。
 - 数据全部在 `localStorage` 的 `tracktor-data`：`sessions`（训练）、`metrics[日期]`（引体、体重、腰围、睡眠、HRV、静息心率、活动热量 active、其中运动记录的热量 ex、有功率计骑行的热量 exP、低强度运动的热量 exL、步数等）、`diet[日期]`、`settings`、`dayx[日期]`（没有训练的日子里的加练）。其他键都以 `tracktor-` 开头。
-- 推拉币从记录现算（`js/p1data.js` 的 `coinBadges`），不另存；以后要存的只有花掉的币和买过的主题，放进 `settings`。
+- G（积分，Grind）从记录现算（`js/p1data.js` 的 `coinBadges`），不另存；以后要存的只有花掉的 G 和买过的主题，放进 `settings`。
+- 训练引擎排的训练存在训练记录本身：`sessions[sid].ex` 是这次的动作、`feel` 是每个动作的感觉、`edited` 表示用户手改过。`js/core.js` 的 `registerPlanned` 把它们挂进 `PROGRAM`/`BYID`（可以超过第 20 天）。进度文件里对应追加的字段是 `pe`。
 - 新增文件要加进 `sw.js` 的缓存列表。
 - 改了 `css/` 或 `js/` 下的任何文件，提交前先运行 `python3 tools/stamp.py`。它给 `index.html` 和 `classic.html` 里的脚本和样式网址加上内容指纹（`?v=…`），这样手机上缓存的旧文件不会和新网页配在一起。不运行的话，更新后可能出现新网页配旧脚本、功能错乱。
 - 改 `js/core.js`、`js/diet.js`、`js/sheetcore.js` 这类两边共用的文件时，两个界面都要打开测。
-- 备份格式见 `js/backup.js`，新字段只能追加在 `MK` 末尾，旧版进度文件必须仍能导入。新界面的备份和恢复也用这个格式，和经典界面的进度文件互通，至少到 v1.4。
+- 备份格式见 `js/backup.js`，新字段只能追加在 `MK` 末尾，旧版进度文件必须仍能导入。新界面的备份和恢复也用这个格式，和经典界面的进度文件互通，至少到 v1.4。顶层只能追加新字段（例如 v1.37a 加的 `pe`），旧文件没有它也要能导入。
 - 经典界面的完整备份在 GitHub 分支 `backup-classic-v1.33a`。
 - 改动后用无头浏览器（Playwright）实际打开页面测试，确认没有报错再提交。

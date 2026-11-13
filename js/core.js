@@ -60,6 +60,18 @@ for(let d=1; d<=20; d++){
   PROGRAM.push({sid:"pull-"+pad(d),kind:"pull",day:d,label:"拉练 D"+d,ex:pullDay(d)});
 }
 const BYID = Object.fromEntries(PROGRAM.map(s=>[s.sid,s]));
+/* sessions planned by the training engine (js/engine.js) carry their own exercises in doc.ex: they replace the
+   fixed programme's day, or add days beyond 20. Called after loading and after importing a progress file. */
+function registerPlanned(sessions){
+  Object.entries(sessions||{}).forEach(([sid,doc])=>{
+    if(!doc||!Array.isArray(doc.ex)||!doc.ex.length)return;
+    const m=/^(push|pull)-(\d+)$/.exec(sid);if(!m)return;
+    let p=BYID[sid];
+    if(!p){p={sid,kind:m[1],day:+m[2],label:(m[1]==="push"?"推练 D":"拉练 D")+(+m[2]),ex:doc.ex};PROGRAM.push(p);BYID[sid]=p}
+    else p.ex=doc.ex;
+  });
+  PROGRAM.sort((a,b)=>a.day-b.day||(a.kind==="push"?-1:1));
+}
 
 /* ---------- storage layout ----------
    Everything lives in localStorage under the "tracktor-" prefix:
@@ -136,6 +148,7 @@ function lsLoad(){
     /* a 0 sleep score was saved before the night was scored; drop it so the real score can arrive */
     let z=0;for(const [d,m] of Object.entries(state.metrics)){if(m.sleep===0){delete m.sleep;delete m.sleepH;z++;if(Object.keys(m).every(k=>k==="date"||m[k]==null))delete state.metrics[d]}}
     if(z)lsSave();
+    registerPlanned(state.sessions);
     if(j.extras&&moveDatedExtras(j.extras))lsSave();}
 }
 function lsSave(){

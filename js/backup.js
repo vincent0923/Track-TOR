@@ -17,14 +17,20 @@ function pack(){
   const DX={};Object.entries(state.dayx||{}).forEach(([d,doc])=>{if(!doc)return;
     const xs=doc.xs&&doc.xs.some(it=>it.sets.some(x=>x.d))?doc.xs:null, n=(doc.note||"").trim()?doc.note:"";
     if(n)DX[d]=[xs||[],n];else if(xs)DX[d]=xs});
-  return {v:4,s:S,m:M,g:state.settings,d:state.diet,tk,dx:DX};
+  /* engine-planned sessions: their own exercises and how each felt, keyed like S (added in v1.37a; older files have none) */
+  const PE={};Object.entries(state.sessions).forEach(([sid,doc])=>{const p=BYID[sid];if(!p||!doc||!doc.ex)return;const k=(p.kind==="push"?"u":"l")+p.day;if(S[k])PE[k]=[doc.ex,doc.feel||null]});
+  return {v:4,s:S,m:M,g:state.settings,d:state.diet,tk,dx:DX,pe:PE};
 }
 function unpack(j){
   const sessions={},metrics={};const d6=t=>t?"20"+t.slice(0,2)+"-"+t.slice(2,4)+"-"+t.slice(4,6):null;
+  const kid=k=>(k[0]==="u"?"push-":"pull-")+pad(+k.slice(1));
+  if(j.pe)registerPlanned(Object.fromEntries(Object.entries(j.pe).map(([k,v])=>[kid(k),{ex:v[0]}])));
   Object.entries(j.s||{}).forEach(([k,v])=>{const sid=(k[0]==="u"?"push-":"pull-")+pad(+k.slice(1));const p=BYID[sid];if(!p)return;
     const doc={sid,done:!!v[0],date:d6(v[1]),note:v[2]||"",sets:{}};
     p.ex.forEach((e,i)=>{const a=v[3]&&v[3][i];doc.sets[e.id]=Array.isArray(a)?a.map(n=>n<0?{v:-n-1,d:false}:{v:n,d:true}):Array.from({length:e.sets},()=>({v:e.target,d:false}))});
-    if(!doc.note)delete doc.note;if(v[4])doc.xs=v[4];sessions[sid]=doc});
+    if(!doc.note)delete doc.note;if(v[4])doc.xs=v[4];
+    const pe=j.pe&&j.pe[k];if(pe){doc.ex=pe[0];if(pe[1])doc.feel=pe[1]}
+    sessions[sid]=doc});
   (j.m||[]).forEach(r=>{const date=d6(r[0]);const m={date};MK.forEach((k,i)=>{if(r[i+1]!=null)m[k]=r[i+1]});metrics[date]=m});
   /* v4 keeps diet days directly; v3 had a separate ledger {days, coros, weights} */
   let diet=null;
