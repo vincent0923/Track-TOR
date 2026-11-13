@@ -19,6 +19,7 @@ const ASSETS = [
   "./js/p1settings.js",
   "./js/p1day.js",
   "./js/p1weather.js",
+  "./js/p1music.js",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",

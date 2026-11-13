@@ -17,7 +17,7 @@
 - 只写以后一直有效的约定和找东西的线索，保持简短。做过什么看 `git log` 和 `CHANGELOG.md`，产品现在什么样看 `docs/PRODUCT.md`，打算做什么看私人文档「推拉机：私人规划与施工清单」。
 
 ## 每次发版
-- 现在的版本号是 v1.51a。
+- 现在的版本号是 v1.52a。
 - 只有加了新功能才升版本号。只改视觉或音效、没有新功能的改动，不升版本号、不写 CHANGELOG，测试通过后直接提交推送，不用问。
 - 版本号三处同步：`index.html` 里的 `#ver`，`README.md` 中英文各一处。
 - `CHANGELOG.md` 加一条，中英双语。
@@ -33,7 +33,7 @@
 - 通用组件（`js/p1.js`）：积木柱状图 `bricksHtml`（每列可带 `t`，手指划过时显示在卡片的 `.bkread`；在卡堆里积木区域不翻牌）、旋钮 `knobHtml`（标签是普通按钮，带自己的 `data-act`）。
 
 ## 代码结构
-- 静态网页，无构建，只有一个界面 `index.html`（经典界面和 29 套主题 v1.43a 删了，代码在分支 `backup-classic-v1.42a`）。样式 `css/p1.css`。脚本按 `index.html` 里的顺序加载、共享全局作用域：`js/hant.js`（繁体：把页面上的简体逐字换成台湾用字，`tracktor-lang` 是 `zht`）、`js/core.js`（计划、存储、`T`）、`js/diet.js`（热量算法、饮食面板）、`js/confetti.js`、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/backupcore.js`（进度文件）、`js/p1data.js`（图表数据、下一次训练、记录面板、G、音效）、`js/p1fx.js`（烟花、彩带、目标 2% 庆祝）、`js/p1stack.js`（毛玻璃 swipe stack：`fsWrap`/`fsBind`/`fsGo`）、`js/coros.js`（高驰）、`js/engine.js`（训练引擎和计划预设）、`js/p1.js`（界面）、`js/p1settings.js`（设定面板、备份恢复、欢迎页、备份提醒）、`js/p1day.js`（日历点某天）、`js/p1weather.js`（天气；`p1settings.js` 用 `p1Sheet`/`p1Reg` 把面板借给它）。
+- 静态网页，无构建，只有一个界面 `index.html`（经典界面和 29 套主题 v1.43a 删了，代码在分支 `backup-classic-v1.42a`）。样式 `css/p1.css`。脚本按 `index.html` 里的顺序加载、共享全局作用域：`js/hant.js`（繁体：把页面上的简体逐字换成台湾用字，`tracktor-lang` 是 `zht`）、`js/core.js`（计划、存储、`T`）、`js/diet.js`（热量算法、饮食面板）、`js/confetti.js`、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/backupcore.js`（进度文件）、`js/p1data.js`（图表数据、下一次训练、记录面板、G、音效）、`js/p1fx.js`（烟花、彩带、目标 2% 庆祝）、`js/p1stack.js`（毛玻璃 swipe stack：`fsWrap`/`fsBind`/`fsGo`）、`js/coros.js`（高驰）、`js/engine.js`（训练引擎和计划预设）、`js/p1.js`（界面）、`js/p1settings.js`（设定面板、备份恢复、欢迎页、备份提醒）、`js/p1day.js`（日历点某天）、`js/p1weather.js`（天气；`p1settings.js` 用 `p1Sheet`/`p1Reg` 把面板借给它）、`js/p1music.js`（迷你播放器：通过 Spotify Web API 遥控手机上的 Spotify，PKCE 登录不用服务器；Client ID 填在 `SP_CLIENT_ID`，回调地址是网站根目录；令牌在 `tracktor-sp`，不进备份；`tracktor-p1-music` 是 on / demo）。
 - 中英双语都用 `T(中文, English)`；繁体不用另写。
 - 数据全部在 `localStorage` 的 `tracktor-data`：`sessions`（训练）、`metrics[日期]`（引体、体重、腰围、睡眠、HRV、静息心率、活动热量 active、其中运动记录的热量 ex、有功率计骑行的热量 exP、低强度运动的热量 exL、步数等；主项不是引体时手动记的数在 `gm[项目 id]`）、`diet[日期]`、`settings`（含 `plan` 训练计划、`weather` 天气城市、`mainEx` 主项，目标数是 `p`；`tiles` 进展页卡片的顺序和隐藏；`theme` 主题、`buys` 用 G 换购的记录）、`dayx[日期]`（没有训练的日子里的加练）。其他键都以 `tracktor-` 开头。
 - 主项（目标里的那个运动，`js/p1data.js` 的 `mainEx`/`mainSeries`）：默认标准引体；从计划动作选的打勾自动记、训练引擎不换它（`isMain`），自己写的只能手动记。

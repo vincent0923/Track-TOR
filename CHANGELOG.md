@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.52a] — 2026-11-14
+
+### 新增 / Added
+- 🎵 **迷你播放器**（设定 › 音乐）：遥控手机上的 Spotify，底栏上方一个小胶囊看正在放什么、暂停、下一首，点开是完整播放器（封面、进度、上一首 / 下一首、音量）。需要 Spotify Premium；没连之前可以先预览样子
+- 🎵 **Mini player** (Settings › Music): a remote for Spotify on your phone, a capsule above the tab bar showing what's on with pause and next, and a full player on tap (artwork, progress, previous / next, volume). Needs Spotify Premium; a preview shows the look before you connect
+- 🪙 **G 充值文件**：在备份里导入一个充值文件只加 G，别的数据不动，同一个文件只算一次
+- 🪙 **G top-up file**: importing one from Backup adds G and nothing else; the same file counts once
+- 🧱 **主项卡堆**：进展页的主项是两张积木卡（单组最好、每周总数），手指划过读每一列的数
+- 🧱 **Main-exercise stack**: on Progress the main exercise is two brick cards (best set, weekly total); run a finger across to read each column
+
 ## [v1.51a] — 2026-11-14
 
 ### 新增 / Added
