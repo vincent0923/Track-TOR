@@ -2,12 +2,12 @@
    One token set, light and dark. The classic interface lives in classic.html with css/app.css. */
 @font-face{font-family:"Geist";font-style:normal;font-weight:100 900;font-display:swap;src:url(../fonts/geist-wght.woff2) format("woff2")}
 :root{
-  --bg:#F2F2EE; --glow:radial-gradient(circle at 20% 0%,rgba(50,215,75,.08),transparent 50%);
+  --bg:#F1F1EC; --glow:radial-gradient(circle at 20% 0%,rgba(79,175,106,.07),transparent 50%);
   --card:#FFFFFF; --line:rgba(0,0,0,.045); --lit:inset 0 1px 0 rgba(255,255,255,.85); --sub:#F4F4F1; --seg:#EAEAE5;
   --dark:linear-gradient(145deg,#1E1E22 0%,#141417 100%); --dark-solid:#18181B; --dark-line:rgba(255,255,255,.08); --track:#2A2A2E;
-  --ink:#18181B; --muted:#86868C; --ac:#32D74B; --on-ac:#081109; --ac-soft:rgba(50,215,75,.15); --ac-text:#15803D;
-  --st1:rgba(50,215,75,.28); --st2:rgba(50,215,75,.7);
-  --push:#22B455; --pull:#F06A1F; --third:#3B82F6; --kpush:var(--push); --kpull:var(--pull); --kthird:var(--third); --good:#15803D; --bad:#DC4A3A; --sleep:#8B5CF6;
+  --ink:#1C1D1F; --muted:#88898E; --ac:#4FAF6A; --on-ac:#FFFFFF; --ac-soft:rgba(79,175,106,.14); --ac-text:#2F7A48;
+  --st1:rgba(79,175,106,.24); --st2:rgba(79,175,106,.6);
+  --push:#4FA36A; --pull:#D4864F; --third:#5F86BF; --kpush:var(--push); --kpull:var(--pull); --kthird:var(--third); --good:#3A8A57; --bad:#C25B48; --sleep:#8577C4;
   --shadow:0 6px 20px -6px rgba(0,0,0,.05),0 2px 5px rgba(0,0,0,.02);
   --num:"Geist",-apple-system,BlinkMacSystemFont,sans-serif;
   --body:-apple-system,BlinkMacSystemFont,"Geist","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
@@ -470,12 +470,12 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
    aurora (free): meadow green by day, deep-sea aurora by night — the tokens at the top of this file.
    ember (bought with G): Nordic warm sand with signal orange by day, obsidian with liquid gold by night. */
 :root[data-theme="ember"]{
-  --bg:#F5EFE8; --glow:radial-gradient(circle at 15% 5%,rgba(255,82,43,.08),transparent 50%);
+  --bg:#F4EFE9; --glow:radial-gradient(circle at 15% 5%,rgba(217,113,78,.07),transparent 50%);
   --card:#FFFDF9; --line:rgba(110,75,45,.08); --lit:inset 0 1px 0 rgba(255,255,255,.95); --sub:#F2EBE1; --seg:#E8DFD3;
   --dark:linear-gradient(145deg,#222B3C 0%,#151B26 100%); --dark-solid:#1B2230; --dark-line:rgba(255,255,255,.1); --track:#2E3748;
-  --ink:#1F1A17; --muted:#96887D; --ac:#FF522B; --on-ac:#FFFFFF; --ac-soft:rgba(255,82,43,.14); --ac-text:#C83212;
-  --st1:rgba(255,82,43,.22); --st2:rgba(255,82,43,.56);
-  --push:#FF6A3D; --pull:#2F5DA8; --third:#B9822A; --good:#2E8B57; --bad:#C83212; --sleep:#7C6AD6;
+  --ink:#2A2420; --muted:#968A80; --ac:#D9714E; --on-ac:#FFFFFF; --ac-soft:rgba(217,113,78,.14); --ac-text:#A9512F;
+  --st1:rgba(217,113,78,.22); --st2:rgba(217,113,78,.55);
+  --push:#D27A57; --pull:#4E6D9C; --third:#B0905A; --good:#3E8A5E; --bad:#B9553E; --sleep:#8577C4;
   --shadow:0 8px 24px -6px rgba(92,64,38,.07),0 2px 5px rgba(92,64,38,.03)}
 :root[data-theme="ember"][data-mode="dark"]{
   --bg:#0B0908; --glow:radial-gradient(circle at 18% 12%,rgba(255,176,32,.12),transparent 45%),radial-gradient(circle at 82% 85%,rgba(244,63,94,.08),transparent 45%);

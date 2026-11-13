@@ -47,13 +47,13 @@ function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>
 
 /* ---------- theme: follow the phone, or fixed light / dark ---------- */
 /* themes: each has a light and a dark version. aurora is free; others are bought with G (settings.buys, settings.theme) */
-const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,sw:["#F2F2EE","#32D74B","#070A10","#00F5D4"]},
-  {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F5EFE8","#FF522B","#0B0908","#FFB020"]}];
+const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,sw:["#F1F1EC","#4FAF6A","#070A10","#00F5D4"]},
+  {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]}];
 function themeOwned(id){const t=THEMES.find(x=>x.id===id);return !!t&&(!t.price||(state.settings.buys||[]).some(b=>b.id===id))}
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const dark=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),th=themeOwned(state.settings.theme)?state.settings.theme:"aurora";
   document.documentElement.dataset.mode=dark?"dark":"light";document.documentElement.dataset.theme=th;
-  document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F2F2EE")}
+  document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
 /* the header switch: tap flips light and dark; hold it for the themes */
 (function(){const b=$("#modeBtn");if(!b)return;let tm=0,held=false;
