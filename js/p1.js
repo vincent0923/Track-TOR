@@ -49,7 +49,7 @@ function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>
 /* themes: each has a light and a dark version. aurora is free; others are bought with G (settings.buys, settings.theme) */
 const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,sw:["#F1F1EC","#4FAF6A","#070A10","#00F5D4"]},
   {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]},
-  {id:"toy",zh:"玩具",en:"Toy",price:90,sw:["#F4F1EA","#EB3B24","#1C1747","#FF4F9A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"},
+  {id:"toy",zh:"玩具",en:"Toy",price:90,sw:["#F4F1EA","#EB3B24","#130C21","#9DF03A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"},
   {id:"pocket",zh:"随身机",en:"Pocket Player",price:120,lit:1,sw:["#C6C9CB","#E7D4B4","#1B1C1E","#E39A2E"],dz:"油润塑料、凹碟方键、点阵屏、喇叭网孔",de:"Oily plastic, dished square keys, a dot-matrix screen, speaker holes"},
   /* single-look themes: fix is the one mode they come in; the header switch hides */
   {id:"tm4",zh:"钴蓝 · 合成器",en:"Cobalt Synth",price:120,fix:"dark",sw:["#123A6B","#2D76C6","#FFFFFF","#FF6E30"],dz:"圆柱按键、点阵屏、发光指示灯",de:"Cylinder keys, a dot-matrix screen, glowing LEDs"},

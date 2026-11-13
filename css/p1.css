@@ -553,22 +553,22 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
   --shadow:0 6px 0 var(--lip),0 14px 28px -6px rgba(30,24,14,.10);
   --num:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace}
 :root[data-theme="toy"][data-mode="dark"]{
-  /* glow-in-the-dark toys: candy keys on a deep indigo board, the cards themselves purple plastic */
-  --bg:#1C1747; --dot:#2E2770;
-  --card:#2A2363; --line:#3B338A; --lip:#120F33; --lit:inset 0 1px 0 rgba(255,255,255,.1); --sub:#1F1A50; --seg:#1F1A50;
-  --well-sh:inset 0 2px 5px rgba(0,0,0,.45),inset 0 -1px 0 rgba(255,255,255,.06);
-  --dark:#7B5CFF; --dark-solid:#7B5CFF; --dark-line:#4A2FC4; --track:rgba(255,255,255,.22);
-  --ink:#FFF6FF; --muted:#A8A1DC; --ac:#2EE6D6; --on-ac:#0B1E3A; --ac-soft:rgba(46,230,214,.18); --ac-text:#2EE6D6; --ac-lip:#0F9C90;
-  --red:#FF4F9A; --red-lip:#B01F63; --yel:#FFD23F; --yel-lip:#B88E00; --grn:#8BE83C; --grn-lip:#4E9A12;
-  --st1:rgba(46,230,214,.22); --st2:rgba(46,230,214,.58);
-  --push:#FF4F9A; --pull:#2EE6D6; --third:#FFD23F; --good:#8BE83C; --bad:#FF4F9A; --sleep:#C4A8FF;
-  --shadow:0 6px 0 var(--lip),0 18px 34px -6px rgba(0,0,0,.55)}
+  /* night toys in a giant-robot palette: deep purple armour, fluorescent lime as the main colour, orange for the second */
+  --bg:#130C21; --dot:#25183D;
+  --card:#2B1B47; --line:#3D2963; --lip:#0B0615; --lit:inset 0 1px 0 rgba(255,255,255,.08); --sub:#1D1232; --seg:#1D1232;
+  --well-sh:inset 0 2px 5px rgba(0,0,0,.5),inset 0 -1px 0 rgba(255,255,255,.05);
+  --dark:#6B3FB8; --dark-solid:#6B3FB8; --dark-line:#3F2180; --track:rgba(255,255,255,.2);
+  --ink:#F5F0FF; --muted:#A796C9; --ac:#9DF03A; --on-ac:#152007; --ac-soft:rgba(157,240,58,.16); --ac-text:#A8F44E; --ac-lip:#5A9612;
+  --red:#FF7A1A; --red-lip:#A84A00; --yel:#C8F53A; --yel-lip:#6E9410; --grn:#9DF03A; --grn-lip:#5A9612;
+  --st1:rgba(157,240,58,.2); --st2:rgba(157,240,58,.56);
+  --push:#9DF03A; --pull:#FF7A1A; --third:#B48CFF; --good:#9DF03A; --bad:#FF7A1A; --sleep:#B48CFF;
+  --shadow:0 6px 0 var(--lip),0 18px 34px -6px rgba(0,0,0,.6)}
 /* keys in the night version carry dark text where the colour is light */
 :root[data-theme="toy"][data-mode="dark"] .dock button[aria-selected="true"]{color:var(--on-ac)}
-:root[data-theme="toy"][data-mode="dark"] .cal .dd.trn b{color:#16123A}
-:root[data-theme="toy"][data-mode="dark"] .cal .dd.trn[style*="--push"] b{color:#fff}
-:root[data-theme="toy"][data-mode="dark"] .cal .dd.today b{background:var(--yel);color:#16123A;box-shadow:0 3px 0 var(--yel-lip)}
-:root[data-theme="toy"][data-mode="dark"] .toast{background:var(--yel);color:#16123A;box-shadow:0 4px 0 var(--yel-lip)}
+:root[data-theme="toy"][data-mode="dark"] .cal .dd.trn b{color:#152007}
+:root[data-theme="toy"][data-mode="dark"] .cal .dd.trn[style*="--third"] b{color:#fff}
+:root[data-theme="toy"][data-mode="dark"] .cal .dd.today b{background:var(--yel);color:#152007;box-shadow:0 3px 0 var(--yel-lip)}
+:root[data-theme="toy"][data-mode="dark"] .toast{background:var(--yel);color:#152007;box-shadow:0 4px 0 var(--yel-lip)}
 /* the dotted board */
 :root[data-theme="toy"] body{background-image:radial-gradient(var(--dot) 1.35px,transparent 1.35px);background-size:20px 20px;background-attachment:scroll}
 :root[data-theme="toy"] h1,:root[data-theme="toy"] .hero h2,:root[data-theme="toy"] .big{font-weight:900}
@@ -659,7 +659,7 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
   background-image:repeating-linear-gradient(to top,rgba(0,0,0,0) 0 1px,rgba(0,0,0,.38) 1px 3px,rgba(0,0,0,0) 3px 10px,rgba(255,255,255,.32) 10px 11px)!important;filter:none}
 /* toy: thicker panels: a lit top edge, a deeper 7px lip, a soft floor shadow */
 :root[data-theme="toy"]{--lip:#D2CAB6;--shadow:inset 0 1.5px 0 rgba(255,255,255,.95),0 7px 0 var(--lip),0 8px 0 rgba(60,45,20,.08),0 18px 30px -8px rgba(30,24,14,.16)}
-:root[data-theme="toy"][data-mode="dark"]{--lip:#0D0A28;--shadow:inset 0 1.5px 0 rgba(255,255,255,.12),0 7px 0 var(--lip),0 8px 0 rgba(0,0,0,.25),0 20px 32px -8px rgba(0,0,0,.6)}
+:root[data-theme="toy"][data-mode="dark"]{--lip:#0B0615;--shadow:inset 0 1.5px 0 rgba(255,255,255,.12),0 7px 0 var(--lip),0 8px 0 rgba(0,0,0,.25),0 20px 32px -8px rgba(0,0,0,.6)}
 :root[data-theme="toy"] .fs-peek i{box-shadow:0 7px 0 var(--lip)}
 :root[data-theme="toy"] .sheet .panel,:root[data-theme="toy"] .mask .sheet{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),0 -7px 0 var(--lip)}
 
