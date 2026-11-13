@@ -454,14 +454,15 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .tilebar .fsreset{width:46px;height:46px}
 .tilebar .fsreset svg{width:20px;height:20px}
 
-/* the pile: the cards behind are full-size cards a few degrees off, their corners showing around the top one;
-   a finger on the top card fans them out a little more */
-.fstack{position:relative;margin-bottom:16px;padding-bottom:calc(var(--n,0)*5px)}
-.fs-peek{position:absolute;inset:0 0 calc(var(--n,0)*-3px);z-index:0;padding:0;background:none;border:0}
-.fs-peek i{position:absolute;inset:0;border-radius:24px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:transform .45s var(--spring),opacity .3s var(--ease);transform-origin:50% 60%}
-.fs-peek i:nth-child(1){transform:rotate(-2.4deg) translate(-3px,7px);opacity:.7}
-.fs-peek i:nth-child(2){transform:rotate(1.8deg) translate(4px,11px);opacity:.45}
-.fstack.fs-touch .fs-peek i:nth-child(1){transform:rotate(-4.5deg) translate(-8px,9px)}
-.fstack.fs-touch .fs-peek i:nth-child(2){transform:rotate(3.6deg) translate(9px,14px)}
-.fstack[data-fs="hero"] .fs-peek i{background:var(--dark-solid);border-color:var(--dark-line)}
+/* the deck (after codefronts "classic deck"): the cards behind sit square, each one a small step further right and
+   down, a shade deeper, with a thin hard edge below, so the stack reads as having thickness; a finger on the top card
+   spreads the deck a little */
+.fstack{position:relative;margin-bottom:calc(14px + var(--n,0)*6px)}
+.fs-peek{position:absolute;inset:0;z-index:0;padding:0;background:none;border:0}
+.fs-peek i{position:absolute;inset:0;border-radius:24px;background:color-mix(in srgb,var(--card) 90%,var(--ink));border:1px solid var(--line);
+  box-shadow:0 2px 0 var(--line),0 12px 24px -16px rgba(0,0,0,.45);transform:translate(calc(var(--i)*4px),calc(var(--i)*6px));transition:transform .4s cubic-bezier(.3,.9,.3,1)}
+.fstack.fs-touch .fs-peek i{transform:translate(calc(var(--i)*5px),calc(var(--i)*11px))}
+.fstack[data-fs="hero"] .fs-peek i{background:color-mix(in srgb,var(--dark-solid) 88%,#000);border-color:var(--dark-line)}
+.fstack>.fs-top{box-shadow:0 3px 0 var(--line),var(--shadow)}
+.fstack[data-fs="hero"]>.fs-top{box-shadow:0 3px 0 var(--dark-line),var(--shadow)}
+@media (prefers-reduced-motion:reduce){.fs-peek i{transition:none}}

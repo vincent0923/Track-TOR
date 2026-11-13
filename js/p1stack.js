@@ -3,12 +3,12 @@
    let go past the threshold and the top card flies off while the one below clears in 0.3 s. With nothing more that
    way, the card stretches like rubber and springs back. Finger to the right goes back in time, to the left forward;
    a stack that just cycles (the training days) treats both the same.
-   fsWrap(id, cardHtml, peeks) gives the markup (peeks: 0–2 card edges showing below);
+   fsWrap(id, cardHtml, peeks) gives the markup (peeks: 0–3 cards showing behind, stepped right and down);
    fsBind(id, {get(dir) → html|null, commit(dir), render() → fsWrap(...), peekDir}) makes it live after it's in the page. */
 const FS={};
-function fsWrap(id,cardHtml,peeks){peeks=Math.max(0,Math.min(2,peeks|0));
+function fsWrap(id,cardHtml,peeks){peeks=Math.max(0,Math.min(3,peeks|0));
   return '<div class="fstack" data-fs="'+id+'" style="--n:'+peeks+'">'+cardHtml
-    +(peeks?'<button class="fs-peek" data-act="fsnext" data-fs="'+id+'" aria-label="'+T('下一张','Next card')+'">'+'<i></i>'.repeat(peeks)+'</button>':'')+'</div>'}
+    +(peeks?'<button class="fs-peek" data-act="fsnext" data-fs="'+id+'" aria-label="'+T('下一张','Next card')+'">'+Array.from({length:peeks},(_,j)=>'<i style="--i:'+(peeks-j)+'"></i>').join("")+'</button>':'')+'</div>'}
 /* a sideways swipe is not a tap: swallow the click that follows it */
 function fsEatClick(){const stop=e=>{e.stopPropagation();e.preventDefault()};addEventListener("click",stop,true);setTimeout(()=>removeEventListener("click",stop,true),400)}
 function fsHost(id){return document.querySelector('.fstack[data-fs="'+id+'"]')}
