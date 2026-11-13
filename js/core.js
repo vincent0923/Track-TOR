@@ -58,6 +58,12 @@ for(let d=1; d<=20; d++){
   PROGRAM.push({sid:"pull-"+pad(d),kind:"pull",day:d,label:"拉练 D"+d,ex:pullDay(d)});
 }
 const BYID = Object.fromEntries(PROGRAM.map(s=>[s.sid,s]));
+/* a day's exercises in the fixed programme (push and pull, days 1–20), or null: what a session without doc.ex was done with */
+function baseEx(sid){const m=/^(push|pull)-(\d+)$/.exec(sid);if(!m||+m[2]<1||+m[2]>20)return null;return m[1]==="push"?pushDay(+m[2]):pullDay(+m[2])}
+/* back to the fixed programme, then the given sessions' own exercises on top: used when the records are replaced
+   (a progress file), so nothing planned on this phone before is left behind in PROGRAM / BYID */
+function resetPlanned(sessions){for(let i=PROGRAM.length-1;i>=0;i--){const p=PROGRAM[i],b=baseEx(p.sid);if(b)p.ex=b;else{PROGRAM.splice(i,1);delete BYID[p.sid]}}
+  registerPlanned(sessions)}
 /* sessions planned by the training engine (js/engine.js) carry their own exercises in doc.ex: they replace the
    fixed programme's day, or add days beyond 20. Called after loading and after importing a progress file. */
 function registerPlanned(sessions){

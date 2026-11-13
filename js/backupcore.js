@@ -8,7 +8,7 @@ function pack(){
   const S={};
   Object.entries(state.sessions).forEach(([sid,doc])=>{const p=BYID[sid];if(!p||!doc||pristine(p,doc))return;
     S[KIND_KEY[p.kind]+p.day]=[doc.done?1:0,doc.date?doc.date.replace(/-/g,"").slice(2):"",doc.note||"",
-      p.ex.map(e=>{const a=doc.sets&&doc.sets[e.id];return a?a.map(x=>x.d?(+x.v||0):-(+x.v||0)-1):0})].concat(doc.xs&&doc.xs.length?[doc.xs]:[])});
+      (doc.ex||baseEx(sid)||p.ex).map(e=>{const a=doc.sets&&doc.sets[e.id];return a?a.map(x=>x.d?(+x.v||0):-(+x.v||0)-1):0})].concat(doc.xs&&doc.xs.length?[doc.xs]:[])});
   const M=Object.values(state.metrics).filter(m=>m.date).sort((x,y)=>x.date<y.date?-1:1).map(m=>{
     const r=[m.date.replace(/-/g,"").slice(2)].concat(MK.map(k=>m[k]??null));while(r.length>1&&r[r.length-1]==null)r.pop();return r});
   /* 带上高驰授权：换手机恢复进度后不用重新授权 */
@@ -26,10 +26,11 @@ function pack(){
 function unpack(j){
   const sessions={},metrics={};const d6=t=>t?"20"+t.slice(0,2)+"-"+t.slice(2,4)+"-"+t.slice(4,6):null;
   const kid=k=>KEY_KIND[k[0]]+"-"+pad(+k.slice(1));
-  if(j.pe)registerPlanned(Object.fromEntries(Object.entries(j.pe).map(([k,v])=>[kid(k),{ex:v[0]}])));
-  Object.entries(j.s||{}).forEach(([k,v])=>{const sid=kid(k);const p=BYID[sid];if(!p)return;
+  /* each session's numbers are in the order of the exercises it was done with: its own (pe) if the engine planned it,
+     otherwise the fixed programme's day. Never what this phone has planned for that day, which can differ. */
+  Object.entries(j.s||{}).forEach(([k,v])=>{const sid=kid(k);const pe0=j.pe&&j.pe[k],ex=pe0?pe0[0]:baseEx(sid);if(!ex)return;
     const doc={sid,done:!!v[0],date:d6(v[1]),note:v[2]||"",sets:{}};
-    p.ex.forEach((e,i)=>{const a=v[3]&&v[3][i];doc.sets[e.id]=Array.isArray(a)?a.map(n=>n<0?{v:-n-1,d:false}:{v:n,d:true}):Array.from({length:e.sets},()=>({v:e.target,d:false}))});
+    ex.forEach((e,i)=>{const a=v[3]&&v[3][i];doc.sets[e.id]=Array.isArray(a)?a.map(n=>n<0?{v:-n-1,d:false}:{v:n,d:true}):Array.from({length:e.sets},()=>({v:e.target,d:false}))});
     if(!doc.note)delete doc.note;if(v[4])doc.xs=v[4];
     const pe=j.pe&&j.pe[k];if(pe){doc.ex=pe[0];if(pe[1])doc.feel=pe[1]}
     sessions[sid]=doc});
