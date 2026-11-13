@@ -471,7 +471,17 @@ function p1SyncUI(){const d=$("#syncDot");if(!d)return;const on=typeof syncing!=
 async function p1Sync(quiet){if(typeof syncing!=="undefined"&&syncing)return;if(!mcp){if(!quiet)promptCorosToken();return}
   window.P1Quiet=!!quiet;p1Syncing=true;p1SyncUI();try{await doSync()}finally{p1Syncing=false;window.P1Quiet=false;p1SyncUI();renderAll()}}
 window.p1Sync=p1Sync;
-$("#syncBtn").addEventListener("click",()=>p1Sync(false));
+/* sync: a tap syncs. In the toy skin the button is the recessed capsule with a plastic puck (after the Ovio toy kit):
+   drag the puck to the far end and let go to sync, it springs back; a tap runs the puck across and syncs too */
+(function(){const b=$("#syncBtn"),pk=b.querySelector(".puck"),toy=()=>document.documentElement.dataset.theme==="toy";let x0=null,dx=0,moved=false,dragAt=0;
+  const max=()=>Math.max(30,b.clientWidth-pk.offsetWidth-10);
+  b.addEventListener("pointerdown",e=>{if(!toy())return;x0=e.clientX;dx=0;moved=false;pk.style.transition="none";try{b.setPointerCapture(e.pointerId)}catch(err){}});
+  b.addEventListener("pointermove",e=>{if(x0==null)return;dx=e.clientX-x0;if(Math.abs(dx)>4)moved=true;const x=Math.max(0,Math.min(max(),dx));pk.style.transform="translateX("+x+"px)";b.classList.toggle("ready",x>=max()*.8)});
+  const up=()=>{if(x0==null)return;const ok=Math.max(0,dx)>=max()*.8;x0=null;pk.style.transition="";pk.style.transform="";b.classList.remove("ready");
+    if(moved){dragAt=Date.now();if(ok){buzz(15);SFX.tap();p1Sync(false)}}};
+  b.addEventListener("pointerup",up);b.addEventListener("pointercancel",up);
+  b.addEventListener("click",()=>{if(Date.now()-dragAt<450)return;
+    if(toy()){pk.style.transform="translateX("+max()+"px)";setTimeout(()=>{pk.style.transform=""},380)}p1Sync(false)})})();
 
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
   if(a==="month"){monthOpen=!monthOpen;monthOff=0;weekOff=0;fsRender("cal")}

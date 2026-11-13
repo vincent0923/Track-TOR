@@ -612,7 +612,6 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] .dock button[aria-selected="true"]{color:#fff}
 :root[data-theme="toy"] .dock .pc{border-radius:14px;box-shadow:0 4px 0 var(--ac-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transition:transform .45s cubic-bezier(.34,1.8,.64,1),width .45s cubic-bezier(.34,1.8,.64,1)}
 /* bars are stacked bricks */
-:root[data-theme="toy"] .bars7 .bv{border-radius:4px;-webkit-mask-image:repeating-linear-gradient(to top,#000 0 13px,transparent 13px 16px);mask-image:repeating-linear-gradient(to top,#000 0 13px,transparent 13px 16px)}
 /* the tick: a big round arcade button */
 :root[data-theme="toy"] .tickb{background:var(--red);color:#fff;box-shadow:0 8px 0 var(--red-lip),0 16px 28px rgba(0,0,0,.24),inset 0 3px 0 rgba(255,255,255,.28),inset 0 -4px 8px rgba(0,0,0,.2);transition:transform .1s,box-shadow .1s}
 :root[data-theme="toy"] .tickb:active{transform:translateY(6px);box-shadow:0 2px 0 var(--red-lip),inset 0 3px 0 rgba(255,255,255,.28)}
@@ -646,10 +645,30 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] #syncBtn .syncdot{background:#fff;box-shadow:0 0 0 3px rgba(0,0,0,.12),inset 0 -2px 0 rgba(0,0,0,.15)}
 :root[data-theme="toy"] #syncBtn .syncdot.ok{background:var(--grn);box-shadow:0 0 0 3px #fff,0 0 8px var(--grn)}
 :root[data-theme="toy"] #meBtn svg{filter:drop-shadow(0 1.5px 0 rgba(0,0,0,.25))}
-/* bricks: the mask cuts the bar into 13px bricks with 3px gaps; this paints each brick's lit top and shaded foot */
-:root[data-theme="toy"] .bars7 .bv{background-image:repeating-linear-gradient(to top,rgba(0,0,0,.28) 0 3px,rgba(0,0,0,0) 3px 9px,rgba(255,255,255,.42) 9px 12px,rgba(255,255,255,.12) 12px 13px,rgba(0,0,0,0) 13px 16px)!important;
-  filter:drop-shadow(0 2px 0 rgba(0,0,0,.18))}
 /* chart lines as plastic tubes */
 :root[data-theme="toy"] svg path[fill="none"]{stroke-width:4.5px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.22))}
 :root[data-theme="toy"] .spark circle,:root[data-theme="toy"] .chart circle{r:5;stroke-width:3px;filter:drop-shadow(0 2px 0 rgba(0,0,0,.25))}
 :root[data-theme="toy"] .ring circle.rv{filter:drop-shadow(0 2px 0 rgba(0,0,0,.25))}
+
+/* the sync button's puck only shows in the toy skin */
+.top .circ .puck{display:contents}
+/* toy: pull-to-sync capsule (recessed well, plastic puck with a glowing dot, springs back) */
+:root[data-theme="toy"] .top #syncBtn{width:94px;height:44px;border-radius:999px;padding:5px;display:flex;align-items:center;justify-content:flex-start;touch-action:none;
+  background:var(--sub);box-shadow:var(--well-sh);border:1.5px solid rgba(255,255,255,.55);color:inherit}
+:root[data-theme="toy"][data-mode="dark"] .top #syncBtn{border-color:rgba(255,255,255,.06)}
+:root[data-theme="toy"] .top #syncBtn:active{transform:none}
+:root[data-theme="toy"] #syncBtn .puck{display:flex;align-items:center;justify-content:center;width:46px;height:32px;border-radius:999px;background:var(--card);border:1px solid var(--line);
+  box-shadow:0 4px 0 var(--lip),0 4px 10px rgba(0,0,0,.12),inset 0 1.5px 0 rgba(255,255,255,.9);transition:transform .55s cubic-bezier(.34,1.65,.64,1)}
+:root[data-theme="toy"] #syncBtn .syncdot{width:11px;height:11px;background:var(--yel);box-shadow:0 0 8px var(--yel)}
+:root[data-theme="toy"] #syncBtn .syncdot.ok{background:var(--grn);box-shadow:0 0 8px var(--grn)}
+:root[data-theme="toy"] #syncBtn.ready .syncdot{background:var(--grn);box-shadow:0 0 10px var(--grn)}
+:root[data-theme="toy"] #syncBtn .syncdot.spin{width:11px;height:11px;border:0;background:var(--ac);box-shadow:0 0 10px var(--ac);animation:toyBlink .6s ease-in-out infinite alternate}
+@keyframes toyBlink{from{opacity:.35;transform:scale(.8)}to{opacity:1;transform:scale(1.1)}}
+/* toy: star-history bricks: 8px bricks, a 2px dark lip under each, a 1px lit top, 1px between */
+:root[data-theme="toy"] .bars7 .bv{border-radius:3px;-webkit-mask-image:repeating-linear-gradient(to top,transparent 0 1px,#000 1px 11px);mask-image:repeating-linear-gradient(to top,transparent 0 1px,#000 1px 11px);
+  background-image:repeating-linear-gradient(to top,rgba(0,0,0,0) 0 1px,rgba(0,0,0,.38) 1px 3px,rgba(0,0,0,0) 3px 10px,rgba(255,255,255,.32) 10px 11px)!important;filter:none}
+/* toy: thicker panels: a lit top edge, a deeper 7px lip, a soft floor shadow */
+:root[data-theme="toy"]{--lip:#D2CAB6;--shadow:inset 0 1.5px 0 rgba(255,255,255,.95),0 7px 0 var(--lip),0 8px 0 rgba(60,45,20,.08),0 18px 30px -8px rgba(30,24,14,.16)}
+:root[data-theme="toy"][data-mode="dark"]{--lip:#0D0A28;--shadow:inset 0 1.5px 0 rgba(255,255,255,.12),0 7px 0 var(--lip),0 8px 0 rgba(0,0,0,.25),0 20px 32px -8px rgba(0,0,0,.6)}
+:root[data-theme="toy"] .fs-peek i{box-shadow:0 7px 0 var(--lip)}
+:root[data-theme="toy"] .sheet .panel,:root[data-theme="toy"] .mask .sheet{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),0 -7px 0 var(--lip)}
