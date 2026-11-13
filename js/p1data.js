@@ -89,7 +89,8 @@ const SFX_TOY={tick:()=>{tone(950,0,.11,"sine",.26,240);tone(1900,0,.02,"square"
   rest:()=>{tone(784,0,.16,"sine",.22,740);tone(622,.22,.26,"sine",.22,590)},
   done:()=>{[[523,0],[659,.12],[784,.24],[1047,.36],[784,.52],[1047,.64]].forEach(([f,t])=>{tone(f,t,.16,"square",.06);tone(f,t,.16,"triangle",.14)});xylo(2093,.82,.18)},
   tap:()=>{tone(1800,0,.018,"square",.05);tone(320,0,.03,"triangle",.1,180)}};
-const SFX=new Proxy({},{get:(o,k)=>(document.documentElement.dataset.theme==="toy"?SFX_TOY:SFX_BASE)[k]});
+/* each skin can bring its own sounds (SFX_TH in js/p1fx.js); anything it leaves out falls back to the base set */
+const SFX=new Proxy({},{get:(o,k)=>{const th=document.documentElement.dataset.theme;if(th==="toy")return SFX_TOY[k];const t=typeof SFX_TH!=="undefined"&&SFX_TH[th];return (t&&t[k])||SFX_BASE[k]}});
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 
 

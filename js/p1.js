@@ -15,7 +15,7 @@ function renderAll(){if(typeof show==="function"&&typeof cur!=="undefined")show(
 const WD_ZH=["日","一","二","三","四","五","六"],WD_EN=["Su","Mo","Tu","We","Th","Fr","Sa"],WD=LANG==="en"?WD_EN.slice():WD_ZH.slice();
 const MON_EN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmt=v=>v==null?"–":Math.round(v).toLocaleString("en-US");
-const ICON={
+const ICON={dust:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 3l-8 8"/><path d="M8.5 10.5l5 5"/><path d="M8.5 10.5C6.5 10.5 4 12 3 20c3-.3 6.5-1.3 10.5-4.5"/><path d="M6.5 17.5l2-3M9.8 17.6l1.3-2.3"/></svg>',
   chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
   left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>',
   right:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
@@ -49,7 +49,8 @@ function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>
 /* themes: each has a light and a dark version. aurora is free; others are bought with G (settings.buys, settings.theme) */
 const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,sw:["#F1F1EC","#4FAF6A","#070A10","#00F5D4"]},
   {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]},
-  {id:"toy",zh:"玩具",en:"Toy",price:90,sw:["#F4F1EA","#EB3B24","#1C1747","#FF4F9A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board",lit:1},
+  {id:"toy",zh:"玩具",en:"Toy",price:90,sw:["#F4F1EA","#EB3B24","#1C1747","#FF4F9A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"},
+  {id:"pocket",zh:"随身机",en:"Pocket Player",price:120,lit:1,sw:["#C6C9CB","#E7D4B4","#1B1C1E","#E39A2E"],dz:"油润塑料、凹碟方键、点阵屏、喇叭网孔",de:"Oily plastic, dished square keys, a dot-matrix screen, speaker holes"},
   /* single-look themes: fix is the one mode they come in; the header switch hides */
   {id:"tm4",zh:"钴蓝 · 合成器",en:"Cobalt Synth",price:120,fix:"dark",sw:["#123A6B","#2D76C6","#FFFFFF","#FF6E30"],dz:"圆柱按键、点阵屏、发光指示灯",de:"Cylinder keys, a dot-matrix screen, glowing LEDs"},
   {id:"skeuo",zh:"拉丝铝 · 霓虹",en:"Brushed Alloy",price:120,fix:"light",sw:["#86888D","#C4C6CA","#18191B","#1FF5DC"],dz:"金属旋钮、黑色表圈、青色霓虹",de:"Metal knobs, a black bezel, cyan neon"},
@@ -60,13 +61,18 @@ function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}
   const th=themeOwned(state.settings.theme)?state.settings.theme:"aurora",fix=(THEMES.find(x=>x.id===th)||{}).fix,
     dark=fix?fix==="dark":m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),de=document.documentElement;
   de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;if(fix||(THEMES.find(x=>x.id===th)||{}).lit)de.dataset.lit="";else delete de.dataset.lit;
-  document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
+  requestAnimationFrame(()=>fitTitle());document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
 /* tactile themes: the light on the materials follows the phone. Tilt moves the highlight (--lx/--ly) and turns the
    reflections on metal (--rot); the rest point drifts back, so holding still settles it. A mouse does the same. */
-(function(){const de=document.documentElement,on=()=>"lit" in de.dataset&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* how strong the light is: 0 off (still), 1 soft, 2 standard, 3 max; scales highlight alpha (--rt) and how far the tilt moves it */
+function rtLevel(){let v=2;try{const x=localStorage.getItem(PK+"rt");if(x!=null)v=+x}catch(e){}return [0,1,2,3].includes(v)?v:2}
+const RT_K=[0,.6,1,1.6];
+function rtApply(){const de=document.documentElement,k=RT_K[rtLevel()];de.style.setProperty("--rt",k?k:.6);if(!k){de.style.removeProperty("--lx");de.style.removeProperty("--ly");de.style.removeProperty("--rot")}}
+rtApply();
+(function(){const de=document.documentElement,on=()=>"lit" in de.dataset&&rtLevel()>0&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
   let bg=null,bb=null,x=0,y=0,raf=0;
-  const put=()=>{raf=0;de.style.setProperty("--lx",(30+x*1.6).toFixed(1)+"%");de.style.setProperty("--ly",(10+y*1.3).toFixed(1)+"%");de.style.setProperty("--rot",(x*3).toFixed(1)+"deg")};
+  const put=()=>{raf=0;const k=RT_K[rtLevel()];de.style.setProperty("--lx",(30+x*1.6*k).toFixed(1)+"%");de.style.setProperty("--ly",(10+y*1.3*k).toFixed(1)+"%");de.style.setProperty("--rot",(x*3*k).toFixed(1)+"deg")};
   const go=(nx,ny)=>{x=Math.max(-25,Math.min(25,nx));y=Math.max(-20,Math.min(20,ny));if(!raf)raf=requestAnimationFrame(put)};
   const ori=e=>{if(!on()||e.gamma==null)return;if(bg==null){bg=e.gamma;bb=e.beta}bg+=(e.gamma-bg)*.02;bb+=(e.beta-bb)*.02;go(e.gamma-bg,e.beta-bb)};
   /* listen from the start (no events arrive until allowed); where the browser asks first, ask on the first tap */
@@ -74,6 +80,13 @@ applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change"
   const ask=()=>{const D=window.DeviceOrientationEvent;if(ask.d||!D||typeof D.requestPermission!=="function")return;ask.d=true;D.requestPermission().catch(()=>{ask.d=false})};
   addEventListener("pointerdown",()=>{if(on())ask()},{passive:true});
   addEventListener("pointermove",e=>{if(e.pointerType==="mouse"&&on())go((e.clientX/innerWidth-.5)*40,(e.clientY/innerHeight-.5)*30)},{passive:true})})();
+/* dust: two days without training or extras and the screen gathers dust, more each day (levels 1–3); training wipes it */
+function dustOn(){try{return localStorage.getItem(PK+"dust")!=="0"}catch(e){return true}}
+function dustDays(){let last="";Object.values(state.sessions).forEach(x=>{if(x&&(x.done||Object.values(x.sets||{}).some(a=>(a||[]).some(z=>z.d)))){const d=x.date||today();if(d>last)last=d}});
+  Object.keys(state.dayx||{}).forEach(d=>{const x=state.dayx[d];if(x&&x.xs&&x.xs.length&&d>last)last=d});return last?dnum(today())-dnum(last):0}
+function dustApply(){const de=document.documentElement,d=dustOn()?dustDays():0,lv=d<2?0:d<3?1:d<5?2:3,was=+(de.dataset.dust||0);
+  let el=document.getElementById("dust");if(!el&&lv){el=document.createElement("div");el.id="dust";el.setAttribute("aria-hidden","true");document.body.appendChild(el)}
+  if(!el)return;if(lv){el.classList.remove("wipe");de.dataset.dust=lv}else if(was){el.classList.add("wipe");delete de.dataset.dust}}
 /* the header switch: tap flips light and dark; hold it for the themes */
 (function(){const b=$("#modeBtn");if(!b)return;let tm=0,held=false;
   b.addEventListener("pointerdown",()=>{held=false;clearTimeout(tm);tm=setTimeout(()=>{held=true;buzz(15);coinSheet(true)},500)});
@@ -269,6 +282,44 @@ let gapR=7;try{const v=+localStorage.getItem(PK+"gw");if(GAP_RANGES.includes(v)&
 function gapData(){const t=today(),to=ymdAdd(t,-1),first=Object.keys(state.diet).sort()[0];
   const from=gapR?ymdAdd(to,-(gapR-1)):(first&&first<=to?first:to),days=[];for(let d=from;d<=to;d=ymdAdd(d,1))days.push(d);
   const gaps=days.map(dietGapOf),known=gaps.filter(g=>g!=null),sum=known.reduce((a,g)=>a+g,0);return {from,to,days,gaps,known,sum}}
+/* bricks: a bar chart built from stacked bricks (cols: [{n bricks, c colour, l label}]). The bricks drop in when drawn;
+   a finger run across lifts each column it passes in a ripple, with a note that rises column by column. */
+function bricksHtml(cols){return '<div class="bricks" style="--cols:'+cols.length+'">'+cols.map((c,i)=>'<div class="bk" data-i="'+i+'" style="--c:'+(c.c||'var(--ac)')+'"><div class="bks">'
+  +(c.n?Array.from({length:c.n},(_,j)=>'<i style="--j:'+j+';--d:'+(i*16+j*26)+'ms"></i>').join(""):'<i class="ghost"></i>')+'</div><span class="bl">'+(c.l||'&nbsp;')+'</span></div>').join("")+'</div>'}
+(function(){let box=null,last=null;
+  const hit=e=>{const el=document.elementFromPoint(e.clientX,e.clientY),col=el&&el.closest(".bk");if(!col||col===last||!box||!box.contains(col))return;last=col;
+    col.classList.remove("hot");void col.offsetWidth;col.classList.add("hot");const n=col.querySelectorAll("i:not(.ghost)").length;
+    if(n){tone(440*Math.pow(2,(+col.dataset.i%15)/12),0,.07,"triangle",.07);buzz(3)}};
+  addEventListener("pointerdown",e=>{box=e.target.closest&&e.target.closest(".bricks");last=null;if(box)hit(e)},{passive:true});
+  addEventListener("pointermove",e=>{if(box)hit(e)},{passive:true});
+  ["pointerup","pointercancel"].forEach(k=>addEventListener(k,()=>{box=null}))})();
+/* knob: a rotary selector. opts are the labels on its arc, each a normal button (with its own data-act); turn the knob,
+   tap it for the next one, or tap a label. */
+const KNOB_SPAN=140;
+function knobHtml(opts,cur,attr,label){const n=opts.length,i=Math.max(0,opts.findIndex(o=>o[0]===cur)),ang=k=>n>1?-KNOB_SPAN/2+KNOB_SPAN*k/(n-1):0;
+  return '<div class="knobw" style="--a:'+ang(i)+'deg" data-i="'+i+'" data-n="'+n+'">'+opts.map((o,k)=>'<button class="kl'+(k===i?' on':'')+'" data-k="'+k+'" '+attr(o[0])+' style="--a:'+ang(k)+'deg">'+o[1]+'</button>').join("")
+    +'<button class="knob" aria-label="'+(label||'')+'"><i></i></button></div>'}
+(function(){let d=null;
+  const angOf=(e,c)=>Math.atan2(e.clientX-c.x,c.y-e.clientY)*180/Math.PI;
+  addEventListener("pointerdown",e=>{const k=e.target.closest&&e.target.closest(".knob");if(!k)return;const w=k.parentNode,r=k.getBoundingClientRect();
+    d={w,k,c:{x:r.left+r.width/2,y:r.top+r.height/2},n:+w.dataset.n,i:+w.dataset.i,start:+w.dataset.i,moved:false,x:e.clientX,y:e.clientY};k.setPointerCapture(e.pointerId)});
+  addEventListener("pointermove",e=>{if(!d)return;if(!d.moved&&Math.hypot(e.clientX-d.x,e.clientY-d.y)<6)return;d.moved=true;d.w.classList.add("turning");
+    const a=Math.max(-KNOB_SPAN/2-12,Math.min(KNOB_SPAN/2+12,angOf(e,d.c))),step=KNOB_SPAN/(d.n-1),i=Math.max(0,Math.min(d.n-1,Math.round((a+KNOB_SPAN/2)/step)));
+    d.w.style.setProperty("--a",a+"deg");if(i!==d.i){d.i=i;buzz(6);tone(1500,0,.025,"square",.04);d.w.querySelectorAll(".kl").forEach((l,j)=>l.classList.toggle("on",j===i))}});
+  const end=()=>{if(!d)return;const {w,n,start,moved}=d;let i=d.i;d=null;w.classList.remove("turning");if(!moved)i=(start+1)%n;
+    const step=KNOB_SPAN/(n-1);w.style.setProperty("--a",(-KNOB_SPAN/2+step*i)+"deg");w.dataset.i=i;
+    if(i!==start){tone(900,0,.04,"triangle",.08);const l=w.querySelector('.kl[data-k="'+i+'"]');setTimeout(()=>l&&l.click(),moved?60:180)}};
+  addEventListener("pointerup",end);addEventListener("pointercancel",end)})();
+/* the main exercise, week by week: 12 weeks of every ticked rep stacked as bricks, the best week in the second colour */
+function wkMon(d){return ymdAdd(d,-((dateObj(d).getDay()+6)%7))}
+function weeklyHtml(){const m=mainEx();if(m.custom)return "";const by={};
+  setsOfMove(m.id,m.id==="pullup"?"pull":null).forEach(([d,v])=>{const w=wkMon(d);by[w]=(by[w]||0)+v});
+  const cur=wkMon(today()),weeks=[];for(let i=11;i>=0;i--)weeks.push(ymdAdd(cur,-7*i));
+  const vals=weeks.map(w=>by[w]||0),mx=Math.max(...vals);if(!mx)return "";const best=vals.lastIndexOf(mx),tot=vals.reduce((a,b)=>a+b,0);
+  return '<section class="card weekly"><div class="row" style="align-items:flex-start"><div class="sp"><p class="eyebrow">'+T('每周总数 · 12 周','Weekly total · 12 weeks')+'</p><h3 class="wkh">'+mainName()+'</h3></div>'
+    +'<span class="cnt n">'+fmt(tot)+'</span></div>'
+    +bricksHtml(vals.map((v,i)=>({n:v?Math.max(1,Math.round(v/mx*8)):0,c:i===best?"var(--push)":"var(--pull)"})))
+    +'<div class="row muted wkf"><span>'+dayLabel(weeks[0])+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--push)"></i>'+T('最多的一周 ','Best week ')+fmt(mx)+' '+mainUnit()+'</span><span>'+T('本周','This week')+'</span></div></section>'}
 function flapHtml(txt){return '<span class="flap">'+[...txt].map((c,i)=>'<span style="--i:'+i+'">'+c+'</span>').join("")+'</span>'}
 function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days,gaps,known,sum}=gapData();gapR=keep;const R=rr!=null?rr:gapR,mx=Math.max(300,...known.map(Math.abs));
   const label=R?T('过去 '+R+' 天','Last '+R+' days'):T('有记录以来 '+days.length+' 天','Since the first log · '+days.length+' days');
@@ -280,7 +331,7 @@ function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days
   return '<section class="card gapcard"><div class="row"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?T(' · 记了 '+known.length+' 天',' · '+known.length+' logged'):'')+'</p>'
     +'<div class="big">'+flapHtml(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?T("缺口","deficit"):T("盈余","surplus"))+'</small></div></div>'
     +(known.length?'<span class="pill '+(sum>=0?"good":"bad")+'">'+word+(Math.abs(sum)/7700).toFixed(2)+T(' kg 脂肪',' kg fat')+'</span>':'')+'</div>'
-    +'<div class="bars7" style="grid-template-columns:repeat('+cols.length+',1fr);gap:'+(cols.length>14?3:cols.length>7?5:8)+'px">'+cols.map(c=>'<div class="bc"><div class="bw"><div class="bv" style="height:'+(c.g==null?6:Math.max(6,Math.abs(c.g)/cm*86))+'px;border-radius:'+(cols.length>14?4:10)+'px;background:'+(c.g==null?"var(--sub)":c.g>=0?"var(--good)":"var(--bad)")+'"></div></div>'+'<span class="bl">'+(c.l||'&nbsp;')+'</span>'+'</div>').join("")+'</div>'
+    +bricksHtml(cols.map(c=>({n:c.g==null?0:Math.max(1,Math.round(Math.abs(c.g)/cm*8)),c:c.g==null?"":c.g>=0?"var(--good)":"var(--bad)",l:c.l})))
     +(days.length?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
     +'</section>'}
 /* the four periods are a frosted swipe stack too: finger right for longer, left for shorter */
@@ -358,7 +409,7 @@ function deltaOf(m,pts,days){days=days==null?30:days;if(pts.length<2)return "";c
   const good=(d>0)===!!m.up;return '<span class="td" style="color:'+(good?"var(--good)":"var(--bad)")+'">'+(d>0?"↑ ":"↓ ")+Math.abs(d).toFixed(m.dec)+' '+m.unit+' · '+span+'</span>'}
 function goalsHtml(){const st=state.settings,gap=gapAllTime();
   const pu=pullSeries(),wt=avg7(wtMerged()),wz=series("waist");
-  const G=[{k:mainEx().id==="pullup"?"pullups":"main:"+mainEx().id,n:mainName().replace(/^标准/,""),c:"var(--pull)",cur:pu.length?pu[pu.length-1].y:null,start:0,tg:+st.p||null,u:mainUnit()},
+  const G=[{k:mainEx().id==="pullup"?"pullups":"main:"+mainEx().id,n:mainName().replace(/^标准/,"").replace(/^Strict /,""),c:"var(--pull)",cur:pu.length?pu[pu.length-1].y:null,start:0,tg:+st.p||null,u:mainUnit()},
     {k:"waist",n:T("腰围","Waist"),c:"var(--ac)",cur:wz.length?wz[wz.length-1].y:null,start:wz.length?wz[0].y:null,tg:+st.z||null,u:"cm"},
     {k:"weight",n:T("体重","Weight"),c:"var(--sleep)",cur:wt.length?+wt[wt.length-1].y.toFixed(1):null,start:wt.length?wt[0].y:null,tg:+st.w||null,u:"kg"},
     {k:"fat",n:T("减脂","Fat loss"),c:"#FFB020",cur:gap?+(gap.s/7700).toFixed(1):null,start:0,tg:+st.fat||null,u:"kg"}];
@@ -381,7 +432,7 @@ function renderProgView(){const v=$("#v-prog"),{shown,hidden}=tileList();
       +'<span class="tv">'+(last?last.y.toFixed(m.dec)+'<small>'+m.unit+'</small>':'–')+'</span>'+(last?deltaOf(m,all):'<span class="td muted">'+T('还没有数据','No data yet')+'</span>')
       +(pts.length>1?lineSvg(pts,m.wide?320:150,m.wide?64:44,m.c,"spark"):'')
       +(tileEdit?'<span class="tx" data-act="thide" data-k="'+m.k+'" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</button>'}).join("");
-  v.innerHTML=goalsHtml()+'<div class="bento'+(tileEdit?' editing':'')+'">'+tiles+'</div>'
+  v.innerHTML=goalsHtml()+weeklyHtml()+'<div class="bento'+(tileEdit?' editing':'')+'">'+tiles+'</div>'
     +(tileEdit?'<div class="tilebar">'+(hidden.length?'<button class="fsreset" data-act="tadd" aria-label="'+T('加回图表','Add a chart back')+'">'+ICON.plus+'</button>':'')+'<button class="fsreset" data-act="tdone" aria-label="'+T('完成','Done')+'">'+ICON.check+'</button></div>':'');
   animateRings(v);tileBind()}
 function tileSave(cfg){state.settings.tiles=cfg;lsSave()}
@@ -410,7 +461,7 @@ function metricSheet(k){const m=METRICS.find(x=>x.k===k),all=m.pts();
   const draw=()=>{const pts=recent(all,chartRange),last=all[all.length-1];
     $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+m.name+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
       +'<div class="row" style="margin-bottom:14px;align-items:flex-end"><div class="sp"><div class="big">'+(last?last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small></div>'+(last?deltaOf(m,all,chartRange):'')+'</div>'
-      +'<div class="seg">'+[[14,T("14天","14d")],[30,T("30天","30d")],[90,T("90天","90d")],[0,T("全部","All")]].map(([d,l])=>'<button data-act="range" data-r="'+d+'" aria-pressed="'+(chartRange===d)+'">'+l+'</button>').join("")+'</div></div>'
+      +knobHtml([[14,T("14天","14d")],[30,T("30天","30d")],[90,T("90天","90d")],[0,T("全部","All")]],chartRange,d=>'data-act="range" data-r="'+d+'"',T('时间范围','Range'))+'</div>'
       +(pts.length>1?'<div class="chart" id="chart">'+lineSvg(pts,340,200,m.c,"",14)+'<span class="tip" id="ctip"></span></div>'
         +'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(pts[0].date)+'</span><span class="sp"></span><span>'+dayLabel(pts[pts.length-1].date)+'</span></div>'
         +'<div class="row" style="margin-top:16px;gap:8px"><span class="pill">'+T('最低 ','Low ')+Math.min(...pts.map(p=>p.y)).toFixed(m.dec)+'</span><span class="pill">'+T('最高 ','High ')+Math.max(...pts.map(p=>p.y)).toFixed(m.dec)+'</span><span class="pill">'+pts.length+T(' 个记录',' records')+'</span></div>'
@@ -455,26 +506,37 @@ $("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()})
   pnl.addEventListener("touchstart",e=>{if(pnl.scrollTop>0)return;y0=e.touches[0].clientY;dy=0},{passive:true});
   pnl.addEventListener("touchmove",e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);pnl.style.transition="none";pnl.style.transform="translateY("+dy+"px)"},{passive:true});
   pnl.addEventListener("touchend",()=>{if(y0==null)return;pnl.style.transition="";pnl.style.transform="";if(dy>90)closeSheet();y0=null})})();
+/* Effects: ray-traced light (a knob), weather, dust after days off, celebrations */
+function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+'" role="switch" aria-checked="'+on+'">'+ic+'<span class="sp">'+t+'</span><span class="sw" aria-hidden="true"></span></button>';
+  openSheet('<div class="sh-h"><h3>'+T('特效','Effects')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
+    +'<div class="setlist"><div class="opt rtrow"><span class="sp"><b>'+T('光追','Ray-traced light')+'</b><br><span class="muted" style="font-size:12px;font-weight:500">'+T('高光和反光跟着手机倾斜','Highlights follow the tilt')+'</span></span>'
+    +knobHtml([[0,T("关","Off")],[1,T("柔","Soft")],[2,T("标准","Std")],[3,T("极致","Max")]],rtLevel(),v=>'data-act="rt" data-v="'+v+'"',T('光追','Ray-traced light'))+'</div>'
+    +'<button class="opt" data-act="go" data-to="p1:weather">'+ICON.rain+'<span class="sp">'+T('天气','Weather')+'</span>'+ICON.right+'</button>'
+    +sw("dust",dustOn(),ICON.dust,T('两天没练就落灰','Dust after two days off'))
+    +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+'</div>')}
 function meSheet(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>'+T('设定','Settings')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">'+T('外观','Appearance')+'</p>'
     +'<div class="setlist">'+("fixed" in document.documentElement.dataset?[]:[["auto",T("跟随手机","Match the phone")],["light",T("亮","Light")],["dark",T("暗","Dark")]]).map(([k,l])=>'<button class="opt" data-act="mode" data-m="'+k+'" aria-pressed="'+(m===k)+'">'+l+'</button>').join("")
-    +'<button class="opt" data-act="fx" role="switch" aria-checked="'+fxOn()+'">'+ICON.spark+'<span class="sp">'+T('庆祝效果','Celebrations')+'</span><span class="sw" aria-hidden="true"></span></button>'
-    +row("p1:weather",ICON.rain,T("天气效果","Weather effects"))
+    +'<button class="opt" data-act="fxmenu">'+ICON.spark+'<span class="sp">'+T('特效','Effects')+'</span>'+ICON.right+'</button>'
     +'<button class="opt" data-act="shop">'+COIN+'<span class="sp">'+T('G 积分商场','G shop')+'</span><b class="n" style="font-size:14px">'+fmt(coinTotal())+' G</b>'+ICON.right+'</button></div>'
-    +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="seg langseg" translate="no">'+[["zh","简中"],["zht","繁中"],["en","Eng"]].map(([k,l])=>'<button data-act="lang" data-l="'+k+'" aria-pressed="'+((HANT?"zht":LANG)===k)+'">'+l+'</button>').join("")+'</div>'
+    +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="knobrow" translate="no">'+knobHtml([["zh","简中"],["zht","繁中"],["en","Eng"]],HANT?"zht":LANG,k=>'data-act="lang" data-l="'+k+'"',T('语言','Language'))+'</div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('更多','More')+'</p><div class="setlist">'
     +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'</div>'
     +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('推拉机 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+'</p>')}
 
 /* ---------- header, dock, routing ---------- */
+/* the page title shrinks to fit beside the header buttons (wide theme fonts, long English words) */
+function fitTitle(){const h=$(".top h1"),tr=$(".top .tr");if(!h||!tr)return;h.style.fontSize="";
+  const room=()=>tr.getBoundingClientRect().left-h.getBoundingClientRect().left-14;let fs=parseFloat(getComputedStyle(h).fontSize),n=0;
+  while(h.scrollWidth>room()&&fs>16&&n++<20){fs-=1;h.style.fontSize=fs+"px"}}
 function paintHeader(v){const d=new Date();$("#today").textContent=LANG==="en"?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]+", "+MON_EN[d.getMonth()]+" "+d.getDate():(d.getMonth()+1)+"月"+d.getDate()+"日 周"+WD[d.getDay()];
-  $("#title").textContent=(LANG==="en"?{train:"Train",diet:"Diet",prog:"Progress"}:{train:"训练",diet:"饮食",prog:"进展"})[v];
+  $("#title").textContent=(LANG==="en"?{train:"Train",diet:"Diet",prog:"Progress"}:{train:"训练",diet:"饮食",prog:"进展"})[v];fitTitle();
   let ls="";try{ls=localStorage.getItem("tracktor-lastsync")||""}catch(e){}$("#syncDot").classList.toggle("ok",ls.startsWith(today()))}
 function placePc(anim){const b=document.querySelector('.dock [aria-selected="true"]'),pc=document.querySelector(".dock .pc");if(!b)return;
   if(!anim)pc.style.transition="none";pc.style.width=b.offsetWidth+"px";pc.style.transform="translateX("+(b.offsetLeft-6)+"px)";pc.style.left="6px";if(!anim){void pc.offsetWidth;pc.style.transition=""}}
 let cur="train";
-function show(v,anim,keep){cur=v;document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
+function show(v,anim,keep){cur=v;dustApply();document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
   document.querySelectorAll(".dock button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
   ({train:renderTrainView,diet:renderDietView,prog:renderProgView})[v]();if(v==="diet"&&!keep)dietPull(false);paintHeader(v);requestAnimationFrame(()=>placePc(anim));
   try{localStorage.setItem(PK+"tab",v)}catch(e){}if(!keep)scrollTo({top:0})}
@@ -533,6 +595,9 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="shop")coinSheet(true);
   else if(a==="go")bridge(b.dataset.to);
   else if(a==="lang")setLang(b.dataset.l);
+  else if(a==="fxmenu")fxSheet();
+  else if(a==="rt"){try{localStorage.setItem(PK+"rt",b.dataset.v)}catch(err){}rtApply();buzz(8)}
+  else if(a==="dust"){const on=!dustOn();try{localStorage.setItem(PK+"dust",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);dustApply()}
   else if(a==="fx"){const on=!fxOn();try{localStorage.setItem("tracktor-p1-fx",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);if(on){SFX.tap();celebrate(2,0)}}
   else if(a==="mode"){try{localStorage.setItem(PK+"mode",b.dataset.m)}catch(err){}applyMode();meSheet()}
   else if(run){
@@ -568,3 +633,8 @@ function setLang(l){try{localStorage.setItem("tracktor-lang",l)}catch(e){}
 let start="train";try{start=localStorage.getItem(PK+"tab")||"train"}catch(e){}
 if(!["train","diet","prog"].includes(start))start="train";
 show(start,false);
+
+/* every save may have been a tick: re-check the dust */
+{const save0=lsSave;lsSave=function(){const r=save0.apply(this,arguments);try{dustApply()}catch(e){}return r}}
+
+if(document.fonts)document.fonts.ready.then(fitTitle);addEventListener("resize",fitTitle);

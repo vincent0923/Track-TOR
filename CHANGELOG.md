@@ -6,6 +6,24 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.51a] — 2026-11-14
+
+### 新增 / Added
+- 🧱 **每周总数**：进展页新卡片，主项最近 12 周每周做了多少次，用一块块积木摞出来，最多的一周换颜色；手指划过积木会依次弹起，带一串升高的音。饮食页的缺口 / 盈余柱子也换成了积木
+- 🧱 **Weekly total**: a new card on Progress stacks the last 12 weeks of your main exercise as bricks, the best week in a second colour; run a finger across and the bricks hop with a rising note. The deficit/surplus bars on Diet are bricks too
+- 🎛️ **旋钮**：图表的时间范围和语言改成旋钮，可以转、点一下跳下一档，或直接点标签
+- 🎛️ **Knobs**: chart range and language are now knobs: turn them, tap for the next step, or tap a label
+- ✨ **特效菜单**（设定 › 外观 › 特效）：光追强弱（关 / 柔 / 标准 / 极致）、天气、两天没练就落灰（越久越旧，一打勾就擦干净）、庆祝效果
+- ✨ **Effects menu** (Settings › Appearance › Effects): ray-traced light strength (off / soft / standard / max), weather, dust after two days off (it gets older the longer you stay away and wipes clean on your next tick), celebrations
+- 🎉 **每套主题自己的庆祝和声音**：玩具撒积木，钴蓝点阵爆闪，拉丝铝霓虹环和钢珠，米白飘圆片，黏土软泥团，随身机像素块，各配一套音效
+- 🎉 **Celebrations and sounds per theme**: bricks for Toy, a dot-matrix strobe for Cobalt Synth, neon rings and steel balls for Brushed Alloy, fluttering discs for Cream · Persimmon, squishy blobs for Clay · Mint, pixels for Pocket Player, each with its own sound set
+- 📻 **随身机主题**（120 G，亮暗两版）：油润塑料机身、凹碟方键、点阵屏
+- 📻 **Pocket Player theme** (120 G, light and dark): oily plastic, dished square keys, a dot-matrix screen
+
+### 改进 / Improved
+- 页面标题自动缩小，不再碰到顶栏按钮；目标的名字不再折行
+- Page titles shrink to fit beside the header buttons; goal names stay on one line
+
 ## [v1.50a] — 2026-11-13
 
 ### 新增 / Added
