@@ -271,25 +271,12 @@ function renderDietDays(){
     const d = state.diet[k] || { items:[] }, t = dietTotals(d), intake = intakeOf(k), b = burnOfDate(k);
     const gap = (b===null || intake===null) ? null : b - intake;
     const rows = (d.items||[]).map(it=>`<tr><td class="f">${escHtml(it.name)}</td><td>${f1Dec(numVal(it.p))}</td><td>${f1Dec(numVal(it.f))}</td><td>${f1Dec(numVal(it.c))}</td><td>${f0Dec(numVal(it.kcal))}</td><td>${numVal(it.veg) ? f0Dec(numVal(it.veg)) : "–"}</td></tr>`).join("");
-    const cAct = activeOf(k);
-    const wKg = weightAtDate(k);
-    const metaTags = [];
-    if(cAct!==null){ const mm = state.metrics[k] || {}, ex = numVal(mm.ex);
-      /* show the split so the burn can be checked: day total, how much was logged workouts, what counts */
-      metaTags.push(`${T("手表活动","Watch activity")} ${f0Dec(cAct)} kcal`
-        + (ex ? T("（运动 "+f0Dec(ex)+"）"," (workouts "+f0Dec(ex)+")") : (mm.ex == null ? T("（运动未知）"," (workouts unknown)") : ""))
-        + ` → ${T("计入","counted")} ${f0Dec(watchBurn(k, cAct))}`
-        + (!state.settings.watchFull && ex != null && cAct - Math.min(ex, cAct) > everydayCap(k) ? T("（日常活动按步数封顶 "+f0Dec(everydayCap(k))+"）"," (everyday movement capped by steps at "+f0Dec(everydayCap(k))+")") : "")); }
-    if(numVal(d.expendOverride)!==null) metaTags.push(`${T("手动总消耗","Manual total burn")} ${f0Dec(d.expendOverride)} kcal`);
-    if(wKg!==null) metaTags.push(`${T("体重","Weight")} ${f1Dec(wKg)} kg`);
-    const metaLine = metaTags.length ? `<p class="note"${dietState.open.has(k)?"":" hidden"} style="padding-top:6px;padding-bottom:${d.note?2:10}px">${metaTags.join(" · ")}</p>` : "";
     return `<article class="diet-day">
       <div class="dhead"><h3><button class="dtoggle" type="button" data-dtoggle="${k}" aria-expanded="${dietState.open.has(k)}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>${dotDateStr(k)}</button></h3>
         <div class="pills"><span class="pill">${T("摄入","In")} <b>${f0Dec(intake)}</b></span><span class="pill">${T("消耗","Burn")} <b>${f0Dec(b)}</b></span>${gap===null ? "" : `<span class="pill ${gap>=0 ? "g" : "r"}">${gap>=0 ? T("缺口","Deficit") : T("盈余","Surplus")} <b>${f0Dec(Math.abs(gap))}</b></span>`}
         <button class="chedit iconbtn" type="button" data-dedit="${k}" aria-label="${T("编辑","Edit")}" title="${T("编辑","Edit")}">${PENCIL_ICON}</button></div></div>
       <div class="tbl"${dietState.open.has(k) ? "" : " hidden"}><table><thead><tr><th>${T("食物","Food")}</th><th>${T("蛋白质","Protein")}<small>g</small></th><th>${T("脂肪","Fat")}<small>g</small></th><th>${T("碳水","Carbs")}<small>g</small></th><th>${T("热量","kcal")}<small>kcal</small></th><th>${T("蔬菜","Veg")}<small>g</small></th></tr></thead>
       <tbody>${rows}<tr class="tot"><td class="f"><b>${T("合计","Total")}</b></td><td>${f1Dec(t.p)}</td><td>${f1Dec(t.f)}</td><td>${f1Dec(t.c)}</td><td>${f0Dec(intake)}</td><td>${t.veg ? f0Dec(t.veg) : "–"}</td></tr></tbody></table></div>
-      ${metaLine}
       ${d.note ? `<p class="note"${dietState.open.has(k) ? "" : " hidden"}>${escHtml(d.note)}</p>` : ""}
     </article>`;
   }).join("");
