@@ -34,6 +34,7 @@ const ICON={
   spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></svg>',
   share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg>',
   reset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 4.1A8 8 0 1 1 4.7 8.6"/><path d="M13.6 1.4 10.6 4.1l3 2.9"/></svg>',
+  moon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg>',
   dumbbell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>',
   lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>'};
@@ -71,15 +72,20 @@ const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 function dayCell(s,marks,out){const t=today(),mk=marks[s],kinds=mk?[...mk].filter(k=>k!=="x").sort():[];
   const cls=(s===t?" today":"")+(s>t?" fut":"")+(out?" out":"")+(kinds.length?" trn":mk?" xo":"")+(s===calSel?" sel":"");
   const st=kinds.length?' style="--kc:var(--'+kinds[0]+')"':'',inner='<b>'+dateObj(s).getDate()+'</b>';
-  return s>t?'<div class="dd'+cls+'">'+inner+'</div>':'<button class="dd'+cls+'"'+st+' data-act="'+(kinds.length?'calsel':'cal')+'" data-d="'+s+'" aria-label="'+s+'">'+inner+'</button>'}
-/* which trained day the line under the calendar shows: the one tapped, else the latest one on this card */
+  return s>t?'<div class="dd'+cls+'">'+inner+'</div>':'<button class="dd'+cls+'"'+st+' data-act="calsel" data-d="'+s+'" aria-label="'+s+'">'+inner+'</button>'}
+/* the line under the calendar appears only for a tapped day: what was trained (in that day's colour), the extra
+   practice, or a rest day; the pen opens the day to change it or add practice */
 let calSel=null;
-function calPill(days){const marks=dayMarks(),t=today();let d=calSel&&days.includes(calSel)?calSel:null;
-  if(!d)d=days.filter(x=>x<=t&&marks[x]&&[...marks[x]].some(k=>k!=="x")).pop()||null;if(!d)return "";
-  const ss=Object.entries(state.sessions).filter(([sid,x])=>x&&x.done&&x.date===d&&BYID[sid]).map(([sid])=>BYID[sid]);if(!ss.length)return "";
-  const names=[];ss.forEach(p=>p.ex.forEach(e=>{const a=state.sessions[p.sid].sets[e.id];if(e.unit!=="分钟"&&a&&a.some(x=>x.d)){const n=NS(e);if(!names.includes(n))names.push(n)}}));
-  return '<div class="calpill" style="--kc:var(--'+ss[0].kind+')"><i class="ci">'+ICON.dumbbell+'</i><span>'+esc(names.join(T("、",", ")))+'</span>'
-    +'<button class="fsreset" data-act="cal" data-d="'+d+'" aria-label="'+T('修改这天','Edit this day')+'">'+ICON.pen+'</button></div>'}
+function calPill(days){const d=calSel;if(!d||!days.includes(d))return "";const t=today();
+  const ss=Object.entries(state.sessions).filter(([sid,x])=>x&&x.done&&x.date===d&&BYID[sid]).map(([sid])=>BYID[sid]);
+  const names=[],add=n=>{if(n&&!names.includes(n))names.push(n)};
+  ss.forEach(p=>p.ex.forEach(e=>{const a=state.sessions[p.sid].sets[e.id];if(e.unit!=="分钟"&&a&&a.some(x=>x.d))add(NS(e))}));
+  const xs=[].concat(...ss.map(p=>state.sessions[p.sid].xs||[]),(state.dayx[d]&&state.dayx[d].xs)||[]);
+  xs.forEach(it=>{if(it.sets&&it.sets.some(x=>x.d))add(typeof xName==="function"?xName(it):it.name)});
+  const kc=ss.length?'var(--'+ss[0].kind+')':names.length?'var(--muted)':'color-mix(in srgb,var(--muted) 55%,transparent)';
+  const txt=names.length?names.join(T("、",", ")):d===t?T("今天还没练","Nothing yet today"):T("休息日","Rest day");
+  return '<div class="calpill" style="--kc:'+kc+'"><i class="ci">'+(ss.length||names.length?ICON.dumbbell:ICON.moon)+'</i><span'+(names.length?'':' class="muted"')+'>'+esc(txt)+'</span>'
+    +'<button class="fsreset" data-act="cal" data-d="'+d+'" aria-label="'+T('打开这天','Open this day')+'">'+ICON.pen+'</button></div>'}
 /* the hero is a deck: one card per training day that's ready, the least recently trained on top. Swipe the top card
    away (or tap the edges peeking below) and the next comes up; tap a card to show its moves; ✨ opens the plan. */
 let heroRot=0,heroOpen=false;
@@ -467,7 +473,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   /* Today: back to this week or month; already there, it opens today */
   else if(a==="caltoday"){monthOff=0;weekOff=0;fsReset("cal")}
   else if(a==="dietnow"){dietGrp=0;fsReset("diet")}
-  else if(a==="calsel"){calSel=b.dataset.d;SFX.tap();fsRender("cal")}
+  else if(a==="calsel"){calSel=calSel===b.dataset.d?null:b.dataset.d;SFX.tap();fsRender("cal")}
   else if(a==="start")startRun(b.dataset.sid);
   else if(a==="fsnext"){const o=FS[b.dataset.fs];if(o)fsGo(b.dataset.fs,o.peekDir||1)}
   else if(a==="hopen"){const c=b;heroOpen=!heroOpen;c.classList.toggle("open",heroOpen);SFX.tap()}
