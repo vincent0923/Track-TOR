@@ -625,11 +625,11 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] .cal button.dd:active b{animation:toyPop .35s cubic-bezier(.34,1.56,.64,1)}
 /* on the blue goals slab every ring fills in yellow */
 :root[data-theme="toy"] .goals4 circle.rv{stroke:var(--yel)}
-/* toy, in 3D: round header buttons are domed plastic, bars are bricks with a lit top and a shaded foot,
+/* toy, in cartoon 3D (flat colour, a solid lip, no shine): round header buttons are plastic, bars are bricks with a lit top and a shaded foot,
    chart lines are plastic tubes casting a shadow, rings are plastic hoops */
 :root[data-theme="toy"] .top .circ{width:42px;height:42px;border:0;color:#fff;
-  background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55) 0 12%,rgba(255,255,255,0) 34%),radial-gradient(circle at 50% 120%,rgba(0,0,0,.28),rgba(0,0,0,0) 60%),var(--pc,var(--ac));
-  box-shadow:0 4px 0 var(--pl,var(--ac-lip)),0 8px 14px -4px rgba(0,0,0,.35),inset 0 -3px 0 rgba(0,0,0,.12)}
+  background:var(--pc,var(--ac));
+  box-shadow:0 4px 0 var(--pl,var(--ac-lip)),0 8px 14px -6px rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.22),inset 0 -3px 0 rgba(0,0,0,.12)}
 :root[data-theme="toy"] .top .circ:active{transform:translateY(3px);box-shadow:0 1px 0 var(--pl,var(--ac-lip)),inset 0 -2px 0 rgba(0,0,0,.12)}
 :root[data-theme="toy"] #syncBtn{--pc:var(--yel);--pl:var(--yel-lip)}
 :root[data-theme="toy"] #meBtn{--pc:var(--ac);--pl:var(--ac-lip)}
@@ -1022,7 +1022,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-dust="3"] #dust{opacity:1}
 #dust.wipe{opacity:0;clip-path:inset(0 0 0 100%);transition:clip-path 1.1s cubic-bezier(.6,0,.2,1),opacity .4s ease 1s}
 /* knobs and bricks in each theme's material */
-:root[data-theme="toy"] .knobw .knob{background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55) 0 12%,rgba(255,255,255,0) 34%),var(--yel);box-shadow:0 0 0 4px var(--sub),0 5px 0 var(--yel-lip),0 10px 16px -4px rgba(0,0,0,.3)}
+:root[data-theme="toy"] .knobw .knob{background:var(--yel);box-shadow:0 0 0 4px var(--sub),0 5px 0 var(--yel-lip),0 10px 16px -4px rgba(0,0,0,.3)}
 :root[data-theme="toy"] .knobw .knob i{background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.25)}
 :root[data-theme="toy"] .bks i{border-radius:3px;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.15),0 2px 0 color-mix(in srgb,var(--c) 55%,#000)}
 :root[data-theme="toy"] .bks{gap:3px}
@@ -1051,3 +1051,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 .goals4 .gn{display:inline-block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom}
 :root[data-theme="skeuo"] .hero h2{font-size:23px}
 :root[data-theme="skeuo"] .weekly .wkh{font-size:19px}
+/* the gap card: the number stays on one line; the fat estimate is a two-line pill (amount, then how sure) */
+.gapcard .big{white-space:nowrap}
+.gpill{display:grid;justify-items:end;text-align:right;gap:1px;border-radius:14px;padding:5px 10px;line-height:1.2;flex:none;align-self:flex-start}
+.gpill small{font-size:10px;font-weight:700;opacity:.75}

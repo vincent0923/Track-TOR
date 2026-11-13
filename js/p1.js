@@ -337,7 +337,7 @@ function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days
   const cm=Math.max(300,...cols.filter(c=>c.g!=null).map(c=>Math.abs(c.g)));
   return '<section class="card gapcard"><div class="row"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?T(' · 记了 '+known.length+' 天',' · '+known.length+' logged'):'')+'</p>'
     +'<div class="big">'+flapHtml(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?T("缺口","deficit"):T("盈余","surplus"))+'</small></div></div>'
-    +(known.length?'<span class="pill '+(sum>=0?"good":"bad")+'">'+word+(Math.abs(sum)/7700).toFixed(2)+T(' kg 脂肪',' kg fat')+'</span>':'')+'</div>'
+    +(known.length?'<span class="pill gpill '+(sum>=0?"good":"bad")+'"><span>'+(w==="about"?word:'')+(Math.abs(sum)/7700).toFixed(2)+T(' kg 脂肪',' kg fat')+'</span>'+(w==="about"?'':'<small>'+word.replace(/[:：]?\s*$/,'')+'</small>')+'</span>':'')+'</div>'
     +bricksHtml(cols.map(c=>({n:c.g==null?0:Math.max(1,Math.round(Math.abs(c.g)/cm*8)),c:c.g==null?"":c.g>=0?"var(--good)":"var(--bad)",l:c.l})),true)
     +(days.length?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
     +'</section>'}
