@@ -239,6 +239,19 @@ function gapAllTime(){
   for(let d = ks[0]; d <= last; d = ymdAdd(d, 1)){ const g = dietGapOf(d); if(g !== null){ s += g; c++; } }
   return c ? { s, c } : null;
 }
+/* cross-check against the scale: the 7-day average weight on a day (null when no weight in those 7 days) */
+function wtMA7(date){ const w = wtMerged().filter(p=>p.date<=date && p.date>=ymdAdd(date,-6)); return w.length ? w.reduce((a,p)=>a+p.y,0)/w.length : null; }
+/* how the fat estimate compares with what the 7-day average weight did over the same days: within 15% of it →
+   "about", more than 15% above → "aggressive estimate", more than 15% below → "conservative estimate". Only for
+   windows of 14 days or more; over a few days water and food in the gut swamp the fat. */
+const XCHECK_TOL = 0.15, XCHECK_MIN_DAYS = 14;
+function fatWord(estKg, from, to){
+  const days = dnum(to) - dnum(from) + 1, a = wtMA7(ymdAdd(from, -1)), b = wtMA7(to);
+  if(days < XCHECK_MIN_DAYS || a === null || b === null) return "about";
+  const seen = a - b;                                   /* kg lost on the scale (negative = gained) */
+  if(Math.abs(estKg - seen) <= XCHECK_TOL * Math.abs(seen)) return "about";
+  return estKg > seen ? "high" : "low";
+}
 function renderGapTile(){
   const el = document.getElementById("dietGapTile"); if(!el) return;
   const n = dietState.gw;
@@ -247,8 +260,11 @@ function renderGapTile(){
   const label = n ? T("近 " + n + " 天", "Last " + n + " days") : (m ? T("有记录以来（" + m.c + " 天）", "Since first log (" + m.c + " days) ") : T("有记录以来", "Since first log "));
   const head = `<span class="gl">${label}${m ? (m.s >= 0 ? T("热量缺口","calorie deficit") : T("热量盈余","calorie surplus")) : T("热量缺口","calorie gap")}</span><span class="gn">›</span>`;
   if(!m){ el.innerHTML = head + `<span class="gv"><b>–</b><span class="gf">${T("记账天数不够","not enough logged days")}</span></span>`; return; }
-  const s = Math.round(m.s), g = Math.round(Math.abs(m.s) / 7.7);
-  el.innerHTML = head + `<span class="gv"><b class="${s >= 0 ? "g" : "r"}">${Math.abs(s)} kcal</b><span class="gf">${T("（约 " + g + " g 脂肪）", "(about " + g + " g fat)")}</span></span>`;
+  const s = Math.round(m.s), g = Math.round(Math.abs(m.s) / 7.7), to = ymdAdd(today(), -1);
+  const from = n ? ymdAdd(to, -(n - 1)) : Object.keys(state.diet).sort()[0];
+  const w = fatWord(m.s / 7700, from, to);
+  const zh = {about:"约 ", high:"激进估计 ", low:"保守估计 "}[w], en = {about:"about ", high:"aggressive estimate: ", low:"conservative estimate: "}[w];
+  el.innerHTML = head + `<span class="gv"><b class="${s >= 0 ? "g" : "r"}">${Math.abs(s)} kcal</b><span class="gf">${T("（" + zh + g + " g 脂肪）", "(" + en + g + " g fat)")}</span></span>`;
   rollNum(el.querySelector("b"), "gap-" + n);
 }
 
