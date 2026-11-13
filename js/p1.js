@@ -6,7 +6,13 @@
 const $=s=>document.querySelector(s);
 const PK="tracktor-p1-";
 /* things not built here yet open the classic page at that spot (see the ?go= handler in js/main.js) */
-const bridge=to=>{location.href="classic.html?go="+encodeURIComponent(to)};
+const bridge=to=>{
+  if(to==="diet"||to.startsWith("diet:")){closeSheet();openDietEntryModal(to.slice(5)||today());return}
+  if(to.startsWith("rec:")){closeSheet();openRecord(to.slice(4));return}
+  location.href="classic.html?go="+encodeURIComponent(to)};
+/* the shared editors (food in js/diet.js, body records in js/p1data.js) call these after saving: redraw this page */
+function renderAll(){if(typeof show==="function"&&typeof cur!=="undefined")show(cur,false,true)}
+function renderDietAll(){renderAll()}
 const WD=["日","一","二","三","四","五","六"];
 const fmt=v=>v==null?"–":Math.round(v).toLocaleString("en-US");
 const ICON={
@@ -275,10 +281,11 @@ function paintHeader(v){const d=new Date();$("#today").textContent=(d.getMonth()
   let ls="";try{ls=localStorage.getItem("tracktor-lastsync")||""}catch(e){}$("#syncDot").classList.toggle("ok",ls.startsWith(today()))}
 function placePc(anim){const b=document.querySelector('.dock [aria-selected="true"]'),pc=document.querySelector(".dock .pc");if(!b)return;
   if(!anim)pc.style.transition="none";pc.style.width=b.offsetWidth+"px";pc.style.transform="translateX("+(b.offsetLeft-6)+"px)";pc.style.left="6px";if(!anim){void pc.offsetWidth;pc.style.transition=""}}
-function show(v,anim){document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
+let cur="train";
+function show(v,anim,keep){cur=v;document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
   document.querySelectorAll(".dock button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
   ({train:renderTrainView,diet:renderDietView,prog:renderProgView})[v]();paintHeader(v);requestAnimationFrame(()=>placePc(anim));
-  try{localStorage.setItem(PK+"tab",v)}catch(e){}scrollTo({top:0})}
+  try{localStorage.setItem(PK+"tab",v)}catch(e){}if(!keep)scrollTo({top:0})}
 document.querySelector(".dock").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(b&&b.getAttribute("aria-selected")!=="true"){SFX.tap();show(b.dataset.v,true)}});
 addEventListener("resize",()=>placePc(false));
 $("#meBtn").addEventListener("click",meSheet);

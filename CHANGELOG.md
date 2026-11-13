@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.34a] — 2026-11-13
+
+### 新增 / Added
+- 🍽️ **新界面里直接记饮食和身体数据**：饮食页的「记一笔」、每天明细里的「编辑这天」、进展页引体体重腰围的「记一笔」不再跳到经典界面，弹出的面板换成新界面的样子，存完当场刷新。
+  **Log food and body measures in the new interface**: Log on the Diet page, Edit this day in a day's details, and Log on the pull-up, weight and waist cards no longer open the classic interface; the editors take the new look and the page refreshes as soon as you save.
+
+### 移除 / Removed
+- 年轮试验页留在手机里的记录和原型留下的几个设置，打开推拉机时自动清掉。
+  The Rings experiment's log and the prototypes' leftover settings are cleared from the phone on the next open.
+
+---
+
 ## [v1.33a] — 2026-11-13
 
 ### 新增 / Added

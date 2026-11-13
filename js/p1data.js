@@ -65,3 +65,45 @@ const SFX={tick:()=>{tone(784,0,.09,"triangle",.2);tone(1175,.06,.16,"triangle",
   tap:()=>tone(1400,0,.04,"sine",.06)};
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 
+
+/* ---------- moved from the classic page (js/ui.js, js/progress.js) ---------- */
+function md(s){if(!s)return "";const p=s.split("-");return (+p[1])+"."+(+p[2])}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function numOrNull(v){if(v===""||v==null)return null;const n=Number(v);return isFinite(n)?n:null}
+/* setMetric changes one day in memory; saveMetric also writes it to storage */
+function setMetric(date,patch){
+  const m=Object.assign({date},state.metrics[date]||{});
+  Object.keys(patch).forEach(k=>{if(patch[k]!=null)m[k]=patch[k]});
+  state.metrics[date]=m;
+}
+function saveMetric(date,patch){setMetric(date,patch);lsSave()}
+/* one number for a chosen date (pull-ups, weight or waist); empty clears that day's record */
+function openRecord(key){
+  const def={pullups:{name:T("标准引体","Strict pull-ups"),unit:T("个","reps"),step:1,mode:"numeric",min:0,max:200,int:true,hint:T("下巴过杠的标准引体向上","Strict reps, chin over the bar")},
+    weight:{name:T("体重","Weight"),unit:"kg",step:0.1,mode:"decimal",min:20,max:300,hint:T("清晨空腹体重","Morning weight, before eating")},
+    waist:{name:T("腰围","Waist"),unit:"cm",step:0.1,mode:"decimal",min:30,max:180,hint:T("量三次肚脐眼位置，选最大值或者平均值","Measure 3 times at the navel; take the largest or the average")}}[key];
+  const m=document.createElement("div");
+  m.className="mask";
+  m.innerHTML='<div class="sheet" role="dialog" aria-modal="true" aria-label="'+esc(def.name)+'" style="max-width:360px">'
+    +'<h3><span>'+esc(def.name)+'</span><button class="iconbtn" type="button" data-close aria-label="'+T("取消","Cancel")+'">'+CLOSE_ICON+'</button></h3>'
+    +'<div class="form-body"><label class="flabel">'+T("日期","Date")+'<input id="recDate" type="date" value="'+today()+'" max="'+today()+'"></label>'
+    +'<label class="flabel">'+esc(def.name)+'（'+def.unit+'）<input id="recVal" type="number" inputmode="'+def.mode+'" min="0" step="'+def.step+'" placeholder="'+esc(def.hint)+'"></label><p class="recerr" id="recErr" role="alert" hidden></p></div>'
+    +'<div class="row" style="justify-content:flex-end"><button class="btn recsave" type="button" data-recsave aria-label="'+T("保存并关闭","Save and close")+'">'+SAVE_ICON+'</button></div></div>';
+  document.body.appendChild(m);
+  const dateEl=m.querySelector("#recDate"),valEl=m.querySelector("#recVal");
+  const load=()=>{const r=state.metrics[dateEl.value];valEl.value=r&&r[key]!=null?r[key]:""};
+  load();dateEl.addEventListener("change",load);
+  m.querySelector("[data-close]").addEventListener("click",()=>m.remove());
+  let armed=false;m.addEventListener("pointerdown",e=>{armed=e.target===m});m.addEventListener("click",e=>{if(e.target===m&&armed)m.remove()});
+  const saveBtn=m.querySelector("[data-recsave]"),errEl=m.querySelector("#recErr");
+  const valid=()=>{const s=valEl.value.trim();if(!s)return !valEl.validity.badInput;const n=Number(s);return isFinite(n)&&n>=def.min&&n<=def.max&&(!def.int||Number.isInteger(n))};
+  const check=()=>{const ok=valid();saveBtn.disabled=!ok;valEl.classList.toggle("bad",!ok);errEl.hidden=ok;
+    if(!ok)errEl.textContent=T("请填 "+def.min+"–"+def.max+" 之间的"+(def.int?"整数":"数字")+"（"+def.unit+"）","Enter a "+(def.int?"whole number":"number")+" from "+def.min+" to "+def.max+" ("+def.unit+")");return ok};
+  valEl.addEventListener("input",check);dateEl.addEventListener("change",check);
+  saveBtn.addEventListener("click",()=>{if(!check())return;
+    const date=dateEl.value||today(),v=numOrNull(valEl.value),r=state.metrics[date];
+    if(v!=null)saveMetric(date,{[key]:v});
+    else if(r&&r[key]!=null){delete r[key];if(Object.keys(r).every(k=>k==="date"))delete state.metrics[date];lsSave()}
+    m.remove();renderAll();toast(md(date)+T(" 的记录已保存"," saved"))});
+  check();valEl.focus();
+}

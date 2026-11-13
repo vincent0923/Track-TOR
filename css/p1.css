@@ -248,3 +248,54 @@ h1,h2,h3,p{margin:0}
   padding:10px 16px;border-radius:999px;font-size:13px;font-weight:600;max-width:calc(100% - 32px);width:max-content;transition:all .35s var(--spring);pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- editors shared with the classic page (food: js/diet.js, body records: js/p1data.js) ----------
+   They build .mask > .sheet with the classic class names; here they take this page's look. */
+.mask{--surface:var(--card);--sunk:var(--sub);--cta:var(--ac);--push:var(--bad);--f-num:var(--num);--f-body:var(--body);
+  position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.42);animation:mIn .3s var(--ease)}
+@keyframes mIn{from{background:rgba(0,0,0,0)}}
+.mask .sheet{position:relative;inset:auto;z-index:auto;pointer-events:auto;align-items:stretch;justify-content:normal;transition:none;width:100%;max-width:480px!important;max-height:90dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:14px;align-content:start;background:var(--card);color:var(--ink);
+  border-radius:28px 28px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px -10px rgba(0,0,0,.3);animation:sUp .45s var(--ease)}
+@keyframes sUp{from{transform:translateY(100%)}}
+.mask .sheet>h3,.mask .sheet>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0;font-size:19px;font-weight:800;letter-spacing:-.03em}
+.mask .iconbtn{width:30px;height:30px;border-radius:50%;border:0;background:var(--sub);color:var(--muted);display:grid;place-items:center;padding:0;cursor:pointer;flex:none}
+.mask .iconbtn svg{width:15px;height:15px}
+.mask .form-body{overflow-y:auto;display:grid;gap:14px;align-content:start}
+.mask .flabel{display:grid;gap:6px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.mask input,.mask select,.mask textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--sub);border:1.5px solid transparent;border-radius:14px;padding:10px 12px;width:100%;min-width:0;letter-spacing:0}
+.mask input[type=number]{font-family:var(--num);font-weight:700;font-variant-numeric:tabular-nums}
+.mask input:focus{outline:none;border-color:var(--ac);background:var(--card)}
+.mask input.bad{border-color:var(--bad)}
+.mask .recerr{margin:0;font-size:12px;color:var(--bad);font-weight:600}
+.mask .mode-tabs{display:flex;padding:3px;border-radius:999px;background:var(--seg)}
+.mask .mode-tabs button{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-size:13px;font-weight:700;padding:8px 10px;border-radius:999px;cursor:pointer;transition:background .25s var(--ease),color .25s}
+.mask .mode-tabs button.active{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+:root[data-mode="dark"] .mask .mode-tabs button.active{background:#263247}
+.mask .burn-box{border-radius:18px;padding:12px;background:color-mix(in srgb,var(--sub) 60%,transparent);border:1px solid var(--line);display:grid;gap:10px}
+.mask .burn-box h4{margin:0;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.mask .burn-preview{font-size:12px;color:var(--muted)}
+.mask .burn-preview b{font-family:var(--num);font-size:15px;color:var(--ink)}
+.mask .total-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mask .total-grid input{text-align:center;padding:10px 4px}
+.mask .kcal-row{display:flex;align-items:flex-end;gap:8px}
+.mask .kcal-row .flabel{flex:1;min-width:0}
+.mask .calc-btn{flex:none;width:48px;height:44px;border-radius:14px;border:0;background:var(--ac);color:var(--on-ac);display:grid;place-items:center;cursor:pointer}
+.mask .calc-btn:disabled{background:var(--sub);color:var(--muted)}
+.mask .calc-btn svg{width:19px;height:19px}
+.mask .calc-msg{margin:0;font-size:12px;color:var(--muted)}
+.mask .calc-msg.warn{color:var(--ac-text);font-weight:700}
+.mask .item-list{display:grid;gap:8px}
+.mask .item-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px 5px;padding:8px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+.mask .item-row .iname-wrap{grid-column:1/-1;display:flex;gap:4px;align-items:center}
+.mask .item-row .ifield{display:grid;gap:3px;font-size:10px;font-weight:600;color:var(--muted);text-align:center;min-width:0}
+.mask .item-row .ifield input{text-align:center;padding:8px 1px;font-size:15px}
+.mask .item-row .del-btn{border:0;background:none;color:var(--bad);font-size:15px;padding:4px 8px;cursor:pointer}
+.mask .fd-more{border-radius:16px;border:1px solid var(--line);padding:12px;display:grid;gap:10px}
+.mask .fd-more summary{font-size:13px;font-weight:700;cursor:pointer}
+.mask .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mask .row{display:flex;align-items:center;gap:10px}
+.mask .btn{width:auto;height:auto;box-shadow:none;font-size:13px}
+.mask .btn.ghost{background:var(--sub);color:var(--ink);border:0!important;border-radius:999px;padding:8px 12px}
+.mask .btn.recsave{width:56px;height:48px;padding:0;border-radius:999px;background:var(--ac);color:var(--on-ac);box-shadow:0 8px 20px -10px var(--ac)}
+.mask .btn.recsave:disabled{opacity:.35}
+.mask .btn.recsave svg{width:20px;height:20px}

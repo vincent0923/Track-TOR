@@ -9,7 +9,7 @@ autoPullSheet();
 /* open on the home tab: whatever sits in the middle of the dock (needs every pane's render functions, so it runs last) */
 setTab(homeTab());
 /* arriving from the main interface (index.html) for something it doesn't have yet: ?go= names the spot, and a
-   back pill returns to it. go=diet[:date] food entry, rec:<key> a body record, sync, goals, fold:<id> a Settings panel,
+   back pill returns to it. go=sync, goals, fold:<id> a Settings panel,
    welcome the first-visit sheet (already shown on a fresh start). */
 (function(){const q=new URLSearchParams(location.search),g=q.get("go");
   let back=false;try{if(g)sessionStorage.setItem(LS+"-fromp1","1");back=sessionStorage.getItem(LS+"-fromp1")==="1"}catch(e){}
@@ -18,9 +18,7 @@ setTab(homeTab());
     b.addEventListener("click",()=>{try{sessionStorage.removeItem(LS+"-fromp1")}catch(e){}location.href="./"});document.body.appendChild(b)}
   if(!g)return;
   history.replaceState(null,"",location.pathname);
-  if(g==="diet"||g.startsWith("diet:")){setTab("diet");openDietEntryModal(g.slice(5)||today())}
-  else if(g.startsWith("rec:")){setTab("body");openRecord(g.slice(4))}
-  else if(g==="sync"){document.getElementById("syncBtn").click()}
+  if(g==="sync"){document.getElementById("syncBtn").click()}
   else if(g==="goals"){setTab("goals")}
   else if(g.startsWith("fold:")){setTab("me");const f=document.getElementById(g.slice(5));if(f){f.open=true;setTimeout(()=>f.scrollIntoView({behavior:"smooth",block:"start"}),60)}}
 })();

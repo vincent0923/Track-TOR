@@ -143,6 +143,8 @@ function lsSave(){
 }
 
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+/* removed experiments leave nothing behind: the Rings page's own log and the prototypes' preferences */
+try{["tracktor-rings","tracktor-proto-tab","tracktor-proto-mode","tracktor-proto2-tab"].forEach(k=>localStorage.removeItem(k))}catch(e){}
 
 function sessionDoc(sid){
   let s = state.sessions[sid];
