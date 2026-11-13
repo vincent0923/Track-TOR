@@ -11,9 +11,8 @@ function pack(){
       (doc.ex||baseEx(sid)||p.ex).map(e=>{const a=doc.sets&&doc.sets[e.id];return a?a.map(x=>x.d?(+x.v||0):-(+x.v||0)-1):0})].concat(doc.xs&&doc.xs.length?[doc.xs]:[])});
   const M=Object.values(state.metrics).filter(m=>m.date).sort((x,y)=>x.date<y.date?-1:1).map(m=>{
     const r=[m.date.replace(/-/g,"").slice(2)].concat(MK.map(k=>m[k]??null));while(r.length>1&&r[r.length-1]==null)r.pop();return r});
-  /* 带上高驰授权：换手机恢复进度后不用重新授权 */
-  let tk = null;
-  try{ tk = JSON.parse(localStorage.getItem("tracktor-coros-token") || "null"); }catch(e){}
+  /* the food table's link comes along (added in v1.44a); the COROS sign-in no longer does (files before v1.44a carried it as tk) */
+  let su = ""; try{ su = localStorage.getItem(SHEET_URL_K) || ""; }catch(e){}
   /* extra practice on days without a session: {date: [items]} */
   /* {date: items} or, when the day has a note, {date: [items, note]} */
   const DX={};Object.entries(state.dayx||{}).forEach(([d,doc])=>{if(!doc)return;
@@ -21,7 +20,7 @@ function pack(){
     if(n)DX[d]=[xs||[],n];else if(xs)DX[d]=xs});
   /* engine-planned sessions: their own exercises and how each felt, keyed like S (added in v1.37a; older files have none) */
   const PE={};Object.entries(state.sessions).forEach(([sid,doc])=>{const p=BYID[sid];if(!p||!doc||!doc.ex)return;const k=KIND_KEY[p.kind]+p.day;if(S[k])PE[k]=[doc.ex,doc.feel||null]});
-  return {v:4,s:S,m:M,g:state.settings,d:state.diet,tk,dx:DX,pe:PE};
+  const out={v:4,s:S,m:M,g:state.settings,d:state.diet,dx:DX,pe:PE};if(su)out.su=su;return out;
 }
 function unpack(j){
   const sessions={},metrics={};const d6=t=>t?"20"+t.slice(0,2)+"-"+t.slice(2,4)+"-"+t.slice(4,6):null;
@@ -41,7 +40,7 @@ function unpack(j){
   const dayx=j.dx?Object.fromEntries(Object.entries(j.dx).map(([d,v])=>{
     const noted=Array.isArray(v)&&v.length===2&&typeof v[1]==="string"&&Array.isArray(v[0]);
     const doc={date:d,xs:noted?(v[0].length?v[0]:null):v};if(noted)doc.note=v[1];return [d,doc]})):null;
-  return {sessions,metrics,diet,settings:j.g?Object.assign({},GDEF,j.g):null,extras:j.x||null,tk:j.tk||null,dayx};
+  return {sessions,metrics,diet,settings:j.g?Object.assign({},GDEF,j.g):null,extras:j.x||null,dayx,su:typeof j.su==="string"?j.su:""};
 }
 const b64e=u=>{let s="";for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s)};
 const b64d=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));

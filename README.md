@@ -47,14 +47,14 @@
 - 所有记录都存在你手机的浏览器里，没有账号，也没有我们的服务器。
 - 高驰由你的浏览器直接连接，不经过第三方。
 - 浏览器偶尔会清空本地数据，记得定期点备份图标保存进度文件。
-- 进度文件带着你的高驰授权，换手机恢复后不用重新授权，所以不要把它发给别人。
+- 进度文件不带高驰授权，换手机恢复后重新连一次高驰；它带着你的饮食表格链接，所以不要把它发给别人。
 - 想断开高驰，在「备份进度」里登出，可以选择保留数据，或只清除高驰同步来的数据。
 
 ## 更多
 
 产品定位、设计取向和现有功能见 [产品说明](docs/PRODUCT.md)，版本记录见 [更新日志](CHANGELOG.md)。
 
-当前版本 **v1.43a**。Alpha 表示已经在日常使用，还在持续打磨。
+当前版本 **v1.44a**。Alpha 表示已经在日常使用，还在持续打磨。
 
 © 2026 vincent0923，保留所有权利。见 [LICENSE](LICENSE)。数字字体 Geist 按 SIL Open Font License 附带，许可见 [fonts/GEIST-OFL.txt](fonts/GEIST-OFL.txt)。庆祝用的彩带和粒子来自 [canvas-confetti](https://github.com/catdad/canvas-confetti)（ISC，见 [docs/CANVAS-CONFETTI-LICENSE.txt](docs/CANVAS-CONFETTI-LICENSE.txt)）。部分图标来自 [Lucide](https://lucide.dev)（ISC 许可，见 [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)）。
 
@@ -109,13 +109,13 @@ Switch the language under the avatar › Language.
 - Everything stays in your phone's browser. There are no accounts and no servers of ours.
 - Your browser connects to COROS directly, with no third party in between.
 - Browsers sometimes clear local data, so tap the backup icon now and then to save a progress file.
-- The progress file includes your COROS authorization, so restoring on a new phone needs no new sign-in. Don't send it to other people.
+- The progress file doesn't carry your COROS sign-in, so connect COROS again after restoring on a new phone. It does carry your food table link, so don't send it to other people.
 - To disconnect COROS, log out from the Back up panel. You can keep your data or delete only what COROS synced.
 
 ## More
 
 See the [product notes](docs/PRODUCT.md) (in Chinese) for positioning, design principles, and how things work today, and the [changelog](CHANGELOG.md) for version history.
 
-Current version: **v1.43a**. Alpha means it's in daily use and still being refined.
+Current version: **v1.44a**. Alpha means it's in daily use and still being refined.
 
 © 2026 vincent0923. All rights reserved. See [LICENSE](LICENSE). The Geist number font is included under the SIL Open Font License; see [fonts/GEIST-OFL.txt](fonts/GEIST-OFL.txt). Celebration confetti comes from [canvas-confetti](https://github.com/catdad/canvas-confetti) (ISC; see [docs/CANVAS-CONFETTI-LICENSE.txt](docs/CANVAS-CONFETTI-LICENSE.txt)). Some icons come from [Lucide](https://lucide.dev) (ISC license; see [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)).

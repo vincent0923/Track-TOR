@@ -80,9 +80,9 @@ function heroCard(p,lock){const sets=setsOf(p.sid),tot=sets.reduce((a,x)=>a+x.le
     +'<p class="eyebrow">'+(lock?ICON.lock+T('预告','Preview'):T('可练','Ready'))+'</p>'
     +'<h2><i class="kd" style="background:var(--'+p.kind+')"></i>'+LAB(p)+'</h2>'
     +'<p class="meta">'+T(p.ex.length+' 个动作 · '+tot+' 组 · 约 '+Math.round(tot*1.6)+' 分钟',p.ex.length+' moves · '+tot+' sets · ~'+Math.round(tot*1.6)+' min')+'<span class="hchev">'+ICON.chev+'</span></p>'
-    +'<div class="exwrap"><div><ul class="exl">'+p.ex.map((e,i)=>'<li class="'+(sets[i].every(x=>x.d)?"dn":"")+'"><span>'+NS(e)+(engTempo(e)?' <i class="slow">'+T('慢速','Slow')+'</i>':'')+'</span><b>'+e.sets+' × '+e.target+(e.unit==="个"?"":" "+U(e.unit))+'</b></li>').join("")+'</ul></div></div>'
+    +'<div class="exwrap"><div><ul class="exl">'+p.ex.map((e,i)=>'<li class="'+(sets[i].every(x=>x.d)?"dn":"")+'"><span>'+NS(e)+(engTempo(e)?' <i class="slow">'+T('慢速','Slow')+'</i>':'')+'</span><b>'+e.sets+' × '+e.target+(e.unit==="个"?"":" "+U(e.unit))+'</b></li>').join("")+'</ul>'
     +(lock?'<button class="btn" disabled>'+ICON.lock+T('练完 '+LAB(lock)+' 解锁','Unlocks after '+LAB(lock))+'</button>'
-      :'<button class="btn" data-act="start" data-sid="'+p.sid+'">'+ICON.play+(dn?T('继续 · ','Continue · ')+dn+'/'+tot:T('开练','Grind'))+'</button>')+'</section>'}
+      :'<button class="btn" data-act="start" data-sid="'+p.sid+'">'+ICON.play+(dn?T('继续 · ','Continue · ')+dn+'/'+tot:T('开练','Grind'))+'</button>')+'</div></div></section>'}
 function heroHtml(){const deck=heroDeck();
   if(!deck.length)return '<section class="dark hero"><p class="eyebrow">'+T('计划','Plan')+'</p><h2>'+T('全部完成','All done')+' 🎉</h2></section>';
   if(heroSid){const k=deck.findIndex(d=>d.p.sid===heroSid);if(k>=0)heroRot=k;heroSid=null}

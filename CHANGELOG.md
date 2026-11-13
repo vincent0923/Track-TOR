@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.44a] — 2026-11-13
+
+### 新增 / Added
+- 💾 **进度文件带上饮食表格链接**，恢复后不用再贴；**不再带高驰授权**，换手机恢复后重新连一次高驰（旧文件里的授权也不再恢复）。
+- 💾 **Progress files carry the food table link**, so it's there after a restore; **they no longer carry the COROS sign-in**: connect COROS again on a new phone (sign-ins in older files aren't restored either).
+- 📋 **饮食表格的输入框**：右边一个粘贴按钮（剪贴板里有别的字也只取链接），点输入框就全选原来的链接，回车直接拉取；下面一句提醒别把链接告诉别人。
+- 📋 **The food table box**: a paste button on its right (takes just the link from whatever's on the clipboard), tapping the box selects the link that's there, Enter pulls; a line below reminds you to keep the link to yourself.
+
+### 修复 / Fixed
+- 新手机先选了训练计划再恢复进度文件时，早期训练的数会对到错的动作上（比如反向划船 20 个变成引体 20 个）。现在每次训练按它当时的动作单恢复。之前恢复错的，用同一个进度文件再恢复一次就对了。
+- Restoring a progress file on a new phone that had already picked a plan could put early sessions' numbers on the wrong moves (20 inverted rows showing as 20 pull-ups). Each session now restores with the moves it was done with; restoring the same file again puts things right.
+
 ## [v1.43a] — 2026-11-13
 
 ### 新增 / Added

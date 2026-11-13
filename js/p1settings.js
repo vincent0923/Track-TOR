@@ -2,6 +2,7 @@
    watch calories, backup and restore (the progress file, js/backupcore.js), the first-visit welcome and the
    5-day backup reminder. Editors use the shared .mask > .sheet look (css/p1.css). */
 (function(){
+const PASTE_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h1.5A2.5 2.5 0 0 1 20 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-11A2.5 2.5 0 0 1 6.5 5H8"/></svg>';
 const SAVE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function sheet(title,body,actions){const m=document.createElement("div");m.className="mask";
   m.innerHTML='<div class="sheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><h3><span>'+esc(title)+'</span><button class="iconbtn" type="button" data-x aria-label="'+T("关闭","Close")+'">'+CLOSE_ICON+'</button></h3>'
@@ -34,9 +35,20 @@ function openWelcome(){const S=sheet(T("欢迎来到推拉机","Welcome to track
 function sheetStatusTxt(){let s=null;try{s=JSON.parse(localStorage.getItem(SHEET_STATUS_K)||"null")}catch(e){}
   if(!s)return T("还没有同步","Not synced yet");return s.ok?T("上次同步 ","Last synced ")+s.at+T(" · "+s.rows+" 条 / "+s.days+" 天"," · "+s.rows+" rows / "+s.days+" days"):s.msg}
 function openTable(){let url="";try{url=localStorage.getItem(SHEET_URL_K)||""}catch(e){}
-  const S=sheet(T("饮食表格","Food table"),'<label class="flabel">'+T("表格的分享链接","The table's share link")+'<input id="tu" type="url" placeholder="'+T("粘贴表格的分享链接","Paste your sheet's share link")+'" value="'+esc(url)+'"></label>'
+  const S=sheet(T("饮食表格","Food table"),'<label class="flabel">'+T("表格的分享链接","The table's share link")+'<span class="pastef"><input id="tu" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="'+T("粘贴表格的分享链接","Paste your sheet's share link")+'" value="'+esc(url)+'"><button type="button" class="pastebtn" data-paste aria-label="'+T("粘贴","Paste")+'">'+PASTE_ICON+'</button></span></label>'
+    +'<p class="calc-msg">'+T("不要告诉别人这个链接哦，不然别人会知道你每天吃什么。","Keep this link to yourself, or others can see what you eat every day.")+'</p>'
     +'<p class="calc-msg" id="ts">'+esc(sheetStatusTxt())+'</p><p class="calc-msg">'+T("表格设成知道链接的人都能查看，要有「日期」和「食物」两列，一行一种食物。打开饮食页会自动拉，往下拉饮食页立刻拉。","Share the table so anyone with the link can view; it needs Date and Food columns, one food per row. Opening Diet pulls it; pull the Diet page down to pull now.")+'</p>',
     '<button class="btn ghost" type="button" data-pull>'+T("保存并拉取","Save and pull")+'</button>');
+  const tu=S.q("#tu"),save=()=>{const v=extractUrl(tu.value);tu.value=v;try{if(v)localStorage.setItem(SHEET_URL_K,v);else localStorage.removeItem(SHEET_URL_K)}catch(e){}};
+  /* tapping the box selects the link that's there, so pasting replaces it */
+  tu.addEventListener("focus",()=>setTimeout(()=>tu.select(),0));
+  tu.addEventListener("change",save);
+  tu.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();S.q("[data-pull]").click()}});
+  /* paste: whatever's on the clipboard replaces the box (just the link, if there's more text) */
+  S.q("[data-paste]").addEventListener("click",async()=>{let t="";
+    try{t=await navigator.clipboard.readText()}catch(e){tu.focus();toast(T("读不到剪贴板，请长按输入框粘贴","Can't read the clipboard; long-press the box to paste"));return}
+    if(!String(t).trim()){toast(T("剪贴板是空的","The clipboard is empty"));return}
+    tu.value=extractUrl(t);save();buzz(10)});
   S.q("[data-pull]").addEventListener("click",async()=>{const v=extractUrl(S.q("#tu").value);try{if(v)localStorage.setItem(SHEET_URL_K,v);else localStorage.removeItem(SHEET_URL_K)}catch(e){}
     S.q("#ts").textContent=T("拉取中…","Pulling…");const r=await pullSheetQuiet({});S.q("#ts").textContent=r.ok?r.note:sheetStatusTxt();if(r.ok)renderAll()})}
 const SYNCS=[["sleep","睡眠","Sleep"],["hrv","HRV","HRV"],["rhr","静息心率","Resting HR"],["weight","体重","Weight"]];
@@ -55,11 +67,10 @@ async function saveBackup(){const name=backupFileName(),file=new File([await enc
   markBackedUp();toast(T("已保存 "+name,"Saved "+name))}
 function applyImport(j){state.sessions=j.sessions;state.metrics=j.metrics;if(j.diet)state.diet=j.diet;if(j.settings)state.settings=j.settings;if(j.dayx)state.dayx=j.dayx;
   if(j.extras)moveDatedExtras(j.extras);resetPlanned(state.sessions);
-  let has=false;try{has=!!localStorage.getItem("tracktor-coros-token")}catch(e){}
-  if(j.tk&&!has){try{localStorage.setItem("tracktor-coros-token",JSON.stringify(j.tk))}catch(e){}}
+  if(j.su){try{localStorage.setItem(SHEET_URL_K,j.su)}catch(e){}}
   lsSave();engPlanAll();renderAll();toast(T("进度已导入","Progress imported"))}
 function openBackup(){const t=lastBackupTs();
-  const S=sheet(T("备份进度","Backup"),'<p class="calc-msg" style="margin:0">'+T("记录都存在这台手机的浏览器里，浏览器偶尔会清空。存一个进度文件，换手机或出问题时选它恢复。进度文件带着高驰授权，别发给别人。","Your records live in this phone's browser, which sometimes clears data. Save a progress file and pick it to restore on a new phone or after a problem. It carries your COROS sign-in; don't share it.")+'</p>'
+  const S=sheet(T("备份进度","Backup"),'<p class="calc-msg" style="margin:0">'+T("记录都存在这台手机的浏览器里，浏览器偶尔会清空。存一个进度文件，换手机或出问题时选它恢复。高驰授权不在里面，换手机后重新连一次高驰。","Your records live in this phone's browser, which sometimes clears data. Save a progress file and pick it to restore on a new phone or after a problem. Your COROS sign-in isn't in it; connect COROS again on a new phone.")+'</p>'
     +'<p class="calc-msg">'+(t?T("上次备份 ","Last backup ")+new Date(t).toLocaleDateString(LANG==="en"?"en-US":"zh-CN"):T("还没备份过","Never backed up"))+'</p>'
     +'<button class="btn" type="button" data-bksave style="height:48px;font-size:15px;width:100%">'+T("保存进度文件","Save a progress file")+'</button>'
     +'<button class="btn ghost" type="button" data-bkload style="height:48px;font-size:15px;width:100%">'+T("从进度文件恢复","Restore from a progress file")+'</button><input type="file" accept=".txt,text/plain" data-bkfile hidden>'
