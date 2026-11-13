@@ -97,8 +97,6 @@ h1,h2,h3,p{margin:0}
 .exl li{display:flex;justify-content:space-between;gap:12px;font-size:14px;font-weight:500}
 .exl li b{font-family:var(--num);font-weight:700;font-variant-numeric:tabular-nums;color:rgba(255,255,255,.8)}
 .exl li.dn{opacity:.4;text-decoration:line-through}
-.hero-alt{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;font-weight:600;color:var(--muted);justify-content:center}
-.hero-alt button{color:#fff;font-weight:700;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.08)}
 .glowring{position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--ac) 22%,transparent),transparent);pointer-events:none}
 
 /* plan ring */
@@ -343,17 +341,10 @@ h1,h2,h3,p{margin:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* engine plan sheet, feel picker */
-.plan1{padding:12px 14px;border-radius:18px;background:var(--sub);margin-bottom:10px}
-.plan1>.row{margin-bottom:6px}.plan1>.row b{font-size:15px;font-weight:800}
-.pex{padding:8px 0;border-top:1px solid var(--line)}
-.pex .row{font-size:14px;font-weight:600}.pex b{font-size:15px;font-weight:800}
-.pex p{font-size:12px;margin-top:2px}
 .feel{display:flex;gap:8px}
 .feel button{height:46px;padding:0 20px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);font-size:15px;font-weight:700;transition:transform .2s var(--spring)}
 .feel button:active{transform:scale(.92)}
 .feel button[data-f="easy"]{background:var(--ac-soft);color:var(--ac-text)}
-.hero-alt+.hero-alt{margin-top:8px}
-.hero-alt svg{width:14px;height:14px}
 /* gap card dots: clearer, especially in dark */
 .dots button{width:7px;height:7px;background:color-mix(in srgb,var(--ink) 22%,transparent)}
 .dots button[aria-pressed="true"]{width:20px;background:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
@@ -414,3 +405,35 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 /* language: one row, three equal parts */
 .langseg{display:flex;width:100%;padding:4px}
 .langseg button{flex:1;height:40px;font-size:14px}
+/* hero deck: the top card, the edges of the others peeking below; swipe sideways to deal the next */
+.hstack{position:relative;margin-bottom:12px;padding-bottom:calc(var(--n,0)*9px)}
+.hstack .hcard{margin-bottom:0;z-index:2;cursor:pointer;touch-action:pan-y;transition:transform .45s var(--spring),opacity .3s var(--ease)}
+.hstack .hcard.fly{opacity:0;transition:transform .22s ease-in,opacity .22s ease-in}
+.hstack .hcard.rise{transform:translateY(12px) scale(.96);opacity:.5;transition:none}
+.hpeek{position:absolute;inset:40px 0 0;z-index:1;padding:0;background:none;border:0}
+.hpeek i{position:absolute;left:12px;right:12px;bottom:0;height:60px;border-radius:24px;background:var(--dark-solid);border:1px solid var(--dark-line);opacity:.75}
+.hpeek i:first-child:not(:last-child){left:24px;right:24px;bottom:0;opacity:.45}
+.hpeek i:last-child:not(:first-child){bottom:9px}
+.hwhy{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:rgba(255,255,255,.55);z-index:1;transition:color .2s,transform .25s var(--spring)}
+.hwhy svg{width:18px;height:18px}
+.hwhy:active{transform:scale(.9);color:#fff}
+.hcard .meta{display:flex;align-items:center;gap:6px}
+.hchev{display:inline-grid;place-items:center;width:16px;height:16px;transition:transform .4s var(--spring)}
+.hchev svg{width:14px;height:14px}
+.hcard.open .hchev{transform:rotate(180deg)}
+.exwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--spring)}
+.hcard.open .exwrap{grid-template-rows:1fr}
+.exwrap>div{overflow:hidden;min-height:0}
+.exwrap .exl{margin:14px 0 0}
+.hcard .btn{margin-top:16px}
+.planlead{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.planlead p{flex:1;font-size:13px;line-height:1.5}
+.planlead .info{font-size:13px;font-weight:800;font-style:italic;font-family:Georgia,serif}
+.planlead .info[aria-expanded="true"]{background:var(--ac-soft);color:var(--ac-text)}
+.theory{display:grid;gap:10px;padding:14px;border-radius:18px;background:var(--sub);margin-bottom:12px;font-size:13px;line-height:1.55}
+.theory b{display:block;font-weight:800;margin-bottom:2px}
+.hcard.locked .eyebrow{display:flex;align-items:center;gap:5px}
+.hcard.locked .eyebrow svg{width:12px;height:12px}
+.hcard.locked h2,.hcard.locked .exl{opacity:.7}
+.hcard .btn:disabled{background:rgba(255,255,255,.08);color:rgba(255,255,255,.55);box-shadow:none;cursor:default}
+.hcard .btn:disabled svg{width:16px;height:16px}

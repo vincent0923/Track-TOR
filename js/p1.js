@@ -32,6 +32,7 @@ const ICON={
   table:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></svg>',
   sliders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
   spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>'};
 function dateObj(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
 function dayLabel(s){const t=today();if(s===t)return T("今天","Today");if(s===ymdAdd(t,-1))return T("昨天","Yesterday");const d=dateObj(s);return (d.getMonth()+1)+"."+d.getDate()}
@@ -65,35 +66,62 @@ function calHtml(){
       :'<span class="pill'+(wkCount?' ac':'')+'" style="margin-left:auto">'+T('本周 '+wkCount+' 天',wkCount+(wkCount===1?' day':' days')+' this week')+'</span>')
     +'<button class="mini chev" data-act="month" aria-expanded="'+monthOpen+'" aria-label="'+(monthOpen?T("收起整月","Collapse the month"):T("展开整月","Show the month"))+'">'+ICON.chev+'</button></div>'
     +(monthOpen?month:week)+'</section>'}
-function heroHtml(){
-  const nx=firstOpen();if(!nx)return '<section class="dark hero"><p class="eyebrow">'+T('计划','Plan')+'</p><h2>'+T('全部完成','All done')+' 🎉</h2></section>';
-  const p=BYID[heroSid&&!(state.sessions[heroSid]&&state.sessions[heroSid].done)?heroSid:nx.sid],sets=setsOf(p.sid);
-  const tot=sets.reduce((a,x)=>a+x.length,0),dn=sets.reduce((a,x)=>a+x.filter(y=>y.d).length,0);
-  const other=firstOpen(p.kind);
-  return '<section class="dark hero"><i class="glowring"></i><p class="eyebrow">'+(p.sid===nx.sid?T("下一次","Next"):T("也可以练","Also ready"))+'</p>'
+/* the hero is a deck: one card per training day that's ready, the least recently trained on top. Swipe the top card
+   away (or tap the edges peeking below) and the next comes up; tap a card to show its moves; ✨ opens the plan. */
+let heroRot=0,heroOpen=false;
+function heroDeck(){const ks=planKinds().map(k=>({k,n:nextOf(k),l:lastDoneOf(k)})).filter(x=>x.n);
+  ks.sort((a,b)=>a.l.date<b.l.date?-1:a.l.date>b.l.date?1:a.l.day-b.l.day);
+  /* ready ones first, then the session after each: it can be read but not started until the one before is done */
+  const later=ks.map(x=>{const nx=PROGRAM.filter(q=>q.kind===x.k&&q.day>x.n.day&&!(state.sessions[q.sid]&&state.sessions[q.sid].done)).sort((a,b)=>a.day-b.day)[0];return nx?{p:nx,lock:x.n}:null}).filter(Boolean);
+  return ks.map(x=>({p:x.n,lock:null})).concat(later)}
+function heroCard(p,lock){const sets=setsOf(p.sid),tot=sets.reduce((a,x)=>a+x.length,0),dn=sets.reduce((a,x)=>a+x.filter(y=>y.d).length,0);
+  return '<section class="dark hero hcard'+(heroOpen?' open':'')+(lock?' locked':'')+'" data-act="hopen"><i class="glowring"></i>'
+    +'<button class="hwhy" data-act="why" data-k="'+p.kind+'" aria-label="'+T('为什么这样练','Why this plan')+'">'+ICON.spark+'</button>'
+    +'<p class="eyebrow">'+(lock?ICON.lock+T('预告','Preview'):T('可练','Ready'))+'</p>'
     +'<h2><i class="kd" style="background:var(--'+p.kind+')"></i>'+LAB(p)+'</h2>'
-    +'<p class="meta">'+T(p.ex.length+' 个动作 · '+tot+' 组 · 约 '+Math.round(tot*1.6)+' 分钟',p.ex.length+' moves · '+tot+' sets · ~'+Math.round(tot*1.6)+' min')+'</p>'
-    +'<ul class="exl">'+p.ex.map((e,i)=>'<li class="'+(sets[i].every(x=>x.d)?"dn":"")+'"><span>'+NS(e)+(engTempo(e)?' <i class="slow">'+T('慢速','Slow')+'</i>':'')+'</span><b>'+e.sets+' × '+e.target+(e.unit==="个"?"":" "+U(e.unit))+'</b></li>').join("")+'</ul>'
-    +'<button class="btn" data-act="start" data-sid="'+p.sid+'">'+ICON.play+(dn?T('继续 · ','Continue · ')+dn+'/'+tot:T('开练','Grind'))+'</button>'
-    +'<div class="hero-alt"><button data-act="why" data-k="'+p.kind+'">'+ICON.spark+T('按你前 3 次调整 · 为什么','Tuned to your last 3 · why')+'</button></div>'
-    +(other&&other.sid!==p.sid?'<div class="hero-alt"><button data-act="swap" data-sid="'+other.sid+'"><i class="kd" style="background:var(--'+other.kind+');width:8px;height:8px"></i>'+T('换成 ','Switch to ')+LAB(other)+'</button></div>':'')
-    +'</section>'}
+    +'<p class="meta">'+T(p.ex.length+' 个动作 · '+tot+' 组 · 约 '+Math.round(tot*1.6)+' 分钟',p.ex.length+' moves · '+tot+' sets · ~'+Math.round(tot*1.6)+' min')+'<span class="hchev">'+ICON.chev+'</span></p>'
+    +'<div class="exwrap"><div><ul class="exl">'+p.ex.map((e,i)=>'<li class="'+(sets[i].every(x=>x.d)?"dn":"")+'"><span>'+NS(e)+(engTempo(e)?' <i class="slow">'+T('慢速','Slow')+'</i>':'')+'</span><b>'+e.sets+' × '+e.target+(e.unit==="个"?"":" "+U(e.unit))+'</b></li>').join("")+'</ul></div></div>'
+    +(lock?'<button class="btn" disabled>'+ICON.lock+T('练完 '+LAB(lock)+' 解锁','Unlocks after '+LAB(lock))+'</button>'
+      :'<button class="btn" data-act="start" data-sid="'+p.sid+'">'+ICON.play+(dn?T('继续 · ','Continue · ')+dn+'/'+tot:T('开练','Grind'))+'</button>')+'</section>'}
+function heroHtml(){const deck=heroDeck();
+  if(!deck.length)return '<section class="dark hero"><p class="eyebrow">'+T('计划','Plan')+'</p><h2>'+T('全部完成','All done')+' 🎉</h2></section>';
+  if(heroSid){const k=deck.findIndex(d=>d.p.sid===heroSid);if(k>=0)heroRot=k;heroSid=null}
+  const n=deck.length,top=deck[((heroRot%n)+n)%n];
+  return '<div class="hstack" style="--n:'+Math.min(2,n-1)+'">'+heroCard(top.p,top.lock)+(n>1?'<button class="hpeek" data-act="hnext" aria-label="'+T('下一张','Next card')+'">'+(n>2?'<i></i>':'')+'<i></i></button>':'')+'</div>'}
+function heroSwipe(){const st=$(".hstack"),c=st&&st.querySelector(".hcard");if(!c||heroDeck().length<2)return;
+  let x0=null,y0=0,dx=0,lock=null;
+  c.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;lock=null;c.style.transition="none"},{passive:true});
+  c.addEventListener("touchmove",e=>{if(x0==null)return;const mx=e.touches[0].clientX-x0,my=e.touches[0].clientY-y0;
+    if(lock==null&&(Math.abs(mx)>8||Math.abs(my)>8))lock=Math.abs(mx)>Math.abs(my)?"x":"y";if(lock!=="x")return;
+    e.preventDefault();dx=mx;c.style.transform="translateX("+dx+"px) rotate("+dx/25+"deg)"},{passive:false});
+  c.addEventListener("touchend",()=>{if(x0==null)return;x0=null;c.style.transition="";
+    if(lock==="x"&&Math.abs(dx)>70){heroFly(dx>0?1:-1)}else c.style.transform="";
+    if(lock==="x")c.dataset.swiped=Date.now()})}
+function heroFly(dir){const c=$(".hstack .hcard");SFX.tap();buzz(10);
+  if(c){c.classList.add("fly");c.style.transform="translateX("+dir*120+"%) rotate("+dir*14+"deg)"}
+  setTimeout(()=>{heroRot++;const v=$("#v-train");const old=v.querySelector(".hstack");const tmp=document.createElement("div");tmp.innerHTML=heroHtml();old.replaceWith(tmp.firstChild);
+    const nc=$(".hstack .hcard");if(nc){nc.classList.add("rise");requestAnimationFrame(()=>requestAnimationFrame(()=>nc.classList.remove("rise")))}heroSwipe()},c?220:0)}
 function planHtml(){const marks=dayMarks(),now=new Date(),ws=weekStart(now);let wk=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);if(marks[ymd(d)])wk++}
   const done=PROGRAM.filter(p=>state.sessions[p.sid]&&state.sessions[p.sid].done);
   const last=Object.entries(state.sessions).filter(([sid,s])=>s&&s.done&&s.date&&BYID[sid]).sort((a,b)=>a[1].date<b[1].date?1:-1)[0];
   let lastTxt="";if(last){const [sid,s]=last;let reps=0;Object.entries(s.sets||{}).forEach(([id,a])=>{const e=BYID[sid].ex.find(x=>x.id===id);if(e&&e.unit==="个")a.forEach(x=>{if(x.d)reps+=+x.v||0})});
     lastTxt=T('上次 ','Last ')+dayLabel(s.date)+' · '+LAB(BYID[sid])+' · '+reps+T(' 次',' reps')}
-  return '<section class="card"><button class="planc" data-act="plan"><span class="ring">'+ringSvg(64,7,Math.min(1,wk/3),"var(--ac)","var(--sub)")+'<span class="rl"><b class="n" style="font-size:17px;font-weight:800">'+wk+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ 3 '+T('天','days')+'</span></span></span>'
-    +'<span class="sp"><h3>'+T('本周','This week')+'</h3><p class="muted">'+planKinds().map(k=>{const n=dayName(k);return T(n.zh+' ',n.en+' ')+done.filter(p=>p.kind===k).length+T(' 次','')}).join(' · ')+(lastTxt?'<br>'+lastTxt:'')+'</p></span><span class="mini">'+ICON.right+'</span></button></section>'}
-function renderTrainView(){const v=$("#v-train");v.innerHTML=heroHtml()+calHtml()+planHtml();animateRings(v)}
+  return '<section class="card"><div class="planc"><span class="ring">'+ringSvg(64,7,Math.min(1,wk/3),"var(--ac)","var(--sub)")+'<span class="rl"><b class="n" style="font-size:17px;font-weight:800">'+wk+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ 3 '+T('天','days')+'</span></span></span>'
+    +'<span class="sp"><h3>'+T('本周','This week')+'</h3><p class="muted">'+planKinds().map(k=>{const n=dayName(k);return T(n.zh+' ',n.en+' ')+done.filter(p=>p.kind===k).length+T(' 次','')}).join(' · ')+(lastTxt?'<br>'+lastTxt:'')+'</p></span></div></section>'}
+function renderTrainView(){const v=$("#v-train");v.innerHTML=heroHtml()+calHtml()+planHtml();animateRings(v);heroSwipe()}
 /* what the engine planned: the next two sessions of a kind (or both kinds), each exercise with its reason */
-function planSheet(only){const kinds=only?[only]:planKinds();let h="";
-  kinds.forEach(kind=>{const l=lastDoneOf(kind).day;const ps=PROGRAM.filter(p=>p.kind===kind&&p.day>l&&!(state.sessions[p.sid]&&state.sessions[p.sid].done)).sort((a,b)=>a.day-b.day).slice(0,2);
-    ps.forEach((p,i)=>{h+='<div class="plan1"><div class="row"><i class="kd" style="background:var(--'+kind+')"></i><b class="sp">'+LAB(p)+'</b><span class="pill'+(i?'':' ac')+'">'+(i?T('预告','Preview'):T('下一次','Next'))+'</span></div>'
-      +p.ex.map(e=>'<div class="pex"><div class="row"><span class="sp">'+N(e)+'</span><b class="n">'+e.sets+' × '+e.target+(e.unit==="个"?"":" "+U(e.unit))+'</b></div>'+(e.why?'<p class="muted">'+T(e.why,e.whyEn||e.why)+'</p>':'')+'</div>').join("")+'</div>'})});
-  openSheet('<div class="sh-h"><h3>'+T('接下来','Coming up')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'+h
-    +'<p class="muted" style="font-size:12px;margin-top:6px">'+T('每类训练看你前 3 次的表现排下 2 次：每组做到 10 个就换更难的动作或慢速，达标就加次数，连着没达标就减；每次 5–12 组。每练完一次重新算，所以「预告」可能会变。','Each kind looks at your last 3 sessions to plan the next 2: reach 10 reps every set and the move gets harder or slower, hit the target and reps go up, miss twice and it eases off; 5–12 sets a session. It replans after every session, so the preview can change.')+'</p>')}
-
+/* ✨ on the card: one line on where the suggestion comes from, and the reasoning behind "i" (the sessions themselves are the deck) */
+function planSheet(){
+  const th=[[T('渐进超负荷','Progressive overload'),T('肌肉要一直面对比上次稍高一点的负担才会继续长。','Muscles keep growing only when the load keeps creeping above last time.')],
+    [T('双重递进','Double progression'),T('先在 5–10 次里加次数，到顶了换更难的动作或放慢下放（3 秒），再到顶就加一组。自重练不能加杠铃片，就用动作难度、节奏和组数代替重量。','Add reps within 5–10 first; at the top, move to a harder variation or a slower 3-second lowering, then add a set. With body weight there are no plates to add, so difficulty, tempo and sets stand in for load.')],
+    [T('次数范围','Rep range'),T('每组练到接近做不动时，从低次数到高次数的增肌效果差不多（Schoenfeld 等 2017 年的荟萃分析）；5–10 次同时顾到力量。','Taken close to failure, low and high reps build similar muscle (Schoenfeld et al., 2017 meta-analysis); 5–10 reps also builds strength.')],
+    [T('训练量','Volume'),T('增肌跟每周的有效组数成正比，每个肌群每周 10 组以上更好（Schoenfeld、Ogborn、Krieger 2017）。所以每次 5–12 组，一周练几次就够。','Muscle growth tracks weekly hard sets, with 10 or more per muscle a week doing better (Schoenfeld, Ogborn & Krieger, 2017). Hence 5–12 sets a session, a few sessions a week.')],
+    [T('看前 3 次','The last 3 sessions'),T('一次的状态受睡眠和吃饭影响大，3 次里有 2 次才算数，不会因为一次好坏就大起大落。','One session swings with sleep and food; it takes 2 of the last 3 to count, so one good or bad day doesn\'t swing the plan.')],
+    [T('按感觉调','Feel'),T('「轻松 / 刚好 / 很难」就是自评用力程度（RPE，Helms 等 2016）：轻松多加，很难先不加。','Easy / right / hard is a self-rated effort score (RPE, Helms et al., 2016): easy adds more, hard holds.')],
+    [T('减量','Deload'),T('连着两次没达标说明疲劳在累积，下一次组数降到六成先恢复。','Missing targets twice in a row means fatigue is piling up, so the next session drops to about 60% of the sets to recover.')]];
+  openSheet('<div class="sh-h"><h3>'+T('建议练（可手动调整）','Suggested (adjust as you like)')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
+    +'<div class="planlead"><p class="muted">'+T('根据你前 3 次训练的表现建议，每练完一次重新算。','Suggested from how your last 3 sessions went; it updates after every session.')+'</p><button class="mini info" data-act="theory" aria-expanded="false" aria-label="'+T('依据','The reasoning')+'">i</button></div>'
+    +'<div class="theory" hidden>'+th.map(([a,b])=>'<p><b>'+a+'</b>'+b+'</p>').join("")+'</div>')}
 /* ---------- focus mode ---------- */
 let run=null,restT=0,timerT=0,clockT=0;
 const restOf=e=>e.id==="pullup"?150:(e.id==="hang"||e.id==="ecc")?90:e.unit==="分钟"?0:60;
@@ -364,9 +392,10 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="mprev"){monthOff--;renderTrainView()}
   else if(a==="mnext"){if(monthOff<0){monthOff++;renderTrainView()}}
   else if(a==="start")startRun(b.dataset.sid);
-  else if(a==="swap"){heroSid=b.dataset.sid;renderTrainView()}
-  else if(a==="plan")planSheet();
-  else if(a==="why")planSheet(b.dataset.k);
+  else if(a==="hnext")heroFly(-1);
+  else if(a==="hopen"){const c=b;if(Date.now()-(+c.dataset.swiped||0)<450)return;heroOpen=!heroOpen;c.classList.toggle("open",heroOpen);SFX.tap()}
+  else if(a==="theory"){const t=document.querySelector("#sheet .theory");if(t){t.hidden=!t.hidden;b.setAttribute("aria-expanded",!t.hidden)}}
+  else if(a==="why")planSheet();
   else if(a==="close")closeSheet();
   else if(a==="day")daySheet(b.dataset.d);
   else if(a==="metric"){chartRange=30;metricSheet(b.dataset.k)}
