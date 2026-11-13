@@ -22,7 +22,7 @@
 
 | 功能 | 说明 |
 |---|---|
-| 🏋️ 训练计划 | 选一个预设：骑行者 AB（引体 + 俯卧撑）、全身 1 分、上下肢 AB、推 / 拉 / 腿 3 分，训练日的名字可以改。训练引擎看你前 3 次的表现排下 2 次：做到 10 个就换更难的动作或慢速，达标就加次数，连着没达标就减，每次 5–12 组，每项都写为什么 |
+| 🏋️ 训练计划 | 选一个预设：打造上身薄肌（引体 + 俯卧撑）、全身紧致、宽肩翘臀（上下肢 AB）、雕刻全身线条（推 / 拉 / 腿），训练日的名字可以改。训练引擎看你前 3 次的表现排下 2 次：做到 10 个就换更难的动作或慢速，达标就加次数，连着没达标就减，每次 5–12 组，每项都写为什么 |
 | 💪 随时加练 | 每个训练日都能加练，默认引体向上，也能加自定义项目 |
 | 🎆 爽感反馈 | 专注训练模式：一次一个动作，拇指位大勾，组间自动倒计时；每打一个勾放一支烟花，做完一个动作撒彩纸，整天练完礼炮加烟花，都带音效和震动；不想要可以在设定里关掉 |
 | 📈 看得见的进步 | 目标进度环，引体、体重、腰围、睡眠、HRV、静息心率的趋势卡片，点开看完整曲线、记一笔 |
@@ -82,7 +82,7 @@ Most people don't need another training plan. They need a reason to keep going. 
 
 | Feature | Details |
 |---|---|
-| 🏋️ Training plans | Pick a preset: Cyclist AB (pull-ups + push-ups), Full body, Upper / lower AB, Push / pull / legs; rename the days as you like. The training engine looks at your last 3 sessions to plan the next 2: reach 10 reps and the move gets harder or slower, hit the target and reps go up, miss twice and it eases off; 5–12 sets a session, each with its reason |
+| 🏋️ Training plans | Pick a preset: Lean upper body (pull-ups + push-ups), Toned all over, Broad shoulders & strong glutes (upper / lower), Sculpt every line (push / pull / legs); rename the days as you like. The training engine looks at your last 3 sessions to plan the next 2: reach 10 reps and the move gets harder or slower, hit the target and reps go up, miss twice and it eases off; 5–12 sets a session, each with its reason |
 | 💪 Extra practice | Add extra sets to any session, pull-ups by default or any exercise you like |
 | 🎆 Feel-good rewards | A focus mode for training: one exercise at a time, a thumb-sized tick, automatic rest countdowns; a firework for every tick, confetti for every finished exercise, cannons and fireworks for the day, all with sound and a buzz; turn them off in Settings if you like |
 | 📈 Visible progress | Goal rings and trend cards for pull-ups, weight, waist, sleep, HRV, and resting heart rate; open one for the full chart or to log a value |

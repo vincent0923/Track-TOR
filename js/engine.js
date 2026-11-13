@@ -22,15 +22,15 @@ const ENG_LADDERS=[
 const E=(id,name,en,unit,sets,target,extra)=>Object.assign({id,name,en,unit,sets,target},extra||{});
 const STRETCH_E=E("stretch","拉伸","Stretch","分钟",1,5);
 const PRESETS=[
-  {id:"cyclist",zh:"骑行者 AB：引体 + 俯卧撑",en:"Cyclist AB: pull-ups + push-ups",dz:"给腿和心肺已经够练的人：一天推、一天拉，只练上身和核心。",de:"For riders whose legs and lungs are covered: push one day, pull the next, upper body and core only.",
+  {id:"cyclist",zh:"打造上身薄肌：引体 + 俯卧撑",en:"Lean upper body: pull-ups + push-ups",dz:"一切为了线条利落又结实的薄肌上身：一天推、一天拉，专攻胸、肩、背和手臂。适合想快速塑形的人。",de:"Everything aimed at a lean, defined, solid upper body: push one day, pull the next, for chest, shoulders, back and arms. For shaping up fast.",
    days:[{kind:"push",zh:"推练",en:"Push",ex:[E("std","标准俯卧撑","Push-ups","个",3,10),E("decline","下斜俯卧撑","Decline push-ups","个",3,8),E("diamond","钻石俯卧撑","Diamond push-ups","个",2,8),E("plank","平板支撑","Plank","秒",2,45),E("situp","仰卧起坐","Sit-ups","个",2,12),STRETCH_E]},
          {kind:"pull",zh:"拉练",en:"Pull",ex:[E("pullup","标准引体","Strict pull-ups","个",3,3,{note:"第一个做；留 1 个余力",noteEn:"Do first; leave 1 in reserve"}),E("row","反向划船","Inverted rows","个",3,10),E("hang","悬吊","Dead hang","秒",2,30),E("ecc","离心引体","Negative pull-ups","个",2,4),STRETCH_E]}]},
-  {id:"full",zh:"全身 1 分：每次都练全身",en:"Full body: the whole body every time",dz:"一周练 2–3 次、时间少的人。",de:"For 2–3 sessions a week and little time.",
+  {id:"full",zh:"全身紧致：每次练遍全身",en:"Toned all over: the whole body every time",dz:"一周两三次、每次半小时左右，全身一起收紧，穿什么都更挺拔。适合时间少的人。",de:"Two or three half-hour sessions a week tighten everything at once, so whatever you wear sits better. For busy weeks.",
    days:[{kind:"push",zh:"全身",en:"Full body",ex:[E("std","标准俯卧撑","Push-ups","个",3,10),E("row","反向划船","Inverted rows","个",3,10),E("squat","深蹲","Squats","个",3,10),E("ecc","离心引体","Negative pull-ups","个",2,4),E("plank","平板支撑","Plank","秒",1,40),STRETCH_E]}]},
-  {id:"upperlower",zh:"上下肢 AB",en:"Upper / lower AB",dz:"一天上身，一天下肢和核心。",de:"Upper body one day, legs and core the next.",
+  {id:"upperlower",zh:"宽肩翘臀：上下肢 AB",en:"Broad shoulders, strong glutes: upper / lower",dz:"一天练宽肩和挺拔的后背，一天练结实的腿和翘臀，身材比例一起拉好。",de:"One day for broad shoulders and an upright back, the next for strong legs and glutes: proportions that work together.",
    days:[{kind:"push",zh:"上肢",en:"Upper",ex:[E("std","标准俯卧撑","Push-ups","个",3,10),E("row","反向划船","Inverted rows","个",3,10),E("pike","派克俯卧撑","Pike push-ups","个",3,8),E("ecc","离心引体","Negative pull-ups","个",2,4),STRETCH_E]},
          {kind:"pull",zh:"下肢",en:"Lower",ex:[E("squat","深蹲","Squats","个",3,10),E("splitsq","分腿蹲","Split squats","个",3,8),E("bridge","臀桥","Glute bridges","个",3,10),E("plank","平板支撑","Plank","秒",2,45),STRETCH_E]}]},
-  {id:"ppl",zh:"推 / 拉 / 腿 3 分",en:"Push / pull / legs",dz:"一周练 3 次以上，三天轮换。",de:"Three or more sessions a week, rotating three days.",
+  {id:"ppl",zh:"雕刻全身线条：推 / 拉 / 腿",en:"Sculpt every line: push / pull / legs",dz:"三天轮换，每块肌肉都练到，最均衡、最完整的线条。适合一周能练三次以上、想看到明显变化的人。",de:"Three rotating days so every muscle gets its turn: the most balanced, complete shape. For three or more sessions a week and visible change.",
    days:[{kind:"push",zh:"推",en:"Push",ex:[E("std","标准俯卧撑","Push-ups","个",3,10),E("pike","派克俯卧撑","Pike push-ups","个",3,8),E("diamond","钻石俯卧撑","Diamond push-ups","个",2,8),E("plank","平板支撑","Plank","秒",2,45),STRETCH_E]},
          {kind:"pull",zh:"拉",en:"Pull",ex:[E("pullup","标准引体","Strict pull-ups","个",3,3),E("row","反向划船","Inverted rows","个",3,10),E("hang","悬吊","Dead hang","秒",2,30),E("kneeraise","悬垂举膝","Hanging knee raises","个",2,10),STRETCH_E]},
          {kind:"third",zh:"腿",en:"Legs",ex:[E("squat","深蹲","Squats","个",3,10),E("splitsq","分腿蹲","Split squats","个",3,8),E("bridge","臀桥","Glute bridges","个",3,10),E("wallsit","靠墙静蹲","Wall sit","秒",2,30),STRETCH_E]}]}];
