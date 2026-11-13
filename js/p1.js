@@ -283,14 +283,15 @@ function gapData(){const t=today(),to=ymdAdd(t,-1),first=Object.keys(state.diet)
   const from=gapR?ymdAdd(to,-(gapR-1)):(first&&first<=to?first:to),days=[];for(let d=from;d<=to;d=ymdAdd(d,1))days.push(d);
   const gaps=days.map(dietGapOf),known=gaps.filter(g=>g!=null),sum=known.reduce((a,g)=>a+g,0);return {from,to,days,gaps,known,sum}}
 /* bricks: a bar chart built from stacked bricks (cols: [{n bricks, c colour, l label}]). The bricks drop in when drawn;
-   a finger run across lifts each column it passes in a ripple, with a note that rises column by column. */
-function bricksHtml(cols){return '<div class="bricks" style="--cols:'+cols.length+'">'+cols.map((c,i)=>'<div class="bk" data-i="'+i+'" style="--c:'+(c.c||'var(--ac)')+'"><div class="bks">'
+   a finger run across lifts each column it passes in a ripple, with a light buzz. A still chart (inside a swipe stack,
+   where a sideways finger turns the card) doesn't react. */
+function bricksHtml(cols,still){return '<div class="bricks'+(still?' still':'')+'" style="--cols:'+cols.length+'">'+cols.map((c,i)=>'<div class="bk" data-i="'+i+'" style="--c:'+(c.c||'var(--ac)')+'"><div class="bks">'
   +(c.n?Array.from({length:c.n},(_,j)=>'<i style="--j:'+j+';--d:'+(i*16+j*26)+'ms"></i>').join(""):'<i class="ghost"></i>')+'</div><span class="bl">'+(c.l||'&nbsp;')+'</span></div>').join("")+'</div>'}
 (function(){let box=null,last=null;
   const hit=e=>{const el=document.elementFromPoint(e.clientX,e.clientY),col=el&&el.closest(".bk");if(!col||col===last||!box||!box.contains(col))return;last=col;
     col.classList.remove("hot");void col.offsetWidth;col.classList.add("hot");const n=col.querySelectorAll("i:not(.ghost)").length;
-    if(n){tone(440*Math.pow(2,(+col.dataset.i%15)/12),0,.07,"triangle",.07);buzz(3)}};
-  addEventListener("pointerdown",e=>{box=e.target.closest&&e.target.closest(".bricks");last=null;if(box)hit(e)},{passive:true});
+    if(n)buzz(6)};
+  addEventListener("pointerdown",e=>{box=e.target.closest&&e.target.closest(".bricks:not(.still)");last=null;if(box)hit(e)},{passive:true});
   addEventListener("pointermove",e=>{if(box)hit(e)},{passive:true});
   ["pointerup","pointercancel"].forEach(k=>addEventListener(k,()=>{box=null}))})();
 /* knob: a rotary selector. opts are the labels on its arc, each a normal button (with its own data-act); turn the knob,
@@ -334,7 +335,7 @@ function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days
   return '<section class="card gapcard"><div class="row"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?T(' · 记了 '+known.length+' 天',' · '+known.length+' logged'):'')+'</p>'
     +'<div class="big">'+flapHtml(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?T("缺口","deficit"):T("盈余","surplus"))+'</small></div></div>'
     +(known.length?'<span class="pill '+(sum>=0?"good":"bad")+'">'+word+(Math.abs(sum)/7700).toFixed(2)+T(' kg 脂肪',' kg fat')+'</span>':'')+'</div>'
-    +bricksHtml(cols.map(c=>({n:c.g==null?0:Math.max(1,Math.round(Math.abs(c.g)/cm*8)),c:c.g==null?"":c.g>=0?"var(--good)":"var(--bad)",l:c.l})))
+    +bricksHtml(cols.map(c=>({n:c.g==null?0:Math.max(1,Math.round(Math.abs(c.g)/cm*8)),c:c.g==null?"":c.g>=0?"var(--good)":"var(--bad)",l:c.l})),true)
     +(days.length?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
     +'</section>'}
 /* the four periods are a frosted swipe stack too: finger right for longer, left for shorter */

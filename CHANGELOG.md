@@ -9,8 +9,8 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 ## [v1.51a] — 2026-11-14
 
 ### 新增 / Added
-- 🧱 **每周总数**：进展页新卡片，主项最近 12 周每周做了多少次，用一块块积木摞出来，最多的一周换颜色；手指划过积木会依次弹起，带一串升高的音。饮食页的缺口 / 盈余柱子也换成了积木
-- 🧱 **Weekly total**: a new card on Progress stacks the last 12 weeks of your main exercise as bricks, the best week in a second colour; run a finger across and the bricks hop with a rising note. The deficit/surplus bars on Diet are bricks too
+- 🧱 **每周总数**：进展页新卡片，主项最近 12 周每周做了多少次，用一块块积木摞出来，最多的一周换颜色；手指划过积木会依次弹起，带轻微振动。饮食页的缺口 / 盈余柱子也换成了积木
+- 🧱 **Weekly total**: a new card on Progress stacks the last 12 weeks of your main exercise as bricks, the best week in a second colour; run a finger across and the bricks hop with a light buzz. The deficit/surplus bars on Diet are bricks too
 - 🎛️ **旋钮**：图表的时间范围和语言改成旋钮，可以转、点一下跳下一档，或直接点标签
 - 🎛️ **Knobs**: chart range and language are now knobs: turn them, tap for the next step, or tap a label
 - ✨ **特效菜单**（设定 › 外观 › 特效）：光追强弱（关 / 柔 / 标准 / 极致）、天气、两天没练就落灰（越久越旧，一打勾就擦干净）、庆祝效果

@@ -862,6 +862,7 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .bk.hot .bks i{animation:bkHop .5s var(--spring) both;animation-delay:calc(var(--j)*24ms)}
 @keyframes bkIn{from{opacity:0;transform:translateY(-18px) scale(.7)}}
 @keyframes bkHop{35%{transform:translateY(-7px) scale(1.08)}}
+.bricks.still{touch-action:auto}
 .bk .bl{font-size:10px;font-weight:600;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden}
 .bricks[style*="--cols:1"] .bk .bl,.bricks .bk .bl:empty{display:none}
 .weekly .wkh{font-family:var(--disp);font-size:24px;font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-top:4px}
