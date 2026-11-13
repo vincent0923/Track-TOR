@@ -54,7 +54,7 @@
 
 产品定位、设计取向和现有功能见 [产品说明](docs/PRODUCT.md)，版本记录见 [更新日志](CHANGELOG.md)。
 
-当前版本 **v1.39a**。Alpha 表示已经在日常使用，还在持续打磨。
+当前版本 **v1.40a**。Alpha 表示已经在日常使用，还在持续打磨。
 
 © 2026 vincent0923，保留所有权利。见 [LICENSE](LICENSE)。数字字体 Barlow Condensed 和各主题用的字体 Archivo、Geist、Geist Mono、Share Tech Mono、Bricolage Grotesque、VT323 按 SIL Open Font License 附带，许可见 [fonts/](fonts/) 下的 OFL 文件。主题的风格参考了 [Ovio](https://github.com/JanaSundar/ovio)（MIT）、[Interior](https://github.com/ddoemonn/interior)（MIT）和 [beUI](https://github.com/starc007/ui-components)（MIT）的设计，用纯 CSS/JS 重写。庆祝用的彩带和粒子来自 [canvas-confetti](https://github.com/catdad/canvas-confetti)（ISC，见 [docs/CANVAS-CONFETTI-LICENSE.txt](docs/CANVAS-CONFETTI-LICENSE.txt)）。各风格的图标来自 Streamline Plump Color（CC BY 4.0）、Pixelarticons（MIT）和 Doodle Icons（MIT），见 [docs/ICONS-CREDITS.txt](docs/ICONS-CREDITS.txt)。部分图标来自 [Lucide](https://lucide.dev)（ISC 许可，见 [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)）。部分音效用 [ZzFX](https://github.com/KilledByAPixel/ZzFX) 合成（MIT 许可，见 [docs/ZZFX-LICENSE.txt](docs/ZZFX-LICENSE.txt)），部分用 [jsfxr](https://github.com/chr15m/jsfxr) 的合成方法（公有领域，见 [docs/JSFXR-UNLICENSE.txt](docs/JSFXR-UNLICENSE.txt)）。
 

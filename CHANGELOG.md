@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.40a] — 2026-11-13
+
+### 新增 / Added
+- 📅 **日历点某天**：新界面的日历（本周一行或整月）点一天，弹出那天完成的训练（每个动作每组做了多少）、当天的饮食和体重腰围。训练旁边点「修改」就能改每组的次数、补打或取消勾，改完引擎按新记录重新排后面的训练。
+  **Tap a calendar day**: in the new interface, tapping a day (week row or month) shows that day's finished sessions (reps per set), food and body numbers. Edit next to a session changes reps and ticks per set; when you're done the engine replans from the corrected record.
+- 💪 **加练**：同一个面板里记加练：引体向上、俯卧撑、深蹲、平板支撑、悬吊，或者自己起名字的动作（按个数或按秒）；调好数点「记一组」，点已记的组可以撤销。有训练的那天记进那次训练，没训练的那天单独存，和经典界面一样。练完的总结卡上也有「加练」。
+  **Extra practice**: the same panel logs extras: pull-ups, push-ups, squats, plank, dead hang, or a move you name (reps or seconds); set the number and tap Log a set, tap a logged set to undo it. On a training day they go into that session, otherwise into the day, as on the classic page. The finish card has Extra practice too.
+
+---
+
 ## [v1.39a] — 2026-11-13
 
 ### 新增 / Added

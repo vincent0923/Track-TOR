@@ -370,3 +370,23 @@ h1,h2,h3,p{margin:0}
 .mask .btn{display:flex;align-items:center;justify-content:center;gap:8px}
 .mask .btn:not(.ghost):not(.recsave){background:var(--ac);color:var(--on-ac);border:0;border-radius:999px;font-weight:800}
 .mask #corosAuthBtn{background:var(--ac)!important;color:var(--on-ac)!important;border:0!important;border-radius:999px!important;height:48px;font-weight:800}
+
+/* one day: tap a calendar day */
+button.dd{border:0;background:none;color:inherit;font:inherit;padding:2px 0;cursor:pointer}
+button.dd:active b{transform:scale(.9)}
+.dd b{transition:transform .2s var(--spring)}
+.setsed{display:flex;flex-wrap:wrap;gap:6px}
+.sed{display:inline-flex;align-items:center;border-radius:999px;background:var(--card);border:1px solid var(--line);overflow:hidden}
+.sed button{width:30px;height:32px;border:0;background:none;color:var(--muted);font-size:16px;font-weight:700}
+.sed .v{width:auto;min-width:36px;padding:0 6px;color:var(--muted);font-size:15px;font-weight:800}
+.sed.on{background:var(--ac-soft);border-color:transparent}.sed.on .v{color:var(--ac-text)}
+.xitem{padding:12px 14px;border-radius:18px;background:var(--sub);margin-bottom:10px}
+.xitem b{font-size:15px;font-weight:800}
+.xsets{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.xsets:empty{display:none}
+.xstep{gap:12px;margin-top:4px}.xstep>b{font-size:24px;font-weight:800;min-width:40px;text-align:center}
+.xstep .mini{background:var(--card)}
+.xlog{height:36px;padding:0 16px;font-size:13px}
+.xadds{display:flex;flex-wrap:wrap;gap:8px}
+.xadds .pill{height:32px;padding:0 12px;font-size:12px}
+.f-bottom .btn.ghost{margin-bottom:-2px}

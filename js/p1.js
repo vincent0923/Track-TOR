@@ -56,7 +56,8 @@ let monthOpen=false,monthOff=0,heroSid=null;
 function weekStart(d){const x=new Date(d);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x}
 const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 function dayCell(s,marks,out){const t=today(),mk=marks[s];const cls=(s===t?" today":"")+(s>t?" fut":"")+(out?" out":"");
-  return '<div class="dd'+cls+'"><b>'+dateObj(s).getDate()+'</b><span class="mk">'+(mk?[...mk].sort().map(k=>'<i class="'+k+'"></i>').join(""):"")+'</span></div>'}
+  const inner='<b>'+dateObj(s).getDate()+'</b><span class="mk">'+(mk?[...mk].sort().map(k=>'<i class="'+k+'"></i>').join(""):"")+'</span>';
+  return s>t?'<div class="dd'+cls+'">'+inner+'</div>':'<button class="dd'+cls+'" data-act="cal" data-d="'+s+'" aria-label="'+s+'">'+inner+'</button>'}
 function calHtml(){
   const marks=dayMarks(),now=new Date(),head='<div class="days">'+(LANG==="en"?["M","T","W","T","F","S","S"]:["一","二","三","四","五","六","日"]).map(w=>'<span class="dw">'+w+'</span>').join("");
   const ws=weekStart(now);let week=head;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);week+=dayCell(ymd(d),marks)}week+="</div>";
@@ -164,7 +165,7 @@ function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Mat
     +(pu?'<span class="pill ac" style="margin-top:6px">'+T('引体单组 '+pu+' 个','Best pull-up set '+pu)+(pu>best?T(' · 新纪录',' · new best'):'')+'</span>':'')
     +'<span class="coinchip big" style="margin-top:10px">'+COIN+'+'+fmt(coinTotal()-run.coins0)+' G</span>'
     +'<div class="stats"><div><b>'+sets+'</b><span>'+T('组','sets')+'</span></div><div><b>'+reps+'</b><span>'+T('次','reps')+'</span></div><div><b>'+Math.max(1,Math.round(secs/60))+'</b><span>'+T('分钟','min')+'</span></div></div></div></div>'
-    +'<div class="f-bottom"><button class="btn" data-act="fclose">'+T('好','OK')+'</button><p class="f-hint">'+(firstOpen()?T('下一次：','Next: ')+LAB(firstOpen()):T('计划全部完成','Plan complete'))+'</p></div>'}
+    +'<div class="f-bottom"><button class="btn ghost" data-act="cal" data-d="today" style="height:46px;font-size:15px">'+ICON.plus+T('加练','Extra practice')+'</button><button class="btn" data-act="fclose">'+T('好','OK')+'</button><p class="f-hint">'+(firstOpen()?T('下一次：','Next: ')+LAB(firstOpen()):T('计划全部完成','Plan complete'))+'</p></div>'}
 function swipe(el){let x0=null,y0=0;el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   el.addEventListener("touchend",e=>{if(x0==null||!run||run.timing)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
     if(Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx))return;const n=run.ex+(dx<0?1:-1);if(n<0||n>=run.p.ex.length)return;
