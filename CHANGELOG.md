@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.45a] — 2026-11-13
+
+### 新增 / Added
+- 📤 **把一天的饮食分享成图片**：饮食记录点开某天，右上角的分享按钮把这天的表格画成一张图，发给朋友。表格加了蔬菜列，食物名太长就折行显示全。
+- 📤 **Share a day's food as a picture**: open a day in the food log and the share button at the top turns its table into an image to send to friends. The table gains a veg column, and long food names wrap instead of being cut.
+- 🌐 **切换语言不再重新打开页面**：在设定里点简中、繁中或 Eng，面板和页面当场换语言。
+- 🌐 **Switching language no longer reloads**: tap 简中, 繁中 or Eng in Settings and the panel and page change on the spot.
+
+### 改动 / Changed
+- 可练的训练卡右上角就是「开练」，预告卡同一位置是 ✨；收起的卡片露出前几个动作、往下渐渐淡出。天气效果挪进设定 › 外观。
+- Ready training cards have Grind at the top right, previews have ✨ in the same spot; folded cards show the first moves fading out. Weather effects moved under Settings › Appearance.
+
 ## [v1.44a] — 2026-11-13
 
 ### 新增 / Added

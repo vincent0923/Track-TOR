@@ -12,7 +12,7 @@ const bridge=to=>{
   if(to.startsWith("rec:")){closeSheet();openRecord(to.slice(4))}};
 /* the shared editors (food in js/diet.js, body records in js/p1data.js) call these after saving: redraw this page */
 function renderAll(){if(typeof show==="function"&&typeof cur!=="undefined")show(cur,false,true)}
-const WD_ZH=["日","一","二","三","四","五","六"],WD_EN=["Su","Mo","Tu","We","Th","Fr","Sa"],WD=LANG==="en"?WD_EN:WD_ZH;
+const WD_ZH=["日","一","二","三","四","五","六"],WD_EN=["Su","Mo","Tu","We","Th","Fr","Sa"],WD=LANG==="en"?WD_EN.slice():WD_ZH.slice();
 const MON_EN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmt=v=>v==null?"–":Math.round(v).toLocaleString("en-US");
 const ICON={
@@ -32,6 +32,7 @@ const ICON={
   table:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></svg>',
   sliders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
   spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></svg>',
+  share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg>',
   lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>'};
 function dateObj(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
@@ -76,13 +77,14 @@ function heroDeck(){const ks=planKinds().map(k=>({k,n:nextOf(k),l:lastDoneOf(k)}
   return ks.map(x=>({p:x.n,lock:null})).concat(later)}
 function heroCard(p,lock){const sets=setsOf(p.sid),tot=sets.reduce((a,x)=>a+x.length,0),dn=sets.reduce((a,x)=>a+x.filter(y=>y.d).length,0);
   return '<section class="dark hero hcard'+(heroOpen?' open':'')+(lock?' locked':'')+'" data-act="hopen"><i class="glowring"></i>'
-    +'<button class="hwhy" data-act="why" data-k="'+p.kind+'" aria-label="'+T('为什么这样练','Why this plan')+'">'+ICON.spark+'</button>'
+    /* top right: start this one (ready cards), or in the same spot the ✨ explanation (previews only) */
+    +'<div class="htop">'+(lock?'<button class="hwhy" data-act="why" data-k="'+p.kind+'" aria-label="'+T('为什么这样练','Why this plan')+'">'+ICON.spark+'</button>'
+      :'<button class="hgo" data-act="start" data-sid="'+p.sid+'">'+ICON.play+'<span>'+(dn?dn+'/'+tot:T('开练','Grind'))+'</span></button>')+'</div>'
     +'<p class="eyebrow">'+(lock?ICON.lock+T('预告','Preview'):T('可练','Ready'))+'</p>'
     +'<h2><i class="kd" style="background:var(--'+p.kind+')"></i>'+LAB(p)+'</h2>'
     +'<p class="meta">'+T(p.ex.length+' 个动作 · '+tot+' 组 · 约 '+Math.round(tot*1.6)+' 分钟',p.ex.length+' moves · '+tot+' sets · ~'+Math.round(tot*1.6)+' min')+'<span class="hchev">'+ICON.chev+'</span></p>'
     +'<div class="exwrap"><div><ul class="exl">'+p.ex.map((e,i)=>'<li class="'+(sets[i].every(x=>x.d)?"dn":"")+'"><span>'+NS(e)+(engTempo(e)?' <i class="slow">'+T('慢速','Slow')+'</i>':'')+'</span><b>'+e.sets+' × '+e.target+(e.unit==="个"?"":" "+U(e.unit))+'</b></li>').join("")+'</ul>'
-    +(lock?'<button class="btn" disabled>'+ICON.lock+T('练完 '+LAB(lock)+' 解锁','Unlocks after '+LAB(lock))+'</button>'
-      :'<button class="btn" data-act="start" data-sid="'+p.sid+'">'+ICON.play+(dn?T('继续 · ','Continue · ')+dn+'/'+tot:T('开练','Grind'))+'</button>')+'</div></div></section>'}
+    +(lock?'<p class="lockline">'+ICON.lock+T('练完 '+LAB(lock)+' 解锁','Unlocks after '+LAB(lock))+'</p>':'')+'</div></div></section>'}
 function heroHtml(){const deck=heroDeck();
   if(!deck.length)return '<section class="dark hero"><p class="eyebrow">'+T('计划','Plan')+'</p><h2>'+T('全部完成','All done')+' 🎉</h2></section>';
   if(heroSid){const k=deck.findIndex(d=>d.p.sid===heroSid);if(k>=0)heroRot=k;heroSid=null}
@@ -254,13 +256,36 @@ async function dietPull(manual){let st={};try{st=JSON.parse(localStorage.getItem
   document.addEventListener("touchend",()=>{if(y0==null)return;const p=$("#ptr"),go=dy*.5>=lim-4;y0=null;if(p){p.style.height="";p.classList.remove("ready")}if(go){buzz(12);dietPull(true)}})})();
 function daySheet(d){const day=state.diet[d]||{},items=day.items||[],tt=dietTotals(day),a=intakeOf(d),b=burnOfDate(d),g=dietGapOf(d);
   const f1=x=>x==null||x===""?"–":(+x).toFixed(0);
-  openSheet('<div class="sh-h"><h3>'+dayLabel(d)+(/^\d/.test(dayLabel(d))?"":' · '+(dateObj(d).getMonth()+1)+'.'+dateObj(d).getDate())+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
+  openSheet('<div class="sh-h"><h3>'+dayLabel(d)+(/^\d/.test(dayLabel(d))?"":' · '+(dateObj(d).getMonth()+1)+'.'+dateObj(d).getDate())+'</h3>'+(items.length?'<button class="mini" data-act="dshare" data-d="'+d+'" aria-label="'+T('分享成图片','Share as a picture')+'">'+ICON.share+'</button>':'')+'<button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="row" style="margin-bottom:16px"><div class="sp"><p class="eyebrow">'+T('摄入','Intake')+'</p><b class="n" style="font-size:22px;font-weight:800">'+fmt(a)+'</b></div><div class="sp"><p class="eyebrow">'+T('消耗','Burn')+'</p><b class="n" style="font-size:22px;font-weight:800">'+fmt(b)+'</b></div>'
     +'<div class="sp"><p class="eyebrow">'+(g==null||g>=0?T("缺口","Deficit"):T("盈余","Surplus"))+'</p><b class="n" style="font-size:22px;font-weight:800;color:'+(g==null?"inherit":g>=0?"var(--good)":"var(--bad)")+'">'+(g==null?"–":fmt(Math.abs(g)))+'</b></div></div>'
-    +(items.length?'<table class="tbl"><tr><th>'+T('食物','Food')+'</th><th>'+T('蛋白','Prot.')+'</th><th>'+T('脂肪','Fat')+'</th><th>'+T('碳水','Carbs')+'</th><th>kcal</th></tr>'+items.map(it=>'<tr><td>'+escHtml(it.name||"")+'</td><td>'+f1(it.p)+'</td><td>'+f1(it.f)+'</td><td>'+f1(it.c)+'</td><td>'+f1(it.kcal)+'</td></tr>').join("")
-      +(items.length>1?'<tr class="tot"><td>'+T('合计','Total')+'</td><td>'+f1(tt.p)+'</td><td>'+f1(tt.f)+'</td><td>'+f1(tt.c)+'</td><td>'+f1(tt.kcal)+'</td></tr>':'')+'</table>':'<p class="empty">'+T('这天只记了总数','Only a total that day')+'</p>')
+    +(items.length?'<table class="tbl"><tr><th>'+T('食物','Food')+'</th><th>'+T('蛋白','Prot.')+'</th><th>'+T('脂肪','Fat')+'</th><th>'+T('碳水','Carbs')+'</th><th>'+T('蔬菜','Veg')+'</th><th>kcal</th></tr>'+items.map(it=>'<tr><td>'+escHtml(it.name||"")+'</td><td>'+f1(it.p)+'</td><td>'+f1(it.f)+'</td><td>'+f1(it.c)+'</td><td>'+f1(it.veg)+'</td><td>'+f1(it.kcal)+'</td></tr>').join("")
+      +(items.length>1?'<tr class="tot"><td>'+T('合计','Total')+'</td><td>'+f1(tt.p)+'</td><td>'+f1(tt.f)+'</td><td>'+f1(tt.c)+'</td><td>'+f1(tt.veg)+'</td><td>'+f1(tt.kcal)+'</td></tr>':'')+'</table>':'<p class="empty">'+T('这天只记了总数','Only a total that day')+'</p>')
     +(day.note?'<p class="muted" style="font-size:12px;margin-top:12px">'+escHtml(day.note)+'</p>':'')
     +'<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet:'+d+'">'+ICON.pen+T('编辑这天','Edit this day')+'</button>')}
+
+/* a day's food as a picture to send to friends: the same table drawn on a canvas, then the share sheet (or a download) */
+async function shareDay(d){const day=state.diet[d]||{},items=day.items||[],tt=dietTotals(day),a=intakeOf(d),b=burnOfDate(d),g=dietGapOf(d);
+  const W=1080,P=64,S=2,cv=document.createElement("canvas"),c=cv.getContext("2d"),F='"Geist",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif';
+  const cs=getComputedStyle(document.documentElement),ac=cs.getPropertyValue("--ac").trim()||"#00E0C2";
+  const n0=x=>x==null||x===""?"–":String(Math.round(+x)),cols=[T("蛋白","Prot."),T("脂肪","Fat"),T("碳水","Carbs"),T("蔬菜","Veg"),"kcal"],cw=110,nameW=W-2*P-cw*cols.length-16;
+  const wrap=(t,w,font)=>{c.font=font;const out=[];let line="";for(const ch of (String(t).match(/[\u2e80-\u9fff\u3000-\u303f\uff00-\uffef]|[^\s\u2e80-\u9fff\u3000-\u303f\uff00-\uffef]+|\s+/g)||[])){if(c.measureText(line+ch).width>w&&line.trim()){out.push(line.trimEnd());line=ch.trimStart()}else line+=ch}if(line)out.push(line);return out.length?out:[""]};
+  const rowFont='500 32px '+F,lh=42;
+  const rows=items.map(it=>({name:wrap(HANT?s2t(it.name||""):(it.name||""),nameW,rowFont),v:[it.p,it.f,it.c,it.veg,it.kcal].map(n0)}));
+  if(items.length>1)rows.push({name:[T("合计","Total")],v:[tt.p,tt.f,tt.c,tt.veg,tt.kcal].map(n0),tot:1});
+  const H=P+70+40+90+60+66+rows.reduce((h,r)=>h+r.name.length*lh+28,0)+90;
+  cv.width=W;cv.height=H;const bg=c.createLinearGradient(0,0,W,H);bg.addColorStop(0,"#16293B");bg.addColorStop(1,"#0B1422");c.fillStyle=bg;c.fillRect(0,0,W,H);
+  const gl=c.createRadialGradient(W*.85,0,0,W*.85,0,W*.7);gl.addColorStop(0,ac+"55");gl.addColorStop(1,ac+"00");c.fillStyle=gl;c.fillRect(0,0,W,H);
+  const tx=(t,x,y,font,col,al)=>{c.font=font;c.fillStyle=col;c.textAlign=al||"left";c.fillText(HANT?s2t(t):t,x,y)};
+  let y=P+56;tx((dateObj(d).getMonth()+1)+"."+dateObj(d).getDate()+(LANG==="en"?"":" "+T("吃了什么","what I ate")),P,y,"800 60px "+F,"#fff");
+  y+=130;[[T("摄入","Intake"),fmt(a),"#fff"],[T("消耗","Burn"),fmt(b),"#fff"],[g==null||g>=0?T("缺口","Deficit"):T("盈余","Surplus"),g==null?"–":fmt(Math.abs(g)),g==null?"#fff":g>=0?ac:"#FF6B6B"]].forEach(([l,v,col],i)=>{const x=P+i*300;tx(l,x,y-44,"600 26px "+F,"rgba(255,255,255,.55)");tx(v,x,y+6,"800 52px "+F,col)});
+  y+=96;c.font="600 26px "+F;tx(T("食物","Food"),P,y,"600 26px "+F,"rgba(255,255,255,.55)");cols.forEach((h,i)=>tx(h,W-P-(cols.length-1-i)*cw,y,"600 26px "+F,"rgba(255,255,255,.55)","right"));
+  y+=18;rows.forEach(r=>{c.fillStyle="rgba(255,255,255,.1)";c.fillRect(P,y,W-2*P,2);y+=lh;const f=r.tot?'800 32px '+F:rowFont;
+    r.name.forEach((ln,k)=>tx(ln,P,y+k*lh-4,f,"#fff"));r.v.forEach((v,i)=>tx(v,W-P-(cols.length-1-i)*cw,y-4,(r.tot?"800 ":"600 ")+"32px "+F,"#fff","right"));y+=(r.name.length-1)*lh+28});
+  tx(T("推拉机","track-TOR"),W-P,H-44,"700 26px "+F,"rgba(255,255,255,.4)","right");
+  const blob=await new Promise(res=>cv.toBlob(res,"image/png")),name=T("饮食","food")+"-"+d+".png",file=new File([blob],name,{type:"image/png"});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]})}catch(e){}return}
+  const url=URL.createObjectURL(blob),el=document.createElement("a");el.href=url;el.download=name;document.body.appendChild(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(url),1e4);toast(T("图片已保存","Picture saved"))}
 
 /* ---------- progress view ---------- */
 const METRICS=[
@@ -357,10 +382,11 @@ function meSheet(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}ca
   openSheet('<div class="sh-h"><h3>'+T('设定','Settings')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">'+T('外观','Appearance')+'</p>'
     +'<div class="setlist">'+[["auto",T("跟随手机","Match the phone")],["light",T("亮","Light")],["dark",T("暗","Dark")]].map(([k,l])=>'<button class="opt" data-act="mode" data-m="'+k+'" aria-pressed="'+(m===k)+'">'+l+'</button>').join("")
     +'<button class="opt" data-act="fx" role="switch" aria-checked="'+fxOn()+'">'+ICON.spark+'<span class="sp">'+T('庆祝效果','Celebrations')+'</span><span class="sw" aria-hidden="true"></span></button>'
+    +row("p1:weather",ICON.rain,T("天气效果","Weather effects"))
     +'<button class="opt" data-act="shop">'+COIN+'<span class="sp">'+T('G 积分商场','G shop')+'</span><b class="n" style="font-size:14px">'+fmt(coinTotal())+' G</b>'+ICON.right+'</button></div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="seg langseg" translate="no">'+[["zh","简中"],["zht","繁中"],["en","Eng"]].map(([k,l])=>'<button data-act="lang" data-l="'+k+'" aria-pressed="'+((HANT?"zht":LANG)===k)+'">'+l+'</button>').join("")+'</div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('更多','More')+'</p><div class="setlist">'
-    +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:weather",ICON.rain,T("天气","Weather"))+row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'</div>'
+    +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'</div>'
     +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('推拉机 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+'</p>')}
 
 /* ---------- header, dock, routing ---------- */
@@ -396,6 +422,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="hopen"){const c=b;if(Date.now()-(+c.dataset.swiped||0)<450)return;heroOpen=!heroOpen;c.classList.toggle("open",heroOpen);SFX.tap()}
   else if(a==="theory"){const t=document.querySelector("#sheet .theory");if(t){t.hidden=!t.hidden;b.setAttribute("aria-expanded",!t.hidden)}}
   else if(a==="why")planSheet();
+  else if(a==="dshare")shareDay(b.dataset.d);
   else if(a==="close")closeSheet();
   else if(a==="day")daySheet(b.dataset.d);
   else if(a==="metric"){chartRange=30;metricSheet(b.dataset.k)}
@@ -405,7 +432,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="gapr")setGapRange(+b.dataset.r);
   else if(a==="shop")coinSheet(true);
   else if(a==="go")bridge(b.dataset.to);
-  else if(a==="lang"){try{localStorage.setItem("tracktor-lang",b.dataset.l)}catch(err){}location.reload()}
+  else if(a==="lang")setLang(b.dataset.l);
   else if(a==="fx"){const on=!fxOn();try{localStorage.setItem("tracktor-p1-fx",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);if(on){SFX.tap();celebrate(2,0)}}
   else if(a==="mode"){try{localStorage.setItem(PK+"mode",b.dataset.m)}catch(err){}applyMode();meSheet()}
   else if(run){
@@ -428,9 +455,16 @@ engPlanAll();
 handleCorosCallback();
 connectMcp().then(()=>{p1SyncUI();let ls="";try{ls=localStorage.getItem("tracktor-lastsync")||""}catch(e){}
   const t=ls?new Date(ls.replace(" ","T")).getTime():0;if(mcpReady&&(!t||Date.now()-t>2*36e5))p1Sync(true)}).catch(()=>{});
-document.documentElement.lang=LANG==="en"?"en":HANT?"zh-Hant":"zh-CN";
-document.querySelectorAll(".dock [data-v]").forEach(b=>{const l={diet:T("饮食","Diet"),train:T("训练","Train"),prog:T("进展","Progress")}[b.dataset.v];b.querySelector("span").textContent=l;b.setAttribute("aria-label",l)});
-$("#meBtn").setAttribute("aria-label",T("设定","Settings"));$("#syncBtn").setAttribute("aria-label",T("同步","Sync"));
+/* words fixed outside the views: the dock, the header buttons, the page language */
+function paintLang(){document.documentElement.lang=LANG==="en"?"en":HANT?"zh-Hant":"zh-CN";
+  WD.splice(0,7,...(LANG==="en"?WD_EN:WD_ZH));
+  document.querySelectorAll(".dock [data-v]").forEach(b=>{const l={diet:T("饮食","Diet"),train:T("训练","Train"),prog:T("进展","Progress")}[b.dataset.v];b.querySelector("span").textContent=l;b.setAttribute("aria-label",l)});
+  $("#meBtn").setAttribute("aria-label",T("设定","Settings"));$("#syncBtn").setAttribute("aria-label",T("同步","Sync"))}
+paintLang();
+/* switching language keeps you where you are: the page and the open settings sheet redraw in the new language */
+function setLang(l){try{localStorage.setItem("tracktor-lang",l)}catch(e){}
+  LANG=l==="en"?"en":"zh";HANT=l==="zht";if(HANT)hantOn();
+  paintLang();renderAll();paintHeader(cur);meSheet();SFX.tap()}
 let start="train";try{start=localStorage.getItem(PK+"tab")||"train"}catch(e){}
 if(!["train","diet","prog"].includes(start))start="train";
 show(start,false);
