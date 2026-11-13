@@ -9,8 +9,8 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 ## [v1.32a] — 2026-11-13
 
 ### 新增 / Added
-- ⌚ **手表热量可以全算**：「设定 › 图表和同步设定」新增「手表热量」开关，打折（默认：日常活动按步数封顶、运动记录 × 0.7、低强度运动 × 0.5、有功率计的骑行全算）或全算（手表报多少算多少）。只改估算的消耗、热量缺口和减脂，同步来的数字不变；「i」里说明两种算法。长按目标卡的「减脂」，或饮食页「摄入与消耗」里的热量缺口小面板，都直接跳到这个开关。
-  **Watch calories can count in full**: a new Watch calories switch in Settings › Charts & sync, discounted (the default: everyday movement capped by steps, logged workouts × 0.7, low-intensity ones × 0.5, power-meter rides in full) or in full (every kcal the watch reports). Only the estimated burn, calorie gap and fat loss change; synced numbers stay as they are. The i explains both. Holding the Fat loss goal, or the calorie-gap tile on the Diet page, jumps straight to this switch.
+- ⌚ **手表热量可以全算**：「设定 › 图表和同步设定」新增「手表热量」开关，打折（默认：日常活动按步数封顶、运动记录 × 0.7、低强度运动 × 0.5、有功率计的骑行全算）或全算（手表报多少算多少）。只改估算的消耗、热量缺口和减脂，同步来的数字不变；「i」里说明两种算法。长按饮食页「摄入与消耗」里的热量缺口小面板直接跳到这个开关。
+  **Watch calories can count in full**: a new Watch calories switch in Settings › Charts & sync, discounted (the default: everyday movement capped by steps, logged workouts × 0.7, low-intensity ones × 0.5, power-meter rides in full) or in full (every kcal the watch reports). Only the estimated burn, calorie gap and fat loss change; synced numbers stay as they are. The i explains both. Holding the calorie-gap tile on the Diet page jumps straight to this switch.
 - ⚖️ **脂肪对账**：统计 14 天以上时，缺口面板的脂肪克数和同期 7 日均体重变化对一下：差 15% 以内写「约」，估算多 15% 以上写「激进估计」，少 15% 以上写「保守估计」；算法写在「i」里。
   **Fat cross-check**: over 14 days or more, the gap tile's grams of fat are checked against the 7-day average weight over the same days: within 15% reads "about", more than 15% above "aggressive estimate", more than 15% below "conservative estimate"; the i explains it.
 - 🧹 **每天的饮食卡片更干净**：表格下面不再列「手表活动 → 计入 · 体重」那行小字；消耗、缺口随开关变。

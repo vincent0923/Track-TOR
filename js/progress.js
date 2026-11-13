@@ -205,10 +205,10 @@ document.getElementById("wFull").addEventListener("click",e=>{const b=e.target.c
   if(on)state.settings.watchFull=true;else delete state.settings.watchFull;
   saveSettings();paintWFull();renderDietAll();renderGoals();
   toast(on?T("手表热量全算","Watch calories counted in full"):T("手表热量打折","Watch calories discounted"))});
-/* holding the fat-loss goal opens this switch: Settings › Charts & sync, scrolled to it, with a brief flash */
+/* holding the diet page's gap tile opens this switch: Settings › Charts & sync, scrolled to it, with a brief flash */
 function goWatchSetting(){setTab("me");const f=document.getElementById("foldSync"),r=document.getElementById("wFullRow");if(!f||!r)return;
   f.open=true;r.scrollIntoView({behavior:"smooth",block:"center"});r.classList.remove("flash");void r.offsetWidth;r.classList.add("flash")}
-/* holding the diet page's gap tile (0.5 s) opens the same switch; a plain tap still steps through the periods */
+/* hold the gap tile for 0.5 s; a plain tap still steps through the periods */
 (function(){const t=document.getElementById("dietGapTile");if(!t)return;let tm=0,held=false,sx=0,sy=0;
   t.addEventListener("pointerdown",e=>{held=false;sx=e.clientX;sy=e.clientY;clearTimeout(tm);
     tm=setTimeout(()=>{held=true;if(navigator.vibrate)navigator.vibrate(15);goWatchSetting()},500)});
@@ -342,12 +342,11 @@ function placeGoals(){
   if(GPIN){if(box.parentElement!==top)top.appendChild(box)}else if(box.parentElement!==pane)pane.prepend(box);
   top.hidden=!GPIN||(typeof curTab!=="undefined"&&curTab==="me");
 }
-/* hold a goal (0.5 s) for its own sheet: the goal, a manual record (pull-ups, waist, weight) and whether it shows on the panel;
-   holding fat loss instead opens the watch-calorie switch it depends on */
+/* hold a goal (0.5 s) for its own sheet: the goal, a manual record (pull-ups, waist, weight) and whether it shows on the panel */
 let goalHeld=false;
 (function(){const box=document.getElementById("goals");let tm=0,sx=0,sy=0;
   box.addEventListener("pointerdown",e=>{const g=e.target.closest(".goal");if(!g)return;goalHeld=false;sx=e.clientX;sy=e.clientY;clearTimeout(tm);
-    tm=setTimeout(()=>{goalHeld=true;if(navigator.vibrate)navigator.vibrate(15);const k=g.querySelector("[data-setgoal]").dataset.setgoal;if(k==="fat")goWatchSetting();else openGoalSheet(k)},500)});
+    tm=setTimeout(()=>{goalHeld=true;if(navigator.vibrate)navigator.vibrate(15);openGoalSheet(g.querySelector("[data-setgoal]").dataset.setgoal)},500)});
   box.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>10)clearTimeout(tm)});
   ["pointerup","pointercancel","pointerleave"].forEach(t=>box.addEventListener(t,()=>clearTimeout(tm)));
   box.addEventListener("contextmenu",e=>{if(e.target.closest(".goal"))e.preventDefault()});
@@ -367,7 +366,9 @@ function openGoalSheet(k){
   document.body.appendChild(m);
   const close=()=>m.remove(),tog=m.querySelector("[data-gson]");
   m.querySelector("[data-close]").addEventListener("click",close);
-  m.addEventListener("click",e=>{if(e.target===m)close()});
+  /* the finger that held the goal lifts over the backdrop once the sheet is open; only a tap that starts on the backdrop closes it */
+  let armed=false;m.addEventListener("pointerdown",e=>{armed=e.target===m});
+  m.addEventListener("click",e=>{if(e.target===m&&armed)close();armed=false});
   tog.addEventListener("click",()=>{const v=tog.getAttribute("aria-pressed")!=="true";tog.setAttribute("aria-pressed",String(v));tog.classList.toggle("on",v)});
   const save=()=>{const v=m.querySelector("#gsVal").value.trim(),n=Number(v);
     if(v===""||!(n>0))delete st[key];else st[key]=k==="pullups"?Math.round(n):n;
