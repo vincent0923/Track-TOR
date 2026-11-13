@@ -319,18 +319,10 @@ h1,h2,h3,p{margin:0}
 .shopc+.shopc .shopart{background:linear-gradient(135deg,#F7B267,#F25F5C)}
 
 /* the gap card: dots for the period, a split-flap turn on the figure, a slide when the period changes */
-.dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
-.dots button{width:6px;height:6px;padding:0;border:0;border-radius:999px;background:var(--seg);transition:width .35s var(--spring),background .25s}
-.dots button[aria-pressed="true"]{width:18px;background:var(--ink)}
-.dots button::before{content:"";display:block;margin:-10px -6px;height:26px}
 .flap{display:inline-flex;perspective:400px}
 .flap span{display:inline-block;transform-origin:50% 55%;animation:flap .5s var(--spring) both;animation-delay:calc(var(--i)*45ms)}
 @keyframes flap{0%{transform:rotateX(-90deg);opacity:.2}60%{transform:rotateX(12deg);opacity:1}100%{transform:none}}
 .gapcard{touch-action:pan-y;overflow:hidden}
-.gapcard.in-r{animation:inR .4s var(--ease)}.gapcard.in-l{animation:inL .4s var(--ease)}
-@keyframes inR{from{opacity:.3;transform:translateX(24px)}}@keyframes inL{from{opacity:.3;transform:translateX(-24px)}}
-.gapcard.nudge{animation:nudge .35s var(--ease)}
-@keyframes nudge{30%{transform:translateX(-6px)}60%{transform:translateX(4px)}}
 /* pull to refresh on Diet; the header sync dot turns while a pull runs */
 .ptr{height:0;overflow:hidden;display:grid;place-items:center;transition:height .3s var(--ease)}
 .ptr i{width:22px;height:22px;border-radius:50%;border:2.5px solid var(--seg);border-top-color:var(--ac);opacity:.5;transition:opacity .2s,transform .2s}
@@ -343,9 +335,6 @@ h1,h2,h3,p{margin:0}
 .feel button{height:46px;padding:0 20px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);font-size:15px;font-weight:700;transition:transform .2s var(--spring)}
 .feel button:active{transform:scale(.92)}
 .feel button[data-f="easy"]{background:var(--ac-soft);color:var(--ac-text)}
-/* gap card dots: clearer, especially in dark */
-.dots button{width:7px;height:7px;background:color-mix(in srgb,var(--ink) 22%,transparent)}
-.dots button[aria-pressed="true"]{width:20px;background:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
 /* a fixed card: the bars scale inside a fixed area so changing the period never resizes it */
 .gapcard .bars7{height:110px}
 .gapcard .bl{min-height:16px}
@@ -453,3 +442,20 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .fs-peek i:last-child:not(:first-child){bottom:9px}
 .mask .mainpick{display:grid;gap:10px;padding:12px;border-radius:16px;background:var(--sub);margin-bottom:10px}
 .mask .mainpick .fgrid[hidden]{display:none}
+/* the small round translucent button: back to today / the latest, add, done (one look everywhere) */
+.fsreset{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--ink);background:color-mix(in srgb,var(--ink) 9%,transparent);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--ink) 10%,transparent);transition:transform .25s var(--spring),opacity .2s}
+.fsreset svg{width:17px;height:17px}
+.fsreset:active{transform:scale(.9)}
+.dark .fsreset{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.12)}
+.addrow{display:flex;justify-content:flex-end;margin-top:10px}
+/* progress tiles in edit mode */
+.bento.editing .tile{animation:wiggle .32s ease-in-out infinite alternate;touch-action:none;position:relative;user-select:none;-webkit-user-select:none}
+.bento.editing .tile:nth-child(2n){animation-delay:-.16s}
+.bento.editing .tile.drag{animation:none;z-index:5;box-shadow:0 18px 40px -12px rgba(0,0,0,.45);transition:none}
+@keyframes wiggle{from{transform:rotate(-.6deg)}to{transform:rotate(.6deg)}}
+.tile .tx{position:absolute;top:-7px;left:-7px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.tile .tx svg{width:12px;height:12px}
+.tilebar{position:fixed;right:18px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:25;display:flex;gap:10px}
+.tilebar .fsreset{width:46px;height:46px}
+.tilebar .fsreset svg{width:20px;height:20px}

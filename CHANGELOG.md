@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.47a] — 2026-11-13
+
+### 新增 / Added
+- ✏️ **进展页的卡片可以编辑**：长按任意一张，拖动换位置，× 隐藏，浮动的「+」把隐藏的加回来。
+- ✏️ **Edit the Progress tiles**: long-press any tile, drag to reorder, × to hide, and the floating + brings hidden ones back.
+
+### 改动 / Changed
+- 日历默认展开；离开本月时出现复位按钮，只回到今天，不再打开加练（点日历上的今天那格才打开）。缺口卡片改成毛玻璃卡片叠；饮食记录一张七天，翻到旧的时出现复位按钮；「记一笔」换成一个小「+」。
+- The calendar opens expanded; away from this month a reset button brings you back without opening anything (tap today's cell for extra practice). The calorie-gap card is a frosted card stack; food records come seven to a card with a reset button when you're looking at older ones; "Log" is now a small +.
+
 ## [v1.46a] — 2026-11-13
 
 ### 新增 / Added

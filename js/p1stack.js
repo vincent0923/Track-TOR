@@ -33,3 +33,6 @@ function fsFly(id,dir,top,under){const o=FS[id];if(typeof SFX!=="undefined")SFX.
 function fsGo(id,dir){const o=FS[id],host=fsHost(id);if(!o||!host)return false;const h=o.get(dir);if(!h)return false;
   fsFly(id,dir,host.firstElementChild,fsUnder(host,h));return true}
 function fsRender(id){const o=FS[id],host=fsHost(id);if(!o||!host)return;const t=document.createElement("div");t.innerHTML=o.render();host.replaceWith(t.firstElementChild);fsBind(id,o)}
+/* jump straight back (to today, to the latest): redraw, and the new card settles in */
+function fsReset(id){fsRender(id);const c=document.querySelector('.fstack[data-fs="'+id+'"] .fs-top');if(typeof SFX!=="undefined")SFX.tap();
+  if(c){c.classList.add("fs-in");requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.remove("fs-in")))}}

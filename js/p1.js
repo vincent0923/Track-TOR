@@ -33,6 +33,7 @@ const ICON={
   sliders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
   spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></svg>',
   share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg>',
+  reset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 4.1A8 8 0 1 1 4.7 8.6"/><path d="M13.6 1.4 10.6 4.1l3 2.9"/></svg>',
   lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>'};
 function dateObj(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
@@ -50,7 +51,7 @@ function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
 
 /* ---------- train view ---------- */
-let monthOpen=false,monthOff=0,heroSid=null;
+let monthOpen=true,monthOff=0,heroSid=null;
 function weekStart(d){const x=new Date(d);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x}
 const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 function dayCell(s,marks,out){const t=today(),mk=marks[s];const cls=(s===t?" today":"")+(s>t?" fut":"")+(out?" out":"");
@@ -92,7 +93,7 @@ function calCard(off){const marks=dayMarks(),now=new Date(),t=today(),head='<div
     for(let i=0;i<42;i++){const d=new Date(ms);d.setDate(ms.getDate()+i);if(i===35&&d.getMonth()!==first.getMonth())break;body+=dayCell(ymd(d),marks,d.getMonth()!==first.getMonth())}label=first}
   body+="</div>";
   return '<section class="card cal"><div class="wk-h"><b>'+(LANG==="en"?MON_EN[label.getMonth()]:(label.getMonth()+1)+'月')+(label.getFullYear()!==now.getFullYear()?" "+label.getFullYear():"")+'</b>'
-    +'<button class="pill'+(off?'':' ac')+'" style="margin-left:auto" data-act="caltoday">'+T('今天','Today')+'</button>'
+    +'<span class="sp"></span>'+(off?'<button class="fsreset" data-act="caltoday" aria-label="'+T('回到今天','Back to today')+'">'+ICON.reset+'</button>':'')
     +'<button class="mini chev" data-act="month" aria-expanded="'+monthOpen+'" aria-label="'+(monthOpen?T("收起整月","Collapse the month"):T("展开整月","Show the month"))+'">'+ICON.chev+'</button></div>'
     +body+'</section>'}
 const calOff=()=>monthOpen?monthOff:weekOff;
@@ -185,16 +186,16 @@ function swipe(el){let x0=null,y0=0;el.addEventListener("touchstart",e=>{x0=e.to
     run.ex=n;run.rest=0;clearInterval(restT);SFX.tap();renderFocus(true)})}
 
 /* ---------- diet view ---------- */
-/* food records, five days to a card, older ones stacked underneath (finger right goes back) */
+/* food records, seven days to a card, older ones stacked underneath (finger right goes back) */
 let dietGrp=0;
 function dietDays(){const t=today();return Object.keys(state.diet).filter(d=>d<=t).sort().reverse()}
-function dietCard(g){const all=dietDays(),keys=all.slice(g*5,g*5+5);
+function dietCard(g){const all=dietDays(),keys=all.slice(g*7,g*7+7);
   if(!keys.length)return '<section class="card"><p class="eyebrow" style="margin-bottom:4px">'+T('记录','Logs')+'</p><p class="empty">'+T('还没有饮食记录','No food logged yet')+'</p></section>';
   const md=d=>(dateObj(d).getMonth()+1)+'.'+dateObj(d).getDate();
-  return '<section class="card"><div class="row" style="margin-bottom:4px"><p class="eyebrow sp">'+T('记录','Logs')+'</p><span class="muted" style="font-size:12px;font-weight:600">'+md(keys[keys.length-1])+' – '+md(keys[0])+'</span></div><div class="dl">'+keys.map(d=>{const a=intakeOf(d),g=dietGapOf(d);
+  return '<section class="card"><div class="row" style="margin-bottom:4px"><p class="eyebrow sp">'+T('记录','Logs')+'</p><span class="muted" style="font-size:12px;font-weight:600">'+md(keys[keys.length-1])+' – '+md(keys[0])+'</span>'+(g?'<button class="fsreset" data-act="dietnow" style="margin-left:8px" aria-label="'+T('回到最近','Back to the latest')+'">'+ICON.reset+'</button>':'')+'</div><div class="dl">'+keys.map(d=>{const a=intakeOf(d),g=dietGapOf(d);
       return '<button data-act="day" data-d="'+d+'"><span class="dt">'+dayLabel(d)+'</span><span class="di n">'+(a!=null?fmt(a)+' kcal':'–')+'</span>'+(g!=null?'<span class="pill '+(g>=0?"good":"bad")+'">'+(g>=0?"−":"+")+fmt(Math.abs(g))+'</span>':'')+'<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>'}).join("")+'</div></section>'}
-function dietListHtml(){const n=Math.ceil(dietDays().length/5);if(dietGrp>=n)dietGrp=Math.max(0,n-1);return fsWrap("diet",dietCard(dietGrp),n-1-dietGrp)}
-const DIET_FS={get:dir=>{const n=Math.ceil(dietDays().length/5),g=dietGrp+dir;return g<0||g>=n?null:dietCard(g)},commit:dir=>{dietGrp+=dir},render:dietListHtml,peekDir:1};
+function dietListHtml(){const n=Math.ceil(dietDays().length/7);if(dietGrp>=n)dietGrp=Math.max(0,n-1);return fsWrap("diet",dietCard(dietGrp),n-1-dietGrp)}
+const DIET_FS={get:dir=>{const n=Math.ceil(dietDays().length/7),g=dietGrp+dir;return g<0||g>=n?null:dietCard(g)},commit:dir=>{dietGrp+=dir},render:dietListHtml,peekDir:1};
 function renderDietView(){const v=$("#v-diet"),t=today();
   const tin=intakeOf(t),tb=burnOfDate(t),gap=tin!=null&&tb!=null?tb-tin:null,pr=proteinOf(t),need=proteinNeed(t);
   const y=ymdAdd(t,-1),yg=dietGapOf(y);
@@ -206,9 +207,9 @@ function renderDietView(){const v=$("#v-diet"),t=today();
   hero+='</div><div class="ring">'+ringSvg(76,8,pp,"var(--sleep)","var(--sub)")+'<span class="rl"><b class="n" style="font-size:16px;font-weight:800">'+(pr!=null?Math.round(pr):"–")+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ '+Math.round(need)+' g</span></span></div></div>';
   if(tin!=null&&tb!=null){const mx=Math.max(tin,tb);hero+='<div class="ib"><i style="width:'+(tin/mx*100)+'%;background:var(--ink)"></i><i style="width:'+(Math.max(0,tb-tin)/mx*100)+'%;background:var(--good);opacity:.35"></i></div>'
     +'<div class="legend"><span><i style="background:var(--ink)"></i>'+T('摄入','Intake')+'</span><span><i style="background:var(--good);opacity:.5"></i>'+T('缺口','Deficit')+'</span><span style="margin-left:auto"><i style="background:var(--sleep)"></i>'+T('蛋白质','Protein')+'</span></div>'}
-  hero+='<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet">'+ICON.plus+T('记一笔','Log')+'</button></section>';
-  const week=gapCardHtml();
-  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+dietListHtml();animateRings(v);gapCardBind();fsBind("diet",DIET_FS)}
+  hero+='<div class="addrow"><button class="fsreset" data-act="go" data-to="diet" aria-label="'+T('记一笔','Log food')+'">'+ICON.plus+'</button></div></section>';
+  const week=gapStackHtml();
+  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+dietListHtml();animateRings(v);fsBind("gap",GAP_FS);fsBind("diet",DIET_FS)}
 /* the gap card: swipe it sideways (or tap a dot) to step through 7, 14, 30 days and since the first log; the
    big figure turns over like a split-flap board. Only finished days count (the window ends yesterday). */
 const GAP_RANGES=[7,14,30,0];
@@ -217,26 +218,23 @@ function gapData(){const t=today(),to=ymdAdd(t,-1),first=Object.keys(state.diet)
   const from=gapR?ymdAdd(to,-(gapR-1)):(first&&first<=to?first:to),days=[];for(let d=from;d<=to;d=ymdAdd(d,1))days.push(d);
   const gaps=days.map(dietGapOf),known=gaps.filter(g=>g!=null),sum=known.reduce((a,g)=>a+g,0);return {from,to,days,gaps,known,sum}}
 function flapHtml(txt){return '<span class="flap">'+[...txt].map((c,i)=>'<span style="--i:'+i+'">'+c+'</span>').join("")+'</span>'}
-function gapCardHtml(){const {from,to,days,gaps,known,sum}=gapData(),mx=Math.max(300,...known.map(Math.abs));
-  const label=gapR?T('过去 '+gapR+' 天','Last '+gapR+' days'):T('有记录以来 '+days.length+' 天','Since the first log · '+days.length+' days');
+function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days,gaps,known,sum}=gapData();gapR=keep;const R=rr!=null?rr:gapR,mx=Math.max(300,...known.map(Math.abs));
+  const label=R?T('过去 '+R+' 天','Last '+R+' days'):T('有记录以来 '+days.length+' 天','Since the first log · '+days.length+' days');
   const w=known.length?fatWord(sum/7700,from,to):"about",word=(LANG==="en"?{about:"about ",high:"aggressive: ",low:"conservative: "}:{about:"约 ",high:"激进估计 ",low:"保守估计 "})[w];
   /* long windows draw one bar per week so the bars stay readable */
   let cols=days.map((d,i)=>({g:gaps[i],l:days.length<=14?WD[dateObj(d).getDay()]:""}));
   if(days.length>31){cols=[];for(let i=0;i<days.length;i+=7){const ch=gaps.slice(i,i+7).filter(g=>g!=null);cols.push({g:ch.length?ch.reduce((a,b)=>a+b,0)/ch.length:null,l:""})}}
   const cm=Math.max(300,...cols.filter(c=>c.g!=null).map(c=>Math.abs(c.g)));
-  return '<section class="card gapcard" id="gapCard"><div class="row"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?T(' · 记了 '+known.length+' 天',' · '+known.length+' logged'):'')+'</p>'
+  return '<section class="card gapcard"><div class="row"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?T(' · 记了 '+known.length+' 天',' · '+known.length+' logged'):'')+'</p>'
     +'<div class="big">'+flapHtml(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?T("缺口","deficit"):T("盈余","surplus"))+'</small></div></div>'
     +(known.length?'<span class="pill '+(sum>=0?"good":"bad")+'">'+word+(Math.abs(sum)/7700).toFixed(2)+T(' kg 脂肪',' kg fat')+'</span>':'')+'</div>'
     +'<div class="bars7" style="grid-template-columns:repeat('+cols.length+',1fr);gap:'+(cols.length>14?3:cols.length>7?5:8)+'px">'+cols.map(c=>'<div class="bc"><div class="bw"><div class="bv" style="height:'+(c.g==null?6:Math.max(6,Math.abs(c.g)/cm*86))+'px;border-radius:'+(cols.length>14?4:10)+'px;background:'+(c.g==null?"var(--sub)":c.g>=0?"var(--good)":"var(--bad)")+'"></div></div>'+'<span class="bl">'+(c.l||'&nbsp;')+'</span>'+'</div>').join("")+'</div>'
     +(days.length?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
-    +'<div class="dots" role="group" aria-label="'+T('统计天数','Period')+'">'+GAP_RANGES.map(r=>'<button data-act="gapr" data-r="'+r+'" aria-pressed="'+(r===gapR)+'" aria-label="'+(r?T('过去 '+r+' 天','Last '+r+' days'):T('有记录以来','Since the first log'))+'"></button>').join("")+'</div></section>'}
-function setGapRange(r){if(r===gapR)return;const dir=GAP_RANGES.indexOf(r)>GAP_RANGES.indexOf(gapR)?1:-1;gapR=r;try{localStorage.setItem(PK+"gw",String(r))}catch(e){}
-  const old=$("#gapCard");if(!old)return;const t=document.createElement("template");t.innerHTML=gapCardHtml();const nw=t.content.firstChild;
-  nw.classList.add(dir>0?"in-r":"in-l");old.replaceWith(nw);SFX.tap();buzz(8);gapCardBind()}
-function gapCardBind(){const c=$("#gapCard");if(!c)return;let x0=null,y0=0;
-  c.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
-  c.addEventListener("touchend",e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
-    if(Math.abs(dx)<40||Math.abs(dy)>Math.abs(dx))return;const i=GAP_RANGES.indexOf(gapR),n=i+(dx<0?1:-1);if(n>=0&&n<GAP_RANGES.length)setGapRange(GAP_RANGES[n]);else{c.classList.remove("nudge");void c.offsetWidth;c.classList.add("nudge")}})}
+    +'</section>'}
+/* the four periods are a frosted swipe stack too: finger right for longer, left for shorter */
+function gapStackHtml(){const i=GAP_RANGES.indexOf(gapR);return fsWrap("gap",gapCardHtml(),GAP_RANGES.length-1-i)}
+const GAP_FS={get:dir=>{const i=GAP_RANGES.indexOf(gapR)+dir;return i<0||i>=GAP_RANGES.length?null:gapCardHtml(GAP_RANGES[i])},
+  commit:dir=>{gapR=GAP_RANGES[GAP_RANGES.indexOf(gapR)+dir];try{localStorage.setItem(PK+"gw",String(gapR))}catch(e){}},render:gapStackHtml,peekDir:1};
 /* food table: opening Diet pulls it quietly (not again within half a minute); pulling the page down pulls it now */
 function syncSpin(on){$("#syncDot").classList.toggle("spin",on)}
 async function dietPull(manual){let st={};try{st=JSON.parse(localStorage.getItem(SHEET_STATUS_K)||"{}")||{}}catch(e){}
@@ -317,12 +315,44 @@ function goalsHtml(){const st=state.settings,gap=gapAllTime();
     if(g.tg&&g.cur!=null)milestone(g.k,pct*100,g.n);
     return '<button data-act="goal"><span class="ring">'+ringSvg(66,7,pct,g.c,"var(--track)")+'<span class="rl"><b class="n" style="font-size:15px;font-weight:800">'+(g.tg?Math.round(pct*100)+"%":"–")+'</b></span></span>'
       +'<span><span class="gn">'+g.n+'</span><br><span class="gv n">'+(g.cur==null?"–":g.cur+" "+g.u)+'</span></span></button>'}).join("")+'</div></section>'}
-function renderProgView(){const v=$("#v-prog"),off=k=>{const s=state.settings.sync;return s&&s[{sleep:"sleep",hrv:"hrv",rhr:"rhr"}[k]]===false};
-  const tiles=METRICS.filter(m=>!off(m.k)).map(m=>{const all=m.pts(),pts=recent(all,30),last=all[all.length-1];
+/* tiles: long-press one to edit (drag to reorder, × to hide; the floating + brings hidden ones back, ✓ finishes).
+   settings.tiles = {order:[k…], hidden:[k…]}; a COROS item switched off in sync settings stays hidden too. */
+let tileEdit=false;
+function tileCfg(){const t=state.settings.tiles||{};return {order:t.order||[],hidden:t.hidden||[]}}
+function tileList(){const c=tileCfg(),off=k=>{const s=state.settings.sync;return s&&s[{sleep:"sleep",hrv:"hrv",rhr:"rhr"}[k]]===false};
+  const pos=k=>{const i=c.order.indexOf(k);return i<0?100+METRICS.findIndex(m=>m.k===k):i};
+  const all=METRICS.filter(m=>!off(m.k)).slice().sort((a,b)=>pos(a.k)-pos(b.k));
+  return {shown:all.filter(m=>!c.hidden.includes(m.k)),hidden:all.filter(m=>c.hidden.includes(m.k))}}
+function renderProgView(){const v=$("#v-prog"),{shown,hidden}=tileList();
+  const tiles=shown.map(m=>{const all=m.pts(),pts=recent(all,30),last=all[all.length-1];
     return '<button class="tile'+(m.wide?" wide":"")+'" data-act="metric" data-k="'+m.k+'"><span class="tl"><i style="background:'+m.c+'"></i>'+m.name+(m.sub?' · '+m.sub:'')+'</span>'
       +'<span class="tv">'+(last?last.y.toFixed(m.dec)+'<small>'+m.unit+'</small>':'–')+'</span>'+(last?deltaOf(m,all):'<span class="td muted">'+T('还没有数据','No data yet')+'</span>')
-      +(pts.length>1?lineSvg(pts,m.wide?320:150,m.wide?64:44,m.c,"spark"):'')+'</button>'}).join("");
-  v.innerHTML=goalsHtml()+'<div class="bento">'+tiles+'</div>';animateRings(v)}
+      +(pts.length>1?lineSvg(pts,m.wide?320:150,m.wide?64:44,m.c,"spark"):'')
+      +(tileEdit?'<span class="tx" data-act="thide" data-k="'+m.k+'" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</button>'}).join("");
+  v.innerHTML=goalsHtml()+'<div class="bento'+(tileEdit?' editing':'')+'">'+tiles+'</div>'
+    +(tileEdit?'<div class="tilebar">'+(hidden.length?'<button class="fsreset" data-act="tadd" aria-label="'+T('加回图表','Add a chart back')+'">'+ICON.plus+'</button>':'')+'<button class="fsreset" data-act="tdone" aria-label="'+T('完成','Done')+'">'+ICON.check+'</button></div>':'');
+  animateRings(v);tileBind()}
+function tileSave(cfg){state.settings.tiles=cfg;lsSave()}
+function tileBind(){const box=$("#v-prog .bento");if(!box)return;let tm=0,drag=null;
+  /* long-press to edit */
+  box.addEventListener("pointerdown",e=>{const t=e.target.closest(".tile");if(!t||e.target.closest(".tx"))return;
+    if(!tileEdit){clearTimeout(tm);const x=e.clientX,y=e.clientY;tm=setTimeout(()=>{tm=0;tileEdit=true;buzz(15);fsEatClick();renderProgView()},500);
+      const cancel=ev=>{if(ev.type!=="pointermove"||Math.hypot(ev.clientX-x,ev.clientY-y)>10){clearTimeout(tm);off()}};
+      const off=()=>{["pointermove","pointerup","pointercancel"].forEach(k=>removeEventListener(k,cancel))};["pointermove","pointerup","pointercancel"].forEach(k=>addEventListener(k,cancel));return}
+    /* editing: drag a tile to a new place */
+    e.preventDefault();const r0=t.getBoundingClientRect();drag={t,x:e.clientX,y:e.clientY,moved:false};t.setPointerCapture(e.pointerId);t.classList.add("drag")});
+  box.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>6)drag.moved=true;
+    drag.t.style.transform="translate("+dx+"px,"+dy+"px) scale(1.04)";drag.t.style.pointerEvents="none";
+    const o=document.elementFromPoint(e.clientX,e.clientY),ot=o&&o.closest(".bento .tile");drag.t.style.pointerEvents="";
+    if(ot&&ot!==drag.t){const rb=ot.getBoundingClientRect(),before=e.clientY<rb.top+rb.height/2&&(ot.classList.contains("wide")||e.clientX<rb.left+rb.width/2||e.clientY<rb.top+rb.height/3);
+      const r1=drag.t.getBoundingClientRect();box.insertBefore(drag.t,before?ot:ot.nextSibling);const r2=drag.t.getBoundingClientRect();drag.x+=r2.left-r1.left;drag.y+=r2.top-r1.top;
+      drag.t.style.transform="translate("+(e.clientX-drag.x)+"px,"+(e.clientY-drag.y)+"px) scale(1.04)";buzz(6)}});
+  const end=()=>{if(!drag)return;const t=drag.t,moved=drag.moved;drag=null;t.classList.remove("drag");t.style.transform="";
+    if(moved){fsEatClick();const c=tileCfg(),keys=[...box.querySelectorAll(".tile")].map(x=>x.dataset.k);c.order=keys.concat(c.order.filter(k=>!keys.includes(k)));tileSave(c)}};
+  box.addEventListener("pointerup",end);box.addEventListener("pointercancel",end)}
+function tileAddSheet(){const {hidden}=tileList();
+  openSheet('<div class="sh-h"><h3>'+T('加回图表','Add a chart back')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><div class="setlist">'
+    +hidden.map(m=>'<button class="opt" data-act="tshow" data-k="'+m.k+'"><i class="kd" style="background:'+m.c+'"></i><span class="sp">'+m.name+'</span>'+ICON.plus+'</button>').join("")+'</div>')}
 let chartRange=30;
 function metricSheet(k){const m=METRICS.find(x=>x.k===k),all=m.pts();
   const draw=()=>{const pts=recent(all,chartRange),last=all[all.length-1];
@@ -410,20 +440,24 @@ $("#syncBtn").addEventListener("click",()=>p1Sync(false));
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
   if(a==="month"){monthOpen=!monthOpen;monthOff=0;weekOff=0;fsRender("cal")}
   /* Today: back to this week or month; already there, it opens today */
-  else if(a==="caltoday"){if(calOff()){monthOff=0;weekOff=0;fsRender("cal");const c=$('.fstack[data-fs="cal"] .fs-top');if(c){c.classList.add("fs-in");requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.remove("fs-in")))}}else if(typeof p1OpenDay==="function")p1OpenDay(today())}
+  else if(a==="caltoday"){monthOff=0;weekOff=0;fsReset("cal")}
+  else if(a==="dietnow"){dietGrp=0;fsReset("diet")}
   else if(a==="start")startRun(b.dataset.sid);
   else if(a==="fsnext"){const o=FS[b.dataset.fs];if(o)fsGo(b.dataset.fs,o.peekDir||1)}
   else if(a==="hopen"){const c=b;heroOpen=!heroOpen;c.classList.toggle("open",heroOpen);SFX.tap()}
   else if(a==="theory"){const t=document.querySelector("#sheet .theory");if(t){t.hidden=!t.hidden;b.setAttribute("aria-expanded",!t.hidden)}}
   else if(a==="why")planSheet();
   else if(a==="dshare")shareDay(b.dataset.d);
+  else if(a==="thide"){e.stopPropagation();const c=tileCfg();if(!c.hidden.includes(b.dataset.k))c.hidden.push(b.dataset.k);tileSave(c);SFX.tap();renderProgView()}
+  else if(a==="tadd")tileAddSheet();
+  else if(a==="tshow"){const c=tileCfg();c.hidden=c.hidden.filter(k=>k!==b.dataset.k);tileSave(c);closeSheet();renderProgView()}
+  else if(a==="tdone"){tileEdit=false;SFX.tap();renderProgView()}
   else if(a==="close")closeSheet();
   else if(a==="day")daySheet(b.dataset.d);
-  else if(a==="metric"){chartRange=30;metricSheet(b.dataset.k)}
+  else if(a==="metric"){if(tileEdit)return;chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
   else if(a==="goal")bridge("goals");
   else if(a==="coins")coinSheet(false);
-  else if(a==="gapr")setGapRange(+b.dataset.r);
   else if(a==="shop")coinSheet(true);
   else if(a==="go")bridge(b.dataset.to);
   else if(a==="lang")setLang(b.dataset.l);
