@@ -45,7 +45,7 @@ function render(){const d=curDay,dt=dateObj(d),ss=sessionsOn(d);
 function openDay(d){if(d==="today")d=today();if(d>today())return;curDay=d;editSid=null;Object.keys(pending).forEach(k=>delete pending[k]);
   if(typeof run!=="undefined"&&run)closeRun();$("#sheetBody").dataset.day="";render()}
 window.p1OpenDay=openDay;
-function changed(){lsSave();if(typeof renderAll==="function")renderAll();render()}
+function changed(){if(typeof engFree==="function"&&engFree())engPlanAll();lsSave();if(typeof renderAll==="function")renderAll();render()}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
   if(a==="cal"){openDay(b.dataset.d);return}
   if(!curDay||!$("#sheet").classList.contains("on")||$("#sheetBody").dataset.day!==curDay)return;

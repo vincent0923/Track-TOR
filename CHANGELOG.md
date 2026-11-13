@@ -6,6 +6,12 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.50a] — 2026-11-13
+
+### 新增 / Added
+- 🌱 **自由练**：不用选计划。建议按你最近 3 周记过的动作（训练和加练都算）排，先练最久没练的部位，每个动作从上次接着加，每次至少 2 个动作、5 组；散步、骑车这类只记录不排。练法稳定后会提示存成你自己的计划。新用户默认就是它。
+- 🌱 **Free training**: no plan needed. Suggestions come from the moves you've logged in the last 3 weeks (sessions and extra practice), the body part trained longest ago first, each move carrying on from last time, at least 2 moves and 5 sets; walks and rides are recorded, not planned. Once a pattern settles, it offers to keep it as your own plan. New users start here.
+
 ## [v1.49a] — 2026-11-13
 
 ### 新增 / Added

@@ -38,8 +38,13 @@ const PRESETS=[
 function engMoves(){const out={};engDoneAll().forEach(p=>{const doc=state.sessions[p.sid];p.ex.forEach(e=>{const a=(doc.sets&&doc.sets[e.id])||[],got=a.filter(x=>x.d).map(x=>+x.v||0);if(!got.length)return;
     out[e.id]={id:e.id,name:engBase(e),en:engBaseEn(e)||engBase(e),unit:e.unit,kind:p.kind,sets:Math.max(1,a.length),target:e.target,tempo:engTempo(e),got,date:doc.date||""}})});
   return Object.values(out)}
+/* every move done so far, from sessions and from extra practice (activities left out) */
+function knownMoves(){const mv={};engMoves().forEach(m=>mv[m.id]=m);
+  freeLog().pool.forEach(m=>{if(mv[m.id]&&mv[m.id].date>=m.last)return;const g=freeGroup(m.id);
+    mv[m.id]={id:m.id,name:m.name,en:m.en,unit:m.unit,kind:g==="pull"?"pull":g==="push"?"push":"third",sets:m.sets||3,target:m.min,tempo:null,got:Array(m.sets||3).fill(m.min),date:m.last}});
+  return Object.values(mv).filter(m=>!engActivity(m))}
 /* a plan of the user's own: days = [{zh, en, ids:[move ids]}] (1–3); each move starts from its own last record */
-function setCustomPlan(days){const mv={};engMoves().forEach(m=>mv[m.id]=m);const lib={};PRESETS.forEach(p=>p.days.forEach(d=>d.ex.forEach(e=>{if(!lib[e.id])lib[e.id]=e})));
+function setCustomPlan(days){const mv={};knownMoves().forEach(m=>mv[m.id]=m);const lib={};PRESETS.forEach(p=>p.days.forEach(d=>d.ex.forEach(e=>{if(!lib[e.id])lib[e.id]=e})));
   const kinds=["push","pull","third"],old=state.settings.plan;
   state.settings.plan={id:"custom",days:days.map((d,i)=>({kind:kinds[i],zh:d.zh,en:d.en||d.zh,ex:d.ids.map(id=>{const m=mv[id];
       if(m)return {id,name:m.name,en:m.en,unit:m.unit,sets:Math.min(ENG_SETS_MAX,Math.max(ENG_SETS_MIN,m.sets)),target:m.target,tempo:m.tempo||null};
@@ -66,8 +71,8 @@ function engDone(kind){return PROGRAM.filter(p=>p.kind===kind&&state.sessions[p.
 /* every finished session of any kind, oldest first: where a move's history is found when its own day has none
    (a custom plan can put a move on a different day than it used to be done on) */
 function engDoneAll(){return ["push","pull","third"].flatMap(engDone).sort((a,b)=>{const x=state.sessions[a.sid].date||"",y=state.sessions[b.sid].date||"";return x<y?-1:x>y?1:0})}
-/* a custom plan keeps the user's own moves: harder means more reps, slower, more sets, never another move */
-const engCustom=()=>!!(state.settings.plan&&state.settings.plan.id==="custom");
+/* a custom plan, and free training, keep the user's own moves: harder means more reps, slower, more sets, never another move */
+const engCustom=()=>!!(state.settings.plan&&(state.settings.plan.id==="custom"||state.settings.plan.id==="free"));
 /* one exercise's result in one finished session */
 function engResult(p,id){const doc=state.sessions[p.sid],e=p.ex.find(x=>x.id===id);if(!e)return null;const a=(doc.sets&&doc.sets[id])||[];
   return {target:e.target,planned:a.length||e.sets,got:a.filter(x=>x.d).map(x=>+x.v||0),feel:doc.feel&&doc.feel[id]||null,tempo:engTempo(e)}}
@@ -128,8 +133,8 @@ function engPlanSession(kind,hist,sim,base){
   const rough=p=>p.ex.filter(e=>{const r=engResult(p,e.id);if(!r)return false;const [lo,hi]=engRange(e);return e.unit!=="分钟"&&engVerdict(r,lo,hi).miss}).length>=2;
   const deload=!sim&&hist.length>=2&&rough(hist[hist.length-1])&&rough(hist[hist.length-2]);
   let ex=base.map(e=>{
-    const tp=engTempo(e);let H=hist.slice(-ENG_LOOK).map(p=>engResult(p,e.id)).filter(r=>r&&r.tempo===tp);
-    if(!H.length)H=engDoneAll().map(p=>engResult(p,e.id)).filter(r=>r&&r.tempo===tp&&r.got.length).slice(-ENG_LOOK);
+    const tp=engTempo(e);let H=engFree()?[]:hist.slice(-ENG_LOOK).map(p=>engResult(p,e.id)).filter(r=>r&&r.tempo===tp);
+    if(!H.length)H=engMoveHist(e.id).filter(r=>r.tempo===tp).slice(-ENG_LOOK);
     if(sim&&sim[e.id])H.push(sim[e.id]);
     const n=engPlanEx(Object.assign({sets:e.sets},e,{tempo:tp}),H.slice(-ENG_LOOK),inSession);
     if(n.id!==e.id){inSession.delete(e.id);inSession.add(n.id)}
@@ -147,7 +152,73 @@ function engWrite(sid,kind,ex){const m=/-(\d+)$/.exec(sid),day=+m[1];
   doc.ex=ex;doc.sets={};ex.forEach(e=>{doc.sets[e.id]=Array.from({length:e.sets},()=>({v:e.target,d:false}))});
   registerPlanned({[sid]:doc})}
 /* plan the next two of each kind; returns true when anything changed */
+/* ---------- free training: no plan picked ----------
+   The suggestion grows out of whatever the user logs (sessions and extra practice alike): every strength move of the
+   last 3 weeks is in a pool (walking, cycling and the like are kept as records but never suggested); a session takes
+   as many moves as the user usually does, at least 2 and 5 sets, the body part trained longest ago first, the same move
+   not two days running; each move carries on from its own last record. Only one move so far: one from another part is
+   added. settings.plan = {id:"free", days:[one day]}; a new user who never picked a plan is on it. */
+const FREE_GROUP={std:"push",decline:"push",diamond:"push",archer:"push",incline:"push",pike:"push",pikeft:"push",pushup:"push",
+  pullup:"pull",row:"pull",rowft:"pull",ecc:"pull",hang:"pull",squat:"legs",splitsq:"legs",bulgarian:"legs",bridge:"legs",slbridge:"legs",wallsit:"legs",
+  plank:"core",situp:"core",kneeraise:"core",legraise:"core"};
+const freeGroup=id=>FREE_GROUP[id]||id;
+const FREE_GROUP_NAME={push:["推","Push"],pull:["拉","Pull"],legs:["腿","Legs"],core:["核心","Core"]};
+const FREE_STARTERS={core:E("plank","平板支撑","Plank","秒",2,30),legs:E("squat","深蹲","Squats","个",3,10),pull:E("row","反向划船","Inverted rows","个",3,8),push:E("std","标准俯卧撑","Push-ups","个",3,8)};
+const engActivity=m=>m.unit==="分钟"||m.unit==="km"||/散步|走路|步行|跑步|慢跑|骑|游泳|徒步|爬山|walk|run|jog|ride|cycl|bike|swim|hike/i.test((m.name||"")+" "+(m.en||""));
+function engFree(){const pl=state.settings.plan;return !!(pl&&pl.id==="free")}
+function freePlanDoc(){return {id:"free",days:[{kind:"push",zh:"自由练",en:"Free training",ex:[]}],from:today()}}
+function setFreePlan(){state.settings.plan=freePlanDoc();
+  Object.entries(state.sessions).forEach(([sid,doc])=>{if(doc&&!doc.done&&doc.ex&&!engStarted(doc)){delete doc.ex;doc.sets={}}});
+  registerPlanned(state.sessions);engPlanAll();lsSave()}
+/* one move's results, oldest first, from finished sessions and from extra practice */
+function engMoveHist(id){const out=[];
+  engDoneAll().forEach(p=>{const r=engResult(p,id);if(r&&r.got.length)out.push([state.sessions[p.sid].date||"",r])});
+  const xs=(d,items)=>(items||[]).forEach(it=>{if(it.id!==id)return;const got=it.sets.filter(x=>x.d).map(x=>+x.v||0);if(got.length)out.push([d,{target:Math.min(...got),planned:got.length,got,feel:null,tempo:null}])});
+  Object.values(state.sessions).forEach(s=>{if(s&&s.date)xs(s.date,s.xs)});Object.values(state.dayx||{}).forEach(x=>{if(x&&x.date)xs(x.date,x.xs)});
+  return out.sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0).map(x=>x[1])}
+/* the strength moves of the last 3 weeks, each with its newest record, and which moves each day had */
+function freeLog(){const cut=ymdAdd(today(),-21),mv={},days={};
+  const note=(id,name,en,unit,d,got,sets)=>{if(!d||d<cut)return;const m={id,name,en:en||name,unit};if(engActivity(m)||m.unit==="分钟")return;
+    const o=mv[id]=mv[id]||Object.assign(m,{last:"",n:0});if(d>=o.last){o.last=d;o.name=name;o.en=en||name;o.unit=unit;o.sets=sets;o.min=Math.min(...got)}o.n++;(days[d]=days[d]||new Set()).add(id)};
+  engDoneAll().forEach(p=>{const doc=state.sessions[p.sid];p.ex.forEach(e=>{const a=(doc.sets&&doc.sets[e.id])||[],got=a.filter(x=>x.d).map(x=>+x.v||0);if(got.length)note(e.id,engBase(e),engBaseEn(e),e.unit,doc.date,got,a.length)})});
+  const xs=(d,items)=>(items||[]).forEach(it=>{const got=it.sets.filter(x=>x.d).map(x=>+x.v||0);if(got.length)note(it.id,typeof xName==="function"?xName(it):it.name,it.name,it.unit,d,got,got.length)});
+  Object.values(state.sessions).forEach(s=>{if(s&&s.date)xs(s.date,s.xs)});Object.values(state.dayx||{}).forEach(x=>{if(x&&x.date)xs(x.date,x.xs)});
+  return {pool:Object.values(mv),days}}
+/* the moves for one free session; virtual = moves already planned in the sessions before it (treated as done then) */
+function freeBase(virtual){virtual=virtual||{};const t=today(),{pool,days}=freeLog(),dn=d=>dnum(d);
+  const recent=Object.keys(days).sort().slice(-3).map(d=>days[d].size).sort((a,b)=>a-b),med=recent.length?recent[Math.floor(recent.length/2)]:2;
+  const n=Math.max(2,Math.min(5,med));
+  const last=m=>virtual[m.id]||m.last,gLast={};pool.forEach(m=>{const g=freeGroup(m.id),l=last(m);if(!gLast[g]||l>gLast[g])gLast[g]=l});
+  Object.keys(virtual).forEach(id=>{const g=freeGroup(id);if(!gLast[g]||virtual[id]>gLast[g])gLast[g]=virtual[id]});
+  const ref=Object.values(virtual).sort().pop()||t,since=d=>dn(ref)-dn(d);
+  const score=m=>since(gLast[freeGroup(m.id)])*10+since(last(m))-(since(last(m))<1?100:0);
+  /* the part trained longest ago comes first, with all its moves; then the next part */
+  const pick=pool.filter(m=>score(m)>-50).sort((a,b)=>score(b)-score(a)).slice(0,n);
+  const ex=pick.map(m=>({id:m.id,name:m.name,en:m.en,unit:m.unit,sets:Math.min(ENG_SETS_MAX,Math.max(ENG_SETS_MIN,m.sets||3)),target:Math.max(1,m.min||1)}));
+  /* nothing logged at all: the three most common first moves */
+  if(!pool.length)return ["push","legs","core"].map(g=>Object.assign({},FREE_STARTERS[g])).concat([Object.assign({},STRETCH_E)]);
+  /* too little: add a move for a part not trained yet */
+  for(const g of ["core","legs","pull","push"]){if(ex.length>=2)break;if(ex.some(e=>freeGroup(e.id)===g)||pool.some(m=>freeGroup(m.id)===g&&since(last(m))<1))continue;ex.push(Object.assign({},FREE_STARTERS[g]))}
+  if(ex.length<2)for(const g of ["core","legs","pull","push"]){if(ex.length>=2)break;if(!ex.some(e=>freeGroup(e.id)===g))ex.push(Object.assign({},FREE_STARTERS[g]))}
+  return ex.concat([Object.assign({},STRETCH_E)])}
+/* once the free log has settled into a pattern (the last 6 training days fall into 2–3 recurring kinds of day),
+   offer to keep it as the user's own plan */
+function freePattern(){if(!engFree())return null;const {days}=freeLog(),ds=Object.keys(days).sort().slice(-6);if(ds.length<6)return null;
+  const sig=d=>[...new Set([...days[d]].map(freeGroup))].sort().join("+"),cnt={};ds.forEach(d=>{const k=sig(d);cnt[k]=(cnt[k]||0)+1});
+  const keys=Object.keys(cnt).filter(k=>cnt[k]>=2);const cover=keys.reduce((a,k)=>a+cnt[k],0);
+  if(keys.length<2||keys.length>3||cover<5)return null;
+  const groups=keys.map(k=>k.split("+")),id=keys.sort().join("|");if(state.settings.freeHintOff===id)return null;
+  return {id,groups:groups.sort((a,b)=>a.join()<b.join()?-1:1)}}
 function engPlanAll(){let changed=false;
+  /* a new user who never picked a plan trains free */
+  if(!state.settings.plan&&!Object.values(state.sessions).some(s=>s&&s.done))state.settings.plan=freePlanDoc();
+  if(engFree()){const kind="push",hist=engDone(kind),virtual={};let d=hist.length?Math.max(...hist.map(p=>p.day)):0,sim=null;
+    for(let k=0;k<ENG_AHEAD;k++){d++;const sid=kind+"-"+pad(d),doc=state.sessions[sid],when=ymdAdd(today(),k+1);
+      if(engStarted(doc)){BYID[sid].ex.forEach(e=>virtual[e.id]=when);continue}
+      const ex=engPlanSession(kind,hist,sim,freeBase(virtual));
+      const before=doc&&doc.ex?JSON.stringify(doc.ex):"";if(JSON.stringify(ex)!==before){engWrite(sid,kind,ex);changed=true}
+      ex.forEach(e=>virtual[e.id]=when);sim={};ex.forEach(e=>sim[e.id]={target:e.target,planned:e.sets,got:Array(e.sets).fill(e.target),feel:null})}
+    if(changed)lsSave();return changed}
   planKinds().forEach(kind=>{
     const hist=engDone(kind),lastDay=hist.length?Math.max(...hist.map(p=>p.day)):0;
     let d=lastDay,sim=null,base=null;

@@ -99,11 +99,15 @@ function heroCard(p,lock){const sets=setsOf(p.sid),tot=sets.reduce((a,x)=>a+x.le
     /* top right: start this one (ready cards), or in the same spot the ✨ explanation (previews only) */
     +'<div class="htop">'+(lock?'<button class="hwhy" data-act="why" data-k="'+p.kind+'" aria-label="'+T('为什么这样练','Why this plan')+'">'+ICON.spark+'</button>'
       :'<button class="hgo" data-act="start" data-sid="'+p.sid+'">'+ICON.play+'<span>'+(dn?dn+'/'+tot:T('开练','Grind'))+'</span></button>')+'</div>'
-    +'<p class="eyebrow">'+(lock?ICON.lock+T('预告','Preview'):T('可练','Ready'))+'</p>'
+    +'<p class="eyebrow">'+(lock?ICON.lock+T('预告','Preview'):engFree()?T('按你最近练的建议','From your recent training'):T('可练','Ready'))+'</p>'
     +'<h2><i class="kd" style="background:var(--'+p.kind+')"></i>'+LAB(p)+'</h2>'
     +'<p class="meta">'+T(p.ex.length+' 个动作 · '+tot+' 组 · 约 '+Math.round(tot*1.6)+' 分钟',p.ex.length+' moves · '+tot+' sets · ~'+Math.round(tot*1.6)+' min')+'<span class="hchev">'+ICON.chev+'</span></p>'
     +'<div class="exwrap"><div><ul class="exl">'+p.ex.map((e,i)=>'<li class="'+(sets[i].every(x=>x.d)?"dn":"")+'"><span>'+NS(e)+(engTempo(e)?' <i class="slow">'+T('慢速','Slow')+'</i>':'')+'</span><b>'+e.sets+' × '+e.target+(e.unit==="个"?"":" "+U(e.unit))+'</b></li>').join("")+'</ul>'
     +(lock?'<p class="lockline">'+ICON.lock+T('练完 '+LAB(lock)+' 解锁','Unlocks after '+LAB(lock))+'</p>':'')+'</div></div></section>'}
+/* free training that has settled into a pattern: offer, once, to keep it as a plan */
+function freeHintHtml(){const f=typeof freePattern==="function"&&freePattern();if(!f)return "";const n=f.groups.length,gn=g=>FREE_GROUP_NAME[g]?T(FREE_GROUP_NAME[g][0],FREE_GROUP_NAME[g][1]):g;
+  return '<div class="freehint"><span class="sp">'+T('看起来你在练 '+["","一","二","三"][n]+' 分：','Looks like a '+n+'-day split: ')+'<b>'+f.groups.map(gs=>gs.map(gn).join(T("+","+"))).join(' · ')+'</b></span>'
+    +'<button class="pill ac" data-act="freekeep">'+T('存成计划','Keep it')+'</button><button class="fsreset" data-act="freeoff" aria-label="'+T('不用','No thanks')+'">'+ICON.x+'</button></div>'}
 function heroHtml(){const deck=heroDeck();
   if(!deck.length)return '<section class="dark hero"><p class="eyebrow">'+T('计划','Plan')+'</p><h2>'+T('全部完成','All done')+' 🎉</h2></section>';
   if(heroSid){const k=deck.findIndex(d=>d.p.sid===heroSid);if(k>=0)heroRot=k;heroSid=null}
@@ -128,7 +132,7 @@ function calCard(off){const marks=dayMarks(),now=new Date(),t=today(),head='<div
 const calOff=()=>monthOpen?monthOff:weekOff;
 function calHtml(){return fsWrap("cal",calCard(calOff()),2)}
 const CAL_FS={get:dir=>{const o=calOff()-dir;return o>0?null:calCard(o)},commit:dir=>{if(monthOpen)monthOff-=dir;else weekOff-=dir},render:calHtml,peekDir:1};
-function renderTrainView(){const v=$("#v-train");v.innerHTML=heroHtml()+calHtml();animateRings(v);fsBind("hero",HERO_FS);fsBind("cal",CAL_FS)}
+function renderTrainView(){const v=$("#v-train");v.innerHTML=freeHintHtml()+heroHtml()+calHtml();animateRings(v);fsBind("hero",HERO_FS);fsBind("cal",CAL_FS)}
 /* what the engine planned: the next two sessions of a kind (or both kinds), each exercise with its reason */
 /* ✨ on the card: one line on where the suggestion comes from, and the reasoning behind "i" (the sessions themselves are the deck) */
 function planSheet(){
@@ -480,6 +484,8 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="theory"){const t=document.querySelector("#sheet .theory");if(t){t.hidden=!t.hidden;b.setAttribute("aria-expanded",!t.hidden)}}
   else if(a==="why")planSheet();
   else if(a==="dshare")shareDay(b.dataset.d);
+  else if(a==="freekeep"){const f=freePattern();if(f&&window.p1Custom)p1Custom(f.groups.length,false,f.groups)}
+  else if(a==="freeoff"){const f=freePattern();if(f){state.settings.freeHintOff=f.id;lsSave();renderTrainView()}}
   else if(a==="theme"){const th=THEMES.find(x=>x.id===b.dataset.id);if(!th)return;
     if(!themeOwned(th.id)){const bal=coinTotal();if(bal<th.price){toast(T('还差 '+(th.price-bal)+' G','You need '+(th.price-bal)+' more G'));return}
       if(!confirm(T('用 '+th.price+' G 换购「'+th.zh+'」？','Spend '+th.price+' G on '+th.en+'?')))return;
