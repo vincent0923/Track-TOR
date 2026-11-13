@@ -36,12 +36,17 @@ const isMain=e=>!!e&&e.id===mainEx().id;
 function mainName(){const m=mainEx();return T(m.zh,m.en||m.zh)}
 function mainUnit(){const u=mainEx().unit;return typeof U==="function"?U(u):u}
 function mainManualOf(m){const id=mainEx().id;return id==="pullup"?m.pullups:(m.gm&&m.gm[id])}
-/* every ticked set of a move, [date, value], from sessions, their extras and extras on days without a session */
+/* every ticked set of a move, [date, value, where], from sessions, their extras and extras on days without a session */
 function setsOfMove(id,kind){const out=[];
   Object.entries(state.sessions).forEach(([sid,s])=>{if(!s||!BYID[sid]||(kind&&BYID[sid].kind!==kind))return;const d=s.date||today();
     ((s.sets&&s.sets[id])||[]).forEach(x=>{if(x.d)out.push([d,+x.v||0,sid])});
     (s.xs||[]).forEach(it=>{if(it.id===id)it.sets.forEach(x=>{if(x.d)out.push([d,+x.v||0,sid])})})});
+  Object.entries(state.dayx||{}).forEach(([d,x])=>((x&&x.xs)||[]).forEach(it=>{if(it.id===id)(it.sets||[]).forEach(z=>{if(z.d)out.push([d,+z.v||0,"x:"+d])})}));
   return out}
+/* how many ticked sets each move has, everywhere (sessions, their extras, day extras) */
+function moveSetCounts(){const n={},add=(id,sets)=>(sets||[]).forEach(z=>{if(z&&z.d)n[id]=(n[id]||0)+1});
+  Object.values(state.sessions).forEach(s=>{if(!s)return;Object.entries(s.sets||{}).forEach(([id,a])=>add(id,a));(s.xs||[]).forEach(it=>add(it.id,it.sets))});
+  Object.values(state.dayx||{}).forEach(x=>((x&&x.xs)||[]).forEach(it=>add(it.id,it.sets)));return n}
 /* the main exercise over time: the larger of the latest hand-logged number and the best set over the last 3
    sessions it was trained in (a lower hand-logged number after a higher one replaces it, so a drop can be recorded) */
 function mainSeries(){const m=mainEx(),manual={},tr={};

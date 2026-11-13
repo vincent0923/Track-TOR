@@ -22,10 +22,13 @@ function profileBody(){const s=st();
 function planMoves(){const seen={},out=[];const add=e=>{if(e&&e.id&&!seen[e.id]&&e.unit!=="分钟"){seen[e.id]=1;out.push({id:e.id,zh:String(e.name).replace(/（.*）/,""),en:String(e.en||e.name).replace(/\s*\(.*\)/,""),unit:e.unit})}};
   add({id:"pullup",name:"标准引体",en:"Strict pull-ups",unit:"个"});
   const pl=st().plan;(pl&&pl.days||[]).forEach(d=>d.ex.forEach(add));
-  planKinds().forEach(k=>{const n=nextOf(k);if(n)n.ex.forEach(add)});return out}
+  planKinds().forEach(k=>{const n=nextOf(k);if(n)n.ex.forEach(add)});
+  /* plus every move you've logged (extras too); the most-logged first, each with its count */
+  if(typeof knownMoves==="function")knownMoves().forEach(m=>add({id:m.id,name:m.name,en:m.en,unit:m.unit}));
+  const c=moveSetCounts();out.forEach(m=>m.n=c[m.id]||0);out.sort((a,b)=>b.n-a.n);return out}
 const MAIN_UNITS=[["个","次","reps"],["秒","秒","s"],["分钟","分钟","min"],["km","km","km"],["kg","kg","kg"]];
 function mainBody(){const m=mainEx(),moves=planMoves(),cust=!!m.custom;
-  return '<div class="mainpick"><label class="flabel">'+T("主项","Main exercise")+'<select id="gmx">'+moves.map(x=>'<option value="'+esc(x.id)+'"'+(!cust&&x.id===m.id?' selected':'')+'>'+esc(T(x.zh,x.en||x.zh))+'</option>').join("")
+  return '<div class="mainpick"><label class="flabel">'+T("主项","Main exercise")+'<select id="gmx">'+moves.map(x=>'<option value="'+esc(x.id)+'"'+(!cust&&x.id===m.id?' selected':'')+'>'+esc(T(x.zh,x.en||x.zh))+(x.n?T(' · 记了 '+x.n+' 组',' · '+x.n+' sets logged'):'')+'</option>').join("")
     +'<option value="__c"'+(cust?' selected':'')+'>'+T("其他（自己写，手动记录）","Other (your own, logged by hand)")+'</option></select></label>'
     +'<div class="fgrid" id="gmc"'+(cust?'':' hidden')+'><label class="flabel">'+T("名字","Name")+'<input id="gmn" maxlength="20" value="'+esc(cust?m.zh:"")+'" placeholder="'+T("例如 跑步、游泳","e.g. Running, Swimming")+'"></label>'
     +'<label class="flabel">'+T("单位","Unit")+'<select id="gmu">'+MAIN_UNITS.map(([v,z,e])=>'<option value="'+v+'"'+(cust&&m.unit===v?' selected':'')+'>'+T(z,e)+'</option>').join("")+'</select></label></div>'
