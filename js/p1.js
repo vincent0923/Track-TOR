@@ -62,6 +62,18 @@ function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}
   de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;
   document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
+/* tactile themes: the light on the materials follows the phone. Tilt moves the highlight (--lx/--ly) and turns the
+   reflections on metal (--rot); the rest point drifts back, so holding still settles it. A mouse does the same. */
+(function(){const de=document.documentElement,on=()=>"fixed" in de.dataset&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let bg=null,bb=null,x=0,y=0,raf=0;
+  const put=()=>{raf=0;de.style.setProperty("--lx",(30+x*1.6).toFixed(1)+"%");de.style.setProperty("--ly",(10+y*1.3).toFixed(1)+"%");de.style.setProperty("--rot",(x*3).toFixed(1)+"deg")};
+  const go=(nx,ny)=>{x=Math.max(-25,Math.min(25,nx));y=Math.max(-20,Math.min(20,ny));if(!raf)raf=requestAnimationFrame(put)};
+  const ori=e=>{if(!on()||e.gamma==null)return;if(bg==null){bg=e.gamma;bb=e.beta}bg+=(e.gamma-bg)*.02;bb+=(e.beta-bb)*.02;go(e.gamma-bg,e.beta-bb)};
+  /* listen from the start (no events arrive until allowed); where the browser asks first, ask on the first tap */
+  addEventListener("deviceorientation",ori);
+  const ask=()=>{const D=window.DeviceOrientationEvent;if(ask.d||!D||typeof D.requestPermission!=="function")return;ask.d=true;D.requestPermission().catch(()=>{ask.d=false})};
+  addEventListener("pointerdown",()=>{if(on())ask()},{passive:true});
+  addEventListener("pointermove",e=>{if(e.pointerType==="mouse"&&on())go((e.clientX/innerWidth-.5)*40,(e.clientY/innerHeight-.5)*30)},{passive:true})})();
 /* the header switch: tap flips light and dark; hold it for the themes */
 (function(){const b=$("#modeBtn");if(!b)return;let tm=0,held=false;
   b.addEventListener("pointerdown",()=>{held=false;clearTimeout(tm);tm=setTimeout(()=>{held=true;buzz(15);coinSheet(true)},500)});
