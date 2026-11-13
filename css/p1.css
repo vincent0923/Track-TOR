@@ -466,3 +466,60 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .fstack>.fs-top{box-shadow:0 3px 0 var(--line),var(--shadow)}
 .fstack[data-fs="hero"]>.fs-top{box-shadow:0 3px 0 var(--dark-line),var(--shadow)}
 @media (prefers-reduced-motion:reduce){.fs-peek i{transition:none}}
+/* ---------- themes: each one has a light and a dark version (data-theme on <html>; data-mode picks the version) ----------
+   aurora (free): meadow green by day, deep-sea aurora by night — the tokens at the top of this file.
+   ember (bought with G): Nordic warm sand with signal orange by day, obsidian with liquid gold by night. */
+:root[data-theme="ember"]{
+  --bg:#F5EFE8; --glow:radial-gradient(circle at 15% 5%,rgba(255,82,43,.08),transparent 50%);
+  --card:#FFFDF9; --line:rgba(110,75,45,.08); --lit:inset 0 1px 0 rgba(255,255,255,.95); --sub:#F2EBE1; --seg:#E8DFD3;
+  --dark:linear-gradient(145deg,#222B3C 0%,#151B26 100%); --dark-solid:#1B2230; --dark-line:rgba(255,255,255,.1); --track:#2E3748;
+  --ink:#1F1A17; --muted:#96887D; --ac:#FF522B; --on-ac:#FFFFFF; --ac-soft:rgba(255,82,43,.14); --ac-text:#C83212;
+  --st1:rgba(255,82,43,.22); --st2:rgba(255,82,43,.56);
+  --push:#FF6A3D; --pull:#2F5DA8; --third:#B9822A; --good:#2E8B57; --bad:#C83212; --sleep:#7C6AD6;
+  --shadow:0 8px 24px -6px rgba(92,64,38,.07),0 2px 5px rgba(92,64,38,.03)}
+:root[data-theme="ember"][data-mode="dark"]{
+  --bg:#0B0908; --glow:radial-gradient(circle at 18% 12%,rgba(255,176,32,.12),transparent 45%),radial-gradient(circle at 82% 85%,rgba(244,63,94,.08),transparent 45%);
+  --card:#161311; --line:rgba(255,220,180,.09); --lit:inset 0 1px 0 rgba(255,230,200,.07); --sub:#221D1A; --seg:#1E1916;
+  --dark:linear-gradient(145deg,#2D2018 0%,#16100D 100%); --dark-solid:#261C16; --dark-line:rgba(255,176,32,.28); --track:#2E241E;
+  --ink:#FAF5F0; --muted:#8C7F75; --ac:#FFB020; --on-ac:#140D02; --ac-soft:rgba(255,176,32,.16); --ac-text:#FFB020;
+  --st1:rgba(255,176,32,.22); --st2:rgba(255,176,32,.56);
+  --push:#FFB020; --pull:#F97362; --third:#7DD3FC; --good:#34D399; --bad:#FB7185; --sleep:#A78BFA;
+  --shadow:0 12px 28px -8px rgba(0,0,0,.72)}
+/* in light mode the training card is a light card like the rest */
+:root:not([data-mode="dark"]) .hero.dark{background:var(--card);border-color:var(--line);color:var(--ink);box-shadow:var(--shadow),var(--lit);--muted:inherit;--sub:inherit}
+:root:not([data-mode="dark"]) .hero .exl li b{color:color-mix(in srgb,var(--ink) 80%,transparent)}
+:root:not([data-mode="dark"]) .hero .hwhy,:root:not([data-mode="dark"]) .hero .lockline{color:var(--muted)}
+:root:not([data-mode="dark"]) .hero .exl .slow{background:var(--sub)}
+:root:not([data-mode="dark"]) .fstack[data-fs="hero"] .fs-peek i{background:color-mix(in srgb,var(--card) 90%,var(--ink));border-color:var(--line)}
+:root:not([data-mode="dark"]) .fstack[data-fs="hero"]>.fs-top{box-shadow:0 3px 0 var(--line),var(--shadow)}
+/* calendar, sized like the SplitFlow event calendar: small round days; a trained day is tinted in its day's colour */
+.cal .wk-h{margin-bottom:8px}.cal .wk-h b{font-size:15px}
+.cal .days{row-gap:6px}
+.cal .dw{font-size:10px;padding-bottom:2px}
+.cal .dd{padding:0;gap:0}
+.cal .dd b{width:30px;height:30px;font-size:12.5px;font-weight:600}
+.cal .dd.trn b{background:color-mix(in srgb,var(--kc) 22%,transparent);color:color-mix(in srgb,var(--kc) 80%,var(--ink));font-weight:800}
+.cal .dd.xo b{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--muted) 70%,transparent)}
+.cal .dd.sel b{box-shadow:0 0 0 2px var(--ink);transform:scale(1.06)}
+.cal .dd.today b{background:var(--ac);color:var(--on-ac)}
+/* the chosen day's training, one line under the calendar */
+.calpill{display:flex;align-items:center;gap:10px;margin-top:12px;padding:6px 6px 6px 8px;border-radius:999px;background:var(--sub)}
+.calpill .ci{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--kc);color:#fff}
+.calpill .ci svg{width:14px;height:14px}
+.calpill span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;font-weight:600}
+.calpill .fsreset{width:30px;height:30px}
+.calpill .fsreset svg{width:15px;height:15px}
+/* light/dark switch in the header (long-press: themes) */
+.modesw{position:relative;width:60px;height:36px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);flex:none;align-self:center}
+.modesw .kn{position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:var(--ac);box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform .45s var(--spring)}
+.modesw svg{position:absolute;top:9px;width:17px;height:17px;transition:opacity .3s}
+.modesw .moon{right:9px;color:#F5B83D}.modesw .sun{left:9px;color:#F5B83D;opacity:0}
+:root[data-mode="dark"] .modesw .kn{transform:translateX(24px)}
+:root[data-mode="dark"] .modesw .moon{opacity:0}:root[data-mode="dark"] .modesw .sun{opacity:1}
+/* theme cards in the G shop */
+.thc{display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;background:var(--sub);width:100%;text-align:left;border:1.5px solid transparent}
+.thc.on{border-color:var(--ac)}
+.thc .sw{display:flex;flex:none;width:52px;height:40px;border-radius:12px;overflow:hidden}
+.thc .sw i{flex:1}
+.thc b{font-size:15px;font-weight:800}
+.thc .pill{flex:none}

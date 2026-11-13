@@ -165,7 +165,9 @@ function coinBadges(){
     {k:"plan",ic:"flag",name:T("累计训练","Sessions"),what:T("累计练完 10、20、40 次","10, 20 and 40 sessions finished"),pts:(done>=10?100:0)+(done>=20?200:0)+(done>=40?400:0),have:done,unit:T("次",""),tiers:[10,20,40]},
     {k:"goal",ic:"target",name:T("达成目标","Goals reached"),what:T(mainEx().zh+"、腰围、体重、减脂，每达成一个自己设的目标","Each goal you set and reach: "+(mainEx().en||mainEx().zh)+", waist, weight, fat loss"),pts:500*[+st.p>0&&mb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,
       have:[+st.p>0&&mb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,unit:T("个",""),tiers:[1,2,3,4]}]}
-function coinTotal(){return coinBadges().reduce((a,b)=>a+b.pts,0)}
+/* G earned minus G spent on themes (settings.buys) */
+function coinSpent(){return (state.settings.buys||[]).reduce((a,b)=>a+(+b.g||0),0)}
+function coinTotal(){return coinBadges().reduce((a,b)=>a+b.pts,0)-coinSpent()}
 
 /* ---------- what js/coros.js expects from the page ---------- */
 function saveSettings(){lsSave()}

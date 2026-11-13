@@ -34,6 +34,7 @@ const ICON={
   spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></svg>',
   share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg>',
   reset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 4.1A8 8 0 1 1 4.7 8.6"/><path d="M13.6 1.4 10.6 4.1l3 2.9"/></svg>',
+  dumbbell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>',
   lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>'};
 function dateObj(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
@@ -44,19 +45,41 @@ function ringSvg(size,stroke,pct,color,track){const r=(size-stroke)/2,c=2*Math.P
 function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>root.querySelectorAll("circle.rv").forEach(c=>c.style.strokeDashoffset=c.dataset.off)))}
 
 /* ---------- theme: follow the phone, or fixed light / dark ---------- */
+/* themes: each has a light and a dark version. aurora is free; others are bought with G (settings.buys, settings.theme) */
+const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,sw:["#F2F2EE","#32D74B","#070A10","#00F5D4"]},
+  {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F5EFE8","#FF522B","#0B0908","#FFB020"]}];
+function themeOwned(id){const t=THEMES.find(x=>x.id===id);return !!t&&(!t.price||(state.settings.buys||[]).some(b=>b.id===id))}
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
-  const dark=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);
-  document.documentElement.dataset.mode=dark?"dark":"light";
-  document.querySelector('meta[name="theme-color"]').content=dark?"#070A10":"#F2F2EE"}
+  const dark=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),th=themeOwned(state.settings.theme)?state.settings.theme:"aurora";
+  document.documentElement.dataset.mode=dark?"dark":"light";document.documentElement.dataset.theme=th;
+  document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F2F2EE")}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
+/* the header switch: tap flips light and dark; hold it for the themes */
+(function(){const b=$("#modeBtn");if(!b)return;let tm=0,held=false;
+  b.addEventListener("pointerdown",()=>{held=false;clearTimeout(tm);tm=setTimeout(()=>{held=true;buzz(15);coinSheet(true)},500)});
+  ["pointerup","pointerleave","pointercancel"].forEach(k=>b.addEventListener(k,()=>clearTimeout(tm)));
+  b.addEventListener("contextmenu",e=>e.preventDefault());
+  b.addEventListener("click",()=>{if(held){held=false;return}const dark=document.documentElement.dataset.mode==="dark";
+    try{localStorage.setItem(PK+"mode",dark?"light":"dark")}catch(e){}applyMode();SFX.tap();buzz(8)})})();
 
 /* ---------- train view ---------- */
 let monthOpen=true,monthOff=0,heroSid=null;
 function weekStart(d){const x=new Date(d);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x}
 const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
-function dayCell(s,marks,out){const t=today(),mk=marks[s];const cls=(s===t?" today":"")+(s>t?" fut":"")+(out?" out":"");
-  const inner='<b>'+dateObj(s).getDate()+'</b><span class="mk">'+(mk?[...mk].sort().map(k=>'<i class="'+k+'"></i>').join(""):"")+'</span>';
-  return s>t?'<div class="dd'+cls+'">'+inner+'</div>':'<button class="dd'+cls+'" data-act="cal" data-d="'+s+'" aria-label="'+s+'">'+inner+'</button>'}
+/* a day: tinted in the colour of the training done that day (only extra practice: a thin ring); tap a trained day to
+   see it under the calendar, any other day (today included) opens it for extra practice */
+function dayCell(s,marks,out){const t=today(),mk=marks[s],kinds=mk?[...mk].filter(k=>k!=="x").sort():[];
+  const cls=(s===t?" today":"")+(s>t?" fut":"")+(out?" out":"")+(kinds.length?" trn":mk?" xo":"")+(s===calSel?" sel":"");
+  const st=kinds.length?' style="--kc:var(--'+kinds[0]+')"':'',inner='<b>'+dateObj(s).getDate()+'</b>';
+  return s>t?'<div class="dd'+cls+'">'+inner+'</div>':'<button class="dd'+cls+'"'+st+' data-act="'+(kinds.length?'calsel':'cal')+'" data-d="'+s+'" aria-label="'+s+'">'+inner+'</button>'}
+/* which trained day the line under the calendar shows: the one tapped, else the latest one on this card */
+let calSel=null;
+function calPill(days){const marks=dayMarks(),t=today();let d=calSel&&days.includes(calSel)?calSel:null;
+  if(!d)d=days.filter(x=>x<=t&&marks[x]&&[...marks[x]].some(k=>k!=="x")).pop()||null;if(!d)return "";
+  const ss=Object.entries(state.sessions).filter(([sid,x])=>x&&x.done&&x.date===d&&BYID[sid]).map(([sid])=>BYID[sid]);if(!ss.length)return "";
+  const names=[];ss.forEach(p=>p.ex.forEach(e=>{const a=state.sessions[p.sid].sets[e.id];if(e.unit!=="分钟"&&a&&a.some(x=>x.d)){const n=NS(e);if(!names.includes(n))names.push(n)}}));
+  return '<div class="calpill" style="--kc:var(--'+ss[0].kind+')"><i class="ci">'+ICON.dumbbell+'</i><span>'+esc(names.join(T("、",", ")))+'</span>'
+    +'<button class="fsreset" data-act="cal" data-d="'+d+'" aria-label="'+T('修改这天','Edit this day')+'">'+ICON.pen+'</button></div>'}
 /* the hero is a deck: one card per training day that's ready, the least recently trained on top. Swipe the top card
    away (or tap the edges peeking below) and the next comes up; tap a card to show its moves; ✨ opens the plan. */
 let heroRot=0,heroOpen=false;
@@ -86,16 +109,16 @@ const HERO_FS={get:()=>{const deck=heroDeck(),n=deck.length;if(n<2)return null;c
 /* ---------- calendar: weeks (folded) or months, a frosted swipe stack; finger right goes back, "Today" returns ---------- */
 let weekOff=0;
 function calCard(off){const marks=dayMarks(),now=new Date(),t=today(),head='<div class="days">'+(LANG==="en"?["M","T","W","T","F","S","S"]:["一","二","三","四","五","六","日"]).map(w=>'<span class="dw">'+w+'</span>').join("");
-  let body=head,label;
-  if(!monthOpen){const ws=weekStart(now);ws.setDate(ws.getDate()+7*off);for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);body+=dayCell(ymd(d),marks)}
+  let body=head,label;const vis=[];
+  if(!monthOpen){const ws=weekStart(now);ws.setDate(ws.getDate()+7*off);for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);vis.push(ymd(d));body+=dayCell(ymd(d),marks)}
     const mid=new Date(ws);mid.setDate(ws.getDate()+3);label=mid}
   else{const first=new Date(now.getFullYear(),now.getMonth()+off,1),ms=weekStart(first);
-    for(let i=0;i<42;i++){const d=new Date(ms);d.setDate(ms.getDate()+i);if(i===35&&d.getMonth()!==first.getMonth())break;body+=dayCell(ymd(d),marks,d.getMonth()!==first.getMonth())}label=first}
+    for(let i=0;i<42;i++){const d=new Date(ms);d.setDate(ms.getDate()+i);if(i===35&&d.getMonth()!==first.getMonth())break;if(d.getMonth()===first.getMonth())vis.push(ymd(d));body+=dayCell(ymd(d),marks,d.getMonth()!==first.getMonth())}label=first}
   body+="</div>";
   return '<section class="card cal"><div class="wk-h"><b>'+(LANG==="en"?MON_EN[label.getMonth()]:(label.getMonth()+1)+'月')+(label.getFullYear()!==now.getFullYear()?" "+label.getFullYear():"")+'</b>'
     +'<span class="sp"></span>'+(off?'<button class="fsreset" data-act="caltoday" aria-label="'+T('回到今天','Back to today')+'">'+ICON.reset+'</button>':'')
     +'<button class="mini chev" data-act="month" aria-expanded="'+monthOpen+'" aria-label="'+(monthOpen?T("收起整月","Collapse the month"):T("展开整月","Show the month"))+'">'+ICON.chev+'</button></div>'
-    +body+'</section>'}
+    +body+calPill(vis)+'</section>'}
 const calOff=()=>monthOpen?monthOff:weekOff;
 function calHtml(){return fsWrap("cal",calCard(calOff()),2)}
 const CAL_FS={get:dir=>{const o=calOff()-dir;return o>0?null:calCard(o)},commit:dir=>{if(monthOpen)monthOff-=dir;else weekOff-=dir},render:calHtml,peekDir:1};
@@ -378,7 +401,7 @@ const COIN='<svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx=
 const BADGE_IC={dumbbell:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',flame:'<path d="M12 3c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 6-8 7-13z"/>',
   pullup:'<path d="M3 4h18M7 4v3M17 4v3"/><circle cx="12" cy="10" r="2.2"/><path d="M7 7l3 5h4l3-5M12 12.5V17M10 21l2-4 2 4"/>',drop:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
   tape:'<rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'};
-function coinSheet(shopFirst){const bs=coinBadges(),tot=bs.reduce((a,b)=>a+b.pts,0);
+function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
   const nextOf=b=>{if(b.tiers){const n=b.tiers.find(t=>t>b.have);return n==null?null:n}const n=(Math.floor(b.have/b.step+1e-9)+1)*b.step;return +n.toFixed(2)};
   const rows=bs.map(b=>{const n=nextOf(b),prev=b.tiers?([0].concat(b.tiers).filter(t=>t<=b.have).pop()):Math.floor(b.have/b.step+1e-9)*b.step,pct=n==null?1:Math.max(0,Math.min(1,(b.have-prev)/(n-prev)));
     return '<div class="badge'+(b.pts?" got":"")+'"><span class="bi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+BADGE_IC[b.ic]+'</svg></span>'
@@ -389,7 +412,9 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=bs.reduce((a,b)=>a+b.pts
   const shop=[[T("像素 RPG","Pixel RPG"),T("打勾就挥剑，练完打怪升级","Every tick swings a sword; level up as you train")],[T("Low poly 小镇","Low-poly town"),T("每个训练日在小镇里盖一栋楼","Every training day builds a house in town")]].map(([n,d])=>'<div class="shopc"><div class="shopart"></div><div class="sp"><b>'+n+'</b><p class="muted">'+d+'</p></div><div style="text-align:right"><span class="coinchip">'+COIN+'<b class="n">2,000</b></span><br><span class="pill" style="margin-top:6px">'+T('即将上线','Coming soon')+'</span></div></div>').join("");
   openSheet('<div class="sh-h"><h3>G</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="row" style="margin-bottom:16px"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+fmt(tot)+'</div><p class="muted" style="font-size:12px">'+T('练出来的真实进步才给币，从记录里算出来','Real progress earns G, worked out from your records')+'</p></div></div>'
-    +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+shop+'</div><p class="muted" style="font-size:12px;margin:8px 2px 18px">'+T('亮、暗两套永远免费。','Light and dark stay free.')+'</p>'
+    +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+THEMES.map(th=>{const own=themeOwned(th.id),on=(themeOwned(state.settings.theme)?state.settings.theme:"aurora")===th.id;
+      return '<button class="thc'+(on?' on':'')+'" data-act="theme" data-id="'+th.id+'"><span class="sw">'+th.sw.map(c=>'<i style="background:'+c+'"></i>').join("")+'</span><span class="sp"><b>'+T(th.zh,th.en)+'</b><br><span class="muted" style="font-size:12px">'+T('亮、暗两版','Light and dark')+'</span></span>'
+        +(on?'<span class="pill ac">'+T('使用中','In use')+'</span>':own?'<span class="pill">'+T('换上','Use')+'</span>':'<span class="pill'+(tot>=th.price?' ac':'')+'">'+COIN+' '+th.price+'</span>')+'</button>'}).join("")+shop+'</div><p class="muted" style="font-size:12px;margin:8px 2px 18px">'+T('每个主题都有亮、暗两版，顶上的开关切换。','Every theme has a light and a dark version; flip them with the switch at the top.')+'</p>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('训练计划','Training plans')+'</p><div class="setlist" style="margin-bottom:18px">'+plans+'</div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('怎么拿','How to earn')+'</p><div class="setlist">'+rows+'</div>');
   if(shopFirst)setTimeout(()=>{const el=document.getElementById("shop");if(el)el.scrollIntoView({block:"start"})},50)}
@@ -442,12 +467,18 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   /* Today: back to this week or month; already there, it opens today */
   else if(a==="caltoday"){monthOff=0;weekOff=0;fsReset("cal")}
   else if(a==="dietnow"){dietGrp=0;fsReset("diet")}
+  else if(a==="calsel"){calSel=b.dataset.d;SFX.tap();fsRender("cal")}
   else if(a==="start")startRun(b.dataset.sid);
   else if(a==="fsnext"){const o=FS[b.dataset.fs];if(o)fsGo(b.dataset.fs,o.peekDir||1)}
   else if(a==="hopen"){const c=b;heroOpen=!heroOpen;c.classList.toggle("open",heroOpen);SFX.tap()}
   else if(a==="theory"){const t=document.querySelector("#sheet .theory");if(t){t.hidden=!t.hidden;b.setAttribute("aria-expanded",!t.hidden)}}
   else if(a==="why")planSheet();
   else if(a==="dshare")shareDay(b.dataset.d);
+  else if(a==="theme"){const th=THEMES.find(x=>x.id===b.dataset.id);if(!th)return;
+    if(!themeOwned(th.id)){const bal=coinTotal();if(bal<th.price){toast(T('还差 '+(th.price-bal)+' G','You need '+(th.price-bal)+' more G'));return}
+      if(!confirm(T('用 '+th.price+' G 换购「'+th.zh+'」？','Spend '+th.price+' G on '+th.en+'?')))return;
+      state.settings.buys=(state.settings.buys||[]).concat([{id:th.id,g:th.price,d:today()}]);celebrate(6,1)}
+    state.settings.theme=th.id;lsSave();applyMode();SFX.tap();coinSheet(true)}
   else if(a==="thide"){e.stopPropagation();const c=tileCfg();if(!c.hidden.includes(b.dataset.k))c.hidden.push(b.dataset.k);tileSave(c);SFX.tap();renderProgView()}
   else if(a==="tadd")tileAddSheet();
   else if(a==="tshow"){const c=tileCfg();c.hidden=c.hidden.filter(k=>k!==b.dataset.k);tileSave(c);closeSheet();renderProgView()}

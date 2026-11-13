@@ -6,6 +6,20 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.48a] — 2026-11-13
+
+### 新增 / Added
+- 🌗 **顶栏明暗开关**：同步按钮左边，点一下切换亮暗，长按进主题页。每个主题都有亮、暗两版。
+- 🌗 **Light/dark switch in the header**: left of the sync button; tap to flip, hold for themes. Every theme has a light and a dark version.
+- 🎨 **用 G 换主题**：新主题「暖砂 · 流金」60 G（亮色暖砂配绯橙，暗色黑曜石配流金）；草木 · 极光免费。
+- 🎨 **Spend G on themes**: the new Sand · Amber theme costs 60 G (warm sand with signal orange by day, obsidian with liquid gold by night); Meadow · Aurora stays free.
+- 📅 **日历上点练过的日子**，底部出现那天练的动作（同色小图标），旁边的笔才打开去改。
+- 📅 **Tap a trained day on the calendar** to see what you did, with a matching icon; the pen beside it opens the day to edit.
+
+### 改动 / Changed
+- 日历照 SplitFlow 原稿缩小，练过的日子整格染色；亮色下训练卡是浅色。
+- The calendar is smaller, after the SplitFlow original, with trained days tinted; in light mode the training card is light.
+
 ## [v1.47a] — 2026-11-13
 
 ### 新增 / Added
