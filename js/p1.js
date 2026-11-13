@@ -290,15 +290,19 @@ function gapData(){const t=today(),to=ymdAdd(t,-1),first=Object.keys(state.diet)
 /* bricks: a bar chart built from stacked bricks (cols: [{n bricks, c colour, l label}]). The bricks drop in when drawn;
    a finger run across lifts each column it passes in a ripple, with a light buzz. A still chart (inside a swipe stack,
    where a sideways finger turns the card) doesn't react. */
-function bricksHtml(cols,still){return '<div class="bricks'+(still?' still':'')+'" style="--cols:'+cols.length+'">'+cols.map((c,i)=>'<div class="bk" data-i="'+i+'" style="--c:'+(c.c||'var(--ac)')+'"><div class="bks">'
+function bricksHtml(cols,still){return '<div class="bricks'+(still?' still':'')+'" style="--cols:'+cols.length+'">'+cols.map((c,i)=>'<div class="bk" data-i="'+i+'"'+(c.t?' data-t="'+esc(c.t)+'"':'')+' style="--c:'+(c.c||'var(--ac)')+'"><div class="bks">'
   +(c.n?Array.from({length:c.n},(_,j)=>'<i style="--j:'+j+';--d:'+(i*16+j*26)+'ms"></i>').join(""):'<i class="ghost"></i>')+'</div><span class="bl">'+(c.l||'&nbsp;')+'</span></div>').join("")+'</div>'}
-(function(){let box=null,last=null;
-  const hit=e=>{const el=document.elementFromPoint(e.clientX,e.clientY),col=el&&el.closest(".bk");if(!col||col===last||!box||!box.contains(col))return;last=col;
+(function(){let box=null,last=null,hits=0,tm=0;
+  const hit=e=>{const el=document.elementFromPoint(e.clientX,e.clientY),col=el&&el.closest(".bk");if(!col||col===last||!box||!box.contains(col))return;last=col;hits++;
     col.classList.remove("hot");void col.offsetWidth;col.classList.add("hot");const n=col.querySelectorAll("i:not(.ghost)").length;
+    const card=box.closest(".card,.tile"),r=card&&card.querySelector(".bkread");if(r&&col.dataset.t){clearTimeout(tm);r.textContent=col.dataset.t;r.classList.add("on")}
     if(n)buzz(6)};
-  addEventListener("pointerdown",e=>{box=e.target.closest&&e.target.closest(".bricks:not(.still)");last=null;if(box)hit(e)},{passive:true});
+  addEventListener("pointerdown",e=>{box=e.target.closest&&e.target.closest(".bricks:not(.still)");last=null;hits=0;if(box)hit(e)},{passive:true});
   addEventListener("pointermove",e=>{if(box)hit(e)},{passive:true});
-  ["pointerup","pointercancel"].forEach(k=>addEventListener(k,()=>{box=null}))})();
+  ["pointerup","pointercancel"].forEach(k=>addEventListener(k,()=>{if(!box)return;const card=box.closest(".card,.tile"),r=card&&card.querySelector(".bkread");
+    if(hits>1)fsEatClick();if(r){clearTimeout(tm);tm=setTimeout(()=>r.classList.remove("on"),1600)}box=null}));
+  /* inside a swipe stack the bricks are for reading: a finger there doesn't turn the card */
+  ["touchstart","touchmove","touchend"].forEach(k=>addEventListener(k,e=>{if(e.target.closest&&e.target.closest(".fstack .bricks:not(.still)"))e.stopPropagation()},{capture:true,passive:true}))})();
 /* knob: a rotary selector. opts are the labels on its arc, each a normal button (with its own data-act); turn the knob,
    tap it for the next one, or tap a label. */
 const KNOB_SPAN=140;
@@ -316,26 +320,37 @@ function knobHtml(opts,cur,attr,label){const n=opts.length,i=Math.max(0,opts.fin
     const step=KNOB_SPAN/(n-1);w.style.setProperty("--a",(-KNOB_SPAN/2+step*i)+"deg");w.dataset.i=i;
     if(i!==start){tone(900,0,.04,"triangle",.08);const l=w.querySelector('.kl[data-k="'+i+'"]');setTimeout(()=>l&&l.click(),moved?60:180)}};
   addEventListener("pointerup",end);addEventListener("pointercancel",end)})();
-/* the main exercise, week by week: 12 weeks of every ticked rep stacked as bricks (one brick = a round number of reps,
-   shown under the chart), the best week in the second colour */
-/* the weekly-total card is a tile like the others: long-press to move or hide it */
-const WEEKLY_TILE={k:"weekly",get name(){return T("每周总数","Weekly total")+" · "+mainName()},c:"var(--pull)",wide:1};
+/* the main exercise as a swipe stack of two brick cards: its best set day by day, and its weekly total (every ticked
+   rep: any training day, extras added to a session, extras on days without one). One brick is a round number of reps
+   so the tallest column stays within about 9; run a finger across the bricks to read a column. */
+let mainCard=0;
 function wkMon(d){return ymdAdd(d,-((dateObj(d).getDay()+6)%7))}
-function weeklyHtml(){const m=mainEx();if(m.custom)return "";const by={};
-  /* every ticked rep counts: any training day, extras added to a session, and extras on days without one */
+function brickUnit(mx){return [1,2,5,10,20,25,50,100,200,500].find(u=>mx/u<=9)||1000}
+function weeklyData(){const m=mainEx();if(m.custom)return null;const by={};
   const add=(d,sets)=>(sets||[]).forEach(x=>{if(x&&x.d){const w=wkMon(d);by[w]=(by[w]||0)+(+x.v||0)}});
   Object.values(state.sessions).forEach(x=>{if(!x)return;const d=x.date||today();add(d,x.sets&&x.sets[m.id]);(x.xs||[]).forEach(it=>{if(it.id===m.id)add(d,it.sets)})});
   Object.entries(state.dayx||{}).forEach(([d,x])=>((x&&x.xs)||[]).forEach(it=>{if(it.id===m.id)add(d,it.sets)}));
-  /* from the first week with any reps, at most the last 12 */
-  const first=Object.keys(by).filter(w=>by[w]>0).sort()[0];if(!first)return "";
+  const first=Object.keys(by).filter(w=>by[w]>0).sort()[0];if(!first)return null;
   const cur=wkMon(today()),weeks=[];for(let i=11;i>=0;i--){const w=ymdAdd(cur,-7*i);if(w>=first)weeks.push(w)}
-  const vals=weeks.map(w=>by[w]||0),mx=Math.max(...vals);if(!mx)return "";const best=vals.lastIndexOf(mx),tot=vals.reduce((a,b)=>a+b,0);
-  /* one brick is a round number of reps, so the best week stays within about 9 bricks */
-  const unit=[1,2,5,10,20,25,50,100,200,500].find(u=>mx/u<=9)||1000;
-  return '<div class="tile wide weekly" data-k="weekly"><div class="row" style="align-items:flex-start"><div class="sp"><p class="eyebrow">'+T('每周总数 · '+weeks.length+' 周','Weekly total · '+weeks.length+(weeks.length>1?' weeks':' week'))+'</p><h3 class="wkh">'+mainName()+'</h3></div>'
-    +'<span class="cnt n">'+fmt(tot)+'</span></div>'
-    +bricksHtml(vals.map((v,i)=>({n:v?Math.max(1,Math.round(v/unit)):0,c:i===best?"var(--push)":"var(--pull)"})))
-    +'<div class="row muted wkf"><span>'+dayLabel(weeks[0])+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--pull)"></i>= '+unit+' '+mainUnit()+'</span><span>'+T('本周','This week')+'</span></div>'+(tileEdit?'<span class="tx" data-act="thide" data-k="weekly" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</div>'}
+  return {weeks,vals:weeks.map(w=>by[w]||0)}}
+function mainCardHtml(i){const u=mainUnit(),M=METRICS[0],dec=M.dec,W=i===1?weeklyData():null;
+  const foot=(a,unit,b)=>'<div class="row muted bkf"><span>'+a+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--pull)"></i>= '+unit+' '+u+'</span><span>'+b+'</span></div>';
+  let head,body;
+  if(W){const {weeks,vals}=W,mx=Math.max(...vals),best=vals.lastIndexOf(mx),tot=vals.reduce((a,b)=>a+b,0),unit=brickUnit(mx);
+    head='<span class="tl"><i style="background:var(--pull)"></i>'+T('每周总数 · '+weeks.length+' 周','Weekly total · '+weeks.length+(weeks.length>1?' weeks':' week'))+'</span>'
+      +'<span class="tv">'+fmt(tot)+'<small>'+u+'</small></span><span class="td muted">'+T('本周 ','This week ')+fmt(vals[vals.length-1])+' '+u+'</span>';
+    body=bricksHtml(vals.map((v,k)=>({n:v?Math.max(1,Math.round(v/unit)):0,c:k===best?"var(--push)":"var(--pull)",t:T(dayLabel(weeks[k])+' 那周 · ',dayLabel(weeks[k])+' week · ')+fmt(v)+' '+u})))
+      +foot(dayLabel(weeks[0]),unit,T('本周','This week'))}
+  else{const all=mainSeries(),pts=all.slice(-12),last=all[all.length-1];
+    head='<span class="tl"><i style="background:var(--pull)"></i>'+mainName()+'</span>'
+      +'<span class="tv">'+(last?last.y.toFixed(dec)+'<small>'+u+'</small>':'–')+'</span>'+(last?deltaOf(M,all):'<span class="td muted">'+T('还没有数据','No data yet')+'</span>');
+    if(pts.length){const mx=Math.max(...pts.map(p=>p.y)),unit=brickUnit(mx),best=pts.map(p=>p.y).lastIndexOf(mx);
+      body=bricksHtml(pts.map((p,k)=>({n:p.y>0?Math.max(1,Math.round(p.y/unit)):0,c:k===best?"var(--push)":"var(--pull)",t:dayLabel(p.date)+' · '+(+p.y).toFixed(dec)+' '+u})))
+        +foot(dayLabel(pts[0].date),unit,dayLabel(pts[pts.length-1].date))}else body=''}
+  return '<section class="card mcard" data-act="metric" data-k="pull"><span class="bkread n" aria-live="polite"></span>'+head+body+'</section>'}
+function mainCards(){return weeklyData()?2:1}
+function mainStackHtml(){if(mainCard>=mainCards())mainCard=0;return fsWrap("mainst",mainCardHtml(mainCard),mainCards()-1)}
+const MAIN_FS={get:()=>mainCards()<2?null:mainCardHtml((mainCard+1)%2),commit:()=>{mainCard=(mainCard+1)%2},render:mainStackHtml,peekDir:1};
 function flapHtml(txt){return '<span class="flap">'+[...txt].map((c,i)=>'<span style="--i:'+i+'">'+c+'</span>').join("")+'</span>'}
 function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days,gaps,known,sum}=gapData();gapR=keep;const R=rr!=null?rr:gapR,mx=Math.max(300,...known.map(Math.abs));
   const label=R?T('过去 '+R+' 天','Last '+R+' days'):T('有记录以来 '+days.length+' 天','Since the first log · '+days.length+' days');
@@ -439,18 +454,18 @@ function goalsHtml(){const st=state.settings,gap=gapAllTime();
 let tileEdit=false;
 function tileCfg(){const t=state.settings.tiles||{};return {order:t.order||[],hidden:t.hidden||[]}}
 function tileList(){const c=tileCfg(),off=k=>{const s=state.settings.sync;return s&&s[{sleep:"sleep",hrv:"hrv",rhr:"rhr"}[k]]===false};
-  const pos=k=>{const i=c.order.indexOf(k);return i<0?(k==="weekly"?-1:100+METRICS.findIndex(m=>m.k===k)):i};
-  const all=[WEEKLY_TILE].concat(METRICS).filter(m=>!off(m.k)).slice().sort((a,b)=>pos(a.k)-pos(b.k));
+  const pos=k=>{const i=c.order.indexOf(k);return i<0?100+METRICS.findIndex(m=>m.k===k):i};
+  const all=METRICS.filter(m=>!off(m.k)).slice().sort((a,b)=>pos(a.k)-pos(b.k));
   return {shown:all.filter(m=>!c.hidden.includes(m.k)),hidden:all.filter(m=>c.hidden.includes(m.k))}}
 function renderProgView(){const v=$("#v-prog"),{shown,hidden}=tileList();
-  const tiles=shown.map(m=>{if(m.k==="weekly")return weeklyHtml();const all=m.pts(),pts=recent(all,30),last=all[all.length-1];
+  const tiles=shown.map(m=>{if(m.k==="pull")return '<div class="tile wide tstack" data-k="pull">'+mainStackHtml()+(tileEdit?'<span class="tx" data-act="thide" data-k="pull" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</div>';const all=m.pts(),pts=recent(all,30),last=all[all.length-1];
     return '<button class="tile'+(m.wide?" wide":"")+'" data-act="metric" data-k="'+m.k+'"><span class="tl"><i style="background:'+m.c+'"></i>'+m.name+(m.sub?' · '+m.sub:'')+'</span>'
       +'<span class="tv">'+(last?last.y.toFixed(m.dec)+'<small>'+m.unit+'</small>':'–')+'</span>'+(last?deltaOf(m,all):'<span class="td muted">'+T('还没有数据','No data yet')+'</span>')
       +(pts.length>1?lineSvg(pts,m.wide?320:150,m.wide?64:44,m.c,"spark"):'')
       +(tileEdit?'<span class="tx" data-act="thide" data-k="'+m.k+'" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</button>'}).join("");
   v.innerHTML=goalsHtml()+'<div class="bento'+(tileEdit?' editing':'')+'">'+tiles+'</div>'
     +(tileEdit?'<div class="tilebar">'+(hidden.length?'<button class="fsreset" data-act="tadd" aria-label="'+T('加回图表','Add a chart back')+'">'+ICON.plus+'</button>':'')+'<button class="fsreset" data-act="tdone" aria-label="'+T('完成','Done')+'">'+ICON.check+'</button></div>':'');
-  animateRings(v);tileBind()}
+  animateRings(v);tileBind();if(!tileEdit&&$('.fstack[data-fs="mainst"]'))fsBind("mainst",MAIN_FS)}
 function tileSave(cfg){state.settings.tiles=cfg;lsSave()}
 function tileBind(){const box=$("#v-prog .bento");if(!box)return;let tm=0,drag=null;
   /* long-press to edit */

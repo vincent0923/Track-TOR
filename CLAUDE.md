@@ -30,7 +30,7 @@
 - 极简、做减法。一个强调色，字重三档，大圆角卡片，所有详情和编辑都用底部弹出面板，动效用同一条回弹曲线（详见 `docs/PRODUCT.md`「界面」）。
 - 一组同类的卡片一律用毛玻璃 swipe stack（训练日、日历、饮食记录都是）：后面的牌是整张卡、整齐地一张比一张往右下错开一小步、颜色略深（照 codefronts 的 classic deck；手指按上去时整摞再拉开一点），最多露三张，只要还有别的牌就露出来；划动时下面一张是毛玻璃，划走后 0.3 秒变清晰；手指往右是往前的时间。不另做翻页按钮；离开最新一张时出现半透明的复位按钮（`.fsreset`，加号、完成等小按钮也用这个样子）。
 - 爽感是核心：打勾放烟花、练完礼炮（`js/p1fx.js`）；有自己庆祝效果的主题写在 `THEME_FX`，音效在 `SFX_TH`（玩具在 `js/p1data.js` 的 `SFX_TOY`）。设定 › 外观 › 特效里放光追强弱（`tracktor-p1-rt`）、天气、落灰（`tracktor-p1-dust`）、庆祝效果。
-- 通用组件（`js/p1.js`）：积木柱状图 `bricksHtml`、旋钮 `knobHtml`（标签是普通按钮，带自己的 `data-act`）。
+- 通用组件（`js/p1.js`）：积木柱状图 `bricksHtml`（每列可带 `t`，手指划过时显示在卡片的 `.bkread`；在卡堆里积木区域不翻牌）、旋钮 `knobHtml`（标签是普通按钮，带自己的 `data-act`）。
 
 ## 代码结构
 - 静态网页，无构建，只有一个界面 `index.html`（经典界面和 29 套主题 v1.43a 删了，代码在分支 `backup-classic-v1.42a`）。样式 `css/p1.css`。脚本按 `index.html` 里的顺序加载、共享全局作用域：`js/hant.js`（繁体：把页面上的简体逐字换成台湾用字，`tracktor-lang` 是 `zht`）、`js/core.js`（计划、存储、`T`）、`js/diet.js`（热量算法、饮食面板）、`js/confetti.js`、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/backupcore.js`（进度文件）、`js/p1data.js`（图表数据、下一次训练、记录面板、G、音效）、`js/p1fx.js`（烟花、彩带、目标 2% 庆祝）、`js/p1stack.js`（毛玻璃 swipe stack：`fsWrap`/`fsBind`/`fsGo`）、`js/coros.js`（高驰）、`js/engine.js`（训练引擎和计划预设）、`js/p1.js`（界面）、`js/p1settings.js`（设定面板、备份恢复、欢迎页、备份提醒）、`js/p1day.js`（日历点某天）、`js/p1weather.js`（天气；`p1settings.js` 用 `p1Sheet`/`p1Reg` 把面板借给它）。
