@@ -35,7 +35,10 @@ const FW=(function(){
 /* the bang: filtered noise for the blast, a low sine thump under it, a few crackles as the sparks fall.
    Rockets often burst together, so they share a compressor instead of clipping. */
 let fxNoise=null,fxBus=null;
-function fxBang(big){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const c=AC;
+/* the toy skin: a cartoon pop and a rattle of marbles instead of a bang */
+function fxPop(big){tone(big?520:760,0,big?.22:.14,"sine",big?.3:.22,big?90:140);tone(big?1400:2000,0,.03,"square",.05);
+  const n=big?7:3;for(let k=0;k<n;k++)tone(1800+Math.random()*1600,.12+k*.06+Math.random()*.03,.05,"sine",.07)}
+function fxBang(big){if(document.documentElement.dataset.theme==="toy"){try{fxPop(big)}catch(e){}return}try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const c=AC;
   if(!fxNoise){fxNoise=c.createBuffer(1,c.sampleRate*2,c.sampleRate);const d=fxNoise.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
   if(!fxBus){fxBus=c.createDynamicsCompressor();fxBus.threshold.value=-12;fxBus.ratio.value=6;fxBus.connect(c.destination)}
   const hit=(at,len,f1,f2,vol,type)=>{const t=c.currentTime+at,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();

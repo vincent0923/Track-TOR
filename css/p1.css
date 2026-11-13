@@ -612,7 +612,7 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] .dock button[aria-selected="true"]{color:#fff}
 :root[data-theme="toy"] .dock .pc{border-radius:14px;box-shadow:0 4px 0 var(--ac-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transition:transform .45s cubic-bezier(.34,1.8,.64,1),width .45s cubic-bezier(.34,1.8,.64,1)}
 /* bars are stacked bricks */
-:root[data-theme="toy"] .bars7 .bv{border-radius:4px;-webkit-mask-image:repeating-linear-gradient(to top,#000 0 9px,transparent 9px 12px);mask-image:repeating-linear-gradient(to top,#000 0 9px,transparent 9px 12px)}
+:root[data-theme="toy"] .bars7 .bv{border-radius:4px;-webkit-mask-image:repeating-linear-gradient(to top,#000 0 13px,transparent 13px 16px);mask-image:repeating-linear-gradient(to top,#000 0 13px,transparent 13px 16px)}
 /* the tick: a big round arcade button */
 :root[data-theme="toy"] .tickb{background:var(--red);color:#fff;box-shadow:0 8px 0 var(--red-lip),0 16px 28px rgba(0,0,0,.24),inset 0 3px 0 rgba(255,255,255,.28),inset 0 -4px 8px rgba(0,0,0,.2);transition:transform .1s,box-shadow .1s}
 :root[data-theme="toy"] .tickb:active{transform:translateY(6px);box-shadow:0 2px 0 var(--red-lip),inset 0 3px 0 rgba(255,255,255,.28)}
@@ -635,3 +635,21 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] .cal button.dd:active b{animation:toyPop .35s cubic-bezier(.34,1.56,.64,1)}
 /* on the blue goals slab every ring fills in yellow */
 :root[data-theme="toy"] .goals4 circle.rv{stroke:var(--yel)}
+/* toy, in 3D: round header buttons are domed plastic, bars are bricks with a lit top and a shaded foot,
+   chart lines are plastic tubes casting a shadow, rings are plastic hoops */
+:root[data-theme="toy"] .top .circ{width:42px;height:42px;border:0;color:#fff;
+  background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.55) 0 12%,rgba(255,255,255,0) 34%),radial-gradient(circle at 50% 120%,rgba(0,0,0,.28),rgba(0,0,0,0) 60%),var(--pc,var(--ac));
+  box-shadow:0 4px 0 var(--pl,var(--ac-lip)),0 8px 14px -4px rgba(0,0,0,.35),inset 0 -3px 0 rgba(0,0,0,.12)}
+:root[data-theme="toy"] .top .circ:active{transform:translateY(3px);box-shadow:0 1px 0 var(--pl,var(--ac-lip)),inset 0 -2px 0 rgba(0,0,0,.12)}
+:root[data-theme="toy"] #syncBtn{--pc:var(--yel);--pl:var(--yel-lip)}
+:root[data-theme="toy"] #meBtn{--pc:var(--ac);--pl:var(--ac-lip)}
+:root[data-theme="toy"] #syncBtn .syncdot{background:#fff;box-shadow:0 0 0 3px rgba(0,0,0,.12),inset 0 -2px 0 rgba(0,0,0,.15)}
+:root[data-theme="toy"] #syncBtn .syncdot.ok{background:var(--grn);box-shadow:0 0 0 3px #fff,0 0 8px var(--grn)}
+:root[data-theme="toy"] #meBtn svg{filter:drop-shadow(0 1.5px 0 rgba(0,0,0,.25))}
+/* bricks: the mask cuts the bar into 13px bricks with 3px gaps; this paints each brick's lit top and shaded foot */
+:root[data-theme="toy"] .bars7 .bv{background-image:repeating-linear-gradient(to top,rgba(0,0,0,.28) 0 3px,rgba(0,0,0,0) 3px 9px,rgba(255,255,255,.42) 9px 12px,rgba(255,255,255,.12) 12px 13px,rgba(0,0,0,0) 13px 16px)!important;
+  filter:drop-shadow(0 2px 0 rgba(0,0,0,.18))}
+/* chart lines as plastic tubes */
+:root[data-theme="toy"] svg path[fill="none"]{stroke-width:4.5px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.22))}
+:root[data-theme="toy"] .spark circle,:root[data-theme="toy"] .chart circle{r:5;stroke-width:3px;filter:drop-shadow(0 2px 0 rgba(0,0,0,.25))}
+:root[data-theme="toy"] .ring circle.rv{filter:drop-shadow(0 2px 0 rgba(0,0,0,.25))}

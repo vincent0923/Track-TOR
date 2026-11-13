@@ -76,11 +76,20 @@ let AC=null;
 function tone(f,at,dur,type,vol,f2){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime+at,o=AC.createOscillator(),g=AC.createGain();
   o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+dur);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
   o.connect(g).connect(AC.destination);o.start(t);o.stop(t+dur+.02)}catch(e){}}
-const SFX={tick:()=>{tone(784,0,.09,"triangle",.2);tone(1175,.06,.16,"triangle",.2)},
+const SFX_BASE={tick:()=>{tone(784,0,.09,"triangle",.2);tone(1175,.06,.16,"triangle",.2)},
   ex:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,i*.07,.18,"triangle",.18))},
   rest:()=>{tone(880,0,.12,"sine",.2);tone(880,.18,.2,"sine",.2)},
   done:()=>{[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.09,.3,"triangle",.2));tone(1568,.5,.6,"sine",.12)},
   tap:()=>tone(1400,0,.04,"sine",.06)};
+/* the toy skin sounds like toys: a bubble pop for a tick, a xylophone run, a cuckoo for the end of a rest,
+   a toy-trumpet fanfare, and a plastic click for taps */
+const xylo=(f,at,v)=>{tone(f,at,.35,"sine",v||.22);tone(f*4,at,.06,"sine",(v||.22)*.35);tone(f*2.76,at,.12,"triangle",(v||.22)*.18)};
+const SFX_TOY={tick:()=>{tone(950,0,.11,"sine",.26,240);tone(1900,0,.02,"square",.05)},
+  ex:()=>{[1047,1175,1319,1568,2093].forEach((f,i)=>xylo(f,i*.065,.2))},
+  rest:()=>{tone(784,0,.16,"sine",.22,740);tone(622,.22,.26,"sine",.22,590)},
+  done:()=>{[[523,0],[659,.12],[784,.24],[1047,.36],[784,.52],[1047,.64]].forEach(([f,t])=>{tone(f,t,.16,"square",.06);tone(f,t,.16,"triangle",.14)});xylo(2093,.82,.18)},
+  tap:()=>{tone(1800,0,.018,"square",.05);tone(320,0,.03,"triangle",.1,180)}};
+const SFX=new Proxy({},{get:(o,k)=>(document.documentElement.dataset.theme==="toy"?SFX_TOY:SFX_BASE)[k]});
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 
 
