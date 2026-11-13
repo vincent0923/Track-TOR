@@ -48,8 +48,9 @@ lsLoad();
    behind); the next session overall is the kind trained less recently */
 function lastDoneOf(kind){let d=0,date="";PROGRAM.forEach(p=>{const s=state.sessions[p.sid];if(p.kind===kind&&s&&s.done){if(p.day>d)d=p.day;if((s.date||"")>date)date=s.date||""}});return {day:d,date}}
 function nextOf(kind){const l=lastDoneOf(kind).day;return PROGRAM.filter(p=>p.kind===kind&&p.day>l&&!(state.sessions[p.sid]&&state.sessions[p.sid].done)).sort((a,b)=>a.day-b.day)[0]}
-function firstOpen(){const a=nextOf("push"),b=nextOf("pull");if(!a||!b)return a||b;
-  const la=lastDoneOf("push"),lb=lastDoneOf("pull");if(la.date!==lb.date)return la.date<lb.date?a:b;return la.day<=lb.day?a:b}
+function firstOpen(except){const ks=(typeof planKinds==="function"?planKinds():["push","pull"]).filter(k=>k!==except);
+  const c=ks.map(k=>({k,n:nextOf(k),l:lastDoneOf(k)})).filter(x=>x.n);if(!c.length)return null;
+  c.sort((a,b)=>a.l.date<b.l.date?-1:a.l.date>b.l.date?1:a.l.day-b.l.day);return c[0].n}
 function setsOf(sid){const s=state.sessions[sid];const p=BYID[sid];
   return p.ex.map(e=>{const a=s&&s.sets&&s.sets[e.id];return a?a.map(x=>({v:+x.v,d:!!x.d})):Array.from({length:e.sets},()=>({v:e.target,d:false}))})}
 function dayMarks(){const m={};const add=(d,k)=>{(m[d]=m[d]||new Set()).add(k)};

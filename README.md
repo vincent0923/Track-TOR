@@ -22,7 +22,7 @@
 
 | 功能 | 说明 |
 |---|---|
-| 🏋️ 推拉训练 | 推日、拉日交替。训练引擎看你前 3 次的表现排下 2 次：做到 10 个就换更难的动作或慢速，达标就加次数，连着没达标就减，每次 5–12 组，每项都写为什么 |
+| 🏋️ 训练计划 | 选一个预设：骑行者 AB（引体 + 俯卧撑）、全身 1 分、上下肢 AB、推 / 拉 / 腿 3 分，训练日的名字可以改。训练引擎看你前 3 次的表现排下 2 次：做到 10 个就换更难的动作或慢速，达标就加次数，连着没达标就减，每次 5–12 组，每项都写为什么 |
 | 💪 随时加练 | 每个训练日都能加练，默认引体向上，也能加自定义项目 |
 | 🎆 爽感反馈 | 专注训练模式：一次一个动作，拇指位大勾，组间自动倒计时；每组有音效和震动，做完一个动作撒彩纸，整天练完全屏庆祝 |
 | 📈 看得见的进步 | 目标进度环，引体、体重、腰围、睡眠、HRV、静息心率的趋势卡片，点开看完整曲线、记一笔 |
@@ -54,7 +54,7 @@
 
 产品定位、设计取向和现有功能见 [产品说明](docs/PRODUCT.md)，版本记录见 [更新日志](CHANGELOG.md)。
 
-当前版本 **v1.40a**。Alpha 表示已经在日常使用，还在持续打磨。
+当前版本 **v1.41a**。Alpha 表示已经在日常使用，还在持续打磨。
 
 © 2026 vincent0923，保留所有权利。见 [LICENSE](LICENSE)。数字字体 Barlow Condensed 和各主题用的字体 Archivo、Geist、Geist Mono、Share Tech Mono、Bricolage Grotesque、VT323 按 SIL Open Font License 附带，许可见 [fonts/](fonts/) 下的 OFL 文件。主题的风格参考了 [Ovio](https://github.com/JanaSundar/ovio)（MIT）、[Interior](https://github.com/ddoemonn/interior)（MIT）和 [beUI](https://github.com/starc007/ui-components)（MIT）的设计，用纯 CSS/JS 重写。庆祝用的彩带和粒子来自 [canvas-confetti](https://github.com/catdad/canvas-confetti)（ISC，见 [docs/CANVAS-CONFETTI-LICENSE.txt](docs/CANVAS-CONFETTI-LICENSE.txt)）。各风格的图标来自 Streamline Plump Color（CC BY 4.0）、Pixelarticons（MIT）和 Doodle Icons（MIT），见 [docs/ICONS-CREDITS.txt](docs/ICONS-CREDITS.txt)。部分图标来自 [Lucide](https://lucide.dev)（ISC 许可，见 [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)）。部分音效用 [ZzFX](https://github.com/KilledByAPixel/ZzFX) 合成（MIT 许可，见 [docs/ZZFX-LICENSE.txt](docs/ZZFX-LICENSE.txt)），部分用 [jsfxr](https://github.com/chr15m/jsfxr) 的合成方法（公有领域，见 [docs/JSFXR-UNLICENSE.txt](docs/JSFXR-UNLICENSE.txt)）。
 
@@ -82,7 +82,7 @@ Most people don't need another training plan. They need a reason to keep going. 
 
 | Feature | Details |
 |---|---|
-| 🏋️ Push and pull training | Push and pull days take turns. The training engine looks at your last 3 sessions to plan the next 2: reach 10 reps and the move gets harder or slower, hit the target and reps go up, miss twice and it eases off; 5–12 sets a session, each with its reason |
+| 🏋️ Training plans | Pick a preset: Cyclist AB (pull-ups + push-ups), Full body, Upper / lower AB, Push / pull / legs; rename the days as you like. The training engine looks at your last 3 sessions to plan the next 2: reach 10 reps and the move gets harder or slower, hit the target and reps go up, miss twice and it eases off; 5–12 sets a session, each with its reason |
 | 💪 Extra practice | Add extra sets to any session, pull-ups by default or any exercise you like |
 | 🎆 Feel-good rewards | A focus mode for training: one exercise at a time, a thumb-sized tick, automatic rest countdowns; sound and a buzz for every set, confetti for every finished exercise, a full-screen celebration for the day |
 | 📈 Visible progress | Goal rings and trend cards for pull-ups, weight, waist, sleep, HRV, and resting heart rate; open one for the full chart or to log a value |

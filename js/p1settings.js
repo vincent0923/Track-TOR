@@ -30,7 +30,7 @@ function openGoals(){const S=sheet(T("目标","Goals"),goalsBody()+'<p class="ca
   S.q("[data-ok]").addEventListener("click",()=>{saveGoals(S.q);lsSave();S.close();renderAll();toast(T("目标已保存","Goals saved"))})}
 /* first visit: everything can stay blank and be changed later from the avatar */
 function openWelcome(){const S=sheet(T("欢迎来到推拉机","Welcome to track-TOR"),'<p class="calc-msg" style="margin:0">'+T("填几项，热量和目标进度才算得准。都可以留空，以后点右上角头像改。","A few details make the calorie and goal maths right. All optional; change them later from the avatar.")+'</p>'+profileBody()+goalsBody());
-  S.q("[data-ok]").addEventListener("click",()=>{saveProfile(S.q);saveGoals(S.q);lsSave();S.close();renderAll()})}
+  S.q("[data-ok]").addEventListener("click",()=>{saveProfile(S.q);saveGoals(S.q);lsSave();S.close();renderAll();setTimeout(()=>openPlan(true),350)})}
 function sheetStatusTxt(){let s=null;try{s=JSON.parse(localStorage.getItem(SHEET_STATUS_K)||"null")}catch(e){}
   if(!s)return T("还没有同步","Not synced yet");return s.ok?T("上次同步 ","Last synced ")+s.at+T(" · "+s.rows+" 条 / "+s.days+" 天"," · "+s.rows+" rows / "+s.days+" days"):s.msg}
 function openTable(){let url="";try{url=localStorage.getItem(SHEET_URL_K)||""}catch(e){}
@@ -78,7 +78,19 @@ function openBackup(){const t=lastBackupTs();
     S.q("#bkm").textContent=T("含 "+n+" 次完成训练、"+m+" 天身体数据"+(d?"、"+d+" 天饮食":"")+"，导入会覆盖当前进度。","Contains "+n+" finished sessions, "+m+" days of body data"+(d?", "+d+" days of food":"")+". Importing replaces current progress.");S.q("#bkc").hidden=false});
   S.q("[data-bkno]").addEventListener("click",()=>{pending=null;S.q("#bkc").hidden=true;S.q("#bkm").textContent=""});
   S.q("[data-bkyes]").addEventListener("click",()=>{if(!pending)return;applyImport(pending);S.close()})}
-const OPEN={profile:openProfile,goals:openGoals,table:openTable,charts:openCharts,backup:openBackup};
+/* training plan: pick a preset (1–3 training days) and rename its days */
+function openPlan(first){const cur=st().plan,curId=cur?cur.id:"cyclist";
+  const names=(cur?cur.days:PRESETS[0].days).map(d=>'<label class="flabel">'+T("第 "+"ABC"[["push","pull","third"].indexOf(d.kind)]+" 天叫什么","Name of day "+"ABC"[["push","pull","third"].indexOf(d.kind)])+'<input data-dn="'+d.kind+'" value="'+esc(T(d.zh,d.en||d.zh))+'"></label>').join("");
+  const S=sheet(T("训练计划","Training plan"),(first?'<p class="calc-msg" style="margin:0">'+T("选一个开始，以后在设定 › 训练计划里换或改名。引擎会按你每次的表现调整次数和组数。","Pick one to start; change or rename it later in Settings › Training plan. The engine tunes reps and sets to how you do.")+'</p>':'')
+    +PRESETS.map(p=>'<button type="button" class="preset'+(p.id===curId?' on':'')+'" data-pre="'+p.id+'"><b>'+T(p.zh,p.en)+'</b><span class="muted">'+T(p.dz,p.de)+'</span><span class="pdays">'+p.days.map(d=>'<i style="background:var(--k'+d.kind+')"></i>'+T(d.zh,d.en)).join("")+'</span></button>').join("")
+    +(cur?'<p class="eyebrow" style="margin-top:6px">'+T("训练日的名字","Day names")+'</p><div class="fgrid">'+names+'</div>':''));
+  S.m.addEventListener("click",e=>{const b=e.target.closest("[data-pre]");if(!b)return;const id=b.dataset.pre;
+    if(id===(st().plan&&st().plan.id)){return}
+    const p=PRESETS.find(x=>x.id===id);if(!first&&!confirm(T("换成「"+p.zh+"」？接下来的训练按新计划排，练过的记录不动。","Switch to "+p.en+"? Upcoming sessions follow the new plan; past records stay.")))return;
+    setPlan(id);S.close();renderAll();toast(T("训练计划：","Plan: ")+T(p.zh,p.en));if(first)return;openPlan(false)});
+  if(S.q("[data-ok]"))S.q("[data-ok]").addEventListener("click",()=>{const pl=st().plan;if(pl)S.m.querySelectorAll("[data-dn]").forEach(i=>{const d=pl.days.find(x=>x.kind===i.dataset.dn),v=i.value.trim();if(d&&v){if(LANG==="en")d.en=v;else d.zh=v}});
+    if(!pl&&!first)setPlan("cyclist");lsSave();S.close();renderAll();toast(T("已保存","Saved"))})}
+const OPEN={plan:()=>openPlan(false),profile:openProfile,goals:openGoals,table:openTable,charts:openCharts,backup:openBackup};
 window.p1Open=k=>{if(typeof closeSheet==="function")closeSheet();OPEN[k]()};
 /* first visit and the 5-day backup reminder */
 setTimeout(()=>{let seen=false;try{seen=localStorage.getItem("tracktor-p1-welcomed")==="1"}catch(e){}

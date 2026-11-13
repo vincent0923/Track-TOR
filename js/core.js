@@ -65,12 +65,12 @@ const BYID = Object.fromEntries(PROGRAM.map(s=>[s.sid,s]));
 function registerPlanned(sessions){
   Object.entries(sessions||{}).forEach(([sid,doc])=>{
     if(!doc||!Array.isArray(doc.ex)||!doc.ex.length)return;
-    const m=/^(push|pull)-(\d+)$/.exec(sid);if(!m)return;
+    const m=/^(push|pull|third)-(\d+)$/.exec(sid);if(!m)return;
     let p=BYID[sid];
-    if(!p){p={sid,kind:m[1],day:+m[2],label:(m[1]==="push"?"推练 D":"拉练 D")+(+m[2]),ex:doc.ex};PROGRAM.push(p);BYID[sid]=p}
+    if(!p){p={sid,kind:m[1],day:+m[2],ex:doc.ex};PROGRAM.push(p);BYID[sid]=p}
     else p.ex=doc.ex;
   });
-  PROGRAM.sort((a,b)=>a.day-b.day||(a.kind==="push"?-1:1));
+  const ko={push:0,pull:1,third:2};PROGRAM.sort((a,b)=>a.day-b.day||ko[a.kind]-ko[b.kind]);
 }
 
 /* ---------- storage layout ----------
@@ -127,8 +127,11 @@ let LANG="zh";try{LANG=localStorage.getItem(LS+"-lang")||"zh"}catch(e){}
 const T=(zh,en)=>LANG==="en"?en:zh;
 const N=e=>T(e.name,e.en), NS=e=>T(e.name.replace(/（.*）/,""),e.en.replace(/\s*\(.*\)/,"")), NOTE=e=>T(e.note,e.noteEn);
 const U=u=>T(u,{"个":"reps","秒":"s","分钟":"min"}[u]||u);
-const LAB=p=>T((p.kind==="push"?"推练":"拉练")+" D"+p.day,(p.kind==="push"?"Push":"Pull")+" D"+p.day);
-const SHORT=p=>T((p.kind==="push"?"推":"拉")+"D"+p.day,(p.kind==="push"?"Push":"Pull")+" D"+p.day);
+/* a training day's name: the chosen plan names its days (settings.plan, see js/engine.js); otherwise push and pull */
+function dayName(kind){const pl=typeof state!=="undefined"&&state.settings&&state.settings.plan,d=pl&&pl.days&&pl.days.find(x=>x.kind===kind);
+  if(d)return {zh:d.zh,en:d.en||d.zh};return kind==="push"?{zh:"推练",en:"Push"}:kind==="pull"?{zh:"拉练",en:"Pull"}:{zh:"C 练",en:"Day C"}}
+const LAB=p=>{const n=dayName(p.kind);return T(n.zh+" D"+p.day,n.en+" D"+p.day)};
+const SHORT=p=>{const n=dayName(p.kind);return T(n.zh.slice(0,1)+"D"+p.day,n.en+" D"+p.day)};
 function today(){const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
 /* ---------- state & storage ---------- */
 /* nothing personal by default: the welcome sheet or a COROS sync fills these in */

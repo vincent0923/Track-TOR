@@ -6,6 +6,20 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.41a] — 2026-11-13
+
+### 新增 / Added
+- 🗂️ **训练计划预设**：设定 › 训练计划里选：骑行者 AB（引体 + 俯卧撑，就是原来那套）、全身 1 分、上下肢 AB、推 / 拉 / 腿 3 分；最多三种训练日，每天的名字可以改。换计划后接下来的训练从新计划的动作开始排，练过的同名动作的成绩照样用来定次数；练过的记录不动。新用户填完欢迎页接着选计划。新增深蹲、分腿蹲、保加利亚分腿蹲、臀桥、单腿臀桥、派克俯卧撑的动作阶梯。
+  **Training-plan presets**: Settings › Training plan offers Cyclist AB (pull-ups + push-ups, the plan so far), Full body, Upper / lower AB and Push / pull / legs; up to three training days, each renamable. After a switch, upcoming sessions start from the new plan's moves while results on the same moves still set the numbers; past records stay. New users pick a plan right after the welcome. New ladders: squats → split squats → Bulgarian split squats, glute bridges → single-leg, pike push-ups → feet-up pike.
+
+### 改进 / Changed
+- G 积分商场只在设定里（显示余额），进展页不再放 G 的小标签；商场里预留「大家写的训练计划」，即将上线。
+  The G shop lives only in Settings (with the balance); the Progress card drops its G badge. The shop has a slot for plans written by users, coming soon.
+- 进度文件里第三种训练日用 `t` 开头的键；旧文件照常导入。
+  Progress files key the third training day with `t`; older files import as before.
+
+---
+
 ## [v1.40a] — 2026-11-13
 
 ### 新增 / Added

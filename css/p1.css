@@ -7,7 +7,7 @@
   --dark:linear-gradient(145deg,#1E1E22 0%,#141417 100%); --dark-solid:#18181B; --dark-line:rgba(255,255,255,.08); --track:#2A2A2E;
   --ink:#18181B; --muted:#86868C; --ac:#32D74B; --on-ac:#081109; --ac-soft:rgba(50,215,75,.15); --ac-text:#15803D;
   --st1:rgba(50,215,75,.28); --st2:rgba(50,215,75,.7);
-  --push:#22B455; --pull:#F06A1F; --good:#15803D; --bad:#DC4A3A; --sleep:#8B5CF6;
+  --push:#22B455; --pull:#F06A1F; --third:#3B82F6; --kpush:var(--push); --kpull:var(--pull); --kthird:var(--third); --good:#15803D; --bad:#DC4A3A; --sleep:#8B5CF6;
   --shadow:0 6px 20px -6px rgba(0,0,0,.05),0 2px 5px rgba(0,0,0,.02);
   --num:"Geist",-apple-system,BlinkMacSystemFont,sans-serif;
   --body:-apple-system,BlinkMacSystemFont,"Geist","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
@@ -19,7 +19,7 @@
   --dark:linear-gradient(145deg,#16293B 0%,#0E1724 100%); --dark-solid:#162336; --dark-line:rgba(0,245,212,.22); --track:#22304A;
   --ink:#F1F5F9; --muted:#8392A8; --ac:#00F5D4; --on-ac:#041311; --ac-soft:rgba(0,245,212,.14); --ac-text:#00F5D4;
   --st1:rgba(0,245,212,.2); --st2:rgba(0,245,212,.58);
-  --push:#00E0C2; --pull:#A78BFA; --good:#34D399; --bad:#FB7185; --sleep:#818CF8;
+  --push:#00E0C2; --pull:#A78BFA; --third:#60A5FA; --good:#34D399; --bad:#FB7185; --sleep:#818CF8;
   --shadow:0 12px 28px -8px rgba(0,0,0,.6); color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
@@ -85,7 +85,7 @@ h1,h2,h3,p{margin:0}
 .dd.today b{background:var(--ac);color:var(--on-ac);font-weight:800}
 .dd .mk{display:flex;gap:3px;height:6px}
 .dd .mk i{width:6px;height:6px;border-radius:50%}
-.mk .push{background:var(--push)}.mk .pull{background:var(--pull)}.mk .x{box-shadow:inset 0 0 0 1.5px var(--muted)}
+.mk .push{background:var(--push)}.mk .pull{background:var(--pull)}.mk .third{background:var(--third)}.mk .x{box-shadow:inset 0 0 0 1.5px var(--muted)}
 .month[hidden]{display:none}
 .mnav{display:flex;gap:6px;margin-left:auto}
 
@@ -390,3 +390,11 @@ button.dd:active b{transform:scale(.9)}
 .xadds{display:flex;flex-wrap:wrap;gap:8px}
 .xadds .pill{height:32px;padding:0 12px;font-size:12px}
 .f-bottom .btn.ghost{margin-bottom:-2px}
+
+/* training plan presets */
+.preset{display:grid;gap:4px;text-align:left;padding:14px;border-radius:18px;background:var(--sub);border:1.5px solid transparent;width:100%;font:inherit;color:inherit;cursor:pointer}
+.preset b{font-size:15px;font-weight:800}
+.preset .muted{font-size:12px}
+.preset.on{border-color:var(--ac);background:var(--ac-soft)}
+.pdays{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;font-weight:700;margin-top:4px}
+.pdays i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}

@@ -17,7 +17,7 @@
 - 只写以后一直有效的约定和找东西的线索，保持简短。做过什么看 `git log` 和 `CHANGELOG.md`，产品现在什么样看 `docs/PRODUCT.md`，打算做什么看私人文档「推拉机：私人规划与施工清单」。
 
 ## 每次发版
-- 现在是「试穿阶段」：主题都是试验，以后会删掉不合适的。新主题、图标、音效、图表画法不升版本号、不写 CHANGELOG，直接提交推送。现在的版本号是 v1.40a。往新界面迁移经典功能算新功能，要升版本号。
+- 现在是「试穿阶段」：主题都是试验，以后会删掉不合适的。新主题、图标、音效、图表画法不升版本号、不写 CHANGELOG，直接提交推送。现在的版本号是 v1.41a。往新界面迁移经典功能算新功能，要升版本号。
 - 只有加了新功能才升版本号。只改视觉或音效、没有新功能的改动，不升版本号、不写 CHANGELOG，测试通过后直接提交推送，不用问。
 - 版本号四处同步：`index.html` 里的 `#ver`，`classic.html` 里的 `.ver`，`README.md` 中英文各一处。
 - `CHANGELOG.md` 加一条，中英双语。
@@ -38,7 +38,8 @@
   - `index.html` 头部有一段转跳：选了经典界面的人去 `classic.html`（带着高驰登录回调的参数）。高驰登录回调在新界面里直接处理。
 - 数据全部在 `localStorage` 的 `tracktor-data`：`sessions`（训练）、`metrics[日期]`（引体、体重、腰围、睡眠、HRV、静息心率、活动热量 active、其中运动记录的热量 ex、有功率计骑行的热量 exP、低强度运动的热量 exL、步数等）、`diet[日期]`、`settings`、`dayx[日期]`（没有训练的日子里的加练）。其他键都以 `tracktor-` 开头。
 - G（积分，Grind）从记录现算（`js/p1data.js` 的 `coinBadges`），不另存；以后要存的只有花掉的 G 和买过的主题，放进 `settings`。
-- 训练引擎排的训练存在训练记录本身：`sessions[sid].ex` 是这次的动作、`feel` 是每个动作的感觉、`edited` 表示用户手改过。`js/core.js` 的 `registerPlanned` 把它们挂进 `PROGRAM`/`BYID`（可以超过第 20 天）。进度文件里对应追加的字段是 `pe`。
+- 训练计划：`settings.plan`（`js/engine.js` 的 `PRESETS`/`setPlan`）选 1–3 种训练日，内部类型固定是 `push`、`pull`、`third`（名字由计划定，`js/core.js` 的 `dayName`/`LAB`）；进度文件里训练的键前缀是 u、l、t。预设只是数据，以后用户写的计划也照这个格式。
+- 训练引擎排的训练存在训练记录本身：`sessions[sid].ex` 是这次的动作、`feel` 是每个动作的感觉、`edited` 表示用户手改过。`js/core.js` 的 `registerPlanned` 把它们挂进 `PROGRAM`/`BYID`（可以超过第 20 天，`third-NN` 只靠它注册）。进度文件里对应追加的字段是 `pe`。
 - 新增文件要加进 `sw.js` 的缓存列表。
 - 改了 `css/` 或 `js/` 下的任何文件，提交前先运行 `python3 tools/stamp.py`。它给 `index.html` 和 `classic.html` 里的脚本和样式网址加上内容指纹（`?v=…`），这样手机上缓存的旧文件不会和新网页配在一起。不运行的话，更新后可能出现新网页配旧脚本、功能错乱。
 - 改 `js/core.js`、`js/diet.js`、`js/coros.js`、`js/sheetcore.js`、`js/backupcore.js` 这类两边共用的文件时，两个界面都要打开测。

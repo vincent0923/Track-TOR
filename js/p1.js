@@ -73,7 +73,7 @@ function heroHtml(){
   const nx=firstOpen();if(!nx)return '<section class="dark hero"><p class="eyebrow">'+T('计划','Plan')+'</p><h2>'+T('全部完成','All done')+' 🎉</h2></section>';
   const p=BYID[heroSid&&!(state.sessions[heroSid]&&state.sessions[heroSid].done)?heroSid:nx.sid],sets=setsOf(p.sid);
   const tot=sets.reduce((a,x)=>a+x.length,0),dn=sets.reduce((a,x)=>a+x.filter(y=>y.d).length,0);
-  const other=nextOf(p.kind==="push"?"pull":"push");
+  const other=firstOpen(p.kind);
   return '<section class="dark hero"><i class="glowring"></i><p class="eyebrow">'+(p.sid===nx.sid?T("下一次","Next"):T("也可以练","Also ready"))+'</p>'
     +'<h2><i class="kd" style="background:var(--'+p.kind+')"></i>'+LAB(p)+'</h2>'
     +'<p class="meta">'+T(p.ex.length+' 个动作 · '+tot+' 组 · 约 '+Math.round(tot*1.6)+' 分钟',p.ex.length+' moves · '+tot+' sets · ~'+Math.round(tot*1.6)+' min')+'</p>'
@@ -83,15 +83,15 @@ function heroHtml(){
     +(other&&other.sid!==p.sid?'<div class="hero-alt"><button data-act="swap" data-sid="'+other.sid+'"><i class="kd" style="background:var(--'+other.kind+');width:8px;height:8px"></i>'+T('换成 ','Switch to ')+LAB(other)+'</button></div>':'')
     +'</section>'}
 function planHtml(){const marks=dayMarks(),now=new Date(),ws=weekStart(now);let wk=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);if(marks[ymd(d)])wk++}
-  const done=PROGRAM.filter(p=>state.sessions[p.sid]&&state.sessions[p.sid].done),np=done.filter(p=>p.kind==="push").length;
+  const done=PROGRAM.filter(p=>state.sessions[p.sid]&&state.sessions[p.sid].done);
   const last=Object.entries(state.sessions).filter(([sid,s])=>s&&s.done&&s.date&&BYID[sid]).sort((a,b)=>a[1].date<b[1].date?1:-1)[0];
   let lastTxt="";if(last){const [sid,s]=last;let reps=0;Object.entries(s.sets||{}).forEach(([id,a])=>{const e=BYID[sid].ex.find(x=>x.id===id);if(e&&e.unit==="个")a.forEach(x=>{if(x.d)reps+=+x.v||0})});
     lastTxt=T('上次 ','Last ')+dayLabel(s.date)+' · '+LAB(BYID[sid])+' · '+reps+T(' 次',' reps')}
   return '<section class="card"><button class="planc" data-act="plan"><span class="ring">'+ringSvg(64,7,Math.min(1,wk/3),"var(--ac)","var(--sub)")+'<span class="rl"><b class="n" style="font-size:17px;font-weight:800">'+wk+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ 3 '+T('天','days')+'</span></span></span>'
-    +'<span class="sp"><h3>'+T('本周','This week')+'</h3><p class="muted">'+T('推 ','Push ')+np+T(' 次 · 拉 ',' · Pull ')+(done.length-np)+T(' 次','')+(lastTxt?'<br>'+lastTxt:'')+'</p></span><span class="mini">'+ICON.right+'</span></button></section>'}
+    +'<span class="sp"><h3>'+T('本周','This week')+'</h3><p class="muted">'+planKinds().map(k=>{const n=dayName(k);return T(n.zh+' ',n.en+' ')+done.filter(p=>p.kind===k).length+T(' 次','')}).join(' · ')+(lastTxt?'<br>'+lastTxt:'')+'</p></span><span class="mini">'+ICON.right+'</span></button></section>'}
 function renderTrainView(){const v=$("#v-train");v.innerHTML=heroHtml()+calHtml()+planHtml();animateRings(v)}
 /* what the engine planned: the next two sessions of a kind (or both kinds), each exercise with its reason */
-function planSheet(only){const kinds=only?[only]:["push","pull"];let h="";
+function planSheet(only){const kinds=only?[only]:planKinds();let h="";
   kinds.forEach(kind=>{const l=lastDoneOf(kind).day;const ps=PROGRAM.filter(p=>p.kind===kind&&p.day>l&&!(state.sessions[p.sid]&&state.sessions[p.sid].done)).sort((a,b)=>a.day-b.day).slice(0,2);
     ps.forEach((p,i)=>{h+='<div class="plan1"><div class="row"><i class="kd" style="background:var(--'+kind+')"></i><b class="sp">'+LAB(p)+'</b><span class="pill'+(i?'':' ac')+'">'+(i?T('预告','Preview'):T('下一次','Next'))+'</span></div>'
       +p.ex.map(e=>'<div class="pex"><div class="row"><span class="sp">'+N(e)+'</span><b class="n">'+e.sets+' × '+e.target+(e.unit==="个"?"":" "+U(e.unit))+'</b></div>'+(e.why?'<p class="muted">'+T(e.why,e.whyEn||e.why)+'</p>':'')+'</div>').join("")+'</div>'})});
@@ -270,7 +270,7 @@ function goalsHtml(){const st=state.settings,gap=gapAllTime();
     {n:T("腰围","Waist"),c:"var(--ac)",cur:wz.length?wz[wz.length-1].y:null,start:wz.length?wz[0].y:null,tg:+st.z||null,u:"cm"},
     {n:T("体重","Weight"),c:"var(--sleep)",cur:wt.length?+wt[wt.length-1].y.toFixed(1):null,start:wt.length?wt[0].y:null,tg:+st.w||null,u:"kg"},
     {n:T("减脂","Fat loss"),c:"#FFB020",cur:gap?+(gap.s/7700).toFixed(1):null,start:0,tg:+st.fat||null,u:"kg"}];
-  return '<section class="dark"><div class="row" style="margin-bottom:14px"><p class="eyebrow sp">'+T('目标','Goals')+'</p><button class="coinchip" data-act="coins" aria-label="G">'+COIN+'<b class="n">'+fmt(coinTotal())+'</b></button></div><div class="goals4">'+G.map(g=>{
+  return '<section class="dark"><div class="row" style="margin-bottom:14px"><p class="eyebrow sp">'+T('目标','Goals')+'</p></div><div class="goals4">'+G.map(g=>{
     const pct=g.tg&&g.cur!=null&&g.start!=null&&g.start!==g.tg?Math.max(0,Math.min(1,(g.cur-g.start)/(g.tg-g.start))):0;
     return '<button data-act="goal"><span class="ring">'+ringSvg(66,7,pct,g.c,"var(--track)")+'<span class="rl"><b class="n" style="font-size:15px;font-weight:800">'+(g.tg?Math.round(pct*100)+"%":"–")+'</b></span></span>'
       +'<span><span class="gn">'+g.n+'</span><br><span class="gv n">'+(g.cur==null?"–":g.cur+" "+g.u)+'</span></span></button>'}).join("")+'</div></section>'}
@@ -312,10 +312,12 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=bs.reduce((a,b)=>a+b.pts
       +'<div class="sp"><div class="row"><b class="sp">'+b.name+'</b><span class="n bp">'+(b.pts?'+'+fmt(b.pts):'0')+'</span></div><p class="muted">'+b.what+'</p>'
       +'<div class="bar" style="--c:'+(b.pts?'var(--ac)':'var(--muted)')+';height:6px;margin-top:6px"><i style="width:'+(pct*100)+'%"></i></div>'
       +'<p class="muted n" style="font-size:11px;margin-top:3px">'+(n==null?T('全部拿到','All earned'):T('现在 ','Now ')+b.have+' '+b.unit+T(' · 下一档 ',' · next at ')+n+' '+b.unit)+'</p></div></div>'}).join("");
+  const plans='<div class="shopc"><div class="shopart" style="background:linear-gradient(135deg,#22C55E,#0EA5E9)"></div><div class="sp"><b>'+T('大家写的训练计划','Plans by other users')+'</b><p class="muted">'+T('用户写的训练计划，审核后上架','Training plans written by users, reviewed before they go up')+'</p></div><span class="pill">'+T('即将上线','Coming soon')+'</span></div>';
   const shop=[[T("像素 RPG","Pixel RPG"),T("打勾就挥剑，练完打怪升级","Every tick swings a sword; level up as you train")],[T("Low poly 小镇","Low-poly town"),T("每个训练日在小镇里盖一栋楼","Every training day builds a house in town")]].map(([n,d])=>'<div class="shopc"><div class="shopart"></div><div class="sp"><b>'+n+'</b><p class="muted">'+d+'</p></div><div style="text-align:right"><span class="coinchip">'+COIN+'<b class="n">2,000</b></span><br><span class="pill" style="margin-top:6px">'+T('即将上线','Coming soon')+'</span></div></div>').join("");
   openSheet('<div class="sh-h"><h3>G</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="row" style="margin-bottom:16px"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+fmt(tot)+'</div><p class="muted" style="font-size:12px">'+T('练出来的真实进步才给币，从记录里算出来','Real progress earns G, worked out from your records')+'</p></div></div>'
-    +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题商店','Theme shop')+'</p><div class="setlist">'+shop+'</div><p class="muted" style="font-size:12px;margin:8px 2px 18px">'+T('亮、暗两套永远免费。','Light and dark stay free.')+'</p>'
+    +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+shop+'</div><p class="muted" style="font-size:12px;margin:8px 2px 18px">'+T('亮、暗两套永远免费。','Light and dark stay free.')+'</p>'
+    +'<p class="eyebrow" style="margin-bottom:8px">'+T('训练计划','Training plans')+'</p><div class="setlist" style="margin-bottom:18px">'+plans+'</div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('怎么拿','How to earn')+'</p><div class="setlist">'+rows+'</div>');
   if(shopFirst)setTimeout(()=>{const el=document.getElementById("shop");if(el)el.scrollIntoView({block:"start"})},50)}
 /* ---------- sheet ---------- */
@@ -330,11 +332,11 @@ function meSheet(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}ca
   const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>'+T('设定','Settings')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">'+T('外观','Appearance')+'</p>'
     +'<div class="setlist">'+[["auto",T("跟随手机","Match the phone")],["light",T("亮","Light")],["dark",T("暗","Dark")]].map(([k,l])=>'<button class="opt" data-act="mode" data-m="'+k+'" aria-pressed="'+(m===k)+'">'+l+'</button>').join("")
-    +'<button class="opt" data-act="shop">'+COIN+'<span class="sp">'+T('主题商店','Theme shop')+'</span>'+ICON.right+'</button>'
+    +'<button class="opt" data-act="shop">'+COIN+'<span class="sp">'+T('G 积分商场','G shop')+'</span><b class="n" style="font-size:14px">'+fmt(coinTotal())+' G</b>'+ICON.right+'</button>'
     +'<button class="opt" data-act="classic">'+ICON.swatch+'<span class="sp">'+T('经典界面','Classic interface')+'<br><span class="muted" style="font-size:12px;font-weight:500">'+T('原来的样子和 29 套主题','The original look and its 29 themes')+'</span></span>'+ICON.right+'</button></div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="setlist">'+[["zh","中文"],["en","English"]].map(([k,l])=>'<button class="opt" data-act="lang" data-l="'+k+'" aria-pressed="'+(LANG===k)+'">'+l+'</button>').join("")+'</div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('更多','More')+'</p><div class="setlist">'
-    +row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'</div>'
+    +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'</div>'
     +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('推拉机 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+'</p>')}
 
 /* ---------- header, dock, routing ---------- */
