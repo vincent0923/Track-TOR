@@ -1,8 +1,6 @@
-/* 推拉机 main interface (P1): the bits of the classic app's logic it needs. js/core.js holds the programme, storage
-   (lsLoad / lsSave) and sessionDoc; js/diet.js the calorie maths; this file the rest, written without the classic
-   page's DOM. Records are shared with classic.html: both read and write the same tracktor-data. */
+/* 推拉机 data helpers. js/core.js holds the programme, storage (lsLoad / lsSave) and sessionDoc; js/diet.js the
+   calorie maths and the food editor; this file the rest: series for charts, next sessions, records, G, sounds. */
 
-window.P1=true;   /* js/coros.js, shared with the classic page, checks this */
 let toastT=0;
 function toast(t){const el=document.getElementById("toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("on"),2200)}
 /* v1.02a kept extras by date: move each day into the session done that day, else the latest one before it, else the
@@ -72,7 +70,7 @@ const SFX={tick:()=>{tone(784,0,.09,"triangle",.2);tone(1175,.06,.16,"triangle",
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 
 
-/* ---------- moved from the classic page (js/ui.js, js/progress.js) ---------- */
+/* ---------- records, celebrations ---------- */
 function md(s){if(!s)return "";const p=s.split("-");return (+p[1])+"."+(+p[2])}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function numOrNull(v){if(v===""||v==null)return null;const n=Number(v);return isFinite(n)?n:null}

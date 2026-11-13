@@ -2,7 +2,7 @@
 """Cache-busting stamp: run before every commit that touches css/ or js/.
 
 Hashes every css/js file and writes the first 8 hex digits into the ?v= part of the
-<link>/<script> URLs in index.html (the main interface) and classic.html, so a new page can never load old scripts or styles
+<link>/<script> URLs in index.html, so a new page can never load old scripts or styles
 from a browser, phone or CDN cache."""
 import hashlib, pathlib, re, sys
 
@@ -14,7 +14,7 @@ for f in files:
 stamp = h.hexdigest()[:8]
 
 changed = False
-for name in ("index.html", "classic.html"):
+for name in ("index.html",):
     page = root / name
     html = page.read_text(encoding="utf-8")
     new = re.sub(r'((?:href|src)="(?:css|js)/[\w.-]+\.(?:css|js))(?:\?v=[0-9a-f]+)?"', r'\1?v=' + stamp + '"', html)

@@ -1,21 +1,17 @@
-/* 推拉机 main interface (P1): the screens. Training writes to the same records as the classic page (classic.html);
-   what is not built here yet (logging food and body measures, COROS, profile, backup, the 29 classic themes) opens
-   the classic page at that spot, with a way back. */
+/* 推拉机 interface: the screens (training, diet, progress), the dock, the settings list and the bottom sheets. */
 
 /* ---------- small helpers ---------- */
 const $=s=>document.querySelector(s);
 const PK="tracktor-p1-";
-/* things not built here yet open the classic page at that spot (see the ?go= handler in js/main.js) */
+/* links in the page: settings sheets (p1:…), sync, goals, the food editor, body records */
 const bridge=to=>{
   if(to.startsWith("p1:")){p1Open(to.slice(3));return}
   if(to==="sync"){closeSheet();p1Sync(false);return}
   if(to==="goals"){p1Open("goals");return}
   if(to==="diet"||to.startsWith("diet:")){closeSheet();openDietEntryModal(to.slice(5)||today());return}
-  if(to.startsWith("rec:")){closeSheet();openRecord(to.slice(4));return}
-  location.href="classic.html?go="+encodeURIComponent(to)};
+  if(to.startsWith("rec:")){closeSheet();openRecord(to.slice(4))}};
 /* the shared editors (food in js/diet.js, body records in js/p1data.js) call these after saving: redraw this page */
 function renderAll(){if(typeof show==="function"&&typeof cur!=="undefined")show(cur,false,true)}
-function renderDietAll(){renderAll()}
 const WD_ZH=["日","一","二","三","四","五","六"],WD_EN=["Su","Mo","Tu","We","Th","Fr","Sa"],WD=LANG==="en"?WD_EN:WD_ZH;
 const MON_EN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmt=v=>v==null?"–":Math.round(v).toLocaleString("en-US");
@@ -135,8 +131,8 @@ function restHtml(){return '<div class="rest"><p class="eyebrow">'+T('组间休�
 function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].o=maxOrdOf(run.doc)+1;a[ci].d=true;if(v!=null)a[ci].v=v;lsSave();
   SFX.tick();buzz(18);
   const e=run.p.ex[run.ex];
-  if(a.every(x=>x.d)){SFX.ex();buzz([20,40,30]);
-    if(window.confetti&&!matchMedia("(prefers-reduced-motion: reduce)").matches)confetti({particleCount:40,spread:60,startVelocity:32,origin:{y:.75},colors:[getComputedStyle(document.documentElement).getPropertyValue("--ac").trim(),"#ffffff"],zIndex:60,disableForReducedMotion:true});
+  if(!a.every(x=>x.d))celebrate(1,0);
+  if(a.every(x=>x.d)){SFX.ex();buzz([20,40,30]);popper();celebrate(3,a.some((x,i)=>+x.v>+(run.p.ex[run.ex].target||0))?1:0);
     if(e.unit!=="分钟"){run.askFeel=run.ex;renderFocus();return}
     {const nx=run.sets.findIndex(x=>x.some(y=>!y.d));if(nx>=0)run.ex=nx;renderFocus(true);return}}
   const r=restOf(e);if(r){run.rest=r;run.restMax=r;renderFocus();clearInterval(restT);restT=setInterval(()=>{if(!run){clearInterval(restT);return}run.rest--;
@@ -158,8 +154,7 @@ function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Mat
   let reps=0,sets=0,pu=0;run.sets.forEach((a,i)=>a.forEach(x=>{if(!x.d)return;sets++;if(p.ex[i].unit==="个")reps+=x.v;if(p.ex[i].id==="pullup")pu=Math.max(pu,x.v)}));
   const best=run.best0;
   SFX.done();buzz([30,60,30,60,80]);
-  if(window.confetti&&!matchMedia("(prefers-reduced-motion: reduce)").matches){const c=getComputedStyle(document.documentElement).getPropertyValue("--ac").trim();
-    [0,250,500].forEach((t,i)=>setTimeout(()=>{confetti({particleCount:70,angle:60,spread:60,origin:{x:0,y:.8},colors:[c,"#fff","#FFD24D"],zIndex:60});confetti({particleCount:70,angle:120,spread:60,origin:{x:1,y:.8},colors:[c,"#fff","#FFD24D"],zIndex:60})},t))}
+  cannons();celebrate(10,1);
   $("#focus").innerHTML='<div class="f-top"><span class="sp"></span><button class="mini" data-act="fclose" aria-label="'+T('关闭','Close')+'">'+ICON.x+'</button></div>'
     +'<div class="f-body"><div class="fin"><div class="medal">'+ICON.trophy+'</div><p class="eyebrow">'+LAB(p)+'</p><h2>'+T('练完了','Done')+'</h2>'
     +(pu?'<span class="pill ac" style="margin-top:6px">'+T('引体单组 '+pu+' 个','Best pull-up set '+pu)+(pu>best?T(' · 新纪录',' · new best'):'')+'</span>':'')
@@ -266,12 +261,13 @@ function deltaOf(m,pts,days){days=days==null?30:days;if(pts.length<2)return "";c
   const good=(d>0)===!!m.up;return '<span class="td" style="color:'+(good?"var(--good)":"var(--bad)")+'">'+(d>0?"↑ ":"↓ ")+Math.abs(d).toFixed(m.dec)+' '+m.unit+' · '+span+'</span>'}
 function goalsHtml(){const st=state.settings,gap=gapAllTime();
   const pu=pullSeries(),wt=avg7(wtMerged()),wz=series("waist");
-  const G=[{n:T("引体","Pull-ups"),c:"var(--pull)",cur:pu.length?pu[pu.length-1].y:null,start:0,tg:+st.p||null,u:T("个","reps")},
-    {n:T("腰围","Waist"),c:"var(--ac)",cur:wz.length?wz[wz.length-1].y:null,start:wz.length?wz[0].y:null,tg:+st.z||null,u:"cm"},
-    {n:T("体重","Weight"),c:"var(--sleep)",cur:wt.length?+wt[wt.length-1].y.toFixed(1):null,start:wt.length?wt[0].y:null,tg:+st.w||null,u:"kg"},
-    {n:T("减脂","Fat loss"),c:"#FFB020",cur:gap?+(gap.s/7700).toFixed(1):null,start:0,tg:+st.fat||null,u:"kg"}];
+  const G=[{k:"pullups",n:T("引体","Pull-ups"),c:"var(--pull)",cur:pu.length?pu[pu.length-1].y:null,start:0,tg:+st.p||null,u:T("个","reps")},
+    {k:"waist",n:T("腰围","Waist"),c:"var(--ac)",cur:wz.length?wz[wz.length-1].y:null,start:wz.length?wz[0].y:null,tg:+st.z||null,u:"cm"},
+    {k:"weight",n:T("体重","Weight"),c:"var(--sleep)",cur:wt.length?+wt[wt.length-1].y.toFixed(1):null,start:wt.length?wt[0].y:null,tg:+st.w||null,u:"kg"},
+    {k:"fat",n:T("减脂","Fat loss"),c:"#FFB020",cur:gap?+(gap.s/7700).toFixed(1):null,start:0,tg:+st.fat||null,u:"kg"}];
   return '<section class="dark"><div class="row" style="margin-bottom:14px"><p class="eyebrow sp">'+T('目标','Goals')+'</p></div><div class="goals4">'+G.map(g=>{
     const pct=g.tg&&g.cur!=null&&g.start!=null&&g.start!==g.tg?Math.max(0,Math.min(1,(g.cur-g.start)/(g.tg-g.start))):0;
+    if(g.tg&&g.cur!=null)milestone(g.k,pct*100,g.n);
     return '<button data-act="goal"><span class="ring">'+ringSvg(66,7,pct,g.c,"var(--track)")+'<span class="rl"><b class="n" style="font-size:15px;font-weight:800">'+(g.tg?Math.round(pct*100)+"%":"–")+'</b></span></span>'
       +'<span><span class="gn">'+g.n+'</span><br><span class="gv n">'+(g.cur==null?"–":g.cur+" "+g.u)+'</span></span></button>'}).join("")+'</div></section>'}
 function renderProgView(){const v=$("#v-prog"),off=k=>{const s=state.settings.sync;return s&&s[{sleep:"sleep",hrv:"hrv",rhr:"rhr"}[k]]===false};
@@ -332,9 +328,9 @@ function meSheet(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}ca
   const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>'+T('设定','Settings')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">'+T('外观','Appearance')+'</p>'
     +'<div class="setlist">'+[["auto",T("跟随手机","Match the phone")],["light",T("亮","Light")],["dark",T("暗","Dark")]].map(([k,l])=>'<button class="opt" data-act="mode" data-m="'+k+'" aria-pressed="'+(m===k)+'">'+l+'</button>').join("")
-    +'<button class="opt" data-act="shop">'+COIN+'<span class="sp">'+T('G 积分商场','G shop')+'</span><b class="n" style="font-size:14px">'+fmt(coinTotal())+' G</b>'+ICON.right+'</button>'
-    +'<button class="opt" data-act="classic">'+ICON.swatch+'<span class="sp">'+T('经典界面','Classic interface')+'<br><span class="muted" style="font-size:12px;font-weight:500">'+T('原来的样子和 29 套主题','The original look and its 29 themes')+'</span></span>'+ICON.right+'</button></div>'
-    +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="setlist">'+[["zh","中文"],["en","English"]].map(([k,l])=>'<button class="opt" data-act="lang" data-l="'+k+'" aria-pressed="'+(LANG===k)+'">'+l+'</button>').join("")+'</div>'
+    +'<button class="opt" data-act="fx" role="switch" aria-checked="'+fxOn()+'">'+ICON.spark+'<span class="sp">'+T('庆祝效果','Celebrations')+'</span><span class="sw" aria-hidden="true"></span></button>'
+    +'<button class="opt" data-act="shop">'+COIN+'<span class="sp">'+T('G 积分商场','G shop')+'</span><b class="n" style="font-size:14px">'+fmt(coinTotal())+' G</b>'+ICON.right+'</button></div>'
+    +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="seg langseg" translate="no">'+[["zh","简中"],["zht","繁中"],["en","Eng"]].map(([k,l])=>'<button data-act="lang" data-l="'+k+'" aria-pressed="'+((HANT?"zht":LANG)===k)+'">'+l+'</button>').join("")+'</div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('更多','More')+'</p><div class="setlist">'
     +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:weather",ICON.rain,T("天气","Weather"))+row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'</div>'
     +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('推拉机 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+'</p>')}
@@ -380,8 +376,8 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="gapr")setGapRange(+b.dataset.r);
   else if(a==="shop")coinSheet(true);
   else if(a==="go")bridge(b.dataset.to);
-  else if(a==="classic"){try{localStorage.setItem("tracktor-ui","classic")}catch(err){}location.href="classic.html"}
-  else if(a==="lang"){try{localStorage.setItem("tracktor-lang",b.dataset.l);if(b.dataset.l==="en")localStorage.setItem("tracktor-ui","p1")}catch(err){}location.reload()}
+  else if(a==="lang"){try{localStorage.setItem("tracktor-lang",b.dataset.l)}catch(err){}location.reload()}
+  else if(a==="fx"){const on=!fxOn();try{localStorage.setItem("tracktor-p1-fx",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);if(on){SFX.tap();celebrate(2,0)}}
   else if(a==="mode"){try{localStorage.setItem(PK+"mode",b.dataset.m)}catch(err){}applyMode();meSheet()}
   else if(run){
     if(a==="fclose"){if(!run.finished&&run.sets.some(x=>x.some(y=>y.d)))toast(T("打过的勾都已保存，下次接着练","Your ticks are saved; carry on next time"));closeRun()}
@@ -403,7 +399,7 @@ engPlanAll();
 handleCorosCallback();
 connectMcp().then(()=>{p1SyncUI();let ls="";try{ls=localStorage.getItem("tracktor-lastsync")||""}catch(e){}
   const t=ls?new Date(ls.replace(" ","T")).getTime():0;if(mcpReady&&(!t||Date.now()-t>2*36e5))p1Sync(true)}).catch(()=>{});
-document.documentElement.lang=LANG==="en"?"en":"zh-CN";
+document.documentElement.lang=LANG==="en"?"en":HANT?"zh-Hant":"zh-CN";
 document.querySelectorAll(".dock [data-v]").forEach(b=>{const l={diet:T("饮食","Diet"),train:T("训练","Train"),prog:T("进展","Progress")}[b.dataset.v];b.querySelector("span").textContent=l;b.setAttribute("aria-label",l)});
 $("#meBtn").setAttribute("aria-label",T("设定","Settings"));$("#syncBtn").setAttribute("aria-label",T("同步","Sync"));
 let start="train";try{start=localStorage.getItem(PK+"tab")||"train"}catch(e){}

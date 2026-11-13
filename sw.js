@@ -1,11 +1,18 @@
 // Service Worker for 推拉机 track-TOR PWA
-const CACHE_NAME = "tracktor-pwa-v8";
+const CACHE_NAME = "tracktor-pwa-v9";
 const ASSETS = [
   "./",
   "./index.html",
-  "./classic.html",
   "./css/p1.css",
+  "./js/hant.js",
+  "./js/core.js",
+  "./js/diet.js",
+  "./js/confetti.js",
+  "./js/sheetcore.js",
+  "./js/backupcore.js",
   "./js/p1data.js",
+  "./js/p1fx.js",
+  "./js/coros.js",
   "./js/engine.js",
   "./js/p1.js",
   "./js/p1settings.js",
@@ -15,38 +22,7 @@ const ASSETS = [
   "./icon-192.png",
   "./icon-512.png",
   "./icon.svg",
-  "./img/wooly/vine-light.svg",
-  "./img/wooly/vine-dark.svg",
-  "./img/wooly/floor-light.svg",
-  "./img/wooly/floor-dark.svg",
-  "./img/wooly/girl.png",
-  "./img/wooly/ball.png",
-  "./css/app.css",
-  "./js/core.js",
-  "./js/zzfx.js",
-  "./js/sfxr.js",
-  "./js/confetti.js",
-  "./js/icons.js",
-  "./js/ui.js",
-  "./js/train.js",
-  "./js/progress.js",
-  "./js/backupcore.js",
-  "./js/backup.js",
-  "./js/coros.js",
-  "./js/welcome.js",
-  "./js/diet.js",
-  "./js/sheetcore.js",
-  "./js/sheet.js",
-  "./js/main.js",
-  "./fonts/barlow-condensed-500.woff2",
-  "./fonts/barlow-condensed-600.woff2",
-  "./fonts/barlow-condensed-700.woff2",
-  "./fonts/archivo-wdth.woff2",
-  "./fonts/vt323.woff2",
-  "./fonts/bricolage-wght.woff2",
-  "./fonts/geist-wght.woff2",
-  "./fonts/geist-mono-wght.woff2",
-  "./fonts/share-tech-mono.woff2"
+  "./fonts/geist-wght.woff2"
 ];
 
 self.addEventListener("install", (e) => {
@@ -67,10 +43,10 @@ self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;   // COROS and other sites go straight to the network
-  // Network first for the page, its code and the theme pictures (img/ can be redrawn in place); the cached copy
+  // Network first for the page and its code; the cached copy
   // is used only when offline. Scripts and styles carry a ?v= stamp from tools/stamp.py, so a new page can't
   // pick up old ones; when a newly stamped copy is stored, the copies with older stamps are dropped.
-  if (e.request.mode === "navigate" || /\.(html|js|css)$/.test(url.pathname) || url.pathname.includes("/img/") || url.pathname.endsWith("/")) {
+  if (e.request.mode === "navigate" || /\.(html|js|css)$/.test(url.pathname) || url.pathname.endsWith("/")) {
     e.respondWith(
       fetch(e.request).then((resp) => {
         if (resp && resp.status === 200) {

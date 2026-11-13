@@ -404,3 +404,13 @@ button.dd:active b{transform:scale(.9)}
 .mask .wxnow svg{width:22px;height:22px;color:var(--ac-text);flex:none}
 .mask .wxres{display:grid;gap:6px}
 .mask .wxres .opt{text-align:left}
+/* fireworks over everything, never in the way */
+canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-events:none}
+/* on/off switch inside a settings row */
+.opt .sw{position:relative;flex:none;width:42px;height:26px;border-radius:999px;background:var(--line);transition:background .25s var(--ease)}
+.opt .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .35s var(--spring)}
+.opt[aria-checked="true"] .sw{background:var(--ac)}
+.opt[aria-checked="true"] .sw::after{transform:translateX(16px)}
+/* language: one row, three equal parts */
+.langseg{display:flex;width:100%;padding:4px}
+.langseg button{flex:1;height:40px;font-size:14px}

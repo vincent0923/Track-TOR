@@ -4,7 +4,6 @@
    Days found in the sheet replace the local diet for those dates; other dates, and every
    non-diet record (weight, waist, heart rate, training), are left alone. */
 const SHEET_URL_K = "dietSheetUrl", SHEET_STATUS_K = LS + "-sheet-status";
-const PROMPT_VER_K = LS + "-prompt-ver";
 
 /* RFC 4180: quoted fields may hold the delimiter, line breaks and doubled quotes ("").
    The delimiter is guessed from the first line: comma, tab or semicolon. */
@@ -276,19 +275,10 @@ async function readSheetRows(u){
   return { rows: null, notes };
 }
 
-function paintSheetStatus(){
-  const el = document.getElementById("dsrcStatus"); if(!el) return;
-  let s = null; try{ s = JSON.parse(localStorage.getItem(SHEET_STATUS_K) || "null"); }catch(e){}
-  el.classList.toggle("err", !!(s && !s.ok));
-  if(!s){ el.textContent = T("状态：还没有同步", "Status: not synced yet"); return; }
-  const last = s.at ? T("上次同步 ", "Last synced ") + s.at + T(" · " + s.rows + " 条 / " + s.days + " 天", " · " + s.rows + " rows / " + s.days + " days") : "";
-  el.textContent = T("状态：", "Status: ") + (s.ok ? last : (s.msg + (last ? T("（", " (") + last + T("）", ")") : "")));
-}
 function setSheetStatus(patch){
   let s = {}; try{ s = JSON.parse(localStorage.getItem(SHEET_STATUS_K) || "{}") || {}; }catch(e){}
   s = Object.assign(s, patch);
   try{ localStorage.setItem(SHEET_STATUS_K, JSON.stringify(s)); }catch(e){}
-  paintSheetStatus();
 }
 
 /* share buttons add words around the link ("【腾讯文档】饮食记录 https://…"); keep just the link */

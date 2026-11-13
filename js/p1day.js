@@ -1,6 +1,6 @@
 /* 推拉机 main interface: one day. Tap a day on the calendar for what was done that day: the finished sessions (with
    a way to correct them), extra practice (pull-ups by default, or any move), and that day's food and body numbers.
-   Extras go in the day's finished session (doc.xs), or in dayx[date] on a day without one, as on the classic page. */
+   Extras go in the day's finished session (doc.xs), or in dayx[date] on a day without one. */
 (function(){
 const QUICK=[["pullup","引体向上","Pull-ups","个"],["pushup","俯卧撑","Push-ups","个"],["squat","深蹲","Squats","个"],["plank","平板支撑","Plank","秒"],["hang","悬吊","Dead hang","秒"]];
 const qOf=id=>QUICK.find(q=>q[0]===id);
@@ -55,7 +55,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
     else{x.d=!x.d;if(x.d)x.o=maxOrdOf(doc)+1;else if(x.o){const o=x.o;delete x.o;Object.values(doc.sets).forEach(arr=>arr.forEach(y=>{if(y.o>o)y.o--}))}}
     lsSave();render();return}
   if(a==="xv"){const id=b.dataset.id,it=(xDocFor(curDay,false).xs||[]).find(i=>i.id===id),st=it&&it.unit==="秒"?5:1;pending[id]=Math.max(0,(pending[id]||0)+(+b.dataset.dv)*st);render();return}
-  if(a==="xlog"){const doc=xDocFor(curDay,true),it=doc.xs[+b.dataset.k];it.sets.push({v:pending[it.id],d:true});if(typeof SFX!=="undefined")SFX.tick();if(typeof buzz==="function")buzz(16);changed();return}
+  if(a==="xlog"){const doc=xDocFor(curDay,true),it=doc.xs[+b.dataset.k];it.sets.push({v:pending[it.id],d:true});if(typeof SFX!=="undefined")SFX.tick();if(typeof buzz==="function")buzz(16);if(curDay===today())celebrate(1,0);changed();return}
   if(a==="xun"){const doc=xDocFor(curDay,false),it=doc.xs[+b.dataset.k],done=it.sets.filter(x=>x.d),x=done[+b.dataset.i];it.sets.splice(it.sets.indexOf(x),1);
     if(!it.sets.length)doc.xs.splice(+b.dataset.k,1);if(doc.xs&&!doc.xs.length&&state.dayx[curDay]===doc&&!doc.note)delete state.dayx[curDay];changed();return}
   if(a==="xadd"){let id=b.dataset.id,name,unit="个";

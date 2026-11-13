@@ -1,8 +1,4 @@
 /* ---------- diet: intake, burn, the gap, the intake chart and the daily food logs ---------- */
-function latestDietOpenSet(days){
-  const ks = Object.keys(days||{}).sort();
-  return new Set(ks.length ? [ks[ks.length-1]] : []);
-}
 
 /* used only until the user fills in their own profile or weight */
 const AGE_DEFAULT = 30, W_DEFAULT = 65, TEF = 0.09, TEF_DEFAULT = 1850;
@@ -115,123 +111,11 @@ function burnOfDate(date){
   return bmrOfDate(date) + watchBurn(date, act) + tefFor(intake===null ? null : (d && d.items), intake);
 }
 
-function dietRangeDates(){
-  const end = today(), out = [];
-  for(let i=dietState.range-1; i>=0; i--) out.push(ymdAdd(end, -i));
-  return out;
-}
-
 function dietGapOf(d){
   const a = intakeOf(d), b = burnOfDate(d);
   return (a!==null && b!==null) ? b - a : null;
 }
 
-function dietMovingSum(date, n){
-  let s = 0, c = 0;
-  for(let i=0; i<n; i++){
-    const g = dietGapOf(ymdAdd(date, -i));
-    if(g !== null){ s += g; c++; }
-  }
-  return c===n ? { s, c } : null;
-}
-
-function renderDietChart(){
-  renderGapTile();
-  const dates = dietRangeDates();
-  const W=340,H=190,L=34,R=30,TP=10,B=22;
-  /* 只画有饮食记录的日子，没记账的日子不单独画消耗 */
-  const pts = dates.map(d=>{ const a = intakeOf(d); return { d, a, b: a===null ? null : burnOfDate(d) }; });
-  const vals = pts.flatMap(p=>[p.a, p.b]).filter(v=>v!==null);
-  let lo=1200, hi=2600;
-  if(vals.length){
-    lo = Math.min(lo, Math.floor(Math.min(...vals)/200)*200);
-    hi = Math.max(hi, Math.ceil(Math.max(...vals)/200)*200);
-  }
-  /* right axis: protein in grams */
-  const pr = dates.map(proteinOf), need = dates.map(proteinNeed), cap = dates.map(proteinCap);
-  const phi = Math.max(40, Math.ceil(Math.max(...cap, ...pr.filter(v=>v!==null)) * 1.1 / 40) * 40);
-  const step = (W-L-R) / Math.max(1, dates.length-1);
-  const x = i => L + i*step, y = v => TP + (hi-v)/(hi-lo)*(H-TP-B), yp = v => TP + (phi-v)/phi*(H-TP-B);
-  let g = "";
-  for(let v=lo; v<=hi; v += (hi-lo>1600 ? 400 : 200)){
-    g += `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${L-4}" y="${y(v)+4}" text-anchor="end">${v}</text>`;
-  }
-  for(let v=0; v<=phi; v+=phi/4) g += `<text x="${W-R+4}" y="${yp(v)+4}" text-anchor="start" style="fill:var(--protein)">${Math.round(v)}</text>`;
-  const lab = dates.length<=14 ? 2 : (dates.length<=30 ? 7 : 14);
-  dates.forEach((d,i)=>{
-    if((dates.length-1-i)%lab===0){
-      g += `<text x="${x(i)}" y="${H-6}" text-anchor="middle">${+d.slice(5,7)}.${+d.slice(8)}</text>`;
-    }
-  });
-  g += serOpen(W, H, L);
-  const bw = Math.max(2, Math.min(10, step*0.6));
-  /* Christmas: a deficit is a green-and-white candy stick, a surplus a red-and-white one */
-  const candy = document.documentElement.getAttribute("data-skin")==="xmas";
-  if(candy) g += `<defs>${[["candyG","#2E7D4F"],["candyR","#B3192E"]].map(([id,c])=>`<pattern id="${id}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect width="5" height="5" fill="#fff"/><rect width="2.6" height="5" fill="${c}"/></pattern>`).join("")}</defs>`;
-  pts.forEach((p,i)=>{
-    if(p.a!==null && p.b!==null){
-      const top = Math.min(y(p.a), y(p.b)), h = Math.abs(y(p.a) - y(p.b));
-      g += candy
-        ? `<rect x="${x(i)-bw/2}" y="${top}" width="${bw}" height="${Math.max(1,h)}" rx="${bw/2}" fill="url(#${p.b>=p.a ? "candyG" : "candyR"})" stroke="rgba(60,40,30,.18)" stroke-width=".6"/>`
-        : `<rect x="${x(i)-bw/2}" y="${top}" width="${bw}" height="${Math.max(1,h)}" rx="1.5" fill="${p.b>=p.a ? "var(--gain)" : "var(--loss)"}" fill-opacity=".35"/>`;
-    }
-  });
-  const line = (key) => linePath(pts.map((p,i)=>p[key]===null ? null : {x:x(i), y:y(p[key])}));
-  const dotsFor = (key, col) => pts.map((p,i)=>p[key]===null?"":`<circle cx="${x(i)}" cy="${y(p[key])}" r="${dates.length>30?1.3:1.9}" fill="${col}"/>`).join("");
-  const bm = dates.map(bmrOfDate);
-  g += `<path d="${bm.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join("")}" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3" stroke-opacity=".8"/><text x="${W-R}" y="${y(bm[bm.length-1])-5}" text-anchor="end">BMR ${Math.round(bm[bm.length-1])}</text>`;
-  g += `<path d="${line("b")}" fill="none" stroke="var(--burn)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>`;
-  g += `<path d="${line("a")}" fill="none" stroke="var(--intake)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
-  g += dotsFor("b", "var(--burn)") + dotsFor("a", "var(--intake)");
-  /* protein: a shaded band from 1.6 to 2.2 g/kg (dotted edges), a line with dots for what was eaten;
-     filled dot = enough, hollow = short. Above the band is fine, more so while cutting */
-  const pl = arr => arr.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+yp(v).toFixed(1)).join("");
-  g += `<path d="${pl(cap)}${need.map((v,i)=>"L"+x(need.length-1-i).toFixed(1)+" "+yp(need[need.length-1-i]).toFixed(1)).join("")}Z" fill="var(--protein)" fill-opacity=".1"/>`;
-  g += `<path d="${pl(need)}" fill="none" stroke="var(--protein)" stroke-width="1.3" stroke-dasharray="1.5 3" stroke-linecap="round"/>`;
-  g += `<path d="${pl(cap)}" fill="none" stroke="var(--protein)" stroke-width="1.3" stroke-dasharray="1.5 3" stroke-linecap="round"/>`;
-  { const pd = linePath(pr.map((v,i)=>v===null ? null : {x:x(i), y:yp(v)}));
-    /* protein is a broad see-through stroke: it shows the level without getting in the way of the calorie lines;
-       a day with no logged neighbour is a short blob */
-    g += `<path d="${pd}" fill="none" stroke="var(--protein)" stroke-width="7" stroke-opacity=".3" stroke-linejoin="round" stroke-linecap="round"/>`;
-    pr.forEach((v,i)=>{ if(v===null || (pr[i-1]!=null) || (pr[i+1]!=null)) return;
-      g += `<circle cx="${x(i)}" cy="${yp(v)}" r="3.5" fill="var(--protein)" fill-opacity=".3"/>`; }); }
-  g += `</g><line id="dxh" x1="0" x2="0" y1="${TP}" y2="${H-B}" stroke="var(--ink)" stroke-opacity=".35" stroke-width="1" visibility="hidden"/>`;
-  
-  const box = document.getElementById("dietChart");
-  if(!box) return;
-  box.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T("摄入与估算总消耗","Intake vs estimated total burn")}">${g}</svg>`;
-  const svg = box.querySelector("svg"), tip = document.getElementById("dietTip"), xh = svg.querySelector("#dxh");
-  const pick = e => {
-    const r = svg.getBoundingClientRect();
-    const sx = (e.clientX - r.left) / r.width * W;
-    const i = Math.max(0, Math.min(dates.length-1, Math.round((sx-L)/step)));
-    const p = pts[i];
-    xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.setAttribute("visibility", "visible");
-    const gap = (p.a!==null && p.b!==null) ? p.b - p.a : null;
-    const pv = pr[i], pn = need[i], pc = cap[i];
-    tip.innerHTML = `${dotDateStr(p.d).slice(5)}　${T("摄入","In")} <b>${f0Dec(p.a)}</b>　${T("消耗","Burn")} <b>${f0Dec(p.b)}</b>　${T("基代","BMR")} <b>${f0Dec(bmrOfDate(p.d))}</b>` + (gap===null ? "" : `　${gap>=0 ? T("缺口","Deficit") : T("盈余","Surplus")} <b>${f0Dec(Math.abs(gap))}</b>`)
-      + `<br>${T("蛋白质","Protein")} <b>${pv===null ? "–" : Math.round(pv)}</b> g（${Math.round(pn)}–${Math.round(pc)}）` + (pv===null ? "" : (pv < pn ? T("　还差 " + Math.round(pn-pv) + " g","　" + Math.round(pn-pv) + " g short") : T("　够了 ✓","　enough ✓")));
-    tip.hidden = false;
-    const bbox = box.getBoundingClientRect();
-    const px = r.left - bbox.left + x(i)/W * r.width;
-    tip.style.left = Math.max(8, Math.min(bbox.width - tip.offsetWidth - 8, px - tip.offsetWidth/2)) + "px";
-  };
-  svg.addEventListener("pointermove", pick);
-  svg.addEventListener("pointerdown", pick);
-  svg.addEventListener("pointerleave", ()=>{ tip.hidden=true; xh.setAttribute("visibility","hidden"); });
-}
-
-/* one tile for the cumulative gap: tap to step through 3 / 7 / 14 / 30 days and everything on record */
-const GAP_WINS = [3, 7, 14, 30, 0];          /* 0 = since the first logged day */
-const GAP_WIN_K = LS + "-gapwin";
-try{ const w = +localStorage.getItem(GAP_WIN_K); if(GAP_WINS.includes(w) && localStorage.getItem(GAP_WIN_K) !== null) dietState.gw = w; }catch(e){}
-/* the chart shows the same stretch the gap tile sums (at least a week; "since the first log" spans every logged day) */
-function syncDietRange(){
-  const n = dietState.gw;
-  if(n){ dietState.range = Math.max(7, n); return; }
-  const ks = Object.keys(state.diet).sort();
-  dietState.range = ks.length ? Math.min(180, Math.max(14, Math.round(dnum(today()) - dnum(ks[0])) + 1)) : 14;
-}
 function gapAllTime(){
   const ks = Object.keys(state.diet).sort(); if(!ks.length) return null;
   let s = 0, c = 0;
@@ -252,64 +136,7 @@ function fatWord(estKg, from, to){
   if(Math.abs(estKg - seen) <= XCHECK_TOL * Math.abs(seen)) return "about";
   return estKg > seen ? "high" : "low";
 }
-function renderGapTile(){
-  const el = document.getElementById("dietGapTile"); if(!el) return;
-  const n = dietState.gw;
-  /* only finished days are summed: the window ends yesterday, because today's food and burn aren't complete until midnight */
-  const m = n ? dietMovingSum(ymdAdd(today(), -1), n) : gapAllTime();
-  const label = n ? T("近 " + n + " 天", "Last " + n + " days") : (m ? T("有记录以来（" + m.c + " 天）", "Since first log (" + m.c + " days) ") : T("有记录以来", "Since first log "));
-  const head = `<span class="gl">${label}${m ? (m.s >= 0 ? T("热量缺口","calorie deficit") : T("热量盈余","calorie surplus")) : T("热量缺口","calorie gap")}</span><span class="gn">›</span>`;
-  if(!m){ el.innerHTML = head + `<span class="gv"><b>–</b><span class="gf">${T("记账天数不够","not enough logged days")}</span></span>`; return; }
-  const s = Math.round(m.s), g = Math.round(Math.abs(m.s) / 7.7), to = ymdAdd(today(), -1);
-  const from = n ? ymdAdd(to, -(n - 1)) : Object.keys(state.diet).sort()[0];
-  const w = fatWord(m.s / 7700, from, to);
-  const zh = {about:"约 ", high:"激进估计 ", low:"保守估计 "}[w], en = {about:"about ", high:"aggressive estimate: ", low:"conservative estimate: "}[w];
-  el.innerHTML = head + `<span class="gv"><b class="${s >= 0 ? "g" : "r"}">${Math.abs(s)} kcal</b><span class="gf">${T("（" + zh + g + " g 脂肪）", "(" + en + g + " g fat)")}</span></span>`;
-  rollNum(el.querySelector("b"), "gap-" + n);
-}
 
-function activeDietDayKeys(){
-  const set = new Set([
-    ...Object.keys(state.diet).filter(k=>{
-      const d = state.diet[k];
-      return d && ((d.items && d.items.length) || numVal(d.intakeOverride)!==null || numVal(d.expendOverride)!==null);
-    })
-  ]);
-  return Array.from(set).sort().reverse();
-}
-
-function renderDietDays(){
-  const box = document.getElementById("dietDays");
-  if(!box) return;
-  const keys = activeDietDayKeys();
-  if(!keys.includes(today())) keys.unshift(today());   /* today always has a card: its pencil adds food */
-  box.innerHTML = keys.map(k=>{
-    const d = state.diet[k] || { items:[] }, t = dietTotals(d), intake = intakeOf(k), b = burnOfDate(k);
-    const gap = (b===null || intake===null) ? null : b - intake;
-    const rows = (d.items||[]).map(it=>`<tr><td class="f">${escHtml(it.name)}</td><td>${f1Dec(numVal(it.p))}</td><td>${f1Dec(numVal(it.f))}</td><td>${f1Dec(numVal(it.c))}</td><td>${f0Dec(numVal(it.kcal))}</td><td>${numVal(it.veg) ? f0Dec(numVal(it.veg)) : "–"}</td></tr>`).join("");
-    return `<article class="diet-day">
-      <div class="dhead"><h3><button class="dtoggle" type="button" data-dtoggle="${k}" aria-expanded="${dietState.open.has(k)}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>${dotDateStr(k)}</button></h3>
-        <div class="pills"><span class="pill">${T("摄入","In")} <b>${f0Dec(intake)}</b></span><span class="pill">${T("消耗","Burn")} <b>${f0Dec(b)}</b></span>${gap===null ? "" : `<span class="pill ${gap>=0 ? "g" : "r"}">${gap>=0 ? T("缺口","Deficit") : T("盈余","Surplus")} <b>${f0Dec(Math.abs(gap))}</b></span>`}
-        <button class="chedit iconbtn" type="button" data-dedit="${k}" aria-label="${T("编辑","Edit")}" title="${T("编辑","Edit")}">${PENCIL_ICON}</button></div></div>
-      <div class="tbl"${dietState.open.has(k) ? "" : " hidden"}><table><thead><tr><th>${T("食物","Food")}</th><th>${T("蛋白质","Protein")}<small>g</small></th><th>${T("脂肪","Fat")}<small>g</small></th><th>${T("碳水","Carbs")}<small>g</small></th><th>${T("热量","kcal")}<small>kcal</small></th><th>${T("蔬菜","Veg")}<small>g</small></th></tr></thead>
-      <tbody>${rows}<tr class="tot"><td class="f"><b>${T("合计","Total")}</b></td><td>${f1Dec(t.p)}</td><td>${f1Dec(t.f)}</td><td>${f1Dec(t.c)}</td><td>${f0Dec(intake)}</td><td>${t.veg ? f0Dec(t.veg) : "–"}</td></tr></tbody></table></div>
-      ${d.note ? `<p class="note"${dietState.open.has(k) ? "" : " hidden"}>${escHtml(d.note)}</p>` : ""}
-    </article>`;
-  }).join("");
-}
-
-function renderDietAll(){
-  renderGoals();                       /* the fat-loss goal follows the diet log */
-  renderDietChart();
-  renderDietDays();
-}
-
-/* the newest logged day starts expanded */
-function initDiet(){
-  dietState.open = latestDietOpenSet(state.diet);
-  syncDietRange();
-  renderDietAll();
-}
 
 
 const CALC_WARN_DIFF = 100;
@@ -483,13 +310,11 @@ function openDietEntryModal(initDate){
       if(formState.note) dayDoc.note = formState.note;
       if(formState.expendOverride !== null) dayDoc.expendOverride = formState.expendOverride;
       state.diet[curDate] = dayDoc;
-      dietState.open.add(curDate);
     } else {
       delete state.diet[curDate];
     }
     if(formState.active !== null || formState.kg !== null) saveMetric(curDate, { active: formState.active, weight: formState.kg });
     lsSave();
-    renderDietAll();
     renderAll();
   }
 
@@ -588,7 +413,7 @@ function openDietEntryModal(initDate){
         if(!confirm(T("删除 "+curDate+" 的全部饮食记录？","Delete all food logs for "+curDate+"?"))) return;
         delete state.diet[curDate];
         lsSave();
-        renderDietAll();
+        renderAll();
         closeIt();
       });
     }
@@ -606,24 +431,5 @@ function openDietEntryModal(initDate){
   return m;
 }
 
-document.addEventListener("click", e=>{
-  if(e.target.closest("#dietGapTile")){
-    dietState.gw = GAP_WINS[(GAP_WINS.indexOf(dietState.gw) + 1) % GAP_WINS.length];
-    try{ localStorage.setItem(GAP_WIN_K, String(dietState.gw)); }catch(err){}
-    syncDietRange();
-    renderGapTile();
-    renderDietChart();
-    return;
-  }
-  const tog = e.target.closest("[data-dtoggle]");
-  if(tog){
-    const k = tog.dataset.dtoggle;
-    if(dietState.open.has(k)) dietState.open.delete(k); else dietState.open.add(k);
-    renderDietDays();
-    return;
-  }
-  const ed = e.target.closest("[data-dedit]");
-  if(ed){ openDietEntryModal(ed.dataset.dedit); return; }
-});
 
 

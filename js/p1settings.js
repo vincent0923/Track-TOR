@@ -1,5 +1,5 @@
-/* 推拉机 main interface: settings that used to open the classic page. Profile, goals, the food table link, charts &
-   watch calories, backup and restore (the same progress file as the classic page), the first-visit welcome and the
+/* 推拉机 main interface: settings sheets. Training plan, profile, goals, the food table link, charts &
+   watch calories, backup and restore (the progress file, js/backupcore.js), the first-visit welcome and the
    5-day backup reminder. Editors use the shared .mask > .sheet look (css/p1.css). */
 (function(){
 const SAVE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -47,7 +47,7 @@ function openCharts(){const full=!!st().watchFull;
     +'<p class="calc-msg">'+T("只改估算的消耗、缺口和减脂，同步来的数字不变。打折：日常活动最多按步数估算的 1.5 倍加 120 kcal，运动记录 × 0.7，低强度运动 × 0.5，有功率计的骑行全算。全算：手表报多少算多少。","Changes only the estimated burn, gap and fat loss; synced numbers stay. Discounted: everyday movement up to 1.5 × what the steps allow plus 120 kcal, workouts × 0.7, low-intensity ones × 0.5, power-meter rides in full. In full: every kcal the watch reports.")+'</p>','<span></span>');
   S.m.addEventListener("click",e=>{const c=e.target.closest("[data-sync]");if(c){const s=Object.assign({},st().sync||{}),on=!syncOnP(c.dataset.sync);s[c.dataset.sync]=on;st().sync=s;c.setAttribute("aria-pressed",String(on));lsSave();renderAll();return}
     const w=e.target.closest("[data-wf]");if(w){const on=w.dataset.wf==="1";if(on)st().watchFull=true;else delete st().watchFull;S.m.querySelectorAll("[data-wf]").forEach(b=>b.classList.toggle("active",b===w));lsSave();renderAll();toast(on?T("手表热量全算","Watch calories in full"):T("手表热量打折","Watch calories discounted"))}})}
-/* backup: the same progress file as the classic page (js/backupcore.js); iPhone home-screen apps save through the share sheet */
+/* backup: the progress file (js/backupcore.js); iPhone home-screen apps save through the share sheet */
 async function saveBackup(){const name=backupFileName(),file=new File([await encodeBackup()],name,{type:"text/plain"});
   const ios=/iP(hone|ad|od)/.test(navigator.userAgent);
   if(ios&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});markBackedUp();toast(T("进度文件已保存","Progress file saved"))}catch(e){if(!e||e.name!=="AbortError")toast(T("保存失败，请再试一次","Couldn't save; try again"))}return}

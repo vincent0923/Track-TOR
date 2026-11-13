@@ -2,8 +2,6 @@ const CLOSE_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const PENCIL_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 20h6"/></svg>';
 const CALC_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8.5 6.5h7"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M15.5 14.5h.01M8.5 18h.01M12 18h.01M15.5 18h.01"/></svg>';
 const SAVE_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>';
-const EYE_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
-      EYE_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.9 17.9A10.4 10.4 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.1-5.9M9.9 5.2A9.7 9.7 0 0 1 12 5c6.5 0 10 7 10 7a18.6 18.6 0 0 1-2.2 3.2M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M2 2l20 20"/></svg>';
 /* ---------- program ---------- */
 const STRETCH = {id:"stretch",name:"拉伸",en:"Stretch",unit:"分钟",target:5,sets:1};
 /* From push D5 / pull D5: no decline push-ups (no consistent bench height when travelling), diamonds 3 sets, wall sit 3 × 20 s on both days. */
@@ -123,7 +121,7 @@ function mergeLegacyDiet(metrics, diet, legacy){
 
 /* ---------- helpers ---------- */
 function pad(n){return String(n).padStart(2,"0")}
-let LANG="zh";try{LANG=localStorage.getItem(LS+"-lang")||"zh"}catch(e){}
+let LANG="zh";try{LANG=localStorage.getItem(LS+"-lang")==="en"?"en":"zh"}catch(e){}   /* "zht" is Chinese shown in Traditional characters (js/hant.js) */
 const T=(zh,en)=>LANG==="en"?en:zh;
 const N=e=>T(e.name,e.en), NS=e=>T(e.name.replace(/（.*）/,""),e.en.replace(/\s*\(.*\)/,"")), NOTE=e=>T(e.note,e.noteEn);
 const U=u=>T(u,{"个":"reps","秒":"s","分钟":"min"}[u]||u);
@@ -131,16 +129,12 @@ const U=u=>T(u,{"个":"reps","秒":"s","分钟":"min"}[u]||u);
 function dayName(kind){const pl=typeof state!=="undefined"&&state.settings&&state.settings.plan,d=pl&&pl.days&&pl.days.find(x=>x.kind===kind);
   if(d)return {zh:d.zh,en:d.en||d.zh};return kind==="push"?{zh:"推练",en:"Push"}:kind==="pull"?{zh:"拉练",en:"Pull"}:{zh:"C 练",en:"Day C"}}
 const LAB=p=>{const n=dayName(p.kind);return T(n.zh+" D"+p.day,n.en+" D"+p.day)};
-const SHORT=p=>{const n=dayName(p.kind);return T(n.zh.slice(0,1)+"D"+p.day,n.en+" D"+p.day)};
 function today(){const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
 /* ---------- state & storage ---------- */
 /* nothing personal by default: the welcome sheet or a COROS sync fills these in */
 const GDEF={h:null,hC:null,hSrc:"coros",w:null,z:null,p:null,b:null,sex:null};
 const H_FALLBACK=170;
 const state = {sessions:{}, metrics:{}, diet:{}, settings:Object.assign({},GDEF), dayx:{}};
-/* diet page view state only; the diet records themselves are state.diet */
-const dietState = { range:14, gw:7, open:new Set() };
-const openDays = new Set();
 /* first visit on this browser: nothing saved yet (read before anything writes) */
 const FRESH = (()=>{try{return !localStorage.getItem(DATA_K)&&!localStorage.getItem("tracktor-coros-token")}catch(e){return false}})();
 let lsOk = true;
@@ -159,8 +153,8 @@ function lsSave(){
 }
 
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-/* removed experiments leave nothing behind: the Rings page's own log and the prototypes' preferences */
-try{["tracktor-rings","tracktor-proto-tab","tracktor-proto-mode","tracktor-proto2-tab"].forEach(k=>localStorage.removeItem(k))}catch(e){}
+/* removed things leave nothing behind: the Rings page's log, the prototypes' and the classic interface's preferences */
+try{["rings","proto-tab","proto-mode","proto2-tab","ui","theme","sound","vol","wear","priv","dock","tab","charts","calfold","goalpin","fromp1","sheet-try","gapwin","prompt-ver"].forEach(k=>localStorage.removeItem("tracktor-"+k))}catch(e){}
 
 function sessionDoc(sid){
   let s = state.sessions[sid];

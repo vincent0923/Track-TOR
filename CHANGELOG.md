@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.43a] — 2026-11-13
+
+### 新增 / Added
+- 🎆 **庆祝效果搬过来了**：每打一个勾放一支烟花（带爆炸声），做完一个动作彩带加三支烟花，整次练完两边礼炮加一场烟花、最后一支大的；目标圆环每跨过一个新的 2% 放一场烟花；今天的加练每记一组也放一支。设定 › 外观里有「庆祝效果」开关。
+- 🎆 **Celebrations are back**: a firework (with a bang) for every tick, confetti and three fireworks for each finished exercise, cannons and a firework show ending in a big one for a finished session, a show for each new 2% step on a goal ring, and one firework per extra set logged today. Settings › Appearance › Celebrations turns them off.
+- 🀄 **繁体中文**：设定 › 语言是一行三格：简中、繁中、Eng。繁中用台湾用字，弹窗和确认框也是繁体。
+- 🀄 **Traditional Chinese**: Settings › Language is one row of three: 简中, 繁中, Eng. 繁中 uses Taiwan forms, dialogs included.
+
+### 移除 / Removed
+- 经典界面（`classic.html`）和它的 29 套主题、Dock 排序、磨损、年度打卡图等都删掉了，只留现在的界面；之前选了经典界面的人打开后直接进现在的界面。数据不受影响，旧进度文件照样能导入。经典界面的代码留在 GitHub 分支 `backup-classic-v1.42a`。
+- The classic interface (`classic.html`) with its 29 themes, dock reordering, wear, the year heatmap and the rest is gone; anyone who had picked it now opens the current interface. Data is untouched and old progress files still import. Its code is kept on the GitHub branch `backup-classic-v1.42a`.
+
 ## [v1.42a] — 2026-11-13
 
 ### 新增 / Added

@@ -17,9 +17,9 @@
 - 只写以后一直有效的约定和找东西的线索，保持简短。做过什么看 `git log` 和 `CHANGELOG.md`，产品现在什么样看 `docs/PRODUCT.md`，打算做什么看私人文档「推拉机：私人规划与施工清单」。
 
 ## 每次发版
-- 现在是「试穿阶段」：主题都是试验，以后会删掉不合适的。新主题、图标、音效、图表画法不升版本号、不写 CHANGELOG，直接提交推送。现在的版本号是 v1.42a。往新界面迁移经典功能算新功能，要升版本号。
+- 现在的版本号是 v1.43a。
 - 只有加了新功能才升版本号。只改视觉或音效、没有新功能的改动，不升版本号、不写 CHANGELOG，测试通过后直接提交推送，不用问。
-- 版本号四处同步：`index.html` 里的 `#ver`，`classic.html` 里的 `.ver`，`README.md` 中英文各一处。
+- 版本号三处同步：`index.html` 里的 `#ver`，`README.md` 中英文各一处。
 - `CHANGELOG.md` 加一条，中英双语。
 - 产品有变化时同步 `docs/PRODUCT.md`。改产品前先读它，里面有设计取向和现在的功能。
 
@@ -27,22 +27,17 @@
 - 省事优先，授权越少越好；健身数据不算敏感。
 - 能用图标就不写字，操作放在它影响的内容旁边。
 - 不加不必要的标签和辅助说明，让布局、按钮和界面本身把意思讲清楚。要解释的放进「i」里，不常驻在页面上。
-- 新界面是标准：极简、做减法。一个强调色，字重三档，大圆角卡片，所有详情和编辑都用底部弹出面板，动效用同一条回弹曲线（详见 `docs/PRODUCT.md`「界面」）。不适合新界面的旧规则一律作废。
+- 极简、做减法。一个强调色，字重三档，大圆角卡片，所有详情和编辑都用底部弹出面板，动效用同一条回弹曲线（详见 `docs/PRODUCT.md`「界面」）。
+- 爽感是核心：打勾放烟花、练完礼炮（`js/p1fx.js`），设定 › 外观可关。
 
 ## 代码结构
-- 静态网页，无构建。两个界面，读写同一份数据：
-  - `index.html`：新界面，默认打开，**以后的开发都从这里开始**。样式 `css/p1.css`，脚本 `js/p1data.js`（从经典界面搬来、不依赖它页面的逻辑，还有 G 的计算）、`js/engine.js`（训练引擎）`js/p1.js`（界面）、`js/p1settings.js`（设定面板、备份恢复、欢迎页、备份提醒）、`js/p1day.js`（日历点某天：当天的训练和修改、加练、当天的饮食和身体数据）和 `js/p1weather.js`（天气：选城市、屏幕效果；`p1settings.js` 用 `p1Sheet`/`p1Reg` 把面板借给它），中英双语都用 `T(中文, English)`，另外加载共用的 `js/core.js`、`js/diet.js`、`js/coros.js`（高驰；新界面设 `window.P1`，它就不碰经典页面的按钮，改调新界面的 `p1SyncUI`/`p1Sync`）、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/backupcore.js`（进度文件格式和打包）、`js/confetti.js`。
-  - `classic.html`：经典界面和 29 套主题，保留到用户说可以删。样式 `css/app.css`，`js/` 其余文件按 `classic.html` 里的顺序加载，共享全局作用域；启动步骤在 `js/main.js`。
-  - 迁移做减法：保留经典界面真正有用的功能，样子按新界面重做，用得少的可以不搬。
-  - 新界面的功能已经不再跳到经典界面；`classic.html?go=…`（`js/main.js`）只留着给以后需要时用。
-  - `index.html` 头部有一段转跳：选了经典界面的人去 `classic.html`（带着高驰登录回调的参数）。高驰登录回调在新界面里直接处理。
+- 静态网页，无构建，只有一个界面 `index.html`（经典界面和 29 套主题 v1.43a 删了，代码在分支 `backup-classic-v1.42a`）。样式 `css/p1.css`。脚本按 `index.html` 里的顺序加载、共享全局作用域：`js/hant.js`（繁体：把页面上的简体逐字换成台湾用字，`tracktor-lang` 是 `zht`）、`js/core.js`（计划、存储、`T`）、`js/diet.js`（热量算法、饮食面板）、`js/confetti.js`、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/backupcore.js`（进度文件）、`js/p1data.js`（图表数据、下一次训练、记录面板、G、音效）、`js/p1fx.js`（烟花、彩带、目标 2% 庆祝）、`js/coros.js`（高驰）、`js/engine.js`（训练引擎和计划预设）、`js/p1.js`（界面）、`js/p1settings.js`（设定面板、备份恢复、欢迎页、备份提醒）、`js/p1day.js`（日历点某天）、`js/p1weather.js`（天气；`p1settings.js` 用 `p1Sheet`/`p1Reg` 把面板借给它）。
+- 中英双语都用 `T(中文, English)`；繁体不用另写。
 - 数据全部在 `localStorage` 的 `tracktor-data`：`sessions`（训练）、`metrics[日期]`（引体、体重、腰围、睡眠、HRV、静息心率、活动热量 active、其中运动记录的热量 ex、有功率计骑行的热量 exP、低强度运动的热量 exL、步数等）、`diet[日期]`、`settings`（含 `plan` 训练计划、`weather` 天气城市）、`dayx[日期]`（没有训练的日子里的加练）。其他键都以 `tracktor-` 开头。
 - G（积分，Grind）从记录现算（`js/p1data.js` 的 `coinBadges`），不另存；以后要存的只有花掉的 G 和买过的主题，放进 `settings`。
 - 训练计划：`settings.plan`（`js/engine.js` 的 `PRESETS`/`setPlan`）选 1–3 种训练日，内部类型固定是 `push`、`pull`、`third`（名字由计划定，`js/core.js` 的 `dayName`/`LAB`）；进度文件里训练的键前缀是 u、l、t。预设只是数据，以后用户写的计划也照这个格式。
 - 训练引擎排的训练存在训练记录本身：`sessions[sid].ex` 是这次的动作、`feel` 是每个动作的感觉、`edited` 表示用户手改过。`js/core.js` 的 `registerPlanned` 把它们挂进 `PROGRAM`/`BYID`（可以超过第 20 天，`third-NN` 只靠它注册）。进度文件里对应追加的字段是 `pe`。
 - 新增文件要加进 `sw.js` 的缓存列表。
-- 改了 `css/` 或 `js/` 下的任何文件，提交前先运行 `python3 tools/stamp.py`。它给 `index.html` 和 `classic.html` 里的脚本和样式网址加上内容指纹（`?v=…`），这样手机上缓存的旧文件不会和新网页配在一起。不运行的话，更新后可能出现新网页配旧脚本、功能错乱。
-- 改 `js/core.js`、`js/diet.js`、`js/coros.js`、`js/sheetcore.js`、`js/backupcore.js` 这类两边共用的文件时，两个界面都要打开测。
-- 备份格式见 `js/backupcore.js`，新字段只能追加在 `MK` 末尾，旧版进度文件必须仍能导入。新界面的备份和恢复也用这个格式，和经典界面的进度文件互通。用户说的「兼容到 v1.4」是一个里程碑，不是版本号 v1.40a：兼容一直保留，直到用户明确说可以停。顶层只能追加新字段（例如 v1.37a 加的 `pe`），旧文件没有它也要能导入。
-- 经典界面的完整备份在 GitHub 分支 `backup-classic-v1.33a`。
+- 改了 `css/` 或 `js/` 下的任何文件，提交前先运行 `python3 tools/stamp.py`。它给 `index.html` 里的脚本和样式网址加上内容指纹（`?v=…`），这样手机上缓存的旧文件不会和新网页配在一起。不运行的话，更新后可能出现新网页配旧脚本、功能错乱。
+- 备份格式见 `js/backupcore.js`，新字段只能追加在 `MK` 末尾，旧版进度文件必须仍能导入。经典界面时期的进度文件也要能导入。用户说的「兼容到 v1.4」是一个里程碑，不是版本号 v1.40a：兼容一直保留，直到用户明确说可以停。顶层只能追加新字段（例如 v1.37a 加的 `pe`），旧文件没有它也要能导入。
 - 改动后用无头浏览器（Playwright）实际打开页面测试，确认没有报错再提交。
