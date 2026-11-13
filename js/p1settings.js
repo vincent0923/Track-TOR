@@ -91,6 +91,7 @@ function openPlan(first){const cur=st().plan,curId=cur?cur.id:"cyclist";
   if(S.q("[data-ok]"))S.q("[data-ok]").addEventListener("click",()=>{const pl=st().plan;if(pl)S.m.querySelectorAll("[data-dn]").forEach(i=>{const d=pl.days.find(x=>x.kind===i.dataset.dn),v=i.value.trim();if(d&&v){if(LANG==="en")d.en=v;else d.zh=v}});
     if(!pl&&!first)setPlan("cyclist");lsSave();S.close();renderAll();toast(T("已保存","Saved"))})}
 const OPEN={plan:()=>openPlan(false),profile:openProfile,goals:openGoals,table:openTable,charts:openCharts,backup:openBackup};
+window.p1Sheet=sheet;window.p1Reg=(k,f)=>{OPEN[k]=f};
 window.p1Open=k=>{if(typeof closeSheet==="function")closeSheet();OPEN[k]()};
 /* first visit and the 5-day backup reminder */
 setTimeout(()=>{let seen=false;try{seen=localStorage.getItem("tracktor-p1-welcomed")==="1"}catch(e){}

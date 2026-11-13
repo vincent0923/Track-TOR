@@ -6,6 +6,12 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.42a] — 2026-11-13
+
+### 新增 / Added
+- 🌧️ **天气**：设定 › 天气里搜任何一个城市，或者点「用我现在的位置」（只在点的时候要一次定位）。屏幕跟着那里现在的天气变：下雨时玻璃上挂着水珠，攒大了才滑下来，沿路带走小水珠、留下一道水痕，同时滑的最多三四颗，不挡字也不挡按钮；下雪飘几片雪；雷雨偶尔闪一下；有雾、阴天有一层淡雾；白天晴天角落一团暖光。效果可以关，也可以试看 15 秒。天气每 20 分钟更新一次，数据来自 Open-Meteo，不用注册。手机设了「减少动态效果」时只画静止的水珠。
+- 🌧️ **Weather**: in Settings › Weather, search any city in the world or tap "Use where I am" (location is asked only on that tap). The screen follows that place's current weather: in rain, drops sit on the glass, grow, then slide down, picking up smaller drops and leaving a thin wet trail, never more than three or four at a time so text and buttons stay clear; a few flakes in snow; a faint flash now and then in a thunderstorm; a soft haze in fog or overcast; a warm glow in one corner on a clear day. The effect can be turned off or previewed for 15 s. Weather refreshes every 20 minutes, from Open-Meteo (no sign-up). With "reduce motion" on, the drops stay still.
+
 ## [v1.41a] — 2026-11-13
 
 ### 新增 / Added
