@@ -49,7 +49,7 @@ function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>
 /* themes: each has a light and a dark version. aurora is free; others are bought with G (settings.buys, settings.theme) */
 const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,sw:["#F1F1EC","#4FAF6A","#070A10","#00F5D4"]},
   {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]},
-  {id:"toy",zh:"玩具",en:"Toy",price:90,sw:["#F4F1EA","#EB3B24","#1C1747","#FF4F9A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"},
+  {id:"toy",zh:"玩具",en:"Toy",price:90,sw:["#F4F1EA","#EB3B24","#1C1747","#FF4F9A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board",lit:1},
   /* single-look themes: fix is the one mode they come in; the header switch hides */
   {id:"tm4",zh:"钴蓝 · 合成器",en:"Cobalt Synth",price:120,fix:"dark",sw:["#123A6B","#2D76C6","#FFFFFF","#FF6E30"],dz:"圆柱按键、点阵屏、发光指示灯",de:"Cylinder keys, a dot-matrix screen, glowing LEDs"},
   {id:"skeuo",zh:"拉丝铝 · 霓虹",en:"Brushed Alloy",price:120,fix:"light",sw:["#86888D","#C4C6CA","#18191B","#1FF5DC"],dz:"金属旋钮、黑色表圈、青色霓虹",de:"Metal knobs, a black bezel, cyan neon"},
@@ -59,12 +59,12 @@ function themeOwned(id){const t=THEMES.find(x=>x.id===id);return !!t&&(!t.price|
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const th=themeOwned(state.settings.theme)?state.settings.theme:"aurora",fix=(THEMES.find(x=>x.id===th)||{}).fix,
     dark=fix?fix==="dark":m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),de=document.documentElement;
-  de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;
+  de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;if(fix||(THEMES.find(x=>x.id===th)||{}).lit)de.dataset.lit="";else delete de.dataset.lit;
   document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
 /* tactile themes: the light on the materials follows the phone. Tilt moves the highlight (--lx/--ly) and turns the
    reflections on metal (--rot); the rest point drifts back, so holding still settles it. A mouse does the same. */
-(function(){const de=document.documentElement,on=()=>"fixed" in de.dataset&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
+(function(){const de=document.documentElement,on=()=>"lit" in de.dataset&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
   let bg=null,bb=null,x=0,y=0,raf=0;
   const put=()=>{raf=0;de.style.setProperty("--lx",(30+x*1.6).toFixed(1)+"%");de.style.setProperty("--ly",(10+y*1.3).toFixed(1)+"%");de.style.setProperty("--rot",(x*3).toFixed(1)+"deg")};
   const go=(nx,ny)=>{x=Math.max(-25,Math.min(25,nx));y=Math.max(-20,Math.min(20,ny));if(!raf)raf=requestAnimationFrame(put)};

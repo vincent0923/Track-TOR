@@ -1,0 +1,8 @@
+Theme fonts. All are licensed under the SIL Open Font License, Version 1.1 (full text in GEIST-OFL.txt).
+
+Copyright 2011 The Michroma Project Authors (https://github.com/googlefonts/Michroma-font)
+Copyright 2024-2024 The Doto Project Authors (https://github.com/oliverlalan/Doto)
+Copyright 2020 The Fraunces Project Authors (github.com/undercasetype/Fraunces)
+Copyright 2016 The Fredoka Project Authors (https://github.com/hafontia/Fredoka-One)
+Copyright 2022 The Inter Project Authors (https://github.com/rsms/inter-tight)
+Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito)
