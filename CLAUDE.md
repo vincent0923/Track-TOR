@@ -17,7 +17,7 @@
 - 只写以后一直有效的约定和找东西的线索，保持简短。做过什么看 `git log` 和 `CHANGELOG.md`，产品现在什么样看 `docs/PRODUCT.md`，打算做什么看私人文档「推拉机：私人规划与施工清单」。
 
 ## 每次发版
-- 现在的版本号是 v1.48a。
+- 现在的版本号是 v1.49a。
 - 只有加了新功能才升版本号。只改视觉或音效、没有新功能的改动，不升版本号、不写 CHANGELOG，测试通过后直接提交推送，不用问。
 - 版本号三处同步：`index.html` 里的 `#ver`，`README.md` 中英文各一处。
 - `CHANGELOG.md` 加一条，中英双语。
@@ -38,7 +38,7 @@
 - 主项（目标里的那个运动，`js/p1data.js` 的 `mainEx`/`mainSeries`）：默认标准引体；从计划动作选的打勾自动记、训练引擎不换它（`isMain`），自己写的只能手动记。
 - G（积分，Grind）从记录现算（`js/p1data.js` 的 `coinBadges`），不另存；余额 = 赚的 − `settings.buys` 里花掉的。
 - 主题（`js/p1.js` 的 `THEMES`，`css/p1.css` 里 `:root[data-theme=…]`，亮暗两版靠 `data-mode`）：每个主题都要有亮、暗两版；草木 · 极光免费，其他用 G 换。顶栏的明暗开关点一下切换，长按进主题页。
-- 训练计划：`settings.plan`（`js/engine.js` 的 `PRESETS`/`setPlan`）选 1–3 种训练日，内部类型固定是 `push`、`pull`、`third`（名字由计划定，`js/core.js` 的 `dayName`/`LAB`）；进度文件里训练的键前缀是 u、l、t。预设只是数据，以后用户写的计划也照这个格式。
+- 训练计划：`settings.plan`（`js/engine.js` 的 `PRESETS`/`setPlan`）选 1–3 种训练日，内部类型固定是 `push`、`pull`、`third`（名字由计划定，`js/core.js` 的 `dayName`/`LAB`）；进度文件里训练的键前缀是 u、l、t。预设只是数据，以后用户写的计划也照这个格式。自定义计划 `id:"custom"`（`setCustomPlan`，面板 `openCustom`）：只用练过的动作（`engMoves`），每个动作从自己的上次记录接着练；自定义计划下引擎不换动作（`engCustom`）；一种训练日里找不到某动作的历史时，到所有训练里找（`engDoneAll`）。
 - 训练引擎排的训练存在训练记录本身：`sessions[sid].ex` 是这次的动作、`feel` 是每个动作的感觉、`edited` 表示用户手改过。`js/core.js` 的 `registerPlanned` 把它们挂进 `PROGRAM`/`BYID`（可以超过第 20 天，`third-NN` 只靠它注册）。进度文件里对应追加的字段是 `pe`。
 - 新增文件要加进 `sw.js` 的缓存列表。
 - 改了 `css/` 或 `js/` 下的任何文件，提交前先运行 `python3 tools/stamp.py`。它给 `index.html` 里的脚本和样式网址加上内容指纹（`?v=…`），这样手机上缓存的旧文件不会和新网页配在一起。不运行的话，更新后可能出现新网页配旧脚本、功能错乱。

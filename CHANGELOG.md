@@ -6,6 +6,12 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.49a] — 2026-11-13
+
+### 新增 / Added
+- 🧩 **自定义训练计划**：训练计划面板最下面选 1、2 或 3 种训练日，把你练过的每个动作放到某一天。每个动作从你上次的组数、次数、秒数接着练，一点点加难度，不换动作、不加新动作。
+- 🧩 **Your own training plan**: at the bottom of the plan panel pick 1, 2 or 3 training days and put each move you've done on one of them. Every move carries on from your own last sets, reps and seconds and gets a little harder; no swapped or new moves.
+
 ## [v1.48a] — 2026-11-13
 
 ### 新增 / Added

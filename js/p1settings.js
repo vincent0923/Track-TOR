@@ -115,13 +115,41 @@ function openPlan(first){const cur=st().plan,curId=cur?cur.id:"cyclist";
   const names=(cur?cur.days:PRESETS[0].days).map(d=>'<label class="flabel">'+T("第 "+"ABC"[["push","pull","third"].indexOf(d.kind)]+" 天叫什么","Name of day "+"ABC"[["push","pull","third"].indexOf(d.kind)])+'<input data-dn="'+d.kind+'" value="'+esc(T(d.zh,d.en||d.zh))+'"></label>').join("");
   const S=sheet(T("训练计划","Training plan"),(first?'<p class="calc-msg" style="margin:0">'+T("选一个开始，以后在设定 › 训练计划里换或改名。引擎会按你每次的表现调整次数和组数。","Pick one to start; change or rename it later in Settings › Training plan. The engine tunes reps and sets to how you do.")+'</p>':'')
     +PRESETS.map(p=>'<button type="button" class="preset'+(p.id===curId?' on':'')+'" data-pre="'+p.id+'"><b>'+T(p.zh,p.en)+'</b><span class="muted">'+T(p.dz,p.de)+'</span><span class="pdays">'+p.days.map(d=>'<i style="background:var(--k'+d.kind+')"></i>'+T(d.zh,d.en)).join("")+'</span></button>').join("")
+    /* your own plan: pick how many training days, then put your moves on them */
+    +'<div class="preset custom'+(curId==="custom"?' on':'')+'"><b>'+T("自定义：用你练过的动作","Your own: the moves you already do")+'</b><span class="muted">'+T("按你以前的组数、次数和时间接着练，一点点加难度，不加新动作。","Carries on from your own sets, reps and times and makes them a little harder each time; no new moves.")+'</span>'
+      +'<span class="cdays">'+[1,2,3].map(n=>'<button type="button" class="chip" data-cust="'+n+'" aria-pressed="'+(curId==="custom"&&cur.days.length===n)+'">'+T(n+" 天",n+(n>1?" days":" day"))+'</button>').join("")+'</span></div>'
     +(cur?'<p class="eyebrow" style="margin-top:6px">'+T("训练日的名字","Day names")+'</p><div class="fgrid">'+names+'</div>':''));
-  S.m.addEventListener("click",e=>{const b=e.target.closest("[data-pre]");if(!b)return;const id=b.dataset.pre;
+  S.m.addEventListener("click",e=>{const c=e.target.closest("[data-cust]");if(c){S.close();setTimeout(()=>openCustom(+c.dataset.cust,first),250);return}
+    const b=e.target.closest("[data-pre]");if(!b)return;const id=b.dataset.pre;
     if(id===(st().plan&&st().plan.id)){return}
     const p=PRESETS.find(x=>x.id===id);if(!first&&!confirm(T("换成「"+p.zh+"」？接下来的训练按新计划排，练过的记录不动。","Switch to "+p.en+"? Upcoming sessions follow the new plan; past records stay.")))return;
     setPlan(id);S.close();renderAll();toast(T("训练计划：","Plan: ")+T(p.zh,p.en));if(first)return;openPlan(false)});
   if(S.q("[data-ok]"))S.q("[data-ok]").addEventListener("click",()=>{const pl=st().plan;if(pl)S.m.querySelectorAll("[data-dn]").forEach(i=>{const d=pl.days.find(x=>x.kind===i.dataset.dn),v=i.value.trim();if(d&&v){if(LANG==="en")d.en=v;else d.zh=v}});
     if(!pl&&!first)setPlan("cyclist");lsSave();S.close();renderAll();toast(T("已保存","Saved"))})}
+/* your own plan: each move you've done is a row with a little day picker (A / B / C / –); moves start where they
+   were assigned before, or on the day they were done on. Saving builds the plan from your own records. */
+function openCustom(n,first){const cur=st().plan,isC=cur&&cur.id==="custom",same=isC&&cur.days.length===n,kinds=["push","pull","third"].slice(0,n);
+  let moves=engMoves().filter(m=>m.unit!=="分钟");const fresh=!moves.length;
+  if(fresh){const seen={};PRESETS.forEach(p=>p.days.forEach(d=>d.ex.forEach(e=>{if(!seen[e.id]&&e.unit!=="分钟"){seen[e.id]=1;moves.push({id:e.id,name:e.name,en:e.en,unit:e.unit,kind:d.kind})}})))}
+  const core=m=>m.unit==="秒"||ENG_CORE.has(m.id);
+  const pick={};moves.forEach(m=>{let d=-1;
+    if(same){d=cur.days.findIndex(x=>x.ex.some(e=>e.id===m.id))}
+    else if(!fresh){d=n===1?0:n===2?(m.kind==="pull"?1:m.kind==="third"?1:0):(core(m)?2:m.kind==="pull"?1:m.kind==="third"?2:0)}
+    pick[m.id]=d});
+  const defN=i=>same&&cur.days[i]?T(cur.days[i].zh,cur.days[i].en||cur.days[i].zh):n===1?T("全身","Full body"):[T("A 日","Day A"),T("B 日","Day B"),T("C 日","Day C")][i];
+  const unit=m=>m.unit==="个"?"":" "+U(m.unit),last=m=>m.got?T("上次 ","Last ")+m.got.length+"×"+Math.min(...m.got)+unit(m):"";
+  const row=m=>'<div class="crow"><span class="sp"><b>'+esc(T(m.name,m.en||m.name))+'</b><span class="muted">'+last(m)+'</span></span><span class="cpick">'
+    +kinds.map((k,i)=>'<button type="button" data-mv="'+m.id+'" data-day="'+i+'" style="--kc:var(--k'+k+')" aria-pressed="'+(pick[m.id]===i)+'">'+"ABC"[i]+'</button>').join("")
+    +'<button type="button" data-mv="'+m.id+'" data-day="-1" aria-pressed="'+(pick[m.id]===-1)+'" aria-label="'+T("不练","Leave out")+'">–</button></span></div>';
+  const S=sheet(T("自定义 · ","Your own · ")+T(n+" 天",n+(n>1?" days":" day")),'<div class="fgrid cnames">'+kinds.map((k,i)=>'<label class="flabel"><span><i class="kd" style="background:var(--k'+k+');display:inline-block;margin-right:6px"></i>'+"ABC"[i]+'</span><input data-cn="'+i+'" value="'+esc(defN(i))+'" maxlength="12"></label>').join("")+'</div>'
+    +'<p class="calc-msg" style="margin:0">'+(fresh?T("还没有训练记录：挑几个动作放到每天，从常用的起点开始。","No training on record yet: put a few moves on each day; they start from usual numbers."):T("每个动作放到哪天；「–」是不练。拉伸自动加在每天最后。","Put each move on a day; – leaves it out. Stretching goes at the end of every day."))+'</p>'
+    +'<div class="clist">'+moves.map(row).join("")+'</div>');
+  S.m.addEventListener("click",e=>{const b=e.target.closest("[data-mv]");if(!b)return;pick[b.dataset.mv]=+b.dataset.day;
+    S.m.querySelectorAll('[data-mv="'+b.dataset.mv+'"]').forEach(x=>x.setAttribute("aria-pressed",x===b));if(typeof buzz==="function")buzz(6)});
+  S.q("[data-ok]").addEventListener("click",()=>{const days=kinds.map((k,i)=>{const v=(S.q('[data-cn="'+i+'"]').value||"").trim()||defN(i);return {zh:v,en:v,ids:moves.filter(m=>pick[m.id]===i).map(m=>m.id)}});
+    const empty=days.findIndex(d=>!d.ids.length);if(empty>=0){toast(T(days[empty].zh+" 还没有动作",days[empty].zh+" has no moves yet"));return}
+    if(!first&&!isC&&!confirm(T("换成自定义计划？接下来的训练按它排，练过的记录不动。","Switch to your own plan? Upcoming sessions follow it; past records stay.")))return;
+    setCustomPlan(days);S.close();renderAll();toast(T("训练计划：自定义","Plan: your own"))})}
 const OPEN={plan:()=>openPlan(false),profile:openProfile,goals:openGoals,table:openTable,charts:openCharts,backup:openBackup};
 window.p1Sheet=sheet;window.p1Reg=(k,f)=>{OPEN[k]=f};
 window.p1Open=k=>{if(typeof closeSheet==="function")closeSheet();OPEN[k]()};

@@ -526,3 +526,18 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 /* the folded training card is always the same height, whatever the day's name */
 .hcard:not(.open) h2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
 .hcard:not(.open) h2 .kd{display:inline-block;vertical-align:middle;margin-right:10px}
+/* custom plan: a row per move with a small day picker */
+.preset.custom{cursor:default}
+.cdays{display:flex;gap:8px;margin-top:6px}
+.mask .cdays .chip{height:34px;padding:0 16px}
+.clist{display:grid;gap:2px}
+.crow{display:flex;align-items:center;gap:10px;padding:10px 2px;border-top:1px solid var(--line)}
+.crow:first-child{border-top:0}
+.crow b{display:block;font-size:14px;font-weight:700}
+.crow .muted{font-size:12px}
+.cpick{display:flex;gap:4px;flex:none}
+.cpick button{width:34px;height:34px;border-radius:50%;font-size:13px;font-weight:800;background:var(--sub);color:var(--muted);transition:transform .25s var(--spring),background .2s}
+.cpick button[aria-pressed="true"]{background:var(--kc,var(--ink));color:#fff;transform:scale(1.06)}
+.cpick button[data-day="-1"][aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.cnames .flabel span{display:flex;align-items:center}
+.mask .cnames{grid-template-columns:repeat(auto-fit,minmax(0,1fr))}

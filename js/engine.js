@@ -34,6 +34,18 @@ const PRESETS=[
    days:[{kind:"push",zh:"推",en:"Push",ex:[E("std","标准俯卧撑","Push-ups","个",3,10),E("pike","派克俯卧撑","Pike push-ups","个",3,8),E("diamond","钻石俯卧撑","Diamond push-ups","个",2,8),E("plank","平板支撑","Plank","秒",2,45),STRETCH_E]},
          {kind:"pull",zh:"拉",en:"Pull",ex:[E("pullup","标准引体","Strict pull-ups","个",3,3),E("row","反向划船","Inverted rows","个",3,10),E("hang","悬吊","Dead hang","秒",2,30),E("kneeraise","悬垂举膝","Hanging knee raises","个",2,10),STRETCH_E]},
          {kind:"third",zh:"腿",en:"Legs",ex:[E("squat","深蹲","Squats","个",3,10),E("splitsq","分腿蹲","Split squats","个",3,8),E("bridge","臀桥","Glute bridges","个",3,10),E("wallsit","靠墙静蹲","Wall sit","秒",2,30),STRETCH_E]}]}];
+/* the moves done so far, newest record of each: what a custom plan is built from */
+function engMoves(){const out={};engDoneAll().forEach(p=>{const doc=state.sessions[p.sid];p.ex.forEach(e=>{const a=(doc.sets&&doc.sets[e.id])||[],got=a.filter(x=>x.d).map(x=>+x.v||0);if(!got.length)return;
+    out[e.id]={id:e.id,name:engBase(e),en:engBaseEn(e)||engBase(e),unit:e.unit,kind:p.kind,sets:Math.max(1,a.length),target:e.target,tempo:engTempo(e),got,date:doc.date||""}})});
+  return Object.values(out)}
+/* a plan of the user's own: days = [{zh, en, ids:[move ids]}] (1–3); each move starts from its own last record */
+function setCustomPlan(days){const mv={};engMoves().forEach(m=>mv[m.id]=m);const lib={};PRESETS.forEach(p=>p.days.forEach(d=>d.ex.forEach(e=>{if(!lib[e.id])lib[e.id]=e})));
+  const kinds=["push","pull","third"],old=state.settings.plan;
+  state.settings.plan={id:"custom",days:days.map((d,i)=>({kind:kinds[i],zh:d.zh,en:d.en||d.zh,ex:d.ids.map(id=>{const m=mv[id];
+      if(m)return {id,name:m.name,en:m.en,unit:m.unit,sets:Math.min(ENG_SETS_MAX,Math.max(ENG_SETS_MIN,m.sets)),target:m.target,tempo:m.tempo||null};
+      const e=lib[id];return e?Object.assign({},e):null}).filter(Boolean).concat(d.ids.includes("stretch")?[]:[Object.assign({},STRETCH_E)])})),from:today()};
+  Object.entries(state.sessions).forEach(([sid,doc])=>{if(doc&&!doc.done&&doc.ex&&!engStarted(doc)){delete doc.ex;doc.sets={}}});
+  registerPlanned(state.sessions);engPlanAll();lsSave()}
 function planKinds(){const pl=state.settings.plan;return pl&&pl.days&&pl.days.length?pl.days.map(d=>d.kind):["push","pull"]}
 /* choose a preset; the cyclist plan with no plan chosen before is the programme already running, so it keeps going */
 function setPlan(id){const p=PRESETS.find(x=>x.id===id);if(!p)return;const old=state.settings.plan;
@@ -51,6 +63,11 @@ const engBase=e=>e.name.replace(/（.*）/,""),engBaseEn=e=>(e.en||"").replace(/
 function engName(e){return {name:engBase(e)+(e.tempo?"（慢速 "+e.tempo+"）":""),en:engBaseEn(e)+(e.tempo?" (slow "+e.tempo+")":"")}}
 function engDone(kind){return PROGRAM.filter(p=>p.kind===kind&&state.sessions[p.sid]&&state.sessions[p.sid].done)
   .sort((a,b)=>{const x=state.sessions[a.sid].date||"",y=state.sessions[b.sid].date||"";return x<y?-1:x>y?1:a.day-b.day})}
+/* every finished session of any kind, oldest first: where a move's history is found when its own day has none
+   (a custom plan can put a move on a different day than it used to be done on) */
+function engDoneAll(){return ["push","pull","third"].flatMap(engDone).sort((a,b)=>{const x=state.sessions[a.sid].date||"",y=state.sessions[b.sid].date||"";return x<y?-1:x>y?1:0})}
+/* a custom plan keeps the user's own moves: harder means more reps, slower, more sets, never another move */
+const engCustom=()=>!!(state.settings.plan&&state.settings.plan.id==="custom");
 /* one exercise's result in one finished session */
 function engResult(p,id){const doc=state.sessions[p.sid],e=p.ex.find(x=>x.id===id);if(!e)return null;const a=(doc.sets&&doc.sets[id])||[];
   return {target:e.target,planned:a.length||e.sets,got:a.filter(x=>x.d).map(x=>+x.v||0),feel:doc.feel&&doc.feel[id]||null,tempo:engTempo(e)}}
@@ -69,14 +86,14 @@ function engPlanEx(e,H,inSession){
   if(e.unit==="分钟")return say("保持","Kept");
   if(!last)return say("还没有记录，先按这个练","No record yet; start here");
   const tops=V.filter(v=>v.top).length,misses=V.filter(v=>v.miss).length,hist=engHist(last);
-  const levelUp=()=>{const st=ENG_STEP[e.id];
+  const levelUp=()=>{const st=engCustom()?null:ENG_STEP[e.id];
     if(e.unit!=="秒"&&st){const next=ENG_LADDERS[st.li][st.i+1];
       if(next&&!inSession.has(next.id)){n.id=next.id;n.name=next.name;n.en=next.en;n.tempo=null;n.note=null;n.noteEn=null;n.target=engRange(n)[0]+1;
         return say("上次 "+hist+"，到顶了，换 "+next.name,"Last time "+hist+", at the top: moving to "+next.en)}}
     if(e.unit!=="秒"&&!e.tempo&&e.id!=="pullup"){n.tempo="3-1-1";n.target=Math.max(lo,6);return say("上次 "+hist+"，到顶了，改成慢速 3-1-1","Last time "+hist+", at the top: slow 3-1-1 tempo")}
     if(e.sets<ENG_SETS_MAX){n.sets=e.sets+1;n.addSet=e.sets;n.target=e.unit==="秒"?hi:Math.max(lo,hi-3);return say("上次 "+hist+"，到顶了，加一组","Last time "+hist+", at the top: one more set")}
     n.target=hi;return say("已经是最高档，保持","Already at the top; kept")};
-  const levelDown=()=>{const st=ENG_STEP[e.id];
+  const levelDown=()=>{const st=engCustom()?null:ENG_STEP[e.id];
     if(e.unit!=="秒"&&st&&st.i>0&&e.id!=="pullup"&&!isMain(e)){const prev=ENG_LADDERS[st.li][st.i-1];
       if(!inSession.has(prev.id)){n.id=prev.id;n.name=prev.name;n.en=prev.en;n.tempo=null;n.note=null;n.noteEn=null;n.target=Math.min(8,engRange(n)[1]);
         return say("最近几次没达标（"+hist+"），先退到 "+prev.name,"Missed recently ("+hist+"): back to "+prev.en)}}
@@ -111,7 +128,8 @@ function engPlanSession(kind,hist,sim,base){
   const rough=p=>p.ex.filter(e=>{const r=engResult(p,e.id);if(!r)return false;const [lo,hi]=engRange(e);return e.unit!=="分钟"&&engVerdict(r,lo,hi).miss}).length>=2;
   const deload=!sim&&hist.length>=2&&rough(hist[hist.length-1])&&rough(hist[hist.length-2]);
   let ex=base.map(e=>{
-    const tp=engTempo(e),H=hist.slice(-ENG_LOOK).map(p=>engResult(p,e.id)).filter(r=>r&&r.tempo===tp);
+    const tp=engTempo(e);let H=hist.slice(-ENG_LOOK).map(p=>engResult(p,e.id)).filter(r=>r&&r.tempo===tp);
+    if(!H.length)H=engDoneAll().map(p=>engResult(p,e.id)).filter(r=>r&&r.tempo===tp&&r.got.length).slice(-ENG_LOOK);
     if(sim&&sim[e.id])H.push(sim[e.id]);
     const n=engPlanEx(Object.assign({sets:e.sets},e,{tempo:tp}),H.slice(-ENG_LOOK),inSession);
     if(n.id!==e.id){inSession.delete(e.id);inSession.add(n.id)}
