@@ -311,7 +311,8 @@ function knobHtml(opts,cur,attr,label){const n=opts.length,i=Math.max(0,opts.fin
     const step=KNOB_SPAN/(n-1);w.style.setProperty("--a",(-KNOB_SPAN/2+step*i)+"deg");w.dataset.i=i;
     if(i!==start){tone(900,0,.04,"triangle",.08);const l=w.querySelector('.kl[data-k="'+i+'"]');setTimeout(()=>l&&l.click(),moved?60:180)}};
   addEventListener("pointerup",end);addEventListener("pointercancel",end)})();
-/* the main exercise, week by week: 12 weeks of every ticked rep stacked as bricks, the best week in the second colour */
+/* the main exercise, week by week: 12 weeks of every ticked rep stacked as bricks (one brick = a round number of reps,
+   shown under the chart), the best week in the second colour */
 function wkMon(d){return ymdAdd(d,-((dateObj(d).getDay()+6)%7))}
 function weeklyHtml(){const m=mainEx();if(m.custom)return "";const by={};
   /* every ticked rep counts: any training day, extras added to a session, and extras on days without one */
@@ -320,10 +321,12 @@ function weeklyHtml(){const m=mainEx();if(m.custom)return "";const by={};
   Object.entries(state.dayx||{}).forEach(([d,x])=>((x&&x.xs)||[]).forEach(it=>{if(it.id===m.id)add(d,it.sets)}));
   const cur=wkMon(today()),weeks=[];for(let i=11;i>=0;i--)weeks.push(ymdAdd(cur,-7*i));
   const vals=weeks.map(w=>by[w]||0),mx=Math.max(...vals);if(!mx)return "";const best=vals.lastIndexOf(mx),tot=vals.reduce((a,b)=>a+b,0);
+  /* one brick is a round number of reps, so the best week stays within about 9 bricks */
+  const unit=[1,2,5,10,20,25,50,100,200,500].find(u=>mx/u<=9)||1000;
   return '<section class="card weekly"><div class="row" style="align-items:flex-start"><div class="sp"><p class="eyebrow">'+T('每周总数 · 12 周','Weekly total · 12 weeks')+'</p><h3 class="wkh">'+mainName()+'</h3></div>'
     +'<span class="cnt n">'+fmt(tot)+'</span></div>'
-    +bricksHtml(vals.map((v,i)=>({n:v?Math.max(1,Math.round(v/mx*8)):0,c:i===best?"var(--push)":"var(--pull)"})))
-    +'<div class="row muted wkf"><span>'+dayLabel(weeks[0])+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--push)"></i>'+T('最多的一周 ','Best week ')+fmt(mx)+' '+mainUnit()+'</span><span>'+T('本周','This week')+'</span></div></section>'}
+    +bricksHtml(vals.map((v,i)=>({n:v?Math.max(1,Math.round(v/unit)):0,c:i===best?"var(--push)":"var(--pull)"})))
+    +'<div class="row muted wkf"><span>'+dayLabel(weeks[0])+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--pull)"></i>= '+unit+' '+mainUnit()+'</span><span>'+T('本周','This week')+'</span></div></section>'}
 function flapHtml(txt){return '<span class="flap">'+[...txt].map((c,i)=>'<span style="--i:'+i+'">'+c+'</span>').join("")+'</span>'}
 function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days,gaps,known,sum}=gapData();gapR=keep;const R=rr!=null?rr:gapR,mx=Math.max(300,...known.map(Math.abs));
   const label=R?T('过去 '+R+' 天','Last '+R+' days'):T('有记录以来 '+days.length+' 天','Since the first log · '+days.length+' days');
