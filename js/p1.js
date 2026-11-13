@@ -178,17 +178,51 @@ function renderDietView(){const v=$("#v-diet"),t=today();
   if(tin!=null&&tb!=null){const mx=Math.max(tin,tb);hero+='<div class="ib"><i style="width:'+(tin/mx*100)+'%;background:var(--ink)"></i><i style="width:'+(Math.max(0,tb-tin)/mx*100)+'%;background:var(--good);opacity:.35"></i></div>'
     +'<div class="legend"><span><i style="background:var(--ink)"></i>摄入</span><span><i style="background:var(--good);opacity:.5"></i>缺口</span><span style="margin-left:auto"><i style="background:var(--sleep)"></i>蛋白质</span></div>'}
   hero+='<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet">'+ICON.plus+'记一笔</button></section>';
-  /* the last 7 finished days */
-  const days=[];for(let i=7;i>=1;i--)days.push(ymdAdd(t,-i));
-  const gaps=days.map(d=>dietGapOf(d)),known=gaps.filter(g=>g!=null),sum=known.reduce((a,g)=>a+g,0),mx=Math.max(300,...known.map(Math.abs));
-  const week='<section class="card"><div class="row"><div class="sp"><p class="eyebrow">过去 7 天'+(known.length<7?' · 记了 '+known.length+' 天':'')+'</p><div class="big" style="font-size:26px">'+(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?"缺口":"盈余")+'</small></div></div>'
-    +(known.length?'<span class="pill '+(sum>=0?"good":"bad")+'">≈ '+(Math.abs(sum)/7700).toFixed(2)+' kg 脂肪</span>':'')+'</div>'
-    +'<div class="bars7">'+days.map((d,i)=>{const g=gaps[i];return '<div class="bc"><div class="bw"><div class="bv" style="height:'+(g==null?6:Math.max(8,Math.abs(g)/mx*86))+'px;background:'+(g==null?"var(--sub)":g>=0?"var(--good)":"var(--bad)")+';opacity:'+(g==null?1:.85)+'"></div></div><span class="bl">'+WD[dateObj(d).getDay()]+'</span></div>'}).join("")+'</div></section>';
+  const week=gapCardHtml();
   const keys=Object.keys(state.diet).filter(d=>d<=t).sort().reverse().slice(0,14);
   const list='<section class="card"><p class="eyebrow" style="margin-bottom:4px">记录</p>'+(keys.length?'<div class="dl">'+keys.map(d=>{const a=intakeOf(d),g=dietGapOf(d);
       return '<button data-act="day" data-d="'+d+'"><span class="dt">'+dayLabel(d)+'</span><span class="di n">'+(a!=null?fmt(a)+' kcal':'–')+'</span>'+(g!=null?'<span class="pill '+(g>=0?"good":"bad")+'">'+(g>=0?"−":"+")+fmt(Math.abs(g))+'</span>':'')+'<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>'}).join("")+'</div>'
     :'<p class="empty">还没有饮食记录</p>')+'</section>';
-  v.innerHTML=hero+week+list;animateRings(v)}
+  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+list;animateRings(v);gapCardBind()}
+/* the gap card: swipe it sideways (or tap a dot) to step through 7, 14, 30 days and since the first log; the
+   big figure turns over like a split-flap board. Only finished days count (the window ends yesterday). */
+const GAP_RANGES=[7,14,30,0];
+let gapR=7;try{const v=+localStorage.getItem(PK+"gw");if(GAP_RANGES.includes(v)&&localStorage.getItem(PK+"gw")!==null)gapR=v}catch(e){}
+function gapData(){const t=today(),to=ymdAdd(t,-1),first=Object.keys(state.diet).sort()[0];
+  const from=gapR?ymdAdd(to,-(gapR-1)):(first&&first<=to?first:to),days=[];for(let d=from;d<=to;d=ymdAdd(d,1))days.push(d);
+  const gaps=days.map(dietGapOf),known=gaps.filter(g=>g!=null),sum=known.reduce((a,g)=>a+g,0);return {from,to,days,gaps,known,sum}}
+function flapHtml(txt){return '<span class="flap">'+[...txt].map((c,i)=>'<span style="--i:'+i+'">'+c+'</span>').join("")+'</span>'}
+function gapCardHtml(){const {from,to,days,gaps,known,sum}=gapData(),mx=Math.max(300,...known.map(Math.abs));
+  const label=gapR?'过去 '+gapR+' 天':'有记录以来 '+days.length+' 天';
+  const w=known.length?fatWord(sum/7700,from,to):"about",word={about:"约 ",high:"激进估计 ",low:"保守估计 "}[w];
+  /* long windows draw one bar per week so the bars stay readable */
+  let cols=days.map((d,i)=>({g:gaps[i],l:days.length<=14?WD[dateObj(d).getDay()]:""}));
+  if(days.length>31){cols=[];for(let i=0;i<days.length;i+=7){const ch=gaps.slice(i,i+7).filter(g=>g!=null);cols.push({g:ch.length?ch.reduce((a,b)=>a+b,0)/ch.length:null,l:""})}}
+  const cm=Math.max(300,...cols.filter(c=>c.g!=null).map(c=>Math.abs(c.g)));
+  return '<section class="card gapcard" id="gapCard"><div class="row"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?' · 记了 '+known.length+' 天':'')+'</p>'
+    +'<div class="big">'+flapHtml(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?"缺口":"盈余")+'</small></div></div>'
+    +(known.length?'<span class="pill '+(sum>=0?"good":"bad")+'">'+word+(Math.abs(sum)/7700).toFixed(2)+' kg 脂肪</span>':'')+'</div>'
+    +'<div class="bars7" style="grid-template-columns:repeat('+cols.length+',1fr);gap:'+(cols.length>14?3:cols.length>7?5:8)+'px">'+cols.map(c=>'<div class="bc"><div class="bw"><div class="bv" style="height:'+(c.g==null?6:Math.max(6,Math.abs(c.g)/cm*86))+'px;border-radius:'+(cols.length>14?4:10)+'px;background:'+(c.g==null?"var(--sub)":c.g>=0?"var(--good)":"var(--bad)")+'"></div></div>'+(c.l?'<span class="bl">'+c.l+'</span>':'')+'</div>').join("")+'</div>'
+    +(days.length>7?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
+    +'<div class="dots" role="group" aria-label="统计天数">'+GAP_RANGES.map(r=>'<button data-act="gapr" data-r="'+r+'" aria-pressed="'+(r===gapR)+'" aria-label="'+(r?'过去 '+r+' 天':'有记录以来')+'"></button>').join("")+'</div></section>'}
+function setGapRange(r){if(r===gapR)return;const dir=GAP_RANGES.indexOf(r)>GAP_RANGES.indexOf(gapR)?1:-1;gapR=r;try{localStorage.setItem(PK+"gw",String(r))}catch(e){}
+  const old=$("#gapCard");if(!old)return;const t=document.createElement("template");t.innerHTML=gapCardHtml();const nw=t.content.firstChild;
+  nw.classList.add(dir>0?"in-r":"in-l");old.replaceWith(nw);SFX.tap();buzz(8);gapCardBind()}
+function gapCardBind(){const c=$("#gapCard");if(!c)return;let x0=null,y0=0;
+  c.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  c.addEventListener("touchend",e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
+    if(Math.abs(dx)<40||Math.abs(dy)>Math.abs(dx))return;const i=GAP_RANGES.indexOf(gapR),n=i+(dx<0?1:-1);if(n>=0&&n<GAP_RANGES.length)setGapRange(GAP_RANGES[n]);else{c.classList.remove("nudge");void c.offsetWidth;c.classList.add("nudge")}})}
+/* food table: opening Diet pulls it quietly (not again within half a minute); pulling the page down pulls it now */
+function syncSpin(on){$("#syncDot").classList.toggle("spin",on)}
+async function dietPull(manual){let st={};try{st=JSON.parse(localStorage.getItem(SHEET_STATUS_K)||"{}")||{}}catch(e){}
+  let url="";try{url=localStorage.getItem(SHEET_URL_K)||""}catch(e){}
+  if(!manual&&(!url||(st.ok&&st.ts&&Date.now()-st.ts<30e3)))return;
+  syncSpin(true);const r=await pullSheetQuiet({silent:!manual});syncSpin(false);
+  if(r.ok&&cur==="diet")renderDietView()}
+(function(){let y0=null,dy=0;const lim=70;
+  document.addEventListener("touchstart",e=>{if(cur!=="diet"||run||scrollY>0||$("#sheet").classList.contains("on")||document.querySelector(".mask"))return;y0=e.touches[0].clientY;dy=0},{passive:true});
+  document.addEventListener("touchmove",e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);const p=$("#ptr");if(p){p.style.height=Math.min(lim,dy*.5)+"px";p.classList.toggle("ready",dy*.5>=lim-4)}},{passive:true});
+  document.addEventListener("touchend",()=>{if(y0==null)return;const p=$("#ptr"),go=dy*.5>=lim-4;y0=null;if(p){p.style.height="";p.classList.remove("ready")}if(go){buzz(12);dietPull(true)}})})();
 function daySheet(d){const day=state.diet[d]||{},items=day.items||[],tt=dietTotals(day),a=intakeOf(d),b=burnOfDate(d),g=dietGapOf(d);
   const f1=x=>x==null||x===""?"–":(+x).toFixed(0);
   openSheet('<div class="sh-h"><h3>'+dayLabel(d)+(dayLabel(d).includes(".")?"":' · '+(dateObj(d).getMonth()+1)+'.'+dateObj(d).getDate())+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
@@ -304,7 +338,7 @@ function placePc(anim){const b=document.querySelector('.dock [aria-selected="tru
 let cur="train";
 function show(v,anim,keep){cur=v;document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
   document.querySelectorAll(".dock button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
-  ({train:renderTrainView,diet:renderDietView,prog:renderProgView})[v]();paintHeader(v);requestAnimationFrame(()=>placePc(anim));
+  ({train:renderTrainView,diet:renderDietView,prog:renderProgView})[v]();if(v==="diet"&&!keep)dietPull(false);paintHeader(v);requestAnimationFrame(()=>placePc(anim));
   try{localStorage.setItem(PK+"tab",v)}catch(e){}if(!keep)scrollTo({top:0})}
 document.querySelector(".dock").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(b&&b.getAttribute("aria-selected")!=="true"){SFX.tap();show(b.dataset.v,true)}});
 addEventListener("resize",()=>placePc(false));
@@ -324,6 +358,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
   else if(a==="goal")bridge("goals");
   else if(a==="coins")coinSheet(false);
+  else if(a==="gapr")setGapRange(+b.dataset.r);
   else if(a==="shop")coinSheet(true);
   else if(a==="go")bridge(b.dataset.to);
   else if(a==="classic"){try{localStorage.setItem("tracktor-ui","classic")}catch(err){}location.href="classic.html"}

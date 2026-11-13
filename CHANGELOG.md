@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.36a] — 2026-11-13
+
+### 新增 / Added
+- 🔄 **新界面里同步饮食表格**：打开饮食页时自动拉一次表格（半分钟内不重复），想立刻拉就把饮食页往下拉。拉取时顶栏的同步小圆点在转。
+  **Food table sync in the new interface**: opening Diet pulls the table quietly (not again within half a minute); pull the page down to pull it now. The header's sync dot turns while it runs.
+- 👆 **左右滑切换统计天数**：饮食页的缺口卡片左右滑，在过去 7、14、30 天和有记录以来之间切换，下面的小点表示在哪一档，也可以点；大数字像翻牌一样翻过去，柱子跟着换（有记录以来按周画）。14 天以上的脂肪克数前面按体重对账写「约」「激进估计」或「保守估计」。
+  **Swipe to change the period**: swipe the Diet gap card to step through the last 7, 14, 30 days and since the first log; the dots below show which (and can be tapped), the figure turns over like a split-flap board and the bars follow (by week since the first log). Over 14 days the grams of fat read "about", "aggressive estimate" or "conservative estimate" after the check against weight.
+
+---
+
 ## [v1.35a] — 2026-11-13
 
 ### 新增 / Added

@@ -320,3 +320,23 @@ h1,h2,h3,p{margin:0}
 .shopc p{font-size:12px}
 .shopart{width:52px;height:52px;border-radius:14px;flex:none;background:linear-gradient(135deg,#6C5CE7,#00B894);opacity:.85}
 .shopc+.shopc .shopart{background:linear-gradient(135deg,#F7B267,#F25F5C)}
+
+/* the gap card: dots for the period, a split-flap turn on the figure, a slide when the period changes */
+.dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.dots button{width:6px;height:6px;padding:0;border:0;border-radius:999px;background:var(--seg);transition:width .35s var(--spring),background .25s}
+.dots button[aria-pressed="true"]{width:18px;background:var(--ink)}
+.dots button::before{content:"";display:block;margin:-10px -6px;height:26px}
+.flap{display:inline-flex;perspective:400px}
+.flap span{display:inline-block;transform-origin:50% 55%;animation:flap .5s var(--spring) both;animation-delay:calc(var(--i)*45ms)}
+@keyframes flap{0%{transform:rotateX(-90deg);opacity:.2}60%{transform:rotateX(12deg);opacity:1}100%{transform:none}}
+.gapcard{touch-action:pan-y;overflow:hidden}
+.gapcard.in-r{animation:inR .4s var(--ease)}.gapcard.in-l{animation:inL .4s var(--ease)}
+@keyframes inR{from{opacity:.3;transform:translateX(24px)}}@keyframes inL{from{opacity:.3;transform:translateX(-24px)}}
+.gapcard.nudge{animation:nudge .35s var(--ease)}
+@keyframes nudge{30%{transform:translateX(-6px)}60%{transform:translateX(4px)}}
+/* pull to refresh on Diet; the header sync dot turns while a pull runs */
+.ptr{height:0;overflow:hidden;display:grid;place-items:center;transition:height .3s var(--ease)}
+.ptr i{width:22px;height:22px;border-radius:50%;border:2.5px solid var(--seg);border-top-color:var(--ac);opacity:.5;transition:opacity .2s,transform .2s}
+.ptr.ready i{opacity:1;transform:rotate(180deg)}
+.syncdot.spin{background:none;box-shadow:none;width:14px;height:14px;border:2.5px solid var(--seg);border-top-color:var(--ac);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}

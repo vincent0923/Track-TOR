@@ -30,6 +30,7 @@ const ASSETS = [
   "./js/coros.js",
   "./js/welcome.js",
   "./js/diet.js",
+  "./js/sheetcore.js",
   "./js/sheet.js",
   "./js/main.js",
   "./fonts/barlow-condensed-500.woff2",
