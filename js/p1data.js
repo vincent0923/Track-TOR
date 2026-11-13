@@ -1,9 +1,28 @@
-/* Shared by the redesign prototypes (proto/ and proto2/): the bits of the main app's logic they need, reading the
-   records stored on this phone. Read-only: lsSave is replaced with a no-op, so nothing here is written back. */
+/* 推拉机 main interface (P1): the bits of the classic app's logic it needs. js/core.js holds the programme, storage
+   (lsLoad / lsSave) and sessionDoc; js/diet.js the calorie maths; this file the rest, written without the classic
+   page's DOM. Records are shared with classic.html: both read and write the same tracktor-data. */
 
-/* ---------- pieces the shared files expect from the main app ---------- */
-function lsSave(){}
-function moveDatedExtras(){return false}
+let toastT=0;
+function toast(t){const el=document.getElementById("toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("on"),2200)}
+/* v1.02a kept extras by date: move each day into the session done that day, else the latest one before it, else the
+   next one (the same as js/train.js, so data opened here first is migrated, not dropped) */
+function moveDatedExtras(byDate){
+  let moved=false;
+  Object.keys(byDate||{}).sort().forEach(d=>{
+    const items=byDate[d].filter(it=>it.sets.some(x=>x.d));
+    if(!items.length)return;
+    const done=PROGRAM.filter(p=>{const s=state.sessions[p.sid];return s&&s.done&&s.date&&s.date<=d}).sort((x,y)=>state.sessions[x.sid].date<state.sessions[y.sid].date?-1:1);
+    const same=done.filter(p=>state.sessions[p.sid].date===d);
+    const open=PROGRAM.find(p=>!(state.sessions[p.sid]&&state.sessions[p.sid].done));
+    const sid=same.length?same[0].sid:done.length?done[done.length-1].sid:(open?open.sid:PROGRAM[PROGRAM.length-1].sid);
+    const doc=sessionDoc(sid);
+    doc.xs=doc.xs||[];
+    items.forEach(it=>{const have=doc.xs.find(y=>y.id===it.id);if(have)have.sets.push(...it.sets);else doc.xs.push(it)});
+    moved=true;
+  });
+  return moved;
+}
+function maxOrdOf(s){let m=0;Object.values(s.sets).forEach(a=>a.forEach(y=>{if(y.o>m)m=y.o}));return m}
 function dnum(s){const p=s.split("-");return Date.UTC(+p[0],+p[1]-1,+p[2])/864e5}
 function series(key){return Object.values(state.metrics).filter(m=>m[key]!=null&&m.date).sort((a,b)=>a.date<b.date?-1:1).map(m=>({date:m.date,x:dnum(m.date),y:+m[key]}))}
 function wtMerged(){return Object.values(state.metrics).filter(m=>m.date&&(m.weight!=null||m.weightC!=null)).sort((a,b)=>a.date<b.date?-1:1).map(m=>({date:m.date,x:dnum(m.date),y:+(m.weight??m.weightC)}))}

@@ -125,7 +125,9 @@ function renderThemes(){const box=document.getElementById("themePanel");if(!box)
   let wf=0;try{wf=+localStorage.getItem(LS+"-wear")||0}catch(e){}
   const wear='<div class="thg"><h4>'+T("磨损","Wear and tear")+'</h4><div class="wearseg seg maseg" role="group" aria-label="'+T("磨损","Wear and tear")+'">'
     +[[0,"自动","Auto"],[1,"轻","Light"],[2,"中","Medium"],[3,"重","Heavy"]].map(([v,zh,en])=>'<button type="button" data-wear-force="'+v+'" aria-pressed="'+(wf===v)+'">'+T(zh,en)+'</button>').join("")+'</div></div>';
-  box.innerHTML=groups.map(([k,name])=>'<div class="thg"><h4>'+name+'</h4><div class="throw">'+THEMES.filter(t=>t[3]===k).map(([id,zh,en,,c])=>{const [bg,sf,a1,a2]=c.split(" ");
+  /* the main interface (index.html) is the new design; this page is the classic one, kept while trying both */
+  const ui='<div class="thg"><h4>'+T("界面","Interface")+'</h4><button type="button" class="tbtn" data-ui-new>'+T("换回新界面","Switch to the new interface")+'</button></div>';
+  box.innerHTML=ui+groups.map(([k,name])=>'<div class="thg"><h4>'+name+'</h4><div class="throw">'+THEMES.filter(t=>t[3]===k).map(([id,zh,en,,c])=>{const [bg,sf,a1,a2]=c.split(" ");
     return '<button type="button" class="thtile" data-theme-pick="'+id+'" aria-pressed="'+(id===cur)+'" style="--a:'+bg+';--b:'+sf+';--c:'+a1+';--d:'+a2+'"><i class="thprev" aria-hidden="true"><b></b><s></s><u></u></i><span>'+(n=>n.length>12?n.replace(" ","<br>"):n)(T(zh,en))+'</span></button>'}).join("")+'</div></div>').join("")+wear}
 /* toy theme: the selected tab sits under a plastic piece that slides to the tapped tab */
 function placePiece(bar,anim){if(!bar||!bar.getClientRects().length)return;let pc=bar.querySelector(".tpiece");
@@ -155,7 +157,8 @@ document.getElementById("langBtn").addEventListener("click",()=>{applyLang(LANG=
     const cur=document.documentElement.getAttribute("data-theme")||"light";applyTheme(THEME_IDS[(THEME_IDS.indexOf(cur)+1)%THEME_IDS.length]);
     const t=THEMES.find(x=>x[0]===document.documentElement.getAttribute("data-theme"));toast(T(t[1],t[2]))});
 })();
-document.addEventListener("click",e=>{const t=e.target.closest("[data-theme-pick]");if(t)applyTheme(t.dataset.themePick);
+document.addEventListener("click",e=>{if(e.target.closest("[data-ui-new]")){try{localStorage.setItem("tracktor-ui","p1");sessionStorage.removeItem(LS+"-fromp1")}catch(err){}location.href="./";return}
+  const t=e.target.closest("[data-theme-pick]");if(t)applyTheme(t.dataset.themePick);
   const w=e.target.closest("[data-wear-force]");if(w){try{localStorage.setItem(LS+"-wear",w.dataset.wearForce)}catch(err){}if(typeof updateWear==="function")updateWear();renderThemes()}});
 
 /* particle flames above an element: the 练 button burns at full size (orange); today's cell on the training

@@ -1,12 +1,12 @@
-/* 推拉机 redesign prototype. Uses the app's own program (core.js) and calorie maths (diet.js) on the records
-   stored on this phone, read-only: lsSave is replaced with a no-op, so nothing here is written back. */
-
-let toastT=0;
-function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("on"),2200)}
+/* 推拉机 main interface (P1): the screens. Training writes to the same records as the classic page (classic.html);
+   what is not built here yet (logging food and body measures, COROS, profile, backup, the 29 classic themes) opens
+   the classic page at that spot, with a way back. */
 
 /* ---------- small helpers ---------- */
 const $=s=>document.querySelector(s);
-const PK="tracktor-proto-";
+const PK="tracktor-p1-";
+/* things not built here yet open the classic page at that spot (see the ?go= handler in js/main.js) */
+const bridge=to=>{location.href="classic.html?go="+encodeURIComponent(to)};
 const WD=["日","一","二","三","四","五","六"];
 const fmt=v=>v==null?"–":Math.round(v).toLocaleString("en-US");
 const ICON={
@@ -16,6 +16,15 @@ const ICON={
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
   check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
   play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/></svg>',
+  sync:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 20v-4h-4"/></svg>',
+  swatch:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><path d="M13 17h8M17 13v8"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+  target:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+  cloud:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4 4 0 0 1 .5 7.97"/><path d="M12 20v-8M9 15l3-3 3 3"/></svg>',
+  table:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></svg>',
+  sliders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>'};
 function dateObj(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
 function dayLabel(s){const t=today();if(s===t)return "今天";if(s===ymdAdd(t,-1))return "昨天";const d=dateObj(s);return (d.getMonth()+1)+"."+d.getDate()}
@@ -23,6 +32,11 @@ function ringSvg(size,stroke,pct,color,track){const r=(size-stroke)/2,c=2*Math.P
   return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" stroke="'+track+'" stroke-width="'+stroke+'"/>'
     +'<circle class="rv" cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" stroke="'+color+'" stroke-width="'+stroke+'" stroke-dasharray="'+c+'" stroke-dashoffset="'+c+'" data-off="'+off+'"/></svg>'}
 function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>root.querySelectorAll("circle.rv").forEach(c=>c.style.strokeDashoffset=c.dataset.off)))}
+
+/* a first visit fills in the profile on the classic page's welcome sheet, then comes back */
+/* (once: if the sheet is closed without saving anything, this page still opens normally next time) */
+(function(){let seen=false;try{seen=localStorage.getItem(PK+"welcomed")==="1";if(FRESH&&!seen)localStorage.setItem(PK+"welcomed","1")}catch(e){seen=true}
+  if(FRESH&&!seen)location.replace("classic.html?go=welcome")})();
 
 /* ---------- theme: follow the phone, or fixed light / dark ---------- */
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
@@ -75,7 +89,9 @@ function planSheet(){const cells=PROGRAM.map(p=>{const s=state.sessions[p.sid],d
 /* ---------- focus mode ---------- */
 let run=null,restT=0,timerT=0,clockT=0;
 const restOf=e=>e.id==="pullup"?150:(e.id==="hang"||e.id==="ecc")?90:e.unit==="分钟"?0:60;
-function startRun(sid){const p=BYID[sid];run={sid,p,sets:setsOf(sid),ex:0,t0:Date.now(),rest:0,timing:0};
+/* the sets are the session's own arrays (sessionDoc), so every tick, change and finish is saved as it happens */
+function startRun(sid){const p=BYID[sid],doc=sessionDoc(sid),pb=pullSeries();
+  run={sid,p,doc,sets:p.ex.map(e=>doc.sets[e.id]),ex:0,t0:Date.now(),rest:0,timing:0,best0:pb.length?Math.max(...pb.map(x=>x.y)):0};
   run.ex=Math.max(0,run.sets.findIndex(a=>a.some(x=>!x.d)));
   const f=$("#focus");f.classList.add("on");f.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
   clearInterval(clockT);clockT=setInterval(()=>{const el=$("#fTime");if(el){const s=Math.floor((Date.now()-run.t0)/1000);el.textContent=Math.floor(s/60)+":"+pad(s%60)}},1000);
@@ -94,7 +110,7 @@ function renderFocus(anim){
   else bottom='<button class="tickb" data-act="tick" aria-label="完成这一组">'+ICON.check+'</button><p class="f-hint">左右滑动换动作</p>';
   f.innerHTML='<div class="f-top"><button class="mini" data-act="fclose" aria-label="退出">'+ICON.x+'</button><div class="f-dots">'+dots+'</div><span class="f-time n" id="fTime">0:00</span></div>'
     +'<div class="f-body" id="fBody"><p class="eyebrow">'+LAB(p)+' · 动作 '+(run.ex+1)+' / '+p.ex.length+'</p><h2>'+N(e)+'</h2><p class="f-note">'+(e.note?NOTE(e):"")+'</p>'
-    +'<div class="f-sets">'+a.map((x,i)=>'<i class="'+(x.d?"dn":i===ci?"cur":"")+'">'+(x.d?x.v:i+1===ci+1?"第 "+(i+1)+" 组":i+1)+'</i>').join("")+'</div>'
+    +'<div class="f-sets">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="撤销第 '+(i+1)+' 组">'+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?"第 "+(i+1)+" 组":i+1)+'</i>').join("")+'</div>'
     +'<div class="f-num">'+(ci<0||run.timing?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="减一">−</button>')+'<b class="n'+(anim?" pop":"")+'" id="fVal">'+(run.timing?run.timeLeft:val)+'</b>'
     +(ci<0||run.timing?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="加一">+</button>')+'</div>'
     +'<p class="f-unit">'+U(e.unit)+(ci<0?' · 全部 '+a.length+' 组完成':' · 第 '+(ci+1)+' 组 / 共 '+a.length+' 组')+'</p></div>'
@@ -103,7 +119,7 @@ function renderFocus(anim){
   swipe($("#fBody"))}
 function restHtml(){return '<div class="rest"><p class="eyebrow">组间休息</p><div class="big" id="rLeft">'+Math.floor(run.rest/60)+':'+pad(run.rest%60)+'</div>'
   +'<div class="bar"><i id="rBar" style="width:'+(run.rest/run.restMax*100)+'%"></i></div><div class="row"><button data-act="rplus">+30 秒</button><button class="ac" data-act="rskip">跳过</button></div></div>'}
-function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].d=true;if(v!=null)a[ci].v=v;
+function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].o=maxOrdOf(run.doc)+1;a[ci].d=true;if(v!=null)a[ci].v=v;lsSave();
   SFX.tick();buzz(18);
   const e=run.p.ex[run.ex];
   if(a.every(x=>x.d)){SFX.ex();buzz([20,40,30]);
@@ -122,9 +138,13 @@ function startTimer(){const e=run.p.ex[run.ex],a=run.sets[run.ex],ci=curSet();co
     if(run.timeLeft<=3&&run.timeLeft>0)tone(660,0,.08,"sine",.12);
     if(run.timeLeft<=0)stopTimer()},1000)}
 function stopTimer(){clearInterval(timerT);const done=run.timeTotal-Math.max(0,run.timeLeft);run.timing=0;tickSet(done)}
+function untick(i){const x=run.sets[run.ex][i];if(!x||!x.d)return;x.d=false;
+  if(x.o){const o=x.o;delete x.o;Object.values(run.doc.sets).forEach(arr=>arr.forEach(y=>{if(y.o>o)y.o--}))}
+  lsSave();run.rest=0;clearInterval(restT);SFX.tap();renderFocus(true)}
 function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Math.floor((Date.now()-run.t0)/1000);
+  run.doc.done=true;run.doc.date=today();lsSave();heroSid=null;
   let reps=0,sets=0,pu=0;run.sets.forEach((a,i)=>a.forEach(x=>{if(!x.d)return;sets++;if(p.ex[i].unit==="个")reps+=x.v;if(p.ex[i].id==="pullup")pu=Math.max(pu,x.v)}));
-  const prev=pullSeries();const best=prev.length?Math.max(...prev.map(x=>x.y)):0;
+  const best=run.best0;
   SFX.done();buzz([30,60,30,60,80]);
   if(window.confetti&&!matchMedia("(prefers-reduced-motion: reduce)").matches){const c=getComputedStyle(document.documentElement).getPropertyValue("--ac").trim();
     [0,250,500].forEach((t,i)=>setTimeout(()=>{confetti({particleCount:70,angle:60,spread:60,origin:{x:0,y:.8},colors:[c,"#fff","#FFD24D"],zIndex:60});confetti({particleCount:70,angle:120,spread:60,origin:{x:1,y:.8},colors:[c,"#fff","#FFD24D"],zIndex:60})},t))}
@@ -132,7 +152,7 @@ function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Mat
     +'<div class="f-body"><div class="fin"><div class="medal">'+ICON.trophy+'</div><p class="eyebrow">'+LAB(p)+'</p><h2>练完了</h2>'
     +(pu?'<span class="pill ac" style="margin-top:6px">引体单组 '+pu+' 个'+(pu>best?' · 新纪录':'')+'</span>':'')
     +'<div class="stats"><div><b>'+sets+'</b><span>组</span></div><div><b>'+reps+'</b><span>次</span></div><div><b>'+Math.max(1,Math.round(secs/60))+'</b><span>分钟</span></div></div></div></div>'
-    +'<div class="f-bottom"><button class="btn" data-act="fclose">好</button><p class="f-hint">原型不记录：这次没有写进推拉机</p></div>'}
+    +'<div class="f-bottom"><button class="btn" data-act="fclose">好</button><p class="f-hint">'+(firstOpen()?'下一次：'+LAB(firstOpen()):'20 天计划全部完成')+'</p></div>'}
 function swipe(el){let x0=null,y0=0;el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   el.addEventListener("touchend",e=>{if(x0==null||!run||run.timing)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
     if(Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx))return;const n=run.ex+(dx<0?1:-1);if(n<0||n>=run.p.ex.length)return;
@@ -145,12 +165,12 @@ function renderDietView(){const v=$("#v-diet"),t=today();
   let hero='<section class="card"><div class="row" style="align-items:flex-start"><div class="sp">';
   if(gap!=null)hero+='<p class="eyebrow">今天 · '+(gap>=0?"缺口":"盈余")+'</p><div class="big" style="color:'+(gap>=0?"var(--good)":"var(--bad)")+'">'+fmt(Math.abs(gap))+'<small>kcal</small></div><p class="muted" style="font-size:12px;margin-top:4px">摄入 '+fmt(tin)+' · 消耗 '+fmt(tb)+'</p>';
   else if(tin!=null)hero+='<p class="eyebrow">今天 · 摄入</p><div class="big">'+fmt(tin)+'<small>kcal</small></div><p class="muted" style="font-size:12px;margin-top:4px">消耗等手表同步'+(yg!=null?' · 昨天缺口 '+fmt(yg):'')+'</p>';
-  else hero+='<p class="eyebrow">今天</p><div class="big" style="font-size:26px">还没记</div><p class="muted" style="font-size:12px;margin-top:4px">'+(yg!=null?'昨天'+(yg>=0?'缺口 ':'盈余 ')+fmt(Math.abs(yg))+' kcal':'在推拉机里记一笔')+'</p>';
+  else hero+='<p class="eyebrow">今天</p><div class="big" style="font-size:26px">还没记</div><p class="muted" style="font-size:12px;margin-top:4px">'+(yg!=null?'昨天'+(yg>=0?'缺口 ':'盈余 ')+fmt(Math.abs(yg))+' kcal':'点下面记一笔')+'</p>';
   const pp=pr!=null&&need?pr/need:0;
   hero+='</div><div class="ring">'+ringSvg(76,8,pp,"var(--sleep)","var(--sub)")+'<span class="rl"><b class="n" style="font-size:16px;font-weight:800">'+(pr!=null?Math.round(pr):"–")+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ '+Math.round(need)+' g</span></span></div></div>';
   if(tin!=null&&tb!=null){const mx=Math.max(tin,tb);hero+='<div class="ib"><i style="width:'+(tin/mx*100)+'%;background:var(--ink)"></i><i style="width:'+(Math.max(0,tb-tin)/mx*100)+'%;background:var(--good);opacity:.35"></i></div>'
     +'<div class="legend"><span><i style="background:var(--ink)"></i>摄入</span><span><i style="background:var(--good);opacity:.5"></i>缺口</span><span style="margin-left:auto"><i style="background:var(--sleep)"></i>蛋白质</span></div>'}
-  hero+='</section>';
+  hero+='<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet">'+ICON.plus+'记一笔</button></section>';
   /* the last 7 finished days */
   const days=[];for(let i=7;i>=1;i--)days.push(ymdAdd(t,-i));
   const gaps=days.map(d=>dietGapOf(d)),known=gaps.filter(g=>g!=null),sum=known.reduce((a,g)=>a+g,0),mx=Math.max(300,...known.map(Math.abs));
@@ -169,16 +189,17 @@ function daySheet(d){const day=state.diet[d]||{},items=day.items||[],tt=dietTota
     +'<div class="sp"><p class="eyebrow">'+(g==null||g>=0?"缺口":"盈余")+'</p><b class="n" style="font-size:22px;font-weight:800;color:'+(g==null?"inherit":g>=0?"var(--good)":"var(--bad)")+'">'+(g==null?"–":fmt(Math.abs(g)))+'</b></div></div>'
     +(items.length?'<table class="tbl"><tr><th>食物</th><th>蛋白</th><th>脂肪</th><th>碳水</th><th>kcal</th></tr>'+items.map(it=>'<tr><td>'+escHtml(it.name||"")+'</td><td>'+f1(it.p)+'</td><td>'+f1(it.f)+'</td><td>'+f1(it.c)+'</td><td>'+f1(it.kcal)+'</td></tr>').join("")
       +(items.length>1?'<tr class="tot"><td>合计</td><td>'+f1(tt.p)+'</td><td>'+f1(tt.f)+'</td><td>'+f1(tt.c)+'</td><td>'+f1(tt.kcal)+'</td></tr>':'')+'</table>':'<p class="empty">这天只记了总数</p>')
-    +(day.note?'<p class="muted" style="font-size:12px;margin-top:12px">'+escHtml(day.note)+'</p>':''))}
+    +(day.note?'<p class="muted" style="font-size:12px;margin-top:12px">'+escHtml(day.note)+'</p>':'')
+    +'<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet:'+d+'">'+ICON.pen+'编辑这天</button>')}
 
 /* ---------- progress view ---------- */
 const METRICS=[
-  {k:"pull",name:"标准引体",unit:"个",c:"var(--pull)",up:1,wide:1,pts:()=>pullSeries(),dec:0},
-  {k:"wt",name:"体重",unit:"kg",c:"var(--push)",up:0,pts:()=>avg7(wtMerged()),dec:1,sub:"7 日均"},
-  {k:"waist",name:"腰围",unit:"cm",c:"var(--ac-text)",up:0,pts:()=>series("waist"),dec:1},
-  {k:"sleep",name:"睡眠",unit:"分",c:"var(--sleep)",up:1,pts:()=>series("sleep"),dec:0},
-  {k:"hrv",name:"HRV",unit:"ms",c:"#38BDF8",up:1,pts:()=>series("hrv"),dec:0},
-  {k:"rhr",name:"静息心率",unit:"bpm",c:"var(--bad)",up:0,pts:()=>series("rhr"),dec:0}];
+  {k:"pull",name:"标准引体",unit:"个",c:"var(--pull)",up:1,wide:1,pts:()=>pullSeries(),dec:0,rec:"rec:pullups"},
+  {k:"wt",name:"体重",unit:"kg",c:"var(--push)",up:0,pts:()=>avg7(wtMerged()),dec:1,sub:"7 日均",rec:"rec:weight"},
+  {k:"waist",name:"腰围",unit:"cm",c:"var(--ac-text)",up:0,pts:()=>series("waist"),dec:1,rec:"rec:waist"},
+  {k:"sleep",name:"睡眠",unit:"分",c:"var(--sleep)",up:1,pts:()=>series("sleep"),dec:0,rec:"sync"},
+  {k:"hrv",name:"HRV",unit:"ms",c:"#38BDF8",up:1,pts:()=>series("hrv"),dec:0,rec:"sync"},
+  {k:"rhr",name:"静息心率",unit:"bpm",c:"var(--bad)",up:0,pts:()=>series("rhr"),dec:0,rec:"sync"}];
 function smoothPath(P){if(!P.length)return "";let d="M"+P[0][0].toFixed(1)+" "+P[0][1].toFixed(1);if(P.length<2)return d;
   const n=P.length,s=[],t=new Array(n).fill(0);for(let i=0;i<n-1;i++){const h=P[i+1][0]-P[i][0];s.push(h?(P[i+1][1]-P[i][1])/h:0)}
   t[0]=s[0];t[n-1]=s[n-2];for(let i=1;i<n-1;i++)t[i]=s[i-1]*s[i]<=0?0:3*(s[i-1]+s[i])/((2*s[i]+s[i-1])/s[i-1]+(s[i]+2*s[i-1])/s[i]);
@@ -220,7 +241,8 @@ function metricSheet(k){const m=METRICS.find(x=>x.k===k),all=m.pts();
       +(pts.length>1?'<div class="chart" id="chart">'+lineSvg(pts,340,200,m.c,"",14)+'<span class="tip" id="ctip"></span></div>'
         +'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(pts[0].date)+'</span><span class="sp"></span><span>'+dayLabel(pts[pts.length-1].date)+'</span></div>'
         +'<div class="row" style="margin-top:16px;gap:8px"><span class="pill">最低 '+Math.min(...pts.map(p=>p.y)).toFixed(m.dec)+'</span><span class="pill">最高 '+Math.max(...pts.map(p=>p.y)).toFixed(m.dec)+'</span><span class="pill">'+pts.length+' 个记录</span></div>'
-        :'<p class="empty">这段时间不够两个记录</p>');
+        :'<p class="empty">这段时间不够两个记录</p>')
+      +(m.rec?'<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="'+m.rec+'">'+(m.rec==="sync"?ICON.sync+'从高驰同步':ICON.pen+'记一笔')+'</button>':'');
     const ch=$("#chart");if(ch)scrubber(ch,pts,m)};
   openSheet("");draw();metricSheet.redraw=draw}
 function scrubber(el,pts,m){const tip=el.querySelector(".tip"),xs=pts.map(p=>p.x),x0=Math.min(...xs),x1=Math.max(...xs);
@@ -239,10 +261,13 @@ $("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()})
   pnl.addEventListener("touchmove",e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);pnl.style.transition="none";pnl.style.transform="translateY("+dy+"px)"},{passive:true});
   pnl.addEventListener("touchend",()=>{if(y0==null)return;pnl.style.transition="";pnl.style.transform="";if(dy>90)closeSheet();y0=null})})();
 function meSheet(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
+  const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>设定</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">外观</p>'
-    +'<div class="setlist">'+[["auto","跟随手机"],["light","亮"],["dark","暗"]].map(([k,l])=>'<button class="opt" data-act="mode" data-m="'+k+'" aria-pressed="'+(m===k)+'">'+l+'</button>').join("")+'</div>'
-    +'<p class="eyebrow" style="margin:18px 0 8px">关于这个原型</p><p class="muted" style="font-size:13px">这是新界面的原型，读的是这台手机上推拉机的真实记录，但不会改动它们：在这里打的勾、练完的训练都不会保存。正式版的设定（资料、备份、高驰、饮食表格、主题）以后都会搬到这里。</p>'
-    +'<a class="btn ghost" style="margin-top:16px;text-decoration:none" href="../">打开推拉机正式版</a>')}
+    +'<div class="setlist">'+[["auto","跟随手机"],["light","亮"],["dark","暗"]].map(([k,l])=>'<button class="opt" data-act="mode" data-m="'+k+'" aria-pressed="'+(m===k)+'">'+l+'</button>').join("")
+    +'<button class="opt" data-act="classic">'+ICON.swatch+'<span class="sp">经典界面<br><span class="muted" style="font-size:12px;font-weight:500">原来的样子和 29 套主题</span></span>'+ICON.right+'</button></div>'
+    +'<p class="eyebrow" style="margin:18px 0 8px">更多</p><div class="setlist">'
+    +row("fold:foldMe",ICON.user,"个人资料")+row("goals",ICON.target,"目标")+row("fold:foldBk",ICON.cloud,"备份进度与高驰")+row("fold:foldDietSrc",ICON.table,"饮食表格")+row("fold:foldSync",ICON.sliders,"图表、同步和手表热量")+'</div>'
+    +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">推拉机 '+($("#ver")?$("#ver").textContent:"")+' · 「更多」里的设定暂时在经典界面里改</p>')}
 
 /* ---------- header, dock, routing ---------- */
 function paintHeader(v){const d=new Date();$("#today").textContent=(d.getMonth()+1)+"月"+d.getDate()+"日 周"+WD[d.getDay()];
@@ -257,8 +282,7 @@ function show(v,anim){document.querySelectorAll(".view").forEach(x=>x.classList.
 document.querySelector(".dock").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(b&&b.getAttribute("aria-selected")!=="true"){SFX.tap();show(b.dataset.v,true)}});
 addEventListener("resize",()=>placePc(false));
 $("#meBtn").addEventListener("click",meSheet);
-$("#syncBtn").addEventListener("click",()=>{let ls="";try{ls=localStorage.getItem("tracktor-lastsync")||""}catch(e){}
-  toast(ls?"上次同步 "+ls.replace(today(),"今天"):"还没同步过 · 正式版打开时会自动同步")});
+$("#syncBtn").addEventListener("click",()=>bridge("sync"));
 
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
   if(a==="month"){monthOpen=!monthOpen;monthOff=0;renderTrainView()}
@@ -271,20 +295,24 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="day")daySheet(b.dataset.d);
   else if(a==="metric"){chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
-  else if(a==="goal")toast("目标在正式版的「目标」里设");
+  else if(a==="goal")bridge("goals");
+  else if(a==="go")bridge(b.dataset.to);
+  else if(a==="classic"){try{localStorage.setItem("tracktor-ui","classic")}catch(err){}location.href="classic.html"}
   else if(a==="mode"){try{localStorage.setItem(PK+"mode",b.dataset.m)}catch(err){}applyMode();meSheet()}
   else if(run){
-    if(a==="fclose"){if(run.finished||!run.sets.some(x=>x.some(y=>y.d))||confirm("退出这次训练？原型里的勾不会保存。"))closeRun()}
+    if(a==="fclose"){if(!run.finished&&run.sets.some(x=>x.some(y=>y.d)))toast("打过的勾都已保存，下次接着练");closeRun()}
+    else if(a==="untick")untick(+b.dataset.i);
     else if(a==="tick")tickSet();
     else if(a==="timer"){if(run.timing)stopTimer();else startTimer()}
-    else if(a==="inc"||a==="dec"){const ci=curSet();if(ci<0)return;const s=run.sets[run.ex][ci];s.v=Math.max(0,s.v+(a==="inc"?1:-1));
-      run.sets[run.ex].forEach((x,i)=>{if(i>ci&&!x.d)x.v=s.v});SFX.tap();const el=$("#fVal");el.textContent=s.v;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");
+    else if(a==="inc"||a==="dec"){const ci=curSet();if(ci<0)return;const s=run.sets[run.ex][ci],st=run.p.ex[run.ex].unit==="秒"?5:1;s.v=Math.max(0,(+s.v||0)+(a==="inc"?st:-st));
+      run.sets[run.ex].forEach((x,i)=>{if(i>ci&&!x.d)x.v=s.v});lsSave();SFX.tap();const el=$("#fVal");el.textContent=s.v;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");
       document.querySelectorAll(".f-sets i").forEach((x,i)=>{if(i>ci&&!run.sets[run.ex][i].d)x.textContent=i+1})}
     else if(a==="rplus"){run.rest+=30;run.restMax=Math.max(run.restMax,run.rest)}
     else if(a==="rskip"){run.rest=0;clearInterval(restT);renderFocus(true)}
     else if(a==="fnext"){const n=run.sets.findIndex(x=>x.some(y=>!y.d));if(n>=0){run.ex=n;renderFocus(true)}}
   }});
 
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 let start="train";try{start=localStorage.getItem(PK+"tab")||"train"}catch(e){}
 if(!["train","diet","prog"].includes(start))start="train";
 show(start,false);

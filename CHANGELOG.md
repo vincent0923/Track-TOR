@@ -6,6 +6,20 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.33a] — 2026-11-13
+
+### 新增 / Added
+- ✨ **新界面成为默认**：打开推拉机就是新设计的界面（原型 P1）：训练、饮食、进展三个标签；训练首页是下一次训练的大卡片加「开始」，日历默认一周、可展开整月；专注训练模式一次一个动作，拇指位大勾、组间自动倒计时、按秒计的动作自动计时，打过的勾点一下能撤销，所有勾和完成都直接记进训练记录；饮食首页是今天的缺口和蛋白质圆环；进展是目标圆环和指标卡片。还没搬过来的功能（记饮食、记体重腰围引体、高驰同步、个人资料、目标、备份、饮食表格、图表设定）点了会打开经典界面的对应位置，左上角有「返回」。
+  **The new interface is now the default**: track-TOR opens in the new design (prototype P1) with Train, Diet and Progress tabs; the next session as a large card with Start, a one-week calendar that opens to the month; a focus mode with one exercise at a time, a thumb-sized tick, automatic rest countdowns and timers for timed holds, a tap on a done set to undo it, and every tick and finish saved to the training records; today's gap and a protein ring on Diet; goal rings and metric cards on Progress. What hasn't moved over yet (logging food and body measures, COROS sync, profile, goals, backup, the food table, chart settings) opens the classic interface at that spot, with Back at the top left.
+- 🎨 **经典界面保留**：原来的界面和 29 套主题在头像 →「经典界面」，选了以后打开就是经典界面；经典界面「设定 › 主题」里的「换回新界面」回来。英文用户默认进经典界面（新界面暂时只有中文）。
+  **The classic interface stays**: the original interface and its 29 themes are under avatar → Classic interface, which then opens by default; Switch to the new interface in its Settings › Theme comes back. English users open the classic interface by default, as the new one is Chinese only for now.
+
+### 移除 / Removed
+- 试验页「年轮」和好玩版原型 P2「赛段」。
+  The Rings experiment and the fun prototype P2 (Stages).
+
+---
+
 ## [v1.32a] — 2026-11-13
 
 ### 新增 / Added

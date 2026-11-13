@@ -2110,3 +2110,7 @@ html:root[data-skin="splitflow"] nav.tabs.tabs{left:12px;right:12px;bottom:calc(
 .wfull.flash{animation:wFlash 1.6s ease-out}
 @keyframes wFlash{0%,40%{box-shadow:0 0 0 3px var(--cta)}100%{box-shadow:0 0 0 3px transparent}}
 #dietGapTile{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+/* back to the main interface after a visit from it */
+.backp1{position:fixed;left:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:40;display:inline-flex;align-items:center;gap:4px;height:36px;padding:0 14px 0 10px;border-radius:999px;
+  border:0;background:var(--ink);color:var(--bg);font:inherit;font-size:14px;font-weight:700;box-shadow:0 6px 18px -6px rgba(0,0,0,.45);cursor:pointer}
+.backp1 svg{width:18px;height:18px}

@@ -1,320 +1,43 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
-<link rel="stylesheet" href="css/app.css?v=7bf2670e">
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>推拉机 track-TOR</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#16212B">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F2F2EE">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script>/* the COROS sign-in returns here; it, anyone who chose the classic interface, and English users (this page is
+   Chinese only for now) unless they chose this one, continue in classic.html */
+try{if(/[?&](code|error)=/.test(location.search)||localStorage.getItem("tracktor-ui")==="classic"||(localStorage.getItem("tracktor-lang")==="en"&&localStorage.getItem("tracktor-ui")!=="p1"))location.replace("classic.html"+location.search+location.hash)}catch(e){}</script>
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-
-</head>
-<body>
-
+<link rel="stylesheet" href="css/p1.css?v=59223144"></head><body>
 <div class="wrap">
   <header class="top">
-    <div class="trow">
-      <h1><span class="zh">推拉机<span class="flipx">🚜</span></span><span class="en">track-TOR<span class="flipx">🚜</span></span><span class="ver">(v1.32a)</span><small class="h1s"><span class="zh">track-TOR · 躯干优化记录</span><span class="en">Torso Optimisation Record</span></small></h1>
-      <button id="pwaInstallBtn" type="button" style="display:none;background:var(--cta);border:0;color:#fff;font-weight:700;font-size:12px;padding:5px 11px;border-radius:999px;cursor:pointer;margin-right:6px">📲 <span class="zh">安装 App</span><span class="en">Install</span></button><button id="syncBtn" class="syncbtn off"><span class="zh">连接中</span><span class="en">Connecting</span></button>
+    <div><p class="eyebrow" id="today"></p><h1 id="title">训练</h1></div>
+    <div class="tr">
+      <button class="circ" id="syncBtn" aria-label="同步状态"><i class="syncdot" id="syncDot"></i></button>
+      <button class="circ" id="meBtn" aria-label="设定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></button>
     </div>
-    <div class="hrow"><p class="sub"><span class="zh">下一次</span><span class="en">Next</span> <b id="stNext" class="num" style="font-size:16px;color:var(--ink)">—</b></p><div class="hbtns">
-      <button id="langBtn" class="iconbtn flagbtn" aria-label="切换语言 / Switch language"></button>
-      <button id="themeBtn" class="iconbtn" aria-label="主题 / Theme"></button>
-      <button id="sndBtn" class="iconbtn" aria-label="声音 / Sound"></button>
-    </div></div>
   </header>
-
-
-
-  <nav class="tabs" role="tablist">
-    <button id="tab-train" role="tab" aria-selected="true" data-tab="train" data-ic="train" class="t-train" aria-label="训练 / Train"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"/></svg><span class="tl"><span class="zh">训练</span><span class="en">Train</span></span></button>
-    <button id="tab-diet" role="tab" aria-selected="false" data-tab="diet" data-ic="diet" class="t-diet" aria-label="饮食 / Diet" title="饮食 / Diet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg><span class="tl"><span class="zh">饮食</span><span class="en">Diet</span></span></button>
-    <button id="tab-body" role="tab" aria-selected="false" data-tab="body" data-ic="charts" class="t-body" aria-label="数据 / Data" title="数据 / Data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg><span class="tl"><span class="zh">数据</span><span class="en">Data</span></span></button>
-    <button id="tab-goals" role="tab" aria-selected="false" data-tab="goals" data-ic="me" class="t-goals" aria-label="目标 / Goals" title="目标 / Goals"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8.5" cy="7.5" r="3.5"/><path d="M2 20.5c0-3.6 2.9-6.5 6.5-6.5 1.4 0 2.6.4 3.7 1.1"/><path d="M15 10.5h6v2.8a3 3 0 0 1-6 0z"/><path d="M15 11.5h-1.3a1.3 1.3 0 0 0 0 2.6H15M21 11.5h1.3a1.3 1.3 0 0 1 0 2.6H21M18 16.3v2.7M16 20.5h4"/></svg><span class="tl"><span class="zh">目标</span><span class="en">Goals</span></span></button>
-    <button id="tab-me" role="tab" aria-selected="false" data-tab="me" data-ic="settings" class="t-me" aria-label="设定 / Settings" title="设定 / Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span class="tl"><span class="zh">设定</span><span class="en">Settings</span></span></button>
-  </nav>
-
-  <div id="goalsTop" hidden></div>
   <main>
-    <section id="pane-train"></section>
-
-    <section id="pane-data" hidden>
-      
-    <section id="pane-diet" hidden>
-
-
-      <div class="chartbox">
-        <div class="chead">
-          <div class="chead-t"><h3><span class="zh">摄入与消耗</span><span class="en">Intake vs burn</span></h3></div>
-        </div>
-        <button type="button" class="gtile" id="dietGapTile" aria-label="切换统计天数 / Change period"></button>
-        <div class="dlegend">
-          <span><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><path d="M1 5h16" stroke="var(--intake)" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="5" r="2" fill="var(--intake)"/></svg><span class="zh">摄入</span><span class="en">Intake</span></span>
-          <span><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><path d="M1 5h16" stroke="var(--burn)" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="5" r="2" fill="var(--burn)"/></svg><span class="zh">估算总消耗</span><span class="en">Est. burn</span></span>
-          <span><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><path d="M1 5h16" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3" stroke-opacity=".8"/></svg><span class="zh">基础代谢</span><span class="en">BMR</span></span>
-          <span><svg class="lgs lgb" viewBox="0 0 10 12" aria-hidden="true"><rect x="1" y="1" width="8" height="10" rx="1.5" fill="var(--gain)" fill-opacity=".35"/></svg><span class="zh">缺口</span><span class="en">Deficit</span></span>
-          <span><svg class="lgs lgb" viewBox="0 0 10 12" aria-hidden="true"><rect x="1" y="1" width="8" height="10" rx="1.5" fill="var(--loss)" fill-opacity=".35"/></svg><span class="zh">盈余</span><span class="en">Surplus</span></span>
-          <span><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><path d="M2.5 5h13" stroke="var(--protein)" stroke-width="5" stroke-opacity=".35" stroke-linecap="round"/></svg><span class="zh">蛋白质（右轴 g）</span><span class="en">Protein (right, g)</span></span>
-          <span><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><rect x="1" y="1.5" width="16" height="7" fill="var(--protein)" fill-opacity=".14"/><path d="M1 1.5h16M1 8.5h16" stroke="var(--protein)" stroke-width="1.1" stroke-dasharray="1.5 2.5" stroke-linecap="round"/></svg><span class="zh">增肌够用区间</span><span class="en">Muscle-building band</span></span>
-        </div>
-        <div id="dietChart"></div>
-        <div class="tip" id="dietTip" hidden></div>
-        <div class="dinfo-row"><button type="button" class="dsrc-i" data-itoggle="dietFormula" aria-expanded="false" aria-controls="dietFormula" aria-label="计算方法 / How it is calculated"><span class="dsrc-i-l">i</span><span class="dsrc-i-r" aria-hidden="true">+</span></button></div>
-        <div class="dfoot" id="dietFormula" hidden><ul class="flist">
-          <li><span class="lgw"><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><path d="M1 5h16" stroke="var(--burn)" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="5" r="2" fill="var(--burn)"/></svg></span><span><span class="zh"><b>估算总消耗</b> = 基础代谢 + 手表热量 + 消化耗能。消化耗能按营养素算：蛋白质热量 × 25%，碳水 × 8%，脂肪 × 2%；没记营养素的日子按摄入 × 9%。手填了当日总消耗，就用手填的。</span><span class="en"><b>Est. burn</b> = BMR + watch calories + digestion. Digestion is worked out per nutrient: 25% of protein calories, 8% of carbs, 2% of fat; days without nutrients use 9% of intake. A total you enter by hand replaces it.</span></span></li>
-          <li><span class="lgw"><span class="lgs"></span></span><span><span class="zh"><b>手表热量</b>（高驰的活动热量，本来就不含基础代谢）：日常活动全算，但最多按步数估算值的 1.5 倍再加 120 kcal（手表整天心率偏高时会多估好几倍）；运动记录 × 0.7（心率估算容易偏高）；健走、家务等自定义活动、瑜伽这类低强度运动 × 0.5（心率只比静息高一点时最不准）；有功率计的骑行全算（功率是实测的，不打折）。当天要到晚上才完整。在「设定 › 图表和同步设定」可以改成全算。</span><span class="en"><b>Watch calories</b> (COROS active calories, which already leave out resting metabolism): everyday movement in full, up to 1.5 times what the steps account for plus 120 kcal (a watch that reads a raised heart rate all day can report several times more); logged workouts × 0.7 (heart-rate estimates run high); low-intensity ones such as walks, housework and other custom activities, and yoga × 0.5 (least accurate when heart rate is barely above resting); rides with a power meter in full (measured, not discounted). Today is only complete in the evening. Settings › Charts & sync can count them in full instead.</span></span></li>
-          <li><span class="lgw"><span class="lgs"></span></span><span><span class="zh"><b>脂肪对账</b>：统计 14 天以上时，把估算的减脂和同期 7 日均体重的变化对一下：差在 15% 以内写「约」；估算比体重多掉 15% 以上写「激进估计」；少 15% 以上写「保守估计」。体重里有水分和肠道内容物，只能当参考；长按这块面板可以切换手表热量打折或全算。</span><span class="en"><b>Fat cross-check</b>: over 14 days or more, the estimated fat loss is compared with what the 7-day average weight did over the same days: within 15% reads "about", more than 15% above reads "aggressive estimate", more than 15% below reads "conservative estimate". Weight includes water and gut contents, so treat it as a guide; hold this tile to switch watch calories between discounted and in full.</span></span></li>
-          <li><span class="lgw"><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><path d="M1 5h16" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3" stroke-opacity=".8"/></svg></span><span><span class="zh"><b>基础代谢</b>：按 Mifflin 公式，用你的性别、年龄、身高和体重算。</span><span class="en"><b>BMR</b>: the Mifflin formula, from your sex, age, height and weight.</span></span></li>
-          <li><span class="lgw"><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><path d="M1 5h16" stroke="var(--intake)" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="5" r="2" fill="var(--intake)"/></svg></span><span><span class="zh"><b>摄入</b>：当天记下的饮食热量合计。</span><span class="en"><b>Intake</b>: the calories you logged that day.</span></span></li>
-          <li><span class="lgw"><svg class="lgs lgb" viewBox="0 0 10 12" aria-hidden="true"><rect x="1" y="1" width="8" height="10" rx="1.5" fill="var(--gain)" fill-opacity=".35"/></svg><svg class="lgs lgb" viewBox="0 0 10 12" aria-hidden="true"><rect x="1" y="1" width="8" height="10" rx="1.5" fill="var(--loss)" fill-opacity=".35"/></svg></span><span><span class="zh"><b>缺口</b> / <b>盈余</b> = 估算总消耗 − 摄入。约 7700 kcal 折合 1 kg 脂肪。</span><span class="en"><b>Deficit</b> / <b>surplus</b> = est. burn − intake. About 7700 kcal makes 1 kg of fat.</span></span></li>
-          <li><span class="lgw"><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><path d="M2.5 5h13" stroke="var(--protein)" stroke-width="5" stroke-opacity=".35" stroke-linecap="round"/></svg></span><span><span class="zh"><b>蛋白质</b>（右边的轴，单位 g）：当天记下的蛋白质合计，画成半透明的粗线，不挡热量那两条线。粗线落在浅色带里或上面就是吃够了，在带子下面是没吃够。</span><span class="en"><b>Protein</b> (right axis, grams): the protein you logged that day, drawn as a broad see-through stroke so it doesn't hide the calorie lines. On or above the shaded band means enough; below it means short.</span></span></li>
-          <li><span class="lgw"><svg class="lgs" viewBox="0 0 18 10" aria-hidden="true"><rect x="1" y="1.5" width="16" height="7" fill="var(--protein)" fill-opacity=".14"/><path d="M1 1.5h16M1 8.5h16" stroke="var(--protein)" stroke-width="1.1" stroke-dasharray="1.5 2.5" stroke-linecap="round"/></svg></span><span><span class="zh"><b>增肌够用区间</b> = 体重 × 1.6 到 2.2 g。到下沿就够增肌了，再往上多长肌肉的效果很小。超过上沿也没问题：减脂期间多吃蛋白质更顶饱，消化耗能也高，还更能保住肌肉。</span><span class="en"><b>Muscle-building band</b> = body weight × 1.6 to 2.2 g. The bottom is enough for building muscle; above it, extra muscle gains are small. Going over the top is fine: while cutting, more protein keeps you fuller, costs more to digest and protects muscle.</span></span></li>
-          <li><span class="lgw"><span class="lgs lgtile" aria-hidden="true"></span></span><span><span class="zh"><b>上方的缺口卡片</b>只算过完的日子，今天不算；期间有一天没记账或缺消耗数据，就显示 –。</span><span class="en"><b>The gap tile above</b> only counts finished days, never today; if any day in the period has no log or no burn data, it shows –.</span></span></li>
-        </ul></div>
-      </div>
-
-      <div class="dbar" id="dietBar"><h2><span class="zh">饮食记录</span><span class="en">Food logs</span><button type="button" class="iconbtn" id="dietSyncBtn" aria-label="同步线上饮食表格（长按设置链接）/ Sync the online food table (hold for the link)" title="同步线上饮食表格 / Sync the online food table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button></h2></div>
-      <div id="dietDays" aria-label="每日饮食记录"></div>
-    </section>
-      <section id="pane-strength" hidden>
-      <div class="chartbox" id="cbHeat"><h3><span class="zh">一年打卡</span><span class="en">Year of training</span> <span id="cvHeat" class="num">—</span></h3><div id="heat"></div></div>
-      <div class="chartbox" id="cbPull"><h3><span class="zh">标准引体</span><span class="en">Strict pull-ups</span> <span id="cvPull" class="num">—</span><button type="button" class="chedit iconbtn" data-rec="pullups" aria-label="手动记录 / Log manually" title="手动记录 / Log manually"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 20h6"/></svg></button></h3><p class="maline" data-ch="pull"><button type="button" class="tbtn chcyc" data-cyc="rg"></button></p><div id="chPull"></div></div>
-      <div class="chartbox" id="cbWt"><h3><span class="zh">体重</span><span class="en">Weight</span> <span id="cvWt" class="num">—</span><button type="button" class="chedit iconbtn" data-rec="weight" aria-label="手动记录 / Log manually" title="手动记录 / Log manually"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 20h6"/></svg></button></h3><p><span style="color:var(--muted)">●</span> <span class="zh">高驰</span><span class="en">COROS</span>　<span style="color:var(--ok)">●</span> <span class="zh">手动</span><span class="en">Manual</span></p><p class="maline" data-ch="wt"><button type="button" class="tbtn chcyc" data-cyc="rg"></button><button type="button" class="tbtn chcyc" data-cyc="ma"></button></p><div id="chWt"></div></div>
-      <div class="chartbox" id="cbWaist"><h3><span class="zh">腰围</span><span class="en">Waist</span> <span id="cvWaist" class="num">—</span><button type="button" class="chedit iconbtn" data-rec="waist" aria-label="手动记录 / Log manually" title="手动记录 / Log manually"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 20h6"/></svg></button></h3><p class="maline" data-ch="waist"><button type="button" class="tbtn chcyc" data-cyc="rg"></button><button type="button" class="tbtn chcyc" data-cyc="ma"></button></p><div id="chWaist"></div></div>
-      </section>
-      <section id="pane-health" hidden>
-      <div class="chartbox" id="cbSleep"><h3 style="--g:var(--sleep)"><svg class="chic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><span class="zh">睡眠评分</span><span class="en">Sleep score</span> <span id="cvSleep" class="num">—</span><button type="button" class="chedit iconbtn" data-csync="sleep" aria-label="同步睡眠评分 / Sync Sleep score" title="同步睡眠评分 / Sync Sleep score"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button></h3><p class="maline" data-ch="sleep"><button type="button" class="tbtn chcyc" data-cyc="rg"></button><button type="button" class="tbtn chcyc" data-cyc="ma"></button></p><div id="chSleep"></div></div>
-      <div class="chartbox" id="cbHrv"><h3 style="--g:var(--pull)"><svg class="chic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.4-9.7C1.5 7.6 3.6 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3.1 1.6-1.9 3.1-3.1 5.2-3.1 3.2 0 5.3 3.1 4.2 6.3-1.8 5.1-9.4 9.7-9.4 9.7z"/><path d="M4 12h3.5l1.8-2.8 2.6 5.3 1.8-3.4H20"/></svg><span class="zh">HRV</span><span class="en">HRV</span> <span id="cvHrv" class="num">—</span><button type="button" class="chedit iconbtn" data-csync="hrv" aria-label="同步HRV / Sync HRV" title="同步HRV / Sync HRV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button></h3><p class="maline" data-ch="hrv"><button type="button" class="tbtn chcyc" data-cyc="rg"></button><button type="button" class="tbtn chcyc" data-cyc="ma"></button></p><div id="chHrv"></div></div>
-      <div class="chartbox" id="cbRhr"><h3 style="--g:var(--push)"><svg class="chic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg><span class="zh">静息心率</span><span class="en">Resting heart rate</span> <span id="cvRhr" class="num">—</span><button type="button" class="chedit iconbtn" data-csync="rhr" aria-label="同步静息心率 / Sync Resting heart rate" title="同步静息心率 / Sync Resting heart rate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button></h3><p class="maline" data-ch="rhr"><button type="button" class="tbtn chcyc" data-cyc="rg"></button><button type="button" class="tbtn chcyc" data-cyc="ma"></button></p><div id="chRhr"></div></div>
-      </section>
-      <div class="addpanel" id="addPanel" hidden><button type="button" class="rk rk-plus" id="addPanelBtn" aria-expanded="false" aria-label="添加数据面板 / Add a data panel" title="添加数据面板 / Add a data panel"></button><div class="addmenu" id="addMenu" hidden></div></div>
-      </section>
-    </section>
-    <section id="pane-goals" hidden>
-    <section class="goals" id="goals" aria-label="目标进度"></section>
-      <details class="fold savefold" id="foldGoal" open><summary><span class="sumt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4v3h-4z"/></svg><span class="zh">目标</span><span class="en">Goals</span></span><span class="saveic" aria-label="保存并收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></span></summary><div class="fbody">
-        <div class="gsec"><div class="gshow-h"><span class="zh">面板显示</span><span class="en">Show on the panel</span></div><div class="gshow" id="goalShow" role="group" aria-label="面板显示哪些目标 / Goals shown on the panel"><button type="button" class="gchip2" data-gshow="pullups" aria-pressed="true" style="--g:var(--pull)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18"/><path d="M8 4v4l2.5 3M16 4v4l-2.5 3"/><circle cx="12" cy="9.5" r="1.8"/><path d="M12 11.5v5M12 16.5l-2 4M12 16.5l2 4"/></svg><span class="zh">引体</span><span class="en">Pull-ups</span></button><button type="button" class="gchip2" data-gshow="waist" aria-pressed="true" style="--g:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 2.5c.9 2.6 1.3 5 1.4 7.5M17.5 2.5c-.9 2.6-1.3 5-1.4 7.5M7.9 15c0 2.3-.4 4.3-1.4 6.5M16.1 15c0 2.3.4 4.3 1.4 6.5"/><path d="M3 10.6l18-.6v4.6l-18 .6z"/><path d="M6 10.5v2M9 10.4v2.4M12 10.3v2M15 10.2v2.4M18 10.1v2" stroke-width="1.3"/></svg><span class="zh">腰围</span><span class="en">Waist</span></button><button type="button" class="gchip2" data-gshow="weight" aria-pressed="true" style="--g:var(--sleep)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 9a5 5 0 0 1 8 0"/><path d="M12 9.5l1.5-2"/></svg><span class="zh">体重</span><span class="en">Weight</span></button><button type="button" class="gchip2" data-gshow="fat" aria-pressed="true" style="--g:var(--cta)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 0 1-10 0c0-2.2 1-3.8 2.3-5 .2 1.6.9 2.6 2 3-.4-3 .3-5.6.7-8z"/></svg><span class="zh">减脂</span><span class="en">Fat loss</span></button></div></div>
-        <div class="gsec"><div class="fgrid">
-          <div class="field"><label for="gP"><span class="zh">目标引体（个）</span><span class="en">Pull-up goal (reps)</span></label><input id="gP" type="number" inputmode="numeric" step="1" min="1" data-g="p"></div>
-          <div class="field"><label for="gF"><span class="zh">目标减脂（kg）</span><span class="en">Fat-loss goal (kg)</span></label><input id="gF" type="number" inputmode="decimal" step="0.1" min="0.1" data-g="fat"></div>
-        </div></div>
-        <div class="gsec">
-          <div class="gline"><div class="field"><label for="gW"><span class="zh">目标体重（kg）</span><span class="en">Target weight (kg)</span></label><input id="gW" type="number" inputmode="decimal" step="0.5" data-g="w"></div><div class="calc" id="gWc"></div></div>
-          <div class="scale" id="scBmi"></div>
-        </div>
-        <div class="gsec">
-          <div class="gline"><div class="field"><label for="gZ"><span class="zh">目标腰围（cm）</span><span class="en">Target waist (cm)</span></label><input id="gZ" type="number" inputmode="decimal" step="0.5" data-g="z"></div><div class="calc" id="gZc"></div></div>
-          <div class="scale" id="scWhtr"></div>
-        </div>
-      </div></details>
-    </section>
-    <section id="pane-me" hidden>
-      <details class="fold savefold" id="foldMe"><summary><span class="sumt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="zh">个人资料</span><span class="en">Profile</span></span><button type="button" class="iconbtn meeye" id="meEye" aria-pressed="false"></button><span class="saveic" aria-label="保存并收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></span></summary><div class="fbody">
-        <div class="fgrid mefields hid" id="meFields">
-          <div class="field"><label for="gS"><span class="zh">性别</span><span class="en">Sex</span></label><select id="gS" data-g="sex"><option value=""></option><option value="m">♂</option><option value="f">♀</option></select></div>
-          <div class="field"><label for="gB"><span class="zh">出生年月</span><span class="en">Birth month</span></label><input id="gB" type="month" data-g="b"></div>
-          <div class="field"><label for="gH"><span class="zh">身高（cm）</span><span class="en">Height (cm)</span></label><input id="gH" type="number" inputmode="decimal" step="0.5" data-g="h"><span class="hsrc" id="gHsrc"></span></div>
-          <div class="field"><label for="gCW"><span class="zh">现在体重（kg）</span><span class="en">Weight now (kg)</span></label><input id="gCW" type="number" inputmode="decimal" step="0.1" data-g="cw"><span class="hsrc" id="gCWsrc"></span></div>
-        </div>
-      </div></details>
-
-      <details class="fold" id="foldBk"><summary><span class="sumt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4 4 0 0 1 .5 7.97"/><path d="M12 12v8M9 15l3-3 3 3"/></svg><span class="zh">备份进度</span><span class="en">Back up progress</span></span></summary><div class="fbody">
-        <div class="row">
-          <button id="bkSave" class="btn ibtn" style="background:var(--ink);color:var(--bg)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 11l5 5 5-5"/><path d="M4 20h16"/></svg><span class="zh">保存进度文件</span><span class="en">Save progress file</span></button>
-          <button id="bkRead" class="btn ghost ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 8l5-5 5 5"/><path d="M4 20h16"/></svg><span class="zh">导入进度文件</span><span class="en">Import progress file</span></button>
-          <input id="bkFile" type="file" accept=".txt,text/plain" hidden>
-        </div>
-        <div id="bkConfirm" class="row" hidden style="margin-top:10px"><span class="note" style="margin:0" id="bkMsg"></span><button id="bkYes" class="btn" style="background:var(--push)"><span class="zh">确认覆盖</span><span class="en">Overwrite</span></button><button id="bkNo" class="btn ghost"><span class="zh">取消</span><span class="en">Cancel</span></button></div>
-        <button id="bkPasteShow" type="button" style="border:0;background:none;color:var(--muted);font-size:12px;padding:0;margin-top:10px;cursor:pointer;text-decoration:underline"><span class="zh">有旧版进度文本？粘贴导入</span><span class="en">Have old progress text? Paste it</span></button>
-        <div id="bkPasteWrap" hidden style="margin-top:10px"><div class="field"><label for="bkPaste"><span class="zh">粘贴进度文本</span><span class="en">Paste progress text</span></label><textarea id="bkPaste" rows="2"></textarea></div>
-        <div class="row" style="margin-top:8px"><button id="bkPasteGo" class="btn ghost"><span class="zh">导入</span><span class="en">Import</span></button></div></div>
-        <div id="coOut" hidden style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
-          <button id="coOutBtn" type="button" class="btn ghost ibtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg><span class="zh">登出高驰</span><span class="en">Log out of COROS</span></button>
-          <div id="coOut1" hidden style="margin-top:10px;display:grid;gap:8px">
-            <p class="note" style="margin:0"><span class="zh">登出后不再同步。已有数据怎么处理？</span><span class="en">Syncing stops after logout. What about the data already here?</span></p>
-            <button type="button" class="btn ghost" data-co="keep"><span class="zh">保留全部数据</span><span class="en">Keep all data</span></button>
-            <button type="button" class="btn ghost" data-co="wipe"><span class="zh">清除高驰同步的数据，手动记录保留</span><span class="en">Delete COROS-synced data, keep manual entries</span></button>
-            <button type="button" class="btn ghost" data-co="cancel"><span class="zh">取消</span><span class="en">Cancel</span></button>
-          </div>
-          <div id="coOut2" hidden style="margin-top:10px;display:grid;gap:8px">
-            <p class="note" style="margin:0" id="coOutMsg"></p>
-            <div class="row"><button type="button" id="coOutYes" class="btn" style="background:var(--push)"><span class="zh">确定登出</span><span class="en">Log out</span></button><button type="button" class="btn ghost" data-co="cancel"><span class="zh">取消</span><span class="en">Cancel</span></button></div>
-          </div>
-        </div>
-      </div></details>
-
-      <details class="fold savefold" id="foldLog">
-        <summary><span class="sumt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="3"/></svg><span class="zh">全部记录</span><span class="en">All records</span> <span id="logCount" class="num" style="color:var(--muted);font-weight:500"></span></span><span class="saveic" aria-label="保存并收起"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></span></summary>
-        <div class="fbody"><div class="tablewrap"><table class="log"><thead><tr><th><span class="zh">日期</span><span class="en">Date</span></th><th><span class="zh">引体</span><span class="en">Pull-ups</span></th><th><span class="zh">体重</span><span class="en">Weight</span></th><th><span class="zh">腰围</span><span class="en">Waist</span></th><th><span class="zh">睡眠</span><span class="en">Sleep</span></th><th></th></tr></thead><tbody id="logBody"></tbody></table></div></div>
-      </details>
-
-
-      <details class="fold" id="foldGuide"><summary><span class="sumt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg><span class="zh">要点</span><span class="en">Guide</span></span></summary><div class="fbody guide">
-      <div class="zh">
-      <h3>进阶规则</h3>
-      <ul>
-        <li>每 5 次加一档：D1–5、D6–10、D11–15、D16–20。</li>
-        <li>某一项没做满，下次这一项沿用原来的数，做满再加。</li>
-        <li>所有按次数的动作每组 5–12 个，不超过 12。要加量就加组，不加次数。</li>
-        <li>标准俯卧撑：稳、慢，3-1-1，余 1–2 个或姿势变形就停，记录实际个数。所有组都到 12 个且留有余量，换更难的形式（底部停 2 秒）。</li>
-        <li>标准引体：拉练第一个做，趁精力最好。每组留 1 个余力，组间休息 2–3 分钟；只算下巴过杠、手臂伸直的完整次数，做不满就记实际个数。</li>
-        <li>从推练 D5 起取消下斜俯卧撑（出差、换场地无法统一高度），钻石俯卧撑改为 3 组；推拉日都加靠墙静蹲 3 × 20 秒。</li>
-        <li>手腕有压力时钻石俯卧撑改握拳或用支架做。</li>
-        <li>同肌群间隔 ≥48 小时；推日最多 1 个引体或不做。</li>
-        <li>引体测试固定条件：精力充沛的日子、训练前、同一根杠、只做一组。</li>
-      </ul>
-      <h3>依据</h3>
-      <ul>
-        <li>渐进超负荷：逐步加量是力量和肌肉增长的基本前提（ACSM 2009 进阶模型立场声明）。每 5 次加一档是为了好执行定的节奏，没有研究规定这个间隔。</li>
-        <li>没做满就沿用原数：属于按表现自我调节，是教练实践中的常用做法，研究证据有限。</li>
-        <li>每组 5–12 个、加组不加次数：只要接近力竭，从 6 次到 30 次以上的范围增肌效果相近（Schoenfeld 2017 荟萃分析）；每周组数越多，肌肉增长越多（Schoenfeld 2017 剂量反应研究）。所以加组是有效的加量方式。上限 12 是为了保持动作质量，不是生理界限。</li>
-        <li>留 1–2 个余力：离力竭 0–3 个以内的训练增肌效果都好，越接近力竭增肌越多，对力量的影响则不大（Refalo 2023、Robinson 2024 荟萃分析）。留余力换来的是恢复和动作质量。</li>
-        <li>慢速 3-1-1：每次动作 0.5–8 秒，增肌效果相近（Schoenfeld 2015 荟萃分析）。慢速的价值在于控制动作、让自重更难，不在于速度本身；单次超过 10 秒反而不利。</li>
-        <li>组间休息 2–3 分钟：较长的组间休息比 1 分钟更利于力量和肌肉（Schoenfeld 2016）。</li>
-        <li>离心引体：离心阶段能承受更大负荷，是还做不了完整引体时的常用过渡。离心训练提升力量有证据支持，专门针对引体的研究较少。</li>
-        <li>同肌群间隔 ≥48 小时：来自通行的新手指南；每个肌群每周练 2 次，增肌效果好于 1 次（Schoenfeld 2016 频率荟萃分析）。</li>
-        <li>休息日少量引体：即“润滑沟槽”（greasing the groove），来自实践经验，缺乏对照研究。</li>
-        <li>平板支撑加到 75 秒：时长超过约 60 秒后收益递减。McGill 建议用多组 10 秒左右的短时支撑练核心耐力，可作为以后的替代。</li>
-      </ul>
-      <h3>骑行日</h3>
-      <ul>
-        <li>先确认天气能骑，再按碳水日吃（150–200g）。不确定能不能骑，早餐按中档，多出的碳水留到骑完。</li>
-        <li>进食窗口：出发前 2–3 小时正餐，或出发前 15 分钟内小份；饭后 30–90 分钟不出发。</li>
-        <li>中间档那天：平均心率 &lt;135，40–60 分钟，轻齿比，陡坡推车；到 140 就放慢。</li>
-        <li>带水，超过 90 分钟带补给。骑完一餐配 ≥25g 低脂蛋白。</li>
-      </ul>
-      <h3>休息日</h3>
-      <ul>
-        <li>不加练。标准引体 1–2 个，1–3 次，间隔几小时，永远留余力。</li>
-        <li>碳水 50–100g；蛋白 114–120g，优先酸奶、FitMilk、鸡胸、虾。</li>
-        <li>碳水不空腹单吃，同餐配 ≥20g 蛋白，主食最后吃。</li>
-        <li>蔬菜 ≥300g，根茎类最多算 150g。</li>
-        <li>每顿 8.5 分饱，先盛好再开吃。</li>
-      </ul>
-      </div>
-      <div class="en">
-      <h3>Progression rules</h3>
-      <ul>
-        <li>Step up every 5 sessions: D1–5, D6–10, D11–15, D16–20.</li>
-        <li>If you miss the target on an exercise, keep the same number next time; increase only once you hit it.</li>
-        <li>Every rep-based exercise: 5–12 reps per set, never above 12. Add sets, not reps, to progress.</li>
-        <li>Standard push-ups: steady and slow, 3-1-1, stop 1–2 reps short or when form breaks, log actual reps. When every set reaches 12 with reps in reserve, switch to a harder variation (2 s pause at the bottom).</li>
-        <li>Strict pull-ups: first exercise of the pull day, while fresh. Leave 1 rep in reserve, rest 2–3 min between sets; count only full reps (chin over bar, arms straight) and log what you actually did.</li>
-        <li>From push D5 on: no decline push-ups (no consistent bench height when travelling or changing parks), diamond push-ups go to 3 sets, and both push and pull days add a 3 × 20 s wall sit.</li>
-        <li>If the wrists feel strained, do diamond push-ups on fists or with push-up handles.</li>
-        <li>At least 48 h between sessions for the same muscles; on push days at most 1 pull-up, or none.</li>
-        <li>Pull-up test, fixed conditions: a well-rested day, before training, same bar, one set only.</li>
-      </ul>
-      <h3>Evidence</h3>
-      <ul>
-        <li>Progressive overload: gradually adding load is the basic condition for strength and muscle gain (ACSM 2009 position stand on progression models). Stepping up every 5 sessions is a practical rhythm; no study prescribes that interval.</li>
-        <li>Repeat the number after a miss: performance-based autoregulation, common coaching practice with limited research behind it.</li>
-        <li>5–12 reps per set, add sets not reps: taken close to failure, anywhere from about 6 to 30+ reps builds muscle similarly (Schoenfeld 2017 meta-analysis); more weekly sets bring more growth (Schoenfeld 2017 dose-response). So adding sets is a valid way to progress. The cap of 12 protects form; it is not a physiological limit.</li>
-        <li>1–2 reps in reserve: sets ending 0–3 reps short of failure all build muscle well, with more growth closer to failure and little difference for strength (Refalo 2023, Robinson 2024 meta-analyses). Reserve buys recovery and form.</li>
-        <li>Slow 3-1-1 tempo: reps lasting 0.5–8 s give similar hypertrophy (Schoenfeld 2015 meta-analysis). Slow reps help control and make bodyweight harder; speed itself isn't the point, and reps over 10 s are worse.</li>
-        <li>2–3 min rest between sets: longer rest beats 1 min for strength and size (Schoenfeld 2016).</li>
-        <li>Negative pull-ups: the lowering phase handles more load, a common bridge before full pull-ups. Eccentric training is supported for strength; pull-up-specific research is thin.</li>
-        <li>≥48 h between same-muscle sessions: standard beginner guidance; training each muscle twice a week beats once (Schoenfeld 2016 frequency meta-analysis).</li>
-        <li>A few pull-ups on rest days: "greasing the groove", from practice rather than controlled studies.</li>
-        <li>Plank up to 75 s: returns diminish past about 60 s. McGill recommends repeated holds of around 10 s for core endurance, a possible later swap.</li>
-      </ul>
-      <h3>Riding days</h3>
-      <ul>
-        <li>Confirm the weather first, then eat as a carb day (150–200 g). If unsure, eat a medium-carb breakfast and save the extra carbs for after the ride.</li>
-        <li>Eating window: a full meal 2–3 h before, or a small snack within 15 min of leaving; don't set off 30–90 min after eating.</li>
-        <li>Middle-tier days: average HR &lt;135, 40–60 min, easy gears, walk steep climbs; ease off at 140.</li>
-        <li>Take water; bring food for rides over 90 min. The meal after the ride gets ≥25 g of low-fat protein.</li>
-      </ul>
-      <h3>Rest days</h3>
-      <ul>
-        <li>No extra training. 1–2 strict pull-ups, 1–3 times, hours apart, always leaving reps in reserve.</li>
-        <li>Carbs 50–100 g; protein 114–120 g, prioritising yogurt, FitMilk, chicken breast, prawns.</li>
-        <li>Never eat carbs alone on an empty stomach: pair with ≥20 g protein, eat the starch last.</li>
-        <li>Vegetables ≥300 g, counting at most 150 g of root vegetables.</li>
-        <li>Eat each meal to 8.5/10 full; plate it before you start.</li>
-      </ul>
-      </div>
-      </div></details>
-      <details class="fold" id="foldSync"><summary><span class="sumt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span class="zh">图表和同步设定</span><span class="en">Charts & sync</span></span></summary><div class="fbody">
-        <div class="gshow" id="syncShow" role="group" aria-label="同步哪些数据 / What to sync"><button type="button" class="gchip2" data-sync="sleep" aria-pressed="true" style="--g:var(--sleep)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><span class="zh">睡眠</span><span class="en">Sleep</span></button><button type="button" class="gchip2" data-sync="hrv" aria-pressed="true" style="--g:var(--pull)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.6-4.6-9.4-9.7C1.5 7.6 3.6 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3.1 1.6-1.9 3.1-3.1 5.2-3.1 3.2 0 5.3 3.1 4.2 6.3-1.8 5.1-9.4 9.7-9.4 9.7z"/><path d="M4 12h3.5l1.8-2.8 2.6 5.3 1.8-3.4H20"/></svg><span class="zh">HRV</span><span class="en">HRV</span></button><button type="button" class="gchip2" data-sync="rhr" aria-pressed="true" style="--g:var(--push)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg><span class="zh">静息心率</span><span class="en">Resting HR</span></button><button type="button" class="gchip2" data-sync="weight" aria-pressed="true" style="--g:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 9a5 5 0 0 1 8 0"/><path d="M12 9.5l1.5-2"/></svg><span class="zh">体重</span><span class="en">Weight</span></button><button type="button" class="gchip2" data-sync="heat" aria-pressed="false" style="--g:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="zh">一年打卡</span><span class="en">Year</span></button></div>
-        <div class="wfull" id="wFullRow"><span class="wfl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="3"/><path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3M12 9.5V12l1.5 1"/></svg><span class="zh">手表热量</span><span class="en">Watch calories</span></span>
-          <div class="seg maseg" id="wFull" role="group" aria-label="手表热量 / Watch calories"><button type="button" data-wfull="0" aria-pressed="true"><span class="zh">打折</span><span class="en">Discounted</span></button><button type="button" data-wfull="1" aria-pressed="false"><span class="zh">全算</span><span class="en">In full</span></button></div>
-          <button type="button" class="dsrc-i" data-itoggle="wFullInfo" aria-expanded="false" aria-controls="wFullInfo" aria-label="说明 / How it works"><span class="dsrc-i-l">i</span><span class="dsrc-i-r" aria-hidden="true">+</span></button></div>
-        <p class="wfinfo" id="wFullInfo" hidden><span class="zh">只改估算的消耗、热量缺口和减脂，同步来的数字不变，随时可以切回来。<b>打折</b>：日常活动最多按步数估算值的 1.5 倍再加 120 kcal，运动记录 × 0.7，低强度运动 × 0.5，有功率计的骑行全算。<b>全算</b>：手表报多少就算多少。</span><span class="en">Changes only the estimated burn, calorie gap and fat loss; synced numbers stay as they are, and you can switch back any time. <b>Discounted</b>: everyday movement up to 1.5 times what the steps account for plus 120 kcal, logged workouts × 0.7, low-intensity ones × 0.5, rides with a power meter in full. <b>In full</b>: every kcal the watch reports.</span></p>
-      <div class="chreset" style="margin:12px 0 0"><button type="button" id="chReset" class="tbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span class="zh">重置图表</span><span class="en">Reset charts</span></button></div>
-      </div></details>
-      <details class="fold" id="foldDietSrc"><summary><span class="sumt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4 4 0 0 1 .5 7.97"/><path d="M12 11v9M9 17l3 3 3-3"/></svg><span class="zh">饮食表格</span><span class="en">Food table</span></span></summary>
-        <div class="fbody">
-        <section class="dsrc" id="dietSrc" aria-label="数据源 / Data source">
-        <details class="dsub" id="dsrcOnline" open><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 8.5a4 4 0 0 1 .5 7.97"/><path d="M12 11v9M9 17l3 3 3-3"/></svg><span class="zh">线上数据</span><span class="en">Online table</span></summary>
-        <div class="dsrc-row"><div class="dsrc-field"><button type="button" class="dsrc-paste" id="dsrcPaste" aria-label="粘贴 / Paste" title="粘贴 / Paste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/></svg></button><input id="dsrcUrl" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="粘贴表格的分享链接"></div><button type="button" class="iconbtn vbtn" id="dsrcPull" aria-label="验证链接并拉取 / Check the link and pull" title="验证链接并拉取 / Check the link and pull"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div>
-        <p class="dsrc-hint"><span class="zh">不要告诉别人这个 URL 哦，不然别人会知道你每天吃什么</span><span class="en">Keep this URL to yourself, or others can see what you eat every day</span></p>
-        <p class="dsrc-status" id="dsrcStatus" aria-live="polite"></p>
-        <div class="dinfo-row"><button type="button" class="dsrc-i" id="dsrcInfoBtn" aria-expanded="false" aria-controls="dsrcInfo" aria-label="说明 / How it works"><span class="dsrc-i-l">i</span><span class="dsrc-i-r" aria-hidden="true">+</span></button></div>
-        <div class="dsrc-info" id="dsrcInfo" hidden>
-          <div class="mode-tabs dsrc-ver" id="dsrcVer" role="tablist">
-            <button type="button" role="tab" data-ver="g">🌏 <span class="zh">Google 表格</span><span class="en">Google Sheets</span></button>
-            <button type="button" role="tab" data-ver="t">🇨🇳 <span class="zh">腾讯文档</span><span class="en">Tencent Docs</span></button>
-          </div>
-          <div data-verpane="g">
-          <h4><span class="zh">用 AI 记账</span><span class="en">Bookkeeping with an AI</span></h4>
-          <ol>
-            <li><span class="zh">让能连接 Google 表格的 AI 连上你的账号</span><span class="en">Connect an AI to your Google account</span></li>
-            <li><span class="zh">把下面的 prompt 发给它，它会发回表格链接</span><span class="en">Send it the prompt below; it sends back a sheet link</span></li>
-            <li><span class="zh">链接粘到上面，点 ✓ 验证</span><span class="en">Paste the link above and tap ✓ to check it</span></li>
-          </ol>
-          <div class="dsrc-code"><button type="button" class="dsrc-copy" data-copy="g"><span class="zh">复制</span><span class="en">Copy</span></button><pre id="dsrcPromptG">帮我用 Google 表格记饮食。
-
-第一次：新建表格「饮食记录」，第一行写：日期｜食物｜蛋白质｜脂肪｜碳水｜蔬菜｜热量。共享设成「知道链接的任何人可查看」，把链接发给我。已经有就直接用。
-
-之后我告诉你吃了什么（文字或照片），你估算后写进表格，一样食物一行：
-- 食物写上份量
-- 蛋白质、脂肪、碳水、蔬菜填克数，热量填千卡，没有填 0
-- 别重复记</pre></div>
-          </div>
-          <div data-verpane="t" hidden>
-          <h4><span class="zh">用 WorkBuddy 记账</span><span class="en">Bookkeeping with WorkBuddy</span></h4>
-          <ol>
-            <li><span class="zh">在 WorkBuddy 里连上腾讯文档</span><span class="en">Connect Tencent Docs in WorkBuddy</span></li>
-            <li><span class="zh">把下面的 prompt 发给它，它会发回表格链接</span><span class="en">Send it the prompt below; it sends back a sheet link</span></li>
-            <li><span class="zh">链接粘到上面，点 ✓ 验证</span><span class="en">Paste the link above and tap ✓ to check it</span></li>
-          </ol>
-          <div class="dsrc-code"><button type="button" class="dsrc-copy" data-copy="t"><span class="zh">复制</span><span class="en">Copy</span></button><pre id="dsrcPromptT">帮我用腾讯文档记饮食。
-
-第一次：新建在线表格「饮食记录」，第一行写：日期｜食物｜蛋白质｜脂肪｜碳水｜蔬菜｜热量。分享设成「所有人可查看」，把链接发给我。已经有就直接用。
-
-之后我告诉你吃了什么（文字或照片），你估算后写进表格，一样食物一行：
-- 食物写上份量
-- 蛋白质、脂肪、碳水、蔬菜填克数，热量填千卡，没有填 0
-- 别重复记</pre></div>
-          </div>
-        </div>
-        </details>
-      </section>
-        </div>
-      </details>
-      <details class="fold" id="foldTheme"><summary><span class="sumt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3" width="15" height="15" rx="2.5"/><path d="M6 7h8"/><path d="M6 11v3.5h2.5V11z"/><path d="M21.5 5 13.5 13"/><path d="M13.5 13c-1.6-.4-3 .7-3 2.4 0 1.2-.6 2.1-1.6 2.6 2.6 1 5.8-.2 5.6-3.3"/></svg><span class="zh">主题</span><span class="en">Theme</span></span></summary>
-        <div class="fbody" id="themePanel"></div>
-      </details>
-    </section>
+    <section class="view" id="v-train"></section>
+    <section class="view" id="v-diet"></section>
+    <section class="view" id="v-prog"></section>
   </main>
 </div>
-<div id="toast" class="toast" hidden></div>
-<button id="toTop" class="totop" type="button" aria-label="返回顶端"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="2.4" rx=".6" fill="currentColor"/><path d="M12 8.2 5.6 14.6h4.1V20h4.6v-5.4h4.1z" fill="currentColor"/></svg></button>
+<nav class="dock" role="tablist">
+  <i class="pc" aria-hidden="true"></i>
+  <button role="tab" data-v="diet" aria-label="饮食"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8a2 2 0 0 0 2 2v8"/><path d="M11 3v8a2 2 0 0 1-2 2"/><path d="M17 21V3c-2 1-3 4-3 8h3"/></svg><span>饮食</span></button>
+  <button role="tab" data-v="train" aria-label="训练"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg><span>训练</span></button>
+  <button role="tab" data-v="prog" aria-label="进展"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span>进展</span></button>
+</nav>
+<div class="focus" id="focus" aria-hidden="true"></div>
+<div class="sheet" id="sheet"><div class="panel" role="dialog" aria-modal="true"><div class="grab"></div><div id="sheetBody"></div></div></div>
+<div class="toast" id="toast" role="status"></div>
+<span id="ver" hidden>v1.33a</span>
 
-<script src="js/core.js?v=7bf2670e"></script>
-<script src="js/zzfx.js?v=7bf2670e"></script>
-<script src="js/sfxr.js?v=7bf2670e"></script>
-<script src="js/confetti.js?v=7bf2670e"></script>
-<script src="js/icons.js?v=7bf2670e"></script>
-<script src="js/ui.js?v=7bf2670e"></script>
-<script src="js/train.js?v=7bf2670e"></script>
-<script src="js/progress.js?v=7bf2670e"></script>
-<script src="js/backup.js?v=7bf2670e"></script>
-<script src="js/coros.js?v=7bf2670e"></script>
-<script src="js/welcome.js?v=7bf2670e"></script>
-<script src="js/diet.js?v=7bf2670e"></script>
-<script src="js/sheet.js?v=7bf2670e"></script>
-<script src="js/main.js?v=7bf2670e"></script>
-
+<script src="js/core.js?v=59223144"></script>
+<script src="js/diet.js?v=59223144"></script>
+<script src="js/confetti.js?v=59223144"></script>
+<script src="js/p1data.js?v=59223144"></script>
+<script src="js/p1.js?v=59223144"></script>
 </body></html>
