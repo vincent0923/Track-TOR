@@ -151,9 +151,18 @@ function lsLoad(){
     /* a 0 sleep score was saved before the night was scored; drop it so the real score can arrive */
     let z=0;for(const [d,m] of Object.entries(state.metrics)){if(m.sleep===0){delete m.sleep;delete m.sleepH;z++;if(Object.keys(m).every(k=>k==="date"||m[k]==null))delete state.metrics[d]}}
     if(z)lsSave();
+    if(repairMapped())lsSave();
     registerPlanned(state.sessions);
     if(j.extras&&moveDatedExtras(j.extras))lsSave();}
 }
+/* before v1.44a, restoring a progress file on a phone that had already planned pull D1–D2 put each number on the
+   planned day's moves (pull-ups first) instead of the moves actually done (rows first): 20 rows read as 20 pull-ups.
+   Such a session has no doc.ex, as many moves as its programme day, and a first move that day never had; its numbers
+   are put back in order on the day's own moves. Runs on every load and changes nothing once repaired. */
+function repairMapped(){let n=0;Object.entries(state.sessions).forEach(([sid,doc])=>{if(!doc||!doc.done||doc.ex||!doc.sets)return;
+  const base=baseEx(sid);if(!base)return;const keys=Object.keys(doc.sets),ids=base.map(e=>e.id);
+  if(keys.length!==ids.length||keys.join()===ids.join()||ids.includes(keys[0]))return;
+  const sets={};ids.forEach((id,i)=>sets[id]=doc.sets[keys[i]]);doc.sets=sets;n++});return n}
 function lsSave(){
   try{localStorage.setItem(DATA_K,JSON.stringify(state));lsOk=true}catch(e){if(lsOk){lsOk=false;toast(T("这个浏览器不允许保存，请先保存进度文件","This browser can't save data — save a progress file now"))}}
 }
