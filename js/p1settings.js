@@ -108,11 +108,19 @@ function openBackup(){const t=lastBackupTs();
   let pending=null;
   S.q("[data-bksave]").addEventListener("click",saveBackup);
   S.q("[data-bkload]").addEventListener("click",()=>S.q("[data-bkfile]").click());
-  S.q("[data-bkfile]").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;let j;try{j=await decodeBackup(await f.text())}catch(err){toast(T("这不是有效的进度文件","Not a valid progress file"));return}
+  S.q("[data-bkfile]").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;const txt=await f.text();e.target.value="";
+    if(txt.trim().startsWith("PP2g:")){giftImport(txt.trim());return}
+    let j;try{j=await decodeBackup(txt)}catch(err){toast(T("这不是有效的进度文件","Not a valid progress file"));return}
     pending=j;const n=Object.values(j.sessions).filter(s=>s&&s.done).length,m=Object.keys(j.metrics).length,d=j.diet?Object.keys(j.diet).length:0;
     S.q("#bkm").textContent=T("含 "+n+" 次完成训练、"+m+" 天身体数据"+(d?"、"+d+" 天饮食":"")+"，导入会覆盖当前进度。","Contains "+n+" finished sessions, "+m+" days of body data"+(d?", "+d+" days of food":"")+". Importing replaces current progress.");S.q("#bkc").hidden=false});
   S.q("[data-bkno]").addEventListener("click",()=>{pending=null;S.q("#bkc").hidden=true;S.q("#bkm").textContent=""});
   S.q("[data-bkyes]").addEventListener("click",()=>{if(!pending)return;applyImport(pending);S.close()})}
+/* a G top-up file ("PP2g:" + {"id","g"}) adds G and touches nothing else; the same file counts once */
+function giftImport(txt){let o=null;try{o=JSON.parse(txt.slice(5))}catch(e){}
+  const g=o&&Math.round(+o.g),id=o&&String(o.id||"").slice(0,40);
+  if(!id||!(g>0&&g<=100000)){toast(T("这不是有效的进度文件","Not a valid progress file"));return}
+  const s=st(),key="gift:"+id;s.buys=s.buys||[];if(s.buys.some(b=>b.id===key)){toast(T("这份 G 已经加过了","This G was already added"));return}
+  s.buys.push({id:key,g:-g,d:today()});lsSave();toast("+"+g+" G");if(typeof celebrate==="function")celebrate(6,1);if(typeof SFX!=="undefined")SFX.done()}
 /* training plan: pick a preset (1–3 training days) and rename its days */
 function openPlan(first){const cur=st().plan,curId=cur?cur.id:(Object.values(state.sessions).some(s=>s&&s.done)?"cyclist":"free");
   const names=(cur?cur.days:PRESETS[0].days).map(d=>'<label class="flabel">'+T("第 "+"ABC"[["push","pull","third"].indexOf(d.kind)]+" 天叫什么","Name of day "+"ABC"[["push","pull","third"].indexOf(d.kind)])+'<input data-dn="'+d.kind+'" value="'+esc(T(d.zh,d.en||d.zh))+'"></label>').join("");
