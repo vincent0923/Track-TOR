@@ -7,6 +7,8 @@ const $=s=>document.querySelector(s);
 const PK="tracktor-p1-";
 /* things not built here yet open the classic page at that spot (see the ?go= handler in js/main.js) */
 const bridge=to=>{
+  if(to.startsWith("p1:")){p1Open(to.slice(3));return}
+  if(to==="goals"){p1Open("goals");return}
   if(to==="diet"||to.startsWith("diet:")){closeSheet();openDietEntryModal(to.slice(5)||today());return}
   if(to.startsWith("rec:")){closeSheet();openRecord(to.slice(4));return}
   location.href="classic.html?go="+encodeURIComponent(to)};
@@ -40,11 +42,6 @@ function ringSvg(size,stroke,pct,color,track){const r=(size-stroke)/2,c=2*Math.P
   return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" stroke="'+track+'" stroke-width="'+stroke+'"/>'
     +'<circle class="rv" cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" stroke="'+color+'" stroke-width="'+stroke+'" stroke-dasharray="'+c+'" stroke-dashoffset="'+c+'" data-off="'+off+'"/></svg>'}
 function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>root.querySelectorAll("circle.rv").forEach(c=>c.style.strokeDashoffset=c.dataset.off)))}
-
-/* a first visit fills in the profile on the classic page's welcome sheet, then comes back */
-/* (once: if the sheet is closed without saving anything, this page still opens normally next time) */
-(function(){let seen=false;try{seen=localStorage.getItem(PK+"welcomed")==="1";if(FRESH&&!seen)localStorage.setItem(PK+"welcomed","1")}catch(e){seen=true}
-  if(FRESH&&!seen)location.replace("classic.html?go=welcome")})();
 
 /* ---------- theme: follow the phone, or fixed light / dark ---------- */
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
@@ -275,8 +272,8 @@ function goalsHtml(){const st=state.settings,gap=gapAllTime();
     const pct=g.tg&&g.cur!=null&&g.start!=null&&g.start!==g.tg?Math.max(0,Math.min(1,(g.cur-g.start)/(g.tg-g.start))):0;
     return '<button data-act="goal"><span class="ring">'+ringSvg(66,7,pct,g.c,"var(--track)")+'<span class="rl"><b class="n" style="font-size:15px;font-weight:800">'+(g.tg?Math.round(pct*100)+"%":"–")+'</b></span></span>'
       +'<span><span class="gn">'+g.n+'</span><br><span class="gv n">'+(g.cur==null?"–":g.cur+" "+g.u)+'</span></span></button>'}).join("")+'</div></section>'}
-function renderProgView(){const v=$("#v-prog");
-  const tiles=METRICS.map(m=>{const all=m.pts(),pts=recent(all,30),last=all[all.length-1];
+function renderProgView(){const v=$("#v-prog"),off=k=>{const s=state.settings.sync;return s&&s[{sleep:"sleep",hrv:"hrv",rhr:"rhr"}[k]]===false};
+  const tiles=METRICS.filter(m=>!off(m.k)).map(m=>{const all=m.pts(),pts=recent(all,30),last=all[all.length-1];
     return '<button class="tile'+(m.wide?" wide":"")+'" data-act="metric" data-k="'+m.k+'"><span class="tl"><i style="background:'+m.c+'"></i>'+m.name+(m.sub?' · '+m.sub:'')+'</span>'
       +'<span class="tv">'+(last?last.y.toFixed(m.dec)+'<small>'+m.unit+'</small>':'–')+'</span>'+(last?deltaOf(m,all):'<span class="td muted">'+T('还没有数据','No data yet')+'</span>')
       +(pts.length>1?lineSvg(pts,m.wide?320:150,m.wide?64:44,m.c,"spark"):'')+'</button>'}).join("");
@@ -335,8 +332,8 @@ function meSheet(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}ca
     +'<button class="opt" data-act="classic">'+ICON.swatch+'<span class="sp">'+T('经典界面','Classic interface')+'<br><span class="muted" style="font-size:12px;font-weight:500">'+T('原来的样子和 29 套主题','The original look and its 29 themes')+'</span></span>'+ICON.right+'</button></div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="setlist">'+[["zh","中文"],["en","English"]].map(([k,l])=>'<button class="opt" data-act="lang" data-l="'+k+'" aria-pressed="'+(LANG===k)+'">'+l+'</button>').join("")+'</div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('更多','More')+'</p><div class="setlist">'
-    +row("fold:foldMe",ICON.user,T("个人资料","Profile"))+row("goals",ICON.target,T("目标","Goals"))+row("fold:foldBk",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("fold:foldDietSrc",ICON.table,T("饮食表格","Food table"))+row("fold:foldSync",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'</div>'
-    +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('推拉机 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+T(' · 「更多」里的设定暂时在经典界面里改',' · settings under More open in the classic interface for now')+'</p>')}
+    +row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'</div>'
+    +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('推拉机 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+'</p>')}
 
 /* ---------- header, dock, routing ---------- */
 function paintHeader(v){const d=new Date();$("#today").textContent=LANG==="en"?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]+", "+MON_EN[d.getMonth()]+" "+d.getDate():(d.getMonth()+1)+"月"+d.getDate()+"日 周"+WD[d.getDay()];

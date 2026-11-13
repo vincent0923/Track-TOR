@@ -6,6 +6,22 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.38a] — 2026-11-13
+
+### 新增 / Added
+- ⚙️ **设定搬进新界面**：头像 › 更多里的个人资料、目标、备份进度、饮食表格、图表和同步（含手表热量开关）都在新界面里打开，不再跳到经典界面；进展页的目标圆环点了直接设目标。关掉同步的睡眠、HRV、静息心率不再在进展页显示。
+  **Settings move into the new interface**: Profile, Goals, Backup, Food table and Charts & sync (with the watch-calories switch) under the avatar › More open in place instead of the classic interface; the Progress goal rings open the goals. Sleep, HRV and resting HR hide from Progress when their sync is off.
+- 💾 **新界面里备份和恢复**：保存进度文件（iPhone 走系统分享里的「存储到文件」），选进度文件恢复，先显示里面有什么再确认；和经典界面的进度文件互通。每 5 天提醒一次备份。
+  **Backup and restore in the new interface**: save a progress file (on iPhone through the share sheet's Save to Files) or pick one to restore, with a summary before you confirm; files are the same as the classic page's. A reminder every 5 days.
+- 👋 **欢迎页在新界面**：第一次打开就在新界面填资料和目标，都能留空。
+  **The welcome sheet in the new interface**: a first visit fills in profile and goals right here, all optional.
+
+### 改进 / Changed
+- 进度文件的打包挪到 `js/backupcore.js`，两个界面共用；格式没变。
+  Progress-file packing moves to `js/backupcore.js`, shared by both interfaces; the format is unchanged.
+
+---
+
 ## [v1.37a] — 2026-11-13
 
 ### 新增 / Added

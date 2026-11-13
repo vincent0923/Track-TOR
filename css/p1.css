@@ -22,6 +22,7 @@
   --push:#00E0C2; --pull:#A78BFA; --good:#34D399; --bad:#FB7185; --sleep:#818CF8;
   --shadow:0 12px 28px -8px rgba(0,0,0,.6); color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
 html{background:var(--bg)}
 body{margin:0;min-height:100dvh;background-color:var(--bg);background-image:var(--glow);background-attachment:fixed;color:var(--ink);font:14px/1.45 var(--body);-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
 button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer;-webkit-user-select:none;user-select:none}
@@ -300,7 +301,7 @@ h1,h2,h3,p{margin:0}
 .mask .btn.recsave:disabled{opacity:.35}
 .mask .btn.recsave svg{width:20px;height:20px}
 
-/* 推拉币 */
+/* G (points) */
 .coin{width:18px;height:18px;flex:none}
 .coinchip{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 11px 0 7px;border-radius:999px;background:rgba(255,197,61,.16);color:inherit;font-size:14px;font-weight:800;white-space:nowrap}
 .dark .coinchip{background:rgba(255,197,61,.18);color:#fff}
@@ -360,3 +361,11 @@ h1,h2,h3,p{margin:0}
 .gapcard .bars7{height:110px}
 .gapcard .bl{min-height:16px}
 .exl .slow{font-style:normal;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.12);margin-left:6px;vertical-align:2px}
+
+/* settings editors */
+.mask .chips{display:flex;flex-wrap:wrap;gap:8px}
+.mask .chip{height:36px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:none;color:var(--muted);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.mask .chip[aria-pressed="true"]{background:var(--ac-soft);color:var(--ac-text);border-color:transparent}
+.mask .eyebrow{margin:0}
+.mask .btn{display:flex;align-items:center;justify-content:center;gap:8px}
+.mask .btn:not(.ghost):not(.recsave){background:var(--ac);color:var(--on-ac);border:0;border-radius:999px;font-weight:800}
