@@ -97,7 +97,7 @@ let run=null,restT=0,timerT=0,clockT=0;
 const restOf=e=>e.id==="pullup"?150:(e.id==="hang"||e.id==="ecc")?90:e.unit==="分钟"?0:60;
 /* the sets are the session's own arrays (sessionDoc), so every tick, change and finish is saved as it happens */
 function startRun(sid){const p=BYID[sid],doc=sessionDoc(sid),pb=pullSeries();
-  run={sid,p,doc,sets:p.ex.map(e=>doc.sets[e.id]),ex:0,t0:Date.now(),rest:0,timing:0,best0:pb.length?Math.max(...pb.map(x=>x.y)):0};
+  run={sid,p,doc,sets:p.ex.map(e=>doc.sets[e.id]),ex:0,t0:Date.now(),rest:0,timing:0,best0:pb.length?Math.max(...pb.map(x=>x.y)):0,coins0:coinTotal()};
   run.ex=Math.max(0,run.sets.findIndex(a=>a.some(x=>!x.d)));
   const f=$("#focus");f.classList.add("on");f.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
   clearInterval(clockT);clockT=setInterval(()=>{const el=$("#fTime");if(el){const s=Math.floor((Date.now()-run.t0)/1000);el.textContent=Math.floor(s/60)+":"+pad(s%60)}},1000);
@@ -157,6 +157,7 @@ function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Mat
   $("#focus").innerHTML='<div class="f-top"><span class="sp"></span><button class="mini" data-act="fclose" aria-label="关闭">'+ICON.x+'</button></div>'
     +'<div class="f-body"><div class="fin"><div class="medal">'+ICON.trophy+'</div><p class="eyebrow">'+LAB(p)+'</p><h2>练完了</h2>'
     +(pu?'<span class="pill ac" style="margin-top:6px">引体单组 '+pu+' 个'+(pu>best?' · 新纪录':'')+'</span>':'')
+    +'<span class="coinchip big" style="margin-top:10px">'+COIN+'+'+fmt(coinTotal()-run.coins0)+' 推拉币</span>'
     +'<div class="stats"><div><b>'+sets+'</b><span>组</span></div><div><b>'+reps+'</b><span>次</span></div><div><b>'+Math.max(1,Math.round(secs/60))+'</b><span>分钟</span></div></div></div></div>'
     +'<div class="f-bottom"><button class="btn" data-act="fclose">好</button><p class="f-hint">'+(firstOpen()?'下一次：'+LAB(firstOpen()):'20 天计划全部完成')+'</p></div>'}
 function swipe(el){let x0=null,y0=0;el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
@@ -228,7 +229,7 @@ function goalsHtml(){const st=state.settings,gap=gapAllTime();
     {n:"腰围",c:"var(--ac)",cur:wz.length?wz[wz.length-1].y:null,start:wz.length?wz[0].y:null,tg:+st.z||null,u:"cm"},
     {n:"体重",c:"var(--sleep)",cur:wt.length?+wt[wt.length-1].y.toFixed(1):null,start:wt.length?wt[0].y:null,tg:+st.w||null,u:"kg"},
     {n:"减脂",c:"#FFB020",cur:gap?+(gap.s/7700).toFixed(1):null,start:0,tg:+st.fat||null,u:"kg"}];
-  return '<section class="dark"><p class="eyebrow" style="margin-bottom:14px">目标</p><div class="goals4">'+G.map(g=>{
+  return '<section class="dark"><div class="row" style="margin-bottom:14px"><p class="eyebrow sp">目标</p><button class="coinchip" data-act="coins" aria-label="推拉币">'+COIN+'<b class="n">'+fmt(coinTotal())+'</b></button></div><div class="goals4">'+G.map(g=>{
     const pct=g.tg&&g.cur!=null&&g.start!=null&&g.start!==g.tg?Math.max(0,Math.min(1,(g.cur-g.start)/(g.tg-g.start))):0;
     return '<button data-act="goal"><span class="ring">'+ringSvg(66,7,pct,g.c,"var(--track)")+'<span class="rl"><b class="n" style="font-size:15px;font-weight:800">'+(g.tg?Math.round(pct*100)+"%":"–")+'</b></span></span>'
       +'<span><span class="gn">'+g.n+'</span><br><span class="gv n">'+(g.cur==null?"–":g.cur+" "+g.u)+'</span></span></button>'}).join("")+'</div></section>'}
@@ -258,6 +259,24 @@ function scrubber(el,pts,m){const tip=el.querySelector(".tip"),xs=pts.map(p=>p.x
   el.addEventListener("pointerdown",show);el.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch")show(e)});
   el.addEventListener("pointerup",()=>setTimeout(()=>tip.classList.remove("on"),1200))}
 
+/* ---------- 推拉币: badges and the theme shop ---------- */
+const COIN='<svg class="coin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#FFC53D"/><circle cx="12" cy="12" r="7.2" fill="none" stroke="#B7791F" stroke-width="1.4"/><path d="M8.6 9.2h6.8M12 9.2v6.4M9.4 12.4h5.2" stroke="#8A5A12" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const BADGE_IC={dumbbell:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',flame:'<path d="M12 3c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 6-8 7-13z"/>',
+  pullup:'<path d="M3 4h18M7 4v3M17 4v3"/><circle cx="12" cy="10" r="2.2"/><path d="M7 7l3 5h4l3-5M12 12.5V17M10 21l2-4 2 4"/>',drop:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+  tape:'<rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'};
+function coinSheet(shopFirst){const bs=coinBadges(),tot=bs.reduce((a,b)=>a+b.pts,0);
+  const nextOf=b=>{if(b.tiers){const n=b.tiers.find(t=>t>b.have);return n==null?null:n}const n=(Math.floor(b.have/b.step+1e-9)+1)*b.step;return +n.toFixed(2)};
+  const rows=bs.map(b=>{const n=nextOf(b),prev=b.tiers?([0].concat(b.tiers).filter(t=>t<=b.have).pop()):Math.floor(b.have/b.step+1e-9)*b.step,pct=n==null?1:Math.max(0,Math.min(1,(b.have-prev)/(n-prev)));
+    return '<div class="badge'+(b.pts?" got":"")+'"><span class="bi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+BADGE_IC[b.ic]+'</svg></span>'
+      +'<div class="sp"><div class="row"><b class="sp">'+b.name+'</b><span class="n bp">'+(b.pts?'+'+fmt(b.pts):'0')+'</span></div><p class="muted">'+b.what+'</p>'
+      +'<div class="bar" style="--c:'+(b.pts?'var(--ac)':'var(--muted)')+';height:6px;margin-top:6px"><i style="width:'+(pct*100)+'%"></i></div>'
+      +'<p class="muted n" style="font-size:11px;margin-top:3px">'+(n==null?'全部拿到':'现在 '+b.have+' '+b.unit+' · 下一档 '+n+' '+b.unit)+'</p></div></div>'}).join("");
+  const shop=[["像素 RPG","打勾就挥剑，练完打怪升级"],["Low poly 小镇","每个训练日在小镇里盖一栋楼"]].map(([n,d])=>'<div class="shopc"><div class="shopart"></div><div class="sp"><b>'+n+'</b><p class="muted">'+d+'</p></div><div style="text-align:right"><span class="coinchip">'+COIN+'<b class="n">2,000</b></span><br><span class="pill" style="margin-top:6px">即将上线</span></div></div>').join("");
+  openSheet('<div class="sh-h"><h3>推拉币</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
+    +'<div class="row" style="margin-bottom:16px"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+fmt(tot)+'</div><p class="muted" style="font-size:12px">练出来的真实进步才给币，从记录里算出来</p></div></div>'
+    +'<p class="eyebrow" id="shop" style="margin-bottom:8px">主题商店</p><div class="setlist">'+shop+'</div><p class="muted" style="font-size:12px;margin:8px 2px 18px">亮、暗两套永远免费。</p>'
+    +'<p class="eyebrow" style="margin-bottom:8px">怎么拿</p><div class="setlist">'+rows+'</div>');
+  if(shopFirst)setTimeout(()=>{const el=document.getElementById("shop");if(el)el.scrollIntoView({block:"start"})},50)}
 /* ---------- sheet ---------- */
 function openSheet(html){$("#sheetBody").innerHTML=html;$("#sheet").classList.add("on");document.body.style.overflow="hidden"}
 function closeSheet(){$("#sheet").classList.remove("on");if(!run)document.body.style.overflow=""}
@@ -270,6 +289,7 @@ function meSheet(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}ca
   const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>设定</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">外观</p>'
     +'<div class="setlist">'+[["auto","跟随手机"],["light","亮"],["dark","暗"]].map(([k,l])=>'<button class="opt" data-act="mode" data-m="'+k+'" aria-pressed="'+(m===k)+'">'+l+'</button>').join("")
+    +'<button class="opt" data-act="shop">'+COIN+'<span class="sp">主题商店</span>'+ICON.right+'</button>'
     +'<button class="opt" data-act="classic">'+ICON.swatch+'<span class="sp">经典界面<br><span class="muted" style="font-size:12px;font-weight:500">原来的样子和 29 套主题</span></span>'+ICON.right+'</button></div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">更多</p><div class="setlist">'
     +row("fold:foldMe",ICON.user,"个人资料")+row("goals",ICON.target,"目标")+row("fold:foldBk",ICON.cloud,"备份进度与高驰")+row("fold:foldDietSrc",ICON.table,"饮食表格")+row("fold:foldSync",ICON.sliders,"图表、同步和手表热量")+'</div>'
@@ -303,6 +323,8 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="metric"){chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
   else if(a==="goal")bridge("goals");
+  else if(a==="coins")coinSheet(false);
+  else if(a==="shop")coinSheet(true);
   else if(a==="go")bridge(b.dataset.to);
   else if(a==="classic"){try{localStorage.setItem("tracktor-ui","classic")}catch(err){}location.href="classic.html"}
   else if(a==="mode"){try{localStorage.setItem(PK+"mode",b.dataset.m)}catch(err){}applyMode();meSheet()}

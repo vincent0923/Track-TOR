@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.35a] — 2026-11-13
+
+### 新增 / Added
+- 🪙 **推拉币**：力量、减脂、腰围有真实进步就拿币。练完一次训练 10；一周练够 3 天 30（连着几周每周多 5，最多 60）；训练里打勾的引体单组每创一个新高 50；每减 0.5 kg 脂肪 50（估算和 7 日均体重变化取小的，防虚高）；腰围比第一次每少 1 cm 50；计划完成 10、20、40 次 100、200、400；每达成一个自己设的目标 500。币全部从记录里算出来，不另存，换手机恢复进度文件就回来。进展页目标卡右上角是余额，点开看每一项拿了多少、离下一档还差多少；练完的总结卡上显示这次拿了多少。
+  **Push-pull coins**: real progress in strength, fat loss and waist earns coins. 10 per finished session; 30 for a week with 3 training days (5 more for each week in a row, up to 60); 50 for each new best strict pull-up set ticked in training; 50 per 0.5 kg of fat (the smaller of the estimate and the 7-day average weight change, so it can't run ahead); 50 per cm off the waist since the first record; 100, 200 and 400 at 10, 20 and 40 sessions; 500 for each goal you set and reach. Coins are worked out from the records, not stored, so restoring a progress file brings them back. The balance sits on the Goals card on Progress; open it to see what each item has paid and how far the next step is; the finish card shows what the session earned.
+- 🛍️ **主题商店**（设定 › 外观，或推拉币面板里）：像素 RPG 和 Low poly 小镇两个主题，各 2,000 币，即将上线；亮、暗两套永远免费。
+  **Theme shop** (Settings › Appearance, or the coins panel): Pixel RPG and Low-poly town, 2,000 coins each, coming soon; light and dark stay free.
+
+---
+
 ## [v1.34a] — 2026-11-13
 
 ### 新增 / Added

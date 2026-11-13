@@ -299,3 +299,24 @@ h1,h2,h3,p{margin:0}
 .mask .btn.recsave{width:56px;height:48px;padding:0;border-radius:999px;background:var(--ac);color:var(--on-ac);box-shadow:0 8px 20px -10px var(--ac)}
 .mask .btn.recsave:disabled{opacity:.35}
 .mask .btn.recsave svg{width:20px;height:20px}
+
+/* 推拉币 */
+.coin{width:18px;height:18px;flex:none}
+.coinchip{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 11px 0 7px;border-radius:999px;background:rgba(255,197,61,.16);color:inherit;font-size:14px;font-weight:800;white-space:nowrap}
+.dark .coinchip{background:rgba(255,197,61,.18);color:#fff}
+.coinchip.big{height:36px;font-size:16px;padding:0 14px 0 9px}
+.coinchip.big .coin{width:22px;height:22px}
+.coinbig .coin{width:52px;height:52px}
+.badge{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--sub)}
+.badge .bi{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--card);color:var(--muted)}
+.badge.got .bi{background:var(--ac);color:var(--on-ac)}
+.badge .bi svg{width:19px;height:19px}
+.badge b{font-size:14px;font-weight:700}
+.badge p{font-size:12px}
+.badge .bp{font-size:15px;font-weight:800;color:var(--muted)}
+.badge.got .bp{color:var(--ac-text)}
+.shopc{display:flex;gap:12px;align-items:center;padding:12px;border-radius:16px;background:var(--sub)}
+.shopc b{font-size:15px;font-weight:800}
+.shopc p{font-size:12px}
+.shopart{width:52px;height:52px;border-radius:14px;flex:none;background:linear-gradient(135deg,#6C5CE7,#00B894);opacity:.85}
+.shopc+.shopc .shopart{background:linear-gradient(135deg,#F7B267,#F25F5C)}
