@@ -2,6 +2,7 @@
    (lsLoad / lsSave) and sessionDoc; js/diet.js the calorie maths; this file the rest, written without the classic
    page's DOM. Records are shared with classic.html: both read and write the same tracktor-data. */
 
+window.P1=true;   /* js/coros.js, shared with the classic page, checks this */
 let toastT=0;
 function toast(t){const el=document.getElementById("toast");if(!el)return;el.textContent=t;el.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("on"),2200)}
 /* v1.02a kept extras by date: move each day into the session done that day, else the latest one before it, else the
@@ -149,3 +150,8 @@ function coinBadges(){
     {k:"goal",ic:"target",name:T("达成目标","Goals reached"),what:T("引体、腰围、体重、减脂，每达成一个自己设的目标","Each goal you set and reach: pull-ups, waist, weight, fat loss"),pts:500*[+st.p>0&&pb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,
       have:[+st.p>0&&pb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,unit:T("个",""),tiers:[1,2,3,4]}]}
 function coinTotal(){return coinBadges().reduce((a,b)=>a+b.pts,0)}
+
+/* ---------- what js/coros.js expects from the page ---------- */
+function saveSettings(){lsSave()}
+function syncOn(k){const s=state.settings.sync;if(k==="heat")return !!(s&&s.heat===true);return !s||s[k]!==false}
+function sfx(k){}

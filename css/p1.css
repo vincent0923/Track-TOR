@@ -369,3 +369,4 @@ h1,h2,h3,p{margin:0}
 .mask .eyebrow{margin:0}
 .mask .btn{display:flex;align-items:center;justify-content:center;gap:8px}
 .mask .btn:not(.ghost):not(.recsave){background:var(--ac);color:var(--on-ac);border:0;border-radius:999px;font-weight:800}
+.mask #corosAuthBtn{background:var(--ac)!important;color:var(--on-ac)!important;border:0!important;border-radius:999px!important;height:48px;font-weight:800}

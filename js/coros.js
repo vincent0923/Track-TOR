@@ -2,7 +2,9 @@
 let mcp=null, syncing=false, mcpReady=false;
 const SYNC_K=LS+"-lastsync";
 function lastSync(){try{return localStorage.getItem(SYNC_K)||""}catch(e){return ""}}
+/* shared by both pages: the classic page has its sync button and panels; the new interface (window.P1) paints its own */
 function syncUI(){
+  if(window.P1){if(typeof p1SyncUI==="function")p1SyncUI();return}
   const b=document.getElementById("syncBtn");
   const co=document.getElementById("coOut");if(co){const has=!!readCorosToken();if(co.hidden===has){co.hidden=!has;coOutStep(0)}}
   if(syncing){b.className="syncbtn busy";b.textContent=T("同步中…","Syncing…");return}
@@ -11,7 +13,7 @@ function syncUI(){
   if(ls.slice(0,10)===today()){b.className="syncbtn done";b.textContent=T("已同步 ","Synced ")+ls.slice(11,16)}
   else{b.className="syncbtn";b.textContent=T("同步高驰mcp","Sync COROS")}
 }
-function syncMsg(t){const el=document.getElementById("toast");el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,5000)}
+function syncMsg(t){if(window.P1){if(!window.P1Quiet)toast(t);return}const el=document.getElementById("toast");el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,5000)}
 function ymdOffset(days){const d=new Date();d.setDate(d.getDate()+days);return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())}
 function parseSleep(text){
   /* tolerant like HRV: replies may arrive JSON-encoded with literal "\n", so don't rely on line breaks. A date followed by a time belongs to a sleep window, not a record header */
@@ -156,7 +158,7 @@ async function syncCalories(){
   }catch(e){}
   return "";
 }
-document.getElementById("syncBtn").addEventListener("click",()=>{
+if(!window.P1)document.getElementById("syncBtn").addEventListener("click",()=>{
   if(syncing)return;
   if(!mcp){promptCorosToken();return}
   withProgress(document.getElementById("syncBtn"), doSync);
@@ -220,9 +222,10 @@ async function doSync(){
       }else if(syncOn("weight"))msg+=T("；没有读到 COROS 体重","; no COROS weight found");
     }catch(e2){msg+=T("；体重读取失败（"+((e2&&e2.code)||"未知原因")+"）","; weight read failed ("+((e2&&e2.code)||"unknown")+")")}
     /* a diet table link is filled in: pull it too */
-    const sheetUrl = typeof extractUrl === "function" ? extractUrl(document.getElementById("dsrcUrl").value) : "";
+    const urlEl = document.getElementById("dsrcUrl"); let saved = ""; try{ saved = localStorage.getItem(SHEET_URL_K) || ""; }catch(e){}
+    const sheetUrl = typeof extractUrl === "function" ? extractUrl(urlEl ? urlEl.value : saved) : "";
     if(sheetUrl){
-      const r = await pullSheet({ silent:true });
+      const r = await (window.P1 ? pullSheetQuiet({ silent:true }) : pullSheet({ silent:true }));
       msg += r.ok ? T("；饮食 "+r.rows+" 条 / "+r.days+" 天", "; diet "+r.rows+" rows / "+r.days+" days") : T("；饮食表读取失败", "; diet table couldn't be read");
     }
     lsSave();renderAll();syncMsg(msg);sfx("syncok");
@@ -277,7 +280,7 @@ function corosLogout(wipe){
   mcp=null; mcpReady=false; syncUI();
   toast(wipe?T("已登出高驰，同步的数据已清除","Logged out of COROS; synced data deleted"):T("已登出高驰，数据都保留","Logged out of COROS; all data kept"));
 }
-document.getElementById("coOut").addEventListener("click",e=>{
+if(!window.P1)document.getElementById("coOut").addEventListener("click",e=>{
   if(e.target.closest("#coOutBtn")){coOutStep(1);return}
   if(e.target.closest("#coOutYes")){corosLogout(coOutMode==="wipe");coOutStep(0);return}
   const c=e.target.closest("[data-co]");if(!c)return;
@@ -528,7 +531,7 @@ async function handleCorosCallback(){
     await connectMcp();
     if(mcpReady){
       syncMsg(T("高驰已连接，正在同步…","COROS connected — syncing…"));
-      document.getElementById("syncBtn").click();
+      if(window.P1)p1Sync();else document.getElementById("syncBtn").click();
     }
     return true;
   }catch(e){

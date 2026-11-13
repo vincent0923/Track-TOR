@@ -64,7 +64,12 @@ function openBackup(){const t=lastBackupTs();
     +'<button class="btn" type="button" data-bksave style="height:48px;font-size:15px;width:100%">'+T("保存进度文件","Save a progress file")+'</button>'
     +'<button class="btn ghost" type="button" data-bkload style="height:48px;font-size:15px;width:100%">'+T("从进度文件恢复","Restore from a progress file")+'</button><input type="file" accept=".txt,text/plain" data-bkfile hidden>'
     +'<p class="calc-msg" id="bkm"></p><div class="row" id="bkc" hidden style="gap:8px"><button class="btn ghost" type="button" data-bkno>'+T("取消","Cancel")+'</button><button class="btn recsave" type="button" data-bkyes style="width:auto;padding:0 18px">'+T("导入","Import")+'</button></div>'
-    +'<button class="btn ghost" type="button" data-act="go" data-to="fold:foldBk" style="height:44px;font-size:14px;width:100%">'+T("高驰连接、登出","COROS sign-in and sign-out")+'</button>','<span></span>');
+    +(readCorosToken()?'<p class="eyebrow" style="margin-top:6px">'+T("高驰已连接","COROS connected")+'</p><div class="row" style="gap:8px"><button class="btn ghost" type="button" data-co="keep" style="flex:1">'+T("登出，保留数据","Sign out, keep data")+'</button><button class="btn ghost" type="button" data-co="wipe" style="flex:1;color:var(--bad)">'+T("登出并清除同步的数据","Sign out and delete synced data")+'</button></div>'
+      :'<button class="btn ghost" type="button" data-co="connect" style="height:44px;font-size:14px;width:100%">'+T("连接高驰","Connect COROS")+'</button>'),'<span></span>');
+  S.m.addEventListener("click",e=>{const c=e.target.closest("[data-co]");if(!c)return;
+    if(c.dataset.co==="connect"){S.close();promptCorosToken();return}
+    const wipe=c.dataset.co==="wipe";if(!confirm(wipe?T("登出高驰并清除同步来的数据？手动记录的不动。","Sign out of COROS and delete what it synced? Manual records stay."):T("登出高驰？数据都保留。","Sign out of COROS? All data stays.")))return;
+    corosLogout(wipe);S.close();renderAll()});
   let pending=null;
   S.q("[data-bksave]").addEventListener("click",saveBackup);
   S.q("[data-bkload]").addEventListener("click",()=>S.q("[data-bkfile]").click());

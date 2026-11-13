@@ -6,6 +6,14 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.39a] — 2026-11-13
+
+### 新增 / Added
+- ⌚ **高驰搬进新界面**：点顶栏的同步小圆点就同步（没连过就弹出连接），同步时小圆点在转，今天同步过是绿色；高驰登录回来直接回到新界面；打开推拉机时，连着高驰且上次同步超过 2 小时，就在后台悄悄同步一次。进展页睡眠、HRV、静息心率的「从高驰同步」也在新界面里完成。头像 › 备份进度与高驰里可以连接、登出（保留数据或清除同步来的数据）。新界面里已经没有要跳到经典界面的地方了。
+  **COROS in the new interface**: tap the sync dot at the top to sync (or connect, the first time); it turns while syncing and is green once synced today. The COROS sign-in returns to the new interface, and opening track-TOR with a connected watch syncs quietly when the last sync is over two hours old. Sync from COROS on the sleep, HRV and resting-HR panels works in place; Backup & COROS under the avatar connects and signs out (keeping or deleting synced data). Nothing in the new interface opens the classic page any more.
+
+---
+
 ## [v1.38a] — 2026-11-13
 
 ### 新增 / Added

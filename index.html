@@ -4,11 +4,11 @@
 <meta name="theme-color" content="#F2F2EE">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<script>/* the COROS sign-in returns here; it and anyone who chose the classic interface continue in classic.html */
-try{if(/[?&](code|error)=/.test(location.search)||localStorage.getItem("tracktor-ui")==="classic")location.replace("classic.html"+location.search+location.hash)}catch(e){}</script>
+<script>/* anyone who chose the classic interface continues in classic.html (with the COROS sign-in callback, if any) */
+try{if(localStorage.getItem("tracktor-ui")==="classic")location.replace("classic.html"+location.search+location.hash)}catch(e){}</script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="css/p1.css?v=9482980e"></head><body>
+<link rel="stylesheet" href="css/p1.css?v=8c82614a"></head><body>
 <div class="wrap">
   <header class="top">
     <div><p class="eyebrow" id="today"></p><h1 id="title">训练</h1></div>
@@ -32,15 +32,16 @@ try{if(/[?&](code|error)=/.test(location.search)||localStorage.getItem("tracktor
 <div class="focus" id="focus" aria-hidden="true"></div>
 <div class="sheet" id="sheet"><div class="panel" role="dialog" aria-modal="true"><div class="grab"></div><div id="sheetBody"></div></div></div>
 <div class="toast" id="toast" role="status"></div>
-<span id="ver" hidden>v1.38a</span>
+<span id="ver" hidden>v1.39a</span>
 
-<script src="js/core.js?v=9482980e"></script>
-<script src="js/diet.js?v=9482980e"></script>
-<script src="js/confetti.js?v=9482980e"></script>
-<script src="js/sheetcore.js?v=9482980e"></script>
-<script src="js/backupcore.js?v=9482980e"></script>
-<script src="js/p1data.js?v=9482980e"></script>
-<script src="js/engine.js?v=9482980e"></script>
-<script src="js/p1.js?v=9482980e"></script>
-<script src="js/p1settings.js?v=9482980e"></script>
+<script src="js/core.js?v=8c82614a"></script>
+<script src="js/diet.js?v=8c82614a"></script>
+<script src="js/confetti.js?v=8c82614a"></script>
+<script src="js/sheetcore.js?v=8c82614a"></script>
+<script src="js/backupcore.js?v=8c82614a"></script>
+<script src="js/p1data.js?v=8c82614a"></script>
+<script src="js/coros.js?v=8c82614a"></script>
+<script src="js/engine.js?v=8c82614a"></script>
+<script src="js/p1.js?v=8c82614a"></script>
+<script src="js/p1settings.js?v=8c82614a"></script>
 </body></html>

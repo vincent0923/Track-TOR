@@ -8,6 +8,7 @@ const PK="tracktor-p1-";
 /* things not built here yet open the classic page at that spot (see the ?go= handler in js/main.js) */
 const bridge=to=>{
   if(to.startsWith("p1:")){p1Open(to.slice(3));return}
+  if(to==="sync"){closeSheet();p1Sync(false);return}
   if(to==="goals"){p1Open("goals");return}
   if(to==="diet"||to.startsWith("diet:")){closeSheet();openDietEntryModal(to.slice(5)||today());return}
   if(to.startsWith("rec:")){closeSheet();openRecord(to.slice(4));return}
@@ -349,7 +350,15 @@ function show(v,anim,keep){cur=v;document.querySelectorAll(".view").forEach(x=>x
 document.querySelector(".dock").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(b&&b.getAttribute("aria-selected")!=="true"){SFX.tap();show(b.dataset.v,true)}});
 addEventListener("resize",()=>placePc(false));
 $("#meBtn").addEventListener("click",meSheet);
-$("#syncBtn").addEventListener("click",()=>bridge("sync"));
+/* COROS (js/coros.js): the header dot syncs; it turns while syncing and is green once synced today. On open, a
+   connected watch syncs quietly when the last sync is over two hours old. */
+let p1Syncing=false;
+function p1SyncUI(){const d=$("#syncDot");if(!d)return;const on=typeof syncing!=="undefined"&&syncing;d.classList.toggle("spin",on||p1Syncing);
+  let ls="";try{ls=localStorage.getItem("tracktor-lastsync")||""}catch(e){}d.classList.toggle("ok",ls.startsWith(today()))}
+async function p1Sync(quiet){if(typeof syncing!=="undefined"&&syncing)return;if(!mcp){if(!quiet)promptCorosToken();return}
+  window.P1Quiet=!!quiet;p1Syncing=true;p1SyncUI();try{await doSync()}finally{p1Syncing=false;window.P1Quiet=false;p1SyncUI();renderAll()}}
+window.p1Sync=p1Sync;
+$("#syncBtn").addEventListener("click",()=>p1Sync(false));
 
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
   if(a==="month"){monthOpen=!monthOpen;monthOff=0;renderTrainView()}
@@ -388,6 +397,9 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
 
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 engPlanAll();
+handleCorosCallback();
+connectMcp().then(()=>{p1SyncUI();let ls="";try{ls=localStorage.getItem("tracktor-lastsync")||""}catch(e){}
+  const t=ls?new Date(ls.replace(" ","T")).getTime():0;if(mcpReady&&(!t||Date.now()-t>2*36e5))p1Sync(true)}).catch(()=>{});
 document.documentElement.lang=LANG==="en"?"en":"zh-CN";
 document.querySelectorAll(".dock [data-v]").forEach(b=>{const l={diet:T("饮食","Diet"),train:T("训练","Train"),prog:T("进展","Progress")}[b.dataset.v];b.querySelector("span").textContent=l;b.setAttribute("aria-label",l)});
 $("#meBtn").setAttribute("aria-label",T("设定","Settings"));$("#syncBtn").setAttribute("aria-label",T("同步","Sync"));
