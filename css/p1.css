@@ -87,7 +87,6 @@ h1,h2,h3,p{margin:0}
 .dd .mk i{width:6px;height:6px;border-radius:50%}
 .mk .push{background:var(--push)}.mk .pull{background:var(--pull)}.mk .third{background:var(--third)}.mk .x{box-shadow:inset 0 0 0 1.5px var(--muted)}
 .month[hidden]{display:none}
-.mnav{display:flex;gap:6px;margin-left:auto}
 
 /* hero: the next session */
 .hero h2{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1.1;margin:6px 0 4px;display:flex;align-items:center;gap:10px}
@@ -405,15 +404,6 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .langseg{display:flex;width:100%;padding:4px}
 .langseg button{flex:1;height:40px;font-size:14px}
 /* hero deck: the top card, the edges of the others peeking below; swipe sideways to deal the next */
-.hstack{position:relative;margin-bottom:12px;padding-bottom:calc(var(--n,0)*9px)}
-.hstack .hcard{margin-bottom:0;z-index:2;cursor:pointer;touch-action:pan-y;transition:transform .45s var(--spring),opacity .3s var(--ease)}
-.hstack .hcard.fly{opacity:0;transition:transform .22s ease-in,opacity .22s ease-in}
-.hstack .hcard.hunder{position:absolute;left:0;right:0;top:0;z-index:1;pointer-events:none;filter:blur(7px) saturate(1.15);opacity:.8;transform:translateY(8px) scale(.965);transition:filter .3s var(--ease),opacity .3s var(--ease),transform .3s var(--ease)}
-.hstack .hcard.hunder.clear{filter:none;opacity:1;transform:none}
-.hpeek{position:absolute;inset:40px 0 0;z-index:0;padding:0;background:none;border:0}
-.hpeek i{position:absolute;left:12px;right:12px;bottom:0;height:60px;border-radius:24px;background:var(--dark-solid);border:1px solid var(--dark-line);opacity:.75}
-.hpeek i:first-child:not(:last-child){left:24px;right:24px;bottom:0;opacity:.45}
-.hpeek i:last-child:not(:first-child){bottom:9px}
 .htop{position:absolute;top:12px;right:12px;z-index:1;display:flex;align-items:center;gap:6px}
 .hgo{height:40px;padding:0 16px 0 13px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;background:var(--ac);color:var(--on-ac);font-weight:800;font-size:15px;box-shadow:0 6px 18px -6px var(--ac);transition:transform .25s var(--spring)}
 .hgo svg{width:15px;height:15px}
@@ -447,3 +437,17 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .pastebtn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--sub);color:var(--ink);border:0;cursor:pointer}
 .pastebtn svg{width:18px;height:18px}
 .pastebtn:active{transform:translateY(-50%) scale(.92)}
+
+/* frosted swipe stack (js/p1stack.js): training days, calendar, food records */
+.fstack{position:relative;margin-bottom:12px;padding-bottom:calc(var(--n,0)*9px)}
+.fstack>.fs-top{position:relative;margin-bottom:0;z-index:2;touch-action:pan-y;transition:transform .45s var(--spring),opacity .3s var(--ease)}
+.fstack>.hcard.fs-top{cursor:pointer}
+.fstack>.fs-top.fs-fly{opacity:0;transition:transform .26s ease-in,opacity .26s ease-in}
+.fstack>.fs-top.fs-in{opacity:.4;transform:scale(.97);transition:none}
+.fstack>.fs-under{position:absolute;left:0;right:0;top:0;margin:0;z-index:1;pointer-events:none;filter:blur(7px) saturate(1.15);opacity:.8;transform:translateY(8px) scale(.965);transition:filter .3s var(--ease),opacity .3s var(--ease),transform .3s var(--ease)}
+.fstack>.fs-under.clear{filter:none;opacity:1;transform:none}
+.fs-peek{position:absolute;inset:40px 0 0;z-index:0;padding:0;background:none;border:0}
+.fs-peek i{position:absolute;left:12px;right:12px;bottom:0;height:60px;border-radius:24px;background:var(--card);border:1px solid var(--line);opacity:.75}
+.fstack[data-fs="hero"] .fs-peek i{background:var(--dark-solid);border-color:var(--dark-line)}
+.fs-peek i:first-child:not(:last-child){left:24px;right:24px;opacity:.45}
+.fs-peek i:last-child:not(:first-child){bottom:9px}

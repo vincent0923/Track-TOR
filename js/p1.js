@@ -56,17 +56,6 @@ const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 function dayCell(s,marks,out){const t=today(),mk=marks[s];const cls=(s===t?" today":"")+(s>t?" fut":"")+(out?" out":"");
   const inner='<b>'+dateObj(s).getDate()+'</b><span class="mk">'+(mk?[...mk].sort().map(k=>'<i class="'+k+'"></i>').join(""):"")+'</span>';
   return s>t?'<div class="dd'+cls+'">'+inner+'</div>':'<button class="dd'+cls+'" data-act="cal" data-d="'+s+'" aria-label="'+s+'">'+inner+'</button>'}
-function calHtml(){
-  const marks=dayMarks(),now=new Date(),head='<div class="days">'+(LANG==="en"?["M","T","W","T","F","S","S"]:["一","二","三","四","五","六","日"]).map(w=>'<span class="dw">'+w+'</span>').join("");
-  const ws=weekStart(now);let week=head;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);week+=dayCell(ymd(d),marks)}week+="</div>";
-  const first=new Date(now.getFullYear(),now.getMonth()+monthOff,1),ms=weekStart(first);let month=head;
-  for(let i=0;i<42;i++){const d=new Date(ms);d.setDate(ms.getDate()+i);if(i===35&&d.getMonth()!==first.getMonth())break;month+=dayCell(ymd(d),marks,d.getMonth()!==first.getMonth())}month+="</div>";
-  let wkCount=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);if(marks[ymd(d)])wkCount++}
-  return '<section class="card"><div class="wk-h"><b>'+(LANG==="en"?MON_EN[first.getMonth()]:(first.getMonth()+1)+'月')+(monthOpen&&first.getFullYear()!==now.getFullYear()?" "+first.getFullYear():"")+'</b>'
-    +(monthOpen?'<div class="mnav"><button class="mini" data-act="mprev" aria-label="'+T('上个月','Previous month')+'">'+ICON.left+'</button><button class="mini" data-act="mnext" aria-label="'+T('下个月','Next month')+'"'+(monthOff>=0?' disabled style="opacity:.35"':'')+'>'+ICON.right+'</button></div>'
-      :'<span class="pill'+(wkCount?' ac':'')+'" style="margin-left:auto">'+T('本周 '+wkCount+' 天',wkCount+(wkCount===1?' day':' days')+' this week')+'</span>')
-    +'<button class="mini chev" data-act="month" aria-expanded="'+monthOpen+'" aria-label="'+(monthOpen?T("收起整月","Collapse the month"):T("展开整月","Show the month"))+'">'+ICON.chev+'</button></div>'
-    +(monthOpen?month:week)+'</section>'}
 /* the hero is a deck: one card per training day that's ready, the least recently trained on top. Swipe the top card
    away (or tap the edges peeking below) and the next comes up; tap a card to show its moves; ✨ opens the plan. */
 let heroRot=0,heroOpen=false;
@@ -89,24 +78,27 @@ function heroHtml(){const deck=heroDeck();
   if(!deck.length)return '<section class="dark hero"><p class="eyebrow">'+T('计划','Plan')+'</p><h2>'+T('全部完成','All done')+' 🎉</h2></section>';
   if(heroSid){const k=deck.findIndex(d=>d.p.sid===heroSid);if(k>=0)heroRot=k;heroSid=null}
   const n=deck.length,top=deck[((heroRot%n)+n)%n];
-  /* the next card lies right under the top one as frosted glass; swiping the top away clears it */
-  const nx=n>1?deck[((heroRot+1)%n+n)%n]:null,under=nx?heroCard(nx.p,nx.lock).replace('<section class="dark hero hcard','<section inert aria-hidden="true" class="dark hero hcard hunder'):'';
-  return '<div class="hstack" style="--n:'+Math.min(2,n-1)+'">'+heroCard(top.p,top.lock)+under+(n>1?'<button class="hpeek" data-act="hnext" aria-label="'+T('下一张','Next card')+'">'+(n>2?'<i></i>':'')+'<i></i></button>':'')+'</div>'}
-function heroSwipe(){const st=$(".hstack"),c=st&&st.querySelector(".hcard");if(!c||heroDeck().length<2)return;
-  let x0=null,y0=0,dx=0,lock=null;
-  c.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;lock=null;c.style.transition="none"},{passive:true});
-  c.addEventListener("touchmove",e=>{if(x0==null)return;const mx=e.touches[0].clientX-x0,my=e.touches[0].clientY-y0;
-    if(lock==null&&(Math.abs(mx)>8||Math.abs(my)>8))lock=Math.abs(mx)>Math.abs(my)?"x":"y";if(lock!=="x")return;
-    e.preventDefault();dx=mx;c.style.transform="translateX("+dx+"px) rotate("+dx/25+"deg)"},{passive:false});
-  c.addEventListener("touchend",()=>{if(x0==null)return;x0=null;c.style.transition="";
-    if(lock==="x"&&Math.abs(dx)>70){heroFly(dx>0?1:-1)}else c.style.transform="";
-    if(lock==="x")c.dataset.swiped=Date.now()})}
-function heroFly(dir){const c=$(".hstack .hcard");SFX.tap();buzz(10);
-  const u=$(".hstack .hunder");
-  if(c){c.classList.add("fly");c.style.transform="translateX("+dir*120+"%) rotate("+dir*14+"deg)"}
-  if(u)u.classList.add("clear");
-  setTimeout(()=>{heroRot++;const v=$("#v-train");const old=v.querySelector(".hstack");const tmp=document.createElement("div");tmp.innerHTML=heroHtml();old.replaceWith(tmp.firstChild);heroSwipe()},c?320:0)}
-function renderTrainView(){const v=$("#v-train");v.innerHTML=heroHtml()+calHtml();animateRings(v);heroSwipe()}
+  return fsWrap("hero",heroCard(top.p,top.lock),n-1)}
+/* either way round, the next training day comes up */
+const HERO_FS={get:()=>{const deck=heroDeck(),n=deck.length;if(n<2)return null;const nx=deck[((heroRot+1)%n+n)%n];return heroCard(nx.p,nx.lock)},
+  commit:()=>{heroRot++},render:heroHtml,peekDir:-1};
+/* ---------- calendar: weeks (folded) or months, a frosted swipe stack; finger right goes back, "Today" returns ---------- */
+let weekOff=0;
+function calCard(off){const marks=dayMarks(),now=new Date(),t=today(),head='<div class="days">'+(LANG==="en"?["M","T","W","T","F","S","S"]:["一","二","三","四","五","六","日"]).map(w=>'<span class="dw">'+w+'</span>').join("");
+  let body=head,label;
+  if(!monthOpen){const ws=weekStart(now);ws.setDate(ws.getDate()+7*off);for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);body+=dayCell(ymd(d),marks)}
+    const mid=new Date(ws);mid.setDate(ws.getDate()+3);label=mid}
+  else{const first=new Date(now.getFullYear(),now.getMonth()+off,1),ms=weekStart(first);
+    for(let i=0;i<42;i++){const d=new Date(ms);d.setDate(ms.getDate()+i);if(i===35&&d.getMonth()!==first.getMonth())break;body+=dayCell(ymd(d),marks,d.getMonth()!==first.getMonth())}label=first}
+  body+="</div>";
+  return '<section class="card cal"><div class="wk-h"><b>'+(LANG==="en"?MON_EN[label.getMonth()]:(label.getMonth()+1)+'月')+(label.getFullYear()!==now.getFullYear()?" "+label.getFullYear():"")+'</b>'
+    +'<button class="pill'+(off?'':' ac')+'" style="margin-left:auto" data-act="caltoday">'+T('今天','Today')+'</button>'
+    +'<button class="mini chev" data-act="month" aria-expanded="'+monthOpen+'" aria-label="'+(monthOpen?T("收起整月","Collapse the month"):T("展开整月","Show the month"))+'">'+ICON.chev+'</button></div>'
+    +body+'</section>'}
+const calOff=()=>monthOpen?monthOff:weekOff;
+function calHtml(){return fsWrap("cal",calCard(calOff()),2)}
+const CAL_FS={get:dir=>{const o=calOff()-dir;return o>0?null:calCard(o)},commit:dir=>{if(monthOpen)monthOff-=dir;else weekOff-=dir},render:calHtml,peekDir:1};
+function renderTrainView(){const v=$("#v-train");v.innerHTML=heroHtml()+calHtml();animateRings(v);fsBind("hero",HERO_FS);fsBind("cal",CAL_FS)}
 /* what the engine planned: the next two sessions of a kind (or both kinds), each exercise with its reason */
 /* ✨ on the card: one line on where the suggestion comes from, and the reasoning behind "i" (the sessions themselves are the deck) */
 function planSheet(){
@@ -193,6 +185,16 @@ function swipe(el){let x0=null,y0=0;el.addEventListener("touchstart",e=>{x0=e.to
     run.ex=n;run.rest=0;clearInterval(restT);SFX.tap();renderFocus(true)})}
 
 /* ---------- diet view ---------- */
+/* food records, five days to a card, older ones stacked underneath (finger right goes back) */
+let dietGrp=0;
+function dietDays(){const t=today();return Object.keys(state.diet).filter(d=>d<=t).sort().reverse()}
+function dietCard(g){const all=dietDays(),keys=all.slice(g*5,g*5+5);
+  if(!keys.length)return '<section class="card"><p class="eyebrow" style="margin-bottom:4px">'+T('记录','Logs')+'</p><p class="empty">'+T('还没有饮食记录','No food logged yet')+'</p></section>';
+  const md=d=>(dateObj(d).getMonth()+1)+'.'+dateObj(d).getDate();
+  return '<section class="card"><div class="row" style="margin-bottom:4px"><p class="eyebrow sp">'+T('记录','Logs')+'</p><span class="muted" style="font-size:12px;font-weight:600">'+md(keys[keys.length-1])+' – '+md(keys[0])+'</span></div><div class="dl">'+keys.map(d=>{const a=intakeOf(d),g=dietGapOf(d);
+      return '<button data-act="day" data-d="'+d+'"><span class="dt">'+dayLabel(d)+'</span><span class="di n">'+(a!=null?fmt(a)+' kcal':'–')+'</span>'+(g!=null?'<span class="pill '+(g>=0?"good":"bad")+'">'+(g>=0?"−":"+")+fmt(Math.abs(g))+'</span>':'')+'<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>'}).join("")+'</div></section>'}
+function dietListHtml(){const n=Math.ceil(dietDays().length/5);if(dietGrp>=n)dietGrp=Math.max(0,n-1);return fsWrap("diet",dietCard(dietGrp),n-1-dietGrp)}
+const DIET_FS={get:dir=>{const n=Math.ceil(dietDays().length/5),g=dietGrp+dir;return g<0||g>=n?null:dietCard(g)},commit:dir=>{dietGrp+=dir},render:dietListHtml,peekDir:1};
 function renderDietView(){const v=$("#v-diet"),t=today();
   const tin=intakeOf(t),tb=burnOfDate(t),gap=tin!=null&&tb!=null?tb-tin:null,pr=proteinOf(t),need=proteinNeed(t);
   const y=ymdAdd(t,-1),yg=dietGapOf(y);
@@ -206,11 +208,7 @@ function renderDietView(){const v=$("#v-diet"),t=today();
     +'<div class="legend"><span><i style="background:var(--ink)"></i>'+T('摄入','Intake')+'</span><span><i style="background:var(--good);opacity:.5"></i>'+T('缺口','Deficit')+'</span><span style="margin-left:auto"><i style="background:var(--sleep)"></i>'+T('蛋白质','Protein')+'</span></div>'}
   hero+='<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet">'+ICON.plus+T('记一笔','Log')+'</button></section>';
   const week=gapCardHtml();
-  const keys=Object.keys(state.diet).filter(d=>d<=t).sort().reverse().slice(0,14);
-  const list='<section class="card"><p class="eyebrow" style="margin-bottom:4px">'+T('记录','Logs')+'</p>'+(keys.length?'<div class="dl">'+keys.map(d=>{const a=intakeOf(d),g=dietGapOf(d);
-      return '<button data-act="day" data-d="'+d+'"><span class="dt">'+dayLabel(d)+'</span><span class="di n">'+(a!=null?fmt(a)+' kcal':'–')+'</span>'+(g!=null?'<span class="pill '+(g>=0?"good":"bad")+'">'+(g>=0?"−":"+")+fmt(Math.abs(g))+'</span>':'')+'<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>'}).join("")+'</div>'
-    :'<p class="empty">'+T('还没有饮食记录','No food logged yet')+'</p>')+'</section>';
-  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+list;animateRings(v);gapCardBind()}
+  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+dietListHtml();animateRings(v);gapCardBind();fsBind("diet",DIET_FS)}
 /* the gap card: swipe it sideways (or tap a dot) to step through 7, 14, 30 days and since the first log; the
    big figure turns over like a split-flap board. Only finished days count (the window ends yesterday). */
 const GAP_RANGES=[7,14,30,0];
@@ -410,12 +408,12 @@ window.p1Sync=p1Sync;
 $("#syncBtn").addEventListener("click",()=>p1Sync(false));
 
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
-  if(a==="month"){monthOpen=!monthOpen;monthOff=0;renderTrainView()}
-  else if(a==="mprev"){monthOff--;renderTrainView()}
-  else if(a==="mnext"){if(monthOff<0){monthOff++;renderTrainView()}}
+  if(a==="month"){monthOpen=!monthOpen;monthOff=0;weekOff=0;fsRender("cal")}
+  /* Today: back to this week or month; already there, it opens today */
+  else if(a==="caltoday"){if(calOff()){monthOff=0;weekOff=0;fsRender("cal");const c=$('.fstack[data-fs="cal"] .fs-top');if(c){c.classList.add("fs-in");requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.remove("fs-in")))}}else if(typeof p1OpenDay==="function")p1OpenDay(today())}
   else if(a==="start")startRun(b.dataset.sid);
-  else if(a==="hnext")heroFly(-1);
-  else if(a==="hopen"){const c=b;if(Date.now()-(+c.dataset.swiped||0)<450)return;heroOpen=!heroOpen;c.classList.toggle("open",heroOpen);SFX.tap()}
+  else if(a==="fsnext"){const o=FS[b.dataset.fs];if(o)fsGo(b.dataset.fs,o.peekDir||1)}
+  else if(a==="hopen"){const c=b;heroOpen=!heroOpen;c.classList.toggle("open",heroOpen);SFX.tap()}
   else if(a==="theory"){const t=document.querySelector("#sheet .theory");if(t){t.hidden=!t.hidden;b.setAttribute("aria-expanded",!t.hidden)}}
   else if(a==="why")planSheet();
   else if(a==="dshare")shareDay(b.dataset.d);

@@ -12,6 +12,7 @@ const ASSETS = [
   "./js/backupcore.js",
   "./js/p1data.js",
   "./js/p1fx.js",
+  "./js/p1stack.js",
   "./js/coros.js",
   "./js/engine.js",
   "./js/p1.js",

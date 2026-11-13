@@ -28,10 +28,11 @@
 - 能用图标就不写字，操作放在它影响的内容旁边。
 - 不加不必要的标签和辅助说明，让布局、按钮和界面本身把意思讲清楚。要解释的放进「i」里，不常驻在页面上。
 - 极简、做减法。一个强调色，字重三档，大圆角卡片，所有详情和编辑都用底部弹出面板，动效用同一条回弹曲线（详见 `docs/PRODUCT.md`「界面」）。
+- 一组同类的卡片一律用毛玻璃 swipe stack（训练日、日历、饮食记录都是）：下面一张毛玻璃，划走后 0.3 秒变清晰；手指往右是往前的时间。不另做翻页按钮。
 - 爽感是核心：打勾放烟花、练完礼炮（`js/p1fx.js`），设定 › 外观可关。
 
 ## 代码结构
-- 静态网页，无构建，只有一个界面 `index.html`（经典界面和 29 套主题 v1.43a 删了，代码在分支 `backup-classic-v1.42a`）。样式 `css/p1.css`。脚本按 `index.html` 里的顺序加载、共享全局作用域：`js/hant.js`（繁体：把页面上的简体逐字换成台湾用字，`tracktor-lang` 是 `zht`）、`js/core.js`（计划、存储、`T`）、`js/diet.js`（热量算法、饮食面板）、`js/confetti.js`、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/backupcore.js`（进度文件）、`js/p1data.js`（图表数据、下一次训练、记录面板、G、音效）、`js/p1fx.js`（烟花、彩带、目标 2% 庆祝）、`js/coros.js`（高驰）、`js/engine.js`（训练引擎和计划预设）、`js/p1.js`（界面）、`js/p1settings.js`（设定面板、备份恢复、欢迎页、备份提醒）、`js/p1day.js`（日历点某天）、`js/p1weather.js`（天气；`p1settings.js` 用 `p1Sheet`/`p1Reg` 把面板借给它）。
+- 静态网页，无构建，只有一个界面 `index.html`（经典界面和 29 套主题 v1.43a 删了，代码在分支 `backup-classic-v1.42a`）。样式 `css/p1.css`。脚本按 `index.html` 里的顺序加载、共享全局作用域：`js/hant.js`（繁体：把页面上的简体逐字换成台湾用字，`tracktor-lang` 是 `zht`）、`js/core.js`（计划、存储、`T`）、`js/diet.js`（热量算法、饮食面板）、`js/confetti.js`、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/backupcore.js`（进度文件）、`js/p1data.js`（图表数据、下一次训练、记录面板、G、音效）、`js/p1fx.js`（烟花、彩带、目标 2% 庆祝）、`js/p1stack.js`（毛玻璃 swipe stack：`fsWrap`/`fsBind`/`fsGo`）、`js/coros.js`（高驰）、`js/engine.js`（训练引擎和计划预设）、`js/p1.js`（界面）、`js/p1settings.js`（设定面板、备份恢复、欢迎页、备份提醒）、`js/p1day.js`（日历点某天）、`js/p1weather.js`（天气；`p1settings.js` 用 `p1Sheet`/`p1Reg` 把面板借给它）。
 - 中英双语都用 `T(中文, English)`；繁体不用另写。
 - 数据全部在 `localStorage` 的 `tracktor-data`：`sessions`（训练）、`metrics[日期]`（引体、体重、腰围、睡眠、HRV、静息心率、活动热量 active、其中运动记录的热量 ex、有功率计骑行的热量 exP、低强度运动的热量 exL、步数等）、`diet[日期]`、`settings`（含 `plan` 训练计划、`weather` 天气城市）、`dayx[日期]`（没有训练的日子里的加练）。其他键都以 `tracktor-` 开头。
 - G（积分，Grind）从记录现算（`js/p1data.js` 的 `coinBadges`），不另存；以后要存的只有花掉的 G 和买过的主题，放进 `settings`。
