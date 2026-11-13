@@ -854,7 +854,7 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="skeuo"] .glowring,:root[data-theme="braun"] .glowring,:root[data-theme="clay"] .glowring{display:none}
 
 /* bricks: stacked-brick bar charts (gap card, weekly totals); each brick has a lit top and a dark foot */
-.bricks{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:3px;align-items:end;height:136px;margin-top:14px;padding:12px 10px 6px;border-radius:16px;background:var(--sub);box-shadow:inset 0 2px 5px rgba(0,0,0,.08);touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.bricks{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,44px));justify-content:center;gap:3px;align-items:end;height:136px;margin-top:14px;padding:12px 10px 6px;border-radius:16px;background:var(--sub);box-shadow:inset 0 2px 5px rgba(0,0,0,.08);touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .bk{display:grid;grid-template-rows:1fr auto;height:100%;gap:5px;min-width:0}
 .bks{display:flex;flex-direction:column-reverse;gap:2px}
 .bks i{display:block;height:9px;border-radius:3px;background:var(--c);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 0 rgba(0,0,0,.28),0 1px 1px rgba(0,0,0,.12);animation:bkIn .55s var(--spring) both;animation-delay:var(--d)}
@@ -865,6 +865,8 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .bricks.still{touch-action:auto}
 .bk .bl{font-size:10px;font-weight:600;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden}
 .bricks[style*="--cols:1"] .bk .bl,.bricks .bk .bl:empty{display:none}
+.tile.weekly{display:block}
+.tile.weekly:active{transform:none}
 .weekly .wkh{font-family:var(--disp);font-size:24px;font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-top:4px}
 .weekly .cnt{font-family:var(--num);font-size:22px;font-weight:700;padding:6px 14px;border-radius:16px;border:3px solid var(--ink);background:var(--card);box-shadow:0 4px 0 color-mix(in srgb,var(--ink) 25%,transparent),inset 0 2px 4px rgba(0,0,0,.1)}
 .weekly .wkf{font-size:11px;font-weight:700;margin-top:10px;gap:8px;letter-spacing:.04em}

@@ -313,20 +313,24 @@ function knobHtml(opts,cur,attr,label){const n=opts.length,i=Math.max(0,opts.fin
   addEventListener("pointerup",end);addEventListener("pointercancel",end)})();
 /* the main exercise, week by week: 12 weeks of every ticked rep stacked as bricks (one brick = a round number of reps,
    shown under the chart), the best week in the second colour */
+/* the weekly-total card is a tile like the others: long-press to move or hide it */
+const WEEKLY_TILE={k:"weekly",get name(){return T("每周总数","Weekly total")+" · "+mainName()},c:"var(--pull)",wide:1};
 function wkMon(d){return ymdAdd(d,-((dateObj(d).getDay()+6)%7))}
 function weeklyHtml(){const m=mainEx();if(m.custom)return "";const by={};
   /* every ticked rep counts: any training day, extras added to a session, and extras on days without one */
   const add=(d,sets)=>(sets||[]).forEach(x=>{if(x&&x.d){const w=wkMon(d);by[w]=(by[w]||0)+(+x.v||0)}});
   Object.values(state.sessions).forEach(x=>{if(!x)return;const d=x.date||today();add(d,x.sets&&x.sets[m.id]);(x.xs||[]).forEach(it=>{if(it.id===m.id)add(d,it.sets)})});
   Object.entries(state.dayx||{}).forEach(([d,x])=>((x&&x.xs)||[]).forEach(it=>{if(it.id===m.id)add(d,it.sets)}));
-  const cur=wkMon(today()),weeks=[];for(let i=11;i>=0;i--)weeks.push(ymdAdd(cur,-7*i));
+  /* from the first week with any reps, at most the last 12 */
+  const first=Object.keys(by).filter(w=>by[w]>0).sort()[0];if(!first)return "";
+  const cur=wkMon(today()),weeks=[];for(let i=11;i>=0;i--){const w=ymdAdd(cur,-7*i);if(w>=first)weeks.push(w)}
   const vals=weeks.map(w=>by[w]||0),mx=Math.max(...vals);if(!mx)return "";const best=vals.lastIndexOf(mx),tot=vals.reduce((a,b)=>a+b,0);
   /* one brick is a round number of reps, so the best week stays within about 9 bricks */
   const unit=[1,2,5,10,20,25,50,100,200,500].find(u=>mx/u<=9)||1000;
-  return '<section class="card weekly"><div class="row" style="align-items:flex-start"><div class="sp"><p class="eyebrow">'+T('每周总数 · 12 周','Weekly total · 12 weeks')+'</p><h3 class="wkh">'+mainName()+'</h3></div>'
+  return '<div class="tile wide weekly" data-k="weekly"><div class="row" style="align-items:flex-start"><div class="sp"><p class="eyebrow">'+T('每周总数 · '+weeks.length+' 周','Weekly total · '+weeks.length+(weeks.length>1?' weeks':' week'))+'</p><h3 class="wkh">'+mainName()+'</h3></div>'
     +'<span class="cnt n">'+fmt(tot)+'</span></div>'
     +bricksHtml(vals.map((v,i)=>({n:v?Math.max(1,Math.round(v/unit)):0,c:i===best?"var(--push)":"var(--pull)"})))
-    +'<div class="row muted wkf"><span>'+dayLabel(weeks[0])+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--pull)"></i>= '+unit+' '+mainUnit()+'</span><span>'+T('本周','This week')+'</span></div></section>'}
+    +'<div class="row muted wkf"><span>'+dayLabel(weeks[0])+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--pull)"></i>= '+unit+' '+mainUnit()+'</span><span>'+T('本周','This week')+'</span></div>'+(tileEdit?'<span class="tx" data-act="thide" data-k="weekly" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</div>'}
 function flapHtml(txt){return '<span class="flap">'+[...txt].map((c,i)=>'<span style="--i:'+i+'">'+c+'</span>').join("")+'</span>'}
 function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days,gaps,known,sum}=gapData();gapR=keep;const R=rr!=null?rr:gapR,mx=Math.max(300,...known.map(Math.abs));
   const label=R?T('过去 '+R+' 天','Last '+R+' days'):T('有记录以来 '+days.length+' 天','Since the first log · '+days.length+' days');
@@ -430,16 +434,16 @@ function goalsHtml(){const st=state.settings,gap=gapAllTime();
 let tileEdit=false;
 function tileCfg(){const t=state.settings.tiles||{};return {order:t.order||[],hidden:t.hidden||[]}}
 function tileList(){const c=tileCfg(),off=k=>{const s=state.settings.sync;return s&&s[{sleep:"sleep",hrv:"hrv",rhr:"rhr"}[k]]===false};
-  const pos=k=>{const i=c.order.indexOf(k);return i<0?100+METRICS.findIndex(m=>m.k===k):i};
-  const all=METRICS.filter(m=>!off(m.k)).slice().sort((a,b)=>pos(a.k)-pos(b.k));
+  const pos=k=>{const i=c.order.indexOf(k);return i<0?(k==="weekly"?-1:100+METRICS.findIndex(m=>m.k===k)):i};
+  const all=[WEEKLY_TILE].concat(METRICS).filter(m=>!off(m.k)).slice().sort((a,b)=>pos(a.k)-pos(b.k));
   return {shown:all.filter(m=>!c.hidden.includes(m.k)),hidden:all.filter(m=>c.hidden.includes(m.k))}}
 function renderProgView(){const v=$("#v-prog"),{shown,hidden}=tileList();
-  const tiles=shown.map(m=>{const all=m.pts(),pts=recent(all,30),last=all[all.length-1];
+  const tiles=shown.map(m=>{if(m.k==="weekly")return weeklyHtml();const all=m.pts(),pts=recent(all,30),last=all[all.length-1];
     return '<button class="tile'+(m.wide?" wide":"")+'" data-act="metric" data-k="'+m.k+'"><span class="tl"><i style="background:'+m.c+'"></i>'+m.name+(m.sub?' · '+m.sub:'')+'</span>'
       +'<span class="tv">'+(last?last.y.toFixed(m.dec)+'<small>'+m.unit+'</small>':'–')+'</span>'+(last?deltaOf(m,all):'<span class="td muted">'+T('还没有数据','No data yet')+'</span>')
       +(pts.length>1?lineSvg(pts,m.wide?320:150,m.wide?64:44,m.c,"spark"):'')
       +(tileEdit?'<span class="tx" data-act="thide" data-k="'+m.k+'" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</button>'}).join("");
-  v.innerHTML=goalsHtml()+weeklyHtml()+'<div class="bento'+(tileEdit?' editing':'')+'">'+tiles+'</div>'
+  v.innerHTML=goalsHtml()+'<div class="bento'+(tileEdit?' editing':'')+'">'+tiles+'</div>'
     +(tileEdit?'<div class="tilebar">'+(hidden.length?'<button class="fsreset" data-act="tadd" aria-label="'+T('加回图表','Add a chart back')+'">'+ICON.plus+'</button>':'')+'<button class="fsreset" data-act="tdone" aria-label="'+T('完成','Done')+'">'+ICON.check+'</button></div>':'');
   animateRings(v);tileBind()}
 function tileSave(cfg){state.settings.tiles=cfg;lsSave()}
