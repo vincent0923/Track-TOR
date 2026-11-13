@@ -546,3 +546,84 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .freehint b{font-weight:800}
 .freehint .pill{flex:none;height:30px;padding:0 12px;font-size:12px}
 .freehint .fsreset{width:30px;height:30px}
+
+/* ======================= toy (Ovio "world=toy", from the Ovio toy UI kit) =======================
+   Cream plastic on a dotted board by day, dark plastic by night. Everything is a moulded part with a hard lip under
+   it; buttons are primary-colour keys that sink when pressed; bars are stacked bricks; numbers are monospaced. */
+:root[data-theme="toy"]{
+  --bg:#F4F1EA; --glow:none; --dot:#D6D0C2;
+  --card:#FAF8F2; --line:#E5DFD0; --lip:#DDD7C7; --lit:inset 0 1px 0 rgba(255,255,255,.9); --sub:#E8E2D5; --seg:#E8E2D5;
+  --well-sh:inset 0 2px 5px rgba(0,0,0,.11),inset 0 -1px 0 rgba(255,255,255,.85);
+  --dark:#2244FF; --dark-solid:#2244FF; --dark-line:#1228A6; --track:rgba(255,255,255,.28);
+  --ink:#181615; --muted:#8C857B; --ac:#2244FF; --on-ac:#FFFFFF; --ac-soft:rgba(34,68,255,.13); --ac-text:#2244FF; --ac-lip:#1228A6;
+  --red:#EB3B24; --red-lip:#A61F0E; --yel:#F2B726; --yel-lip:#B8830C; --grn:#2AB858; --grn-lip:#187D36;
+  --st1:rgba(34,68,255,.22); --st2:rgba(34,68,255,.6);
+  --push:#EB3B24; --pull:#2244FF; --third:#F2B726; --good:#2AB858; --bad:#EB3B24; --sleep:#8B5CF6;
+  --shadow:0 6px 0 var(--lip),0 14px 28px -6px rgba(30,24,14,.10);
+  --num:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+:root[data-theme="toy"][data-mode="dark"]{
+  --bg:#111318; --dot:#252934;
+  --card:#1B1E26; --line:#2B303C; --lip:#0A0B0E; --lit:inset 0 1px 0 rgba(255,255,255,.07); --sub:#12141A; --seg:#12141A;
+  --well-sh:inset 0 2px 5px rgba(0,0,0,.55),inset 0 -1px 0 rgba(255,255,255,.05);
+  --dark:#3858FF; --dark-solid:#3858FF; --dark-line:#192FA8;
+  --ink:#F5F3EE; --muted:#8A90A0; --ac:#3858FF; --on-ac:#FFFFFF; --ac-soft:rgba(56,88,255,.2); --ac-text:#8EA2FF; --ac-lip:#192FA8;
+  --red:#F0442E; --red-lip:#9E1F10; --yel:#F5BE30; --yel-lip:#A87A0A; --grn:#2ECF62; --grn-lip:#168238;
+  --push:#F0442E; --pull:#3858FF; --third:#F5BE30; --good:#2ECF62; --bad:#F0442E; --sleep:#A78BFA;
+  --shadow:0 6px 0 var(--lip),0 18px 34px -6px rgba(0,0,0,.65)}
+/* the dotted board */
+:root[data-theme="toy"] body{background-image:radial-gradient(var(--dot) 1.35px,transparent 1.35px);background-size:20px 20px;background-attachment:scroll}
+:root[data-theme="toy"] h1,:root[data-theme="toy"] .hero h2,:root[data-theme="toy"] .big{font-weight:900}
+/* moulded cards with a lip */
+:root[data-theme="toy"] .card,:root[data-theme="toy"] .tile,:root[data-theme="toy"] .hero.dark{background:var(--card);border:1.5px solid var(--line);border-radius:22px;box-shadow:var(--shadow);color:var(--ink);--muted:inherit;--sub:inherit}
+:root[data-theme="toy"] .tile{transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
+:root[data-theme="toy"] .tile:active{transform:translateY(4px);box-shadow:0 2px 0 var(--lip)}
+/* the goals board is a blue plastic slab */
+:root[data-theme="toy"] .dark:not(.hero){background:var(--dark);border:1.5px solid var(--dark-line);box-shadow:0 6px 0 var(--dark-line),inset 0 1.5px 0 rgba(255,255,255,.28),0 14px 28px -6px rgba(0,0,0,.18)}
+:root[data-theme="toy"] .hero .exl li b{color:color-mix(in srgb,var(--ink) 80%,transparent)}
+:root[data-theme="toy"] .hero .hwhy,:root[data-theme="toy"] .hero .lockline{color:var(--muted)}
+:root[data-theme="toy"] .hero .exl .slow{background:var(--sub)}
+:root[data-theme="toy"] .glowring{display:none}
+/* primary-colour keys that sink when pressed */
+:root[data-theme="toy"] .btn,:root[data-theme="toy"] .hgo{border-radius:14px;box-shadow:0 4px 0 var(--ac-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transition:transform .1s cubic-bezier(.34,1.56,.64,1),box-shadow .1s}
+:root[data-theme="toy"] .hgo{background:var(--red);box-shadow:0 4px 0 var(--red-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transform:rotate(-2deg)}
+:root[data-theme="toy"] .btn:active,:root[data-theme="toy"] .hgo:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ac-lip)}
+:root[data-theme="toy"] .hgo:active{box-shadow:0 1px 0 var(--red-lip)}
+:root[data-theme="toy"] .btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:0 4px 0 var(--lip)}
+:root[data-theme="toy"] .btn.ghost:active{box-shadow:0 1px 0 var(--lip)}
+:root[data-theme="toy"] .circ,:root[data-theme="toy"] .fsreset,:root[data-theme="toy"] .mini{background:var(--card);border:1.5px solid var(--line);box-shadow:0 3px 0 var(--lip);color:var(--ink);transition:transform .1s,box-shadow .1s}
+:root[data-theme="toy"] .circ:active,:root[data-theme="toy"] .fsreset:active,:root[data-theme="toy"] .mini:active{transform:translateY(2px);box-shadow:0 1px 0 var(--lip)}
+:root[data-theme="toy"] .dark .fsreset{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.25);box-shadow:0 3px 0 rgba(0,0,0,.25);color:#fff}
+/* recessed wells: options, segments, pills, the calendar line */
+:root[data-theme="toy"] .opt,:root[data-theme="toy"] .seg,:root[data-theme="toy"] .calpill,:root[data-theme="toy"] .thc,:root[data-theme="toy"] .preset{background:var(--sub);box-shadow:var(--well-sh);border:1.5px solid rgba(255,255,255,.4)}
+:root[data-theme="toy"][data-mode="dark"] .opt,:root[data-theme="toy"][data-mode="dark"] .seg,:root[data-theme="toy"][data-mode="dark"] .calpill,:root[data-theme="toy"][data-mode="dark"] .thc,:root[data-theme="toy"][data-mode="dark"] .preset{border-color:rgba(255,255,255,.05)}
+:root[data-theme="toy"] .opt[aria-pressed="true"],:root[data-theme="toy"] .preset.on,:root[data-theme="toy"] .thc.on{background:var(--yel);color:#181615;box-shadow:0 4px 0 var(--yel-lip),inset 0 1.5px 0 rgba(255,255,255,.45);border-color:transparent}
+:root[data-theme="toy"] .seg button[aria-pressed="true"]{background:var(--red);color:#fff;box-shadow:0 3px 0 var(--red-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transform:translateY(-1px)}
+/* the dock: a plastic tray, the chosen tab a blue key */
+:root[data-theme="toy"] .dock{background:var(--card);border:1.5px solid var(--line);box-shadow:0 5px 0 var(--lip),0 12px 26px rgba(0,0,0,.14)}
+:root[data-theme="toy"] .dock button{color:var(--muted)}
+:root[data-theme="toy"] .dock button[aria-selected="true"]{color:#fff}
+:root[data-theme="toy"] .dock .pc{border-radius:14px;box-shadow:0 4px 0 var(--ac-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transition:transform .45s cubic-bezier(.34,1.8,.64,1),width .45s cubic-bezier(.34,1.8,.64,1)}
+/* bars are stacked bricks */
+:root[data-theme="toy"] .bars7 .bv{border-radius:4px;-webkit-mask-image:repeating-linear-gradient(to top,#000 0 9px,transparent 9px 12px);mask-image:repeating-linear-gradient(to top,#000 0 9px,transparent 9px 12px)}
+/* the tick: a big round arcade button */
+:root[data-theme="toy"] .tickb{background:var(--red);color:#fff;box-shadow:0 8px 0 var(--red-lip),0 16px 28px rgba(0,0,0,.24),inset 0 3px 0 rgba(255,255,255,.28),inset 0 -4px 8px rgba(0,0,0,.2);transition:transform .1s,box-shadow .1s}
+:root[data-theme="toy"] .tickb:active{transform:translateY(6px);box-shadow:0 2px 0 var(--red-lip),inset 0 3px 0 rgba(255,255,255,.28)}
+:root[data-theme="toy"] .tickb.done{background:var(--sub);color:var(--muted);box-shadow:var(--well-sh)}
+/* calendar days are little pegs */
+:root[data-theme="toy"] .cal .dd.trn b{background:var(--kc);color:#fff;box-shadow:0 3px 0 color-mix(in srgb,var(--kc) 60%,#000)}
+:root[data-theme="toy"] .cal .dd.today b{background:var(--ink);color:var(--bg);box-shadow:0 3px 0 #000}
+/* the light/dark switch is the recessed capsule with a plastic puck */
+:root[data-theme="toy"] .modesw{background:var(--sub);box-shadow:var(--well-sh);border:1.5px solid rgba(255,255,255,.5)}
+:root[data-theme="toy"] .modesw .kn{background:var(--card);border:1px solid var(--line);box-shadow:0 3px 0 var(--lip),inset 0 1.5px 0 rgba(255,255,255,.9);transition:transform .55s cubic-bezier(.34,1.65,.64,1)}
+:root[data-theme="toy"] .modesw .kn::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--yel);box-shadow:0 0 6px var(--yel)}
+/* sheets and the deck */
+:root[data-theme="toy"] .sheet .panel,:root[data-theme="toy"] .mask .sheet{border:1.5px solid var(--line);box-shadow:0 -6px 0 var(--lip)}
+:root[data-theme="toy"] .fs-peek i{background:var(--card);border:1.5px solid var(--line);box-shadow:0 4px 0 var(--lip)}
+:root[data-theme="toy"] .fstack>.fs-top{box-shadow:var(--shadow)}
+:root[data-theme="toy"] .toast{background:#141413;color:#fff;border:0;box-shadow:0 4px 0 #000}
+:root[data-theme="toy"] .pill.ac{background:var(--yel);color:#181615;box-shadow:0 2px 0 var(--yel-lip)}
+/* a little life: pressed things wobble back */
+@keyframes toyPop{0%{transform:scale(.94)}55%{transform:scale(1.04)}100%{transform:none}}
+:root[data-theme="toy"] .cal button.dd:active b{animation:toyPop .35s cubic-bezier(.34,1.56,.64,1)}
+/* on the blue goals slab every ring fills in yellow */
+:root[data-theme="toy"] .goals4 circle.rv{stroke:var(--yel)}

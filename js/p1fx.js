@@ -47,10 +47,14 @@ function fxBang(big){try{AC=AC||new (window.AudioContext||window.webkitAudioCont
   const n=big?12:5;for(let k=0;k<n;k++)hit((big?.3:.2)+Math.random()*(big?.9:.5),.04,6500,3500,.06+Math.random()*.05,"highpass")}catch(e){}}
 function celebrate(n,big){if(fxCalm())return;FW.add(n||0,big||0)}
 const fxAc=()=>getComputedStyle(document.documentElement).getPropertyValue("--ac").trim()||"#22C55E";
+/* the toy skin throws plastic: primary colours, squares and dots */
+const fxToy=()=>document.documentElement.dataset.theme==="toy";
+const fxCols=()=>fxToy()?["#EB3B24","#2244FF","#F2B726","#2AB858","#FFFFFF"]:[fxAc(),"#ffffff","#FFD24D"];
+const fxShape=()=>fxToy()?{shapes:["square","circle"],scalar:1.35}:{};
 /* one exercise done: a popper from the bottom; the whole session done: cannons from both sides */
-function popper(){if(fxCalm()||!window.confetti)return;confetti({particleCount:40,spread:60,startVelocity:32,origin:{y:.75},colors:[fxAc(),"#ffffff"],zIndex:60,disableForReducedMotion:true})}
+function popper(){if(fxCalm()||!window.confetti)return;confetti(Object.assign({particleCount:40,spread:60,startVelocity:32,origin:{y:.75},colors:fxCols(),zIndex:60,disableForReducedMotion:true},fxShape()))}
 function cannons(){if(fxCalm()||!window.confetti)return;const c=fxAc();
-  [0,250,500].forEach(t=>setTimeout(()=>{confetti({particleCount:70,angle:60,spread:60,origin:{x:0,y:.8},colors:[c,"#fff","#FFD24D"],zIndex:60});confetti({particleCount:70,angle:120,spread:60,origin:{x:1,y:.8},colors:[c,"#fff","#FFD24D"],zIndex:60})},t))}
+  [0,250,500].forEach(t=>setTimeout(()=>{confetti(Object.assign({particleCount:70,angle:60,spread:60,origin:{x:0,y:.8},colors:fxCols(),zIndex:60},fxShape()));confetti(Object.assign({particleCount:70,angle:120,spread:60,origin:{x:1,y:.8},colors:fxCols(),zIndex:60},fxShape()))},t))}
 /* every new 2% step on a goal ring: a big show. The highest step is remembered in this browser, so weight going up
    and down never celebrates the same step twice; the first time a goal is seen, and the first seconds after opening
    (synced data can still be arriving), it is recorded quietly. */

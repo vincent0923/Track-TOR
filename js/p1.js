@@ -48,7 +48,8 @@ function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>
 /* ---------- theme: follow the phone, or fixed light / dark ---------- */
 /* themes: each has a light and a dark version. aurora is free; others are bought with G (settings.buys, settings.theme) */
 const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,sw:["#F1F1EC","#4FAF6A","#070A10","#00F5D4"]},
-  {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]}];
+  {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]},
+  {id:"toy",zh:"玩具",en:"Toy",price:90,sw:["#F4F1EA","#EB3B24","#2244FF","#F2B726"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"}];
 function themeOwned(id){const t=THEMES.find(x=>x.id===id);return !!t&&(!t.price||(state.settings.buys||[]).some(b=>b.id===id))}
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const dark=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),th=themeOwned(state.settings.theme)?state.settings.theme:"aurora";
@@ -423,7 +424,7 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
   openSheet('<div class="sh-h"><h3>G</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="row" style="margin-bottom:16px"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+fmt(tot)+'</div><p class="muted" style="font-size:12px">'+T('练出来的真实进步才给币，从记录里算出来','Real progress earns G, worked out from your records')+'</p></div></div>'
     +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+THEMES.map(th=>{const own=themeOwned(th.id),on=(themeOwned(state.settings.theme)?state.settings.theme:"aurora")===th.id;
-      return '<button class="thc'+(on?' on':'')+'" data-act="theme" data-id="'+th.id+'"><span class="sw">'+th.sw.map(c=>'<i style="background:'+c+'"></i>').join("")+'</span><span class="sp"><b>'+T(th.zh,th.en)+'</b><br><span class="muted" style="font-size:12px">'+T('亮、暗两版','Light and dark')+'</span></span>'
+      return '<button class="thc'+(on?' on':'')+'" data-act="theme" data-id="'+th.id+'"><span class="sw">'+th.sw.map(c=>'<i style="background:'+c+'"></i>').join("")+'</span><span class="sp"><b>'+T(th.zh,th.en)+'</b><br><span class="muted" style="font-size:12px">'+(th.dz?T(th.dz,th.de)+' · ':'')+T('亮、暗两版','Light and dark')+'</span></span>'
         +(on?'<span class="pill ac">'+T('使用中','In use')+'</span>':own?'<span class="pill">'+T('换上','Use')+'</span>':'<span class="pill'+(tot>=th.price?' ac':'')+'">'+COIN+' '+th.price+'</span>')+'</button>'}).join("")+shop+'</div><p class="muted" style="font-size:12px;margin:8px 2px 18px">'+T('每个主题都有亮、暗两版，顶上的开关切换。','Every theme has a light and a dark version; flip them with the switch at the top.')+'</p>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('训练计划','Training plans')+'</p><div class="setlist" style="margin-bottom:18px">'+plans+'</div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('怎么拿','How to earn')+'</p><div class="setlist">'+rows+'</div>');
