@@ -411,8 +411,9 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .hstack{position:relative;margin-bottom:12px;padding-bottom:calc(var(--n,0)*9px)}
 .hstack .hcard{margin-bottom:0;z-index:2;cursor:pointer;touch-action:pan-y;transition:transform .45s var(--spring),opacity .3s var(--ease)}
 .hstack .hcard.fly{opacity:0;transition:transform .22s ease-in,opacity .22s ease-in}
-.hstack .hcard.rise{transform:translateY(12px) scale(.96);opacity:.5;transition:none}
-.hpeek{position:absolute;inset:40px 0 0;z-index:1;padding:0;background:none;border:0}
+.hstack .hcard.hunder{position:absolute;left:0;right:0;top:0;z-index:1;pointer-events:none;filter:blur(7px) saturate(1.15);opacity:.8;transform:translateY(8px) scale(.965);transition:filter .3s var(--ease),opacity .3s var(--ease),transform .3s var(--ease)}
+.hstack .hcard.hunder.clear{filter:none;opacity:1;transform:none}
+.hpeek{position:absolute;inset:40px 0 0;z-index:0;padding:0;background:none;border:0}
 .hpeek i{position:absolute;left:12px;right:12px;bottom:0;height:60px;border-radius:24px;background:var(--dark-solid);border:1px solid var(--dark-line);opacity:.75}
 .hpeek i:first-child:not(:last-child){left:24px;right:24px;bottom:0;opacity:.45}
 .hpeek i:last-child:not(:first-child){bottom:9px}

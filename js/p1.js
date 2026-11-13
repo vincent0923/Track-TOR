@@ -89,7 +89,9 @@ function heroHtml(){const deck=heroDeck();
   if(!deck.length)return '<section class="dark hero"><p class="eyebrow">'+T('计划','Plan')+'</p><h2>'+T('全部完成','All done')+' 🎉</h2></section>';
   if(heroSid){const k=deck.findIndex(d=>d.p.sid===heroSid);if(k>=0)heroRot=k;heroSid=null}
   const n=deck.length,top=deck[((heroRot%n)+n)%n];
-  return '<div class="hstack" style="--n:'+Math.min(2,n-1)+'">'+heroCard(top.p,top.lock)+(n>1?'<button class="hpeek" data-act="hnext" aria-label="'+T('下一张','Next card')+'">'+(n>2?'<i></i>':'')+'<i></i></button>':'')+'</div>'}
+  /* the next card lies right under the top one as frosted glass; swiping the top away clears it */
+  const nx=n>1?deck[((heroRot+1)%n+n)%n]:null,under=nx?heroCard(nx.p,nx.lock).replace('<section class="dark hero hcard','<section inert aria-hidden="true" class="dark hero hcard hunder'):'';
+  return '<div class="hstack" style="--n:'+Math.min(2,n-1)+'">'+heroCard(top.p,top.lock)+under+(n>1?'<button class="hpeek" data-act="hnext" aria-label="'+T('下一张','Next card')+'">'+(n>2?'<i></i>':'')+'<i></i></button>':'')+'</div>'}
 function heroSwipe(){const st=$(".hstack"),c=st&&st.querySelector(".hcard");if(!c||heroDeck().length<2)return;
   let x0=null,y0=0,dx=0,lock=null;
   c.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;lock=null;c.style.transition="none"},{passive:true});
@@ -100,9 +102,10 @@ function heroSwipe(){const st=$(".hstack"),c=st&&st.querySelector(".hcard");if(!
     if(lock==="x"&&Math.abs(dx)>70){heroFly(dx>0?1:-1)}else c.style.transform="";
     if(lock==="x")c.dataset.swiped=Date.now()})}
 function heroFly(dir){const c=$(".hstack .hcard");SFX.tap();buzz(10);
+  const u=$(".hstack .hunder");
   if(c){c.classList.add("fly");c.style.transform="translateX("+dir*120+"%) rotate("+dir*14+"deg)"}
-  setTimeout(()=>{heroRot++;const v=$("#v-train");const old=v.querySelector(".hstack");const tmp=document.createElement("div");tmp.innerHTML=heroHtml();old.replaceWith(tmp.firstChild);
-    const nc=$(".hstack .hcard");if(nc){nc.classList.add("rise");requestAnimationFrame(()=>requestAnimationFrame(()=>nc.classList.remove("rise")))}heroSwipe()},c?220:0)}
+  if(u)u.classList.add("clear");
+  setTimeout(()=>{heroRot++;const v=$("#v-train");const old=v.querySelector(".hstack");const tmp=document.createElement("div");tmp.innerHTML=heroHtml();old.replaceWith(tmp.firstChild);heroSwipe()},c?320:0)}
 function planHtml(){const marks=dayMarks(),now=new Date(),ws=weekStart(now);let wk=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);if(marks[ymd(d)])wk++}
   const done=PROGRAM.filter(p=>state.sessions[p.sid]&&state.sessions[p.sid].done);
   const last=Object.entries(state.sessions).filter(([sid,s])=>s&&s.done&&s.date&&BYID[sid]).sort((a,b)=>a[1].date<b[1].date?1:-1)[0];
