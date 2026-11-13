@@ -194,7 +194,7 @@ function dietCard(g){const all=dietDays(),keys=all.slice(g*7,g*7+7);
   const md=d=>(dateObj(d).getMonth()+1)+'.'+dateObj(d).getDate();
   return '<section class="card"><div class="row" style="margin-bottom:4px"><p class="eyebrow sp">'+T('记录','Logs')+'</p><span class="muted" style="font-size:12px;font-weight:600">'+md(keys[keys.length-1])+' – '+md(keys[0])+'</span>'+(g?'<button class="fsreset" data-act="dietnow" style="margin-left:8px" aria-label="'+T('回到最近','Back to the latest')+'">'+ICON.reset+'</button>':'')+'</div><div class="dl">'+keys.map(d=>{const a=intakeOf(d),g=dietGapOf(d);
       return '<button data-act="day" data-d="'+d+'"><span class="dt">'+dayLabel(d)+'</span><span class="di n">'+(a!=null?fmt(a)+' kcal':'–')+'</span>'+(g!=null?'<span class="pill '+(g>=0?"good":"bad")+'">'+(g>=0?"−":"+")+fmt(Math.abs(g))+'</span>':'')+'<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>'}).join("")+'</div></section>'}
-function dietListHtml(){const n=Math.ceil(dietDays().length/7);if(dietGrp>=n)dietGrp=Math.max(0,n-1);return fsWrap("diet",dietCard(dietGrp),n-1-dietGrp)}
+function dietListHtml(){const n=Math.ceil(dietDays().length/7);if(dietGrp>=n)dietGrp=Math.max(0,n-1);return fsWrap("diet",dietCard(dietGrp),n-1)}
 const DIET_FS={get:dir=>{const n=Math.ceil(dietDays().length/7),g=dietGrp+dir;return g<0||g>=n?null:dietCard(g)},commit:dir=>{dietGrp+=dir},render:dietListHtml,peekDir:1};
 function renderDietView(){const v=$("#v-diet"),t=today();
   const tin=intakeOf(t),tb=burnOfDate(t),gap=tin!=null&&tb!=null?tb-tin:null,pr=proteinOf(t),need=proteinNeed(t);
@@ -232,7 +232,7 @@ function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days
     +(days.length?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
     +'</section>'}
 /* the four periods are a frosted swipe stack too: finger right for longer, left for shorter */
-function gapStackHtml(){const i=GAP_RANGES.indexOf(gapR);return fsWrap("gap",gapCardHtml(),GAP_RANGES.length-1-i)}
+function gapStackHtml(){const i=GAP_RANGES.indexOf(gapR);return fsWrap("gap",gapCardHtml(),GAP_RANGES.length-1)}
 const GAP_FS={get:dir=>{const i=GAP_RANGES.indexOf(gapR)+dir;return i<0||i>=GAP_RANGES.length?null:gapCardHtml(GAP_RANGES[i])},
   commit:dir=>{gapR=GAP_RANGES[GAP_RANGES.indexOf(gapR)+dir];try{localStorage.setItem(PK+"gw",String(gapR))}catch(e){}},render:gapStackHtml,peekDir:1};
 /* food table: opening Diet pulls it quietly (not again within half a minute); pulling the page down pulls it now */

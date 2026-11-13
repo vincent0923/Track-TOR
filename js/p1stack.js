@@ -17,13 +17,14 @@ function fsUnder(host,html){const t=document.createElement("div");t.innerHTML=ht
 function fsBind(id,o){FS[id]=o;const host=fsHost(id);if(!host)return;const top=host.firstElementChild;top.classList.add("fs-top");
   let x0=null,y0=0,dx=0,lock=null,under=null,udir=0;
   const drop=()=>{if(under){const u=under;u.classList.remove("clear");setTimeout(()=>u.remove(),300)}under=null;udir=0};
-  top.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;lock=null;top.style.transition="none"},{passive:true});
+  top.addEventListener("touchstart",e=>{host.classList.add("fs-touch");x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;lock=null;top.style.transition="none"},{passive:true});
   top.addEventListener("touchmove",e=>{if(x0==null)return;const mx=e.touches[0].clientX-x0,my=e.touches[0].clientY-y0;
     if(lock==null&&(Math.abs(mx)>8||Math.abs(my)>8))lock=Math.abs(mx)>Math.abs(my)?"x":"y";if(lock!=="x")return;
     e.preventDefault();dx=mx;const dir=dx<0?-1:1;
     if(dir!==udir){drop();const h=o.get(dir);if(h){under=fsUnder(host,h);udir=dir}}
     const eff=under?dx:dx*.22;top.style.transform="translateX("+eff+"px) rotate("+eff/25+"deg)"},{passive:false});
-  top.addEventListener("touchend",()=>{if(x0==null)return;x0=null;top.style.transition="";if(lock!=="x")return;fsEatClick();
+  top.addEventListener("touchcancel",()=>host.classList.remove("fs-touch"));
+  top.addEventListener("touchend",()=>{host.classList.remove("fs-touch");if(x0==null)return;x0=null;top.style.transition="";if(lock!=="x")return;fsEatClick();
     if(under&&Math.abs(dx)>70)fsFly(id,dx<0?-1:1,top,under);else{top.style.transform="";drop()}})}
 function fsFly(id,dir,top,under){const o=FS[id];if(typeof SFX!=="undefined")SFX.tap();if(typeof buzz==="function")buzz(10);
   top.classList.add("fs-fly");top.style.transform="translateX("+dir*120+"%) rotate("+dir*14+"deg)";
