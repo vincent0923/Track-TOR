@@ -6,6 +6,14 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.32a] — 2026-11-13
+
+### 新增 / Added
+- ⌚ **手表热量可以全算**：「设定 › 图表和同步设定」新增「手表热量」开关，打折（默认：日常活动按步数封顶、运动记录 × 0.7、低强度运动 × 0.5、有功率计的骑行全算）或全算（手表报多少算多少）。只改估算的消耗、热量缺口和减脂，同步来的数字不变；「i」里说明两种算法。长按目标卡的「减脂」直接跳到这个开关。
+  **Watch calories can count in full**: a new Watch calories switch in Settings › Charts & sync, discounted (the default: everyday movement capped by steps, logged workouts × 0.7, low-intensity ones × 0.5, power-meter rides in full) or in full (every kcal the watch reports). Only the estimated burn, calorie gap and fat loss change; synced numbers stay as they are. The i explains both. Holding the Fat loss goal jumps straight to this switch.
+
+---
+
 ## [v1.31a] — 2026-11-10
 
 ### 新增 / Added

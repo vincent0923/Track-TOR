@@ -2101,3 +2101,11 @@ html:root[data-skin="splitflow"] nav.tabs.tabs{left:12px;right:12px;bottom:calc(
 :root[data-skin="splitflow"] .dhead{padding:14px 16px}
 :root[data-skin="splitflow"] #pane-diet .pill{font-size:11px}
 :root[data-skin="splitflow"] #pane-diet .pill b{font-family:var(--f-body);font-size:13px;font-weight:800}
+/* Settings › Charts & sync: watch calories discounted or in full; an i for what each means */
+.wfull{display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--sunk)}
+.wfull .wfl{display:flex;align-items:center;gap:8px;flex:1;min-width:0;font-weight:600;font-size:14px}
+.wfull .wfl svg{width:18px;height:18px;flex:none;color:var(--burn,var(--cta))}
+.wfull .maseg button{font-family:var(--f-body);font-size:13px;padding:6px 12px}
+.wfinfo{margin:8px 2px 0;font-size:12px;line-height:1.6;color:var(--muted)}
+.wfull.flash{animation:wFlash 1.6s ease-out}
+@keyframes wFlash{0%,40%{box-shadow:0 0 0 3px var(--cta)}100%{box-shadow:0 0 0 3px transparent}}

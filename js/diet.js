@@ -21,8 +21,11 @@ function everydayCap(date){
   const kg = weightAtDate(date) || W_DEFAULT;
   return st * kg * STEP_KCAL * STEP_MARGIN + STEP_EXTRA;
 }
+/* Settings › Charts & sync can count the watch in full instead (settings.watchFull): every kcal it reports, no
+   discounts and no step cap. Only the estimates change; the synced numbers stay as they are. */
 function watchBurn(date, act){
   if(act === null) return null;
+  if(state.settings && state.settings.watchFull) return act;
   const m = state.metrics[date];
   if(!m || m.ex == null) return act * EX_FACTOR;
   const ex = Math.min(+m.ex || 0, act), exP = Math.min(+m.exP || 0, ex), exL = Math.min(+m.exL || 0, ex - exP);
@@ -276,7 +279,7 @@ function renderDietDays(){
       metaTags.push(`${T("手表活动","Watch activity")} ${f0Dec(cAct)} kcal`
         + (ex ? T("（运动 "+f0Dec(ex)+"）"," (workouts "+f0Dec(ex)+")") : (mm.ex == null ? T("（运动未知）"," (workouts unknown)") : ""))
         + ` → ${T("计入","counted")} ${f0Dec(watchBurn(k, cAct))}`
-        + (ex != null && cAct - Math.min(ex, cAct) > everydayCap(k) ? T("（日常活动按步数封顶 "+f0Dec(everydayCap(k))+"）"," (everyday movement capped by steps at "+f0Dec(everydayCap(k))+")") : "")); }
+        + (!state.settings.watchFull && ex != null && cAct - Math.min(ex, cAct) > everydayCap(k) ? T("（日常活动按步数封顶 "+f0Dec(everydayCap(k))+"）"," (everyday movement capped by steps at "+f0Dec(everydayCap(k))+")") : "")); }
     if(numVal(d.expendOverride)!==null) metaTags.push(`${T("手动总消耗","Manual total burn")} ${f0Dec(d.expendOverride)} kcal`);
     if(wKg!==null) metaTags.push(`${T("体重","Weight")} ${f1Dec(wKg)} kg`);
     const metaLine = metaTags.length ? `<p class="note"${dietState.open.has(k)?"":" hidden"} style="padding-top:6px;padding-bottom:${d.note?2:10}px">${metaTags.join(" · ")}</p>` : "";

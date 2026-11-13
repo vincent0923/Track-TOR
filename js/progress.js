@@ -197,6 +197,17 @@ document.getElementById("syncShow").addEventListener("click",e=>{
   const s=Object.assign({},state.settings.sync||{});s[b.dataset.sync]=!syncOn(b.dataset.sync);
   state.settings.sync=s;saveSettings();paintSync();paintAddPanel();
 });
+/* watch calories: discounted (default) or counted in full; only the estimates change (see watchBurn) */
+function paintWFull(){const on=!!state.settings.watchFull;
+  document.querySelectorAll("#wFull [data-wfull]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.wfull==="1")===on)))}
+document.getElementById("wFull").addEventListener("click",e=>{const b=e.target.closest("[data-wfull]");if(!b)return;
+  const on=b.dataset.wfull==="1";if(!!state.settings.watchFull===on)return;
+  if(on)state.settings.watchFull=true;else delete state.settings.watchFull;
+  saveSettings();paintWFull();renderDietAll();renderGoals();
+  toast(on?T("手表热量全算","Watch calories counted in full"):T("手表热量打折","Watch calories discounted"))});
+/* holding the fat-loss goal opens this switch: Settings › Charts & sync, scrolled to it, with a brief flash */
+function goWatchSetting(){setTab("me");const f=document.getElementById("foldSync"),r=document.getElementById("wFullRow");if(!f||!r)return;
+  f.open=true;r.scrollIntoView({behavior:"smooth",block:"center"});r.classList.remove("flash");void r.offsetWidth;r.classList.add("flash")}
 /* Body tab: when some data panels are switched off, a round + at the bottom shows that more can be added;
    it opens a row of the hidden panels, and tapping one turns it back on (the same switch as in Settings). */
 function paintAddPanel(){
@@ -236,7 +247,7 @@ function renderHeat(){const box=document.getElementById("heat");if(!box)return;
   box.scrollLeft=box.scrollWidth;
   const cv=document.getElementById("cvHeat");cv.textContent=days+T(" 天"," days");rollNum(cv,"heat")}
 function renderData(){
-  paintSync();
+  paintSync();paintWFull();
   renderRecords();
   if(curTab!=="body")return;          /* the charts are only on the Data tab; switching to it draws them */
   renderHeat();
@@ -322,11 +333,12 @@ function placeGoals(){
   if(GPIN){if(box.parentElement!==top)top.appendChild(box)}else if(box.parentElement!==pane)pane.prepend(box);
   top.hidden=!GPIN||(typeof curTab!=="undefined"&&curTab==="me");
 }
-/* hold a goal (0.5 s) for its own sheet: the goal, a manual record (pull-ups, waist, weight) and whether it shows on the panel */
+/* hold a goal (0.5 s) for its own sheet: the goal, a manual record (pull-ups, waist, weight) and whether it shows on the panel;
+   holding fat loss instead opens the watch-calorie switch it depends on */
 let goalHeld=false;
 (function(){const box=document.getElementById("goals");let tm=0,sx=0,sy=0;
   box.addEventListener("pointerdown",e=>{const g=e.target.closest(".goal");if(!g)return;goalHeld=false;sx=e.clientX;sy=e.clientY;clearTimeout(tm);
-    tm=setTimeout(()=>{goalHeld=true;if(navigator.vibrate)navigator.vibrate(15);openGoalSheet(g.querySelector("[data-setgoal]").dataset.setgoal)},500)});
+    tm=setTimeout(()=>{goalHeld=true;if(navigator.vibrate)navigator.vibrate(15);const k=g.querySelector("[data-setgoal]").dataset.setgoal;if(k==="fat")goWatchSetting();else openGoalSheet(k)},500)});
   box.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>10)clearTimeout(tm)});
   ["pointerup","pointercancel","pointerleave"].forEach(t=>box.addEventListener(t,()=>clearTimeout(tm)));
   box.addEventListener("contextmenu",e=>{if(e.target.closest(".goal"))e.preventDefault()});
