@@ -104,9 +104,6 @@ h1,h2,h3,p{margin:0}
 .ring svg{transform:rotate(-90deg);display:block}
 .ring .rl{position:absolute;text-align:center;line-height:1}
 .ring circle{fill:none;stroke-linecap:round;transition:stroke-dashoffset 1s var(--ease)}
-.planc{display:flex;align-items:center;gap:16px;width:100%;text-align:left}
-.planc h3{font-size:16px;font-weight:700;letter-spacing:-.02em}
-.planc p{font-size:12px;margin-top:2px}
 
 /* progress bars with moving stripes */
 .bar{height:10px;border-radius:999px;background:var(--sub);overflow:hidden}

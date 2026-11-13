@@ -106,14 +106,7 @@ function heroFly(dir){const c=$(".hstack .hcard");SFX.tap();buzz(10);
   if(c){c.classList.add("fly");c.style.transform="translateX("+dir*120+"%) rotate("+dir*14+"deg)"}
   if(u)u.classList.add("clear");
   setTimeout(()=>{heroRot++;const v=$("#v-train");const old=v.querySelector(".hstack");const tmp=document.createElement("div");tmp.innerHTML=heroHtml();old.replaceWith(tmp.firstChild);heroSwipe()},c?320:0)}
-function planHtml(){const marks=dayMarks(),now=new Date(),ws=weekStart(now);let wk=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);if(marks[ymd(d)])wk++}
-  const done=PROGRAM.filter(p=>state.sessions[p.sid]&&state.sessions[p.sid].done);
-  const last=Object.entries(state.sessions).filter(([sid,s])=>s&&s.done&&s.date&&BYID[sid]).sort((a,b)=>a[1].date<b[1].date?1:-1)[0];
-  let lastTxt="";if(last){const [sid,s]=last;let reps=0;Object.entries(s.sets||{}).forEach(([id,a])=>{const e=BYID[sid].ex.find(x=>x.id===id);if(e&&e.unit==="个")a.forEach(x=>{if(x.d)reps+=+x.v||0})});
-    lastTxt=T('上次 ','Last ')+dayLabel(s.date)+' · '+LAB(BYID[sid])+' · '+reps+T(' 次',' reps')}
-  return '<section class="card"><div class="planc"><span class="ring">'+ringSvg(64,7,Math.min(1,wk/3),"var(--ac)","var(--sub)")+'<span class="rl"><b class="n" style="font-size:17px;font-weight:800">'+wk+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ 3 '+T('天','days')+'</span></span></span>'
-    +'<span class="sp"><h3>'+T('本周','This week')+'</h3><p class="muted">'+planKinds().map(k=>{const n=dayName(k);return T(n.zh+' ',n.en+' ')+done.filter(p=>p.kind===k).length+T(' 次','')}).join(' · ')+(lastTxt?'<br>'+lastTxt:'')+'</p></span></div></section>'}
-function renderTrainView(){const v=$("#v-train");v.innerHTML=heroHtml()+calHtml()+planHtml();animateRings(v);heroSwipe()}
+function renderTrainView(){const v=$("#v-train");v.innerHTML=heroHtml()+calHtml();animateRings(v);heroSwipe()}
 /* what the engine planned: the next two sessions of a kind (or both kinds), each exercise with its reason */
 /* ✨ on the card: one line on where the suggestion comes from, and the reasoning behind "i" (the sessions themselves are the deck) */
 function planSheet(){
