@@ -43,7 +43,9 @@ function setPlan(id){const p=PRESETS.find(x=>x.id===id);if(!p)return;const old=s
   registerPlanned(state.sessions);engPlanAll();lsSave()}
 const ENG_STEP={};ENG_LADDERS.forEach((l,li)=>l.forEach((x,i)=>ENG_STEP[x.id]={li,i}));
 /* rep ranges: strength moves 5–10, core moves 10–15; pull-ups and negatives may start lower */
-function engRange(e){if(e.unit==="秒")return [20,60];if(e.id==="bridge"||e.id==="slbridge"||e.id==="squat")return [8,15];if(e.unit==="分钟")return [e.target,e.target];
+/* the main exercise (the goal move) is never swapped for another: its reps (or seconds) just keep climbing */
+function engRange(e){if(typeof isMain==="function"&&isMain(e)){const r=engRange0(e);return [r[0],999]}return engRange0(e)}
+function engRange0(e){if(e.unit==="秒")return [20,60];if(e.id==="bridge"||e.id==="slbridge"||e.id==="squat")return [8,15];if(e.unit==="分钟")return [e.target,e.target];
   if(e.id==="situp"||e.id==="kneeraise"||e.id==="legraise")return [10,15];if(e.id==="pullup")return [1,10];if(e.id==="ecc")return [3,8];return [5,10]}
 const engBase=e=>e.name.replace(/（.*）/,""),engBaseEn=e=>(e.en||"").replace(/\s*\(.*\)/,"");
 function engName(e){return {name:engBase(e)+(e.tempo?"（慢速 "+e.tempo+"）":""),en:engBaseEn(e)+(e.tempo?" (slow "+e.tempo+")":"")}}
@@ -75,7 +77,7 @@ function engPlanEx(e,H,inSession){
     if(e.sets<ENG_SETS_MAX){n.sets=e.sets+1;n.addSet=e.sets;n.target=e.unit==="秒"?hi:Math.max(lo,hi-3);return say("上次 "+hist+"，到顶了，加一组","Last time "+hist+", at the top: one more set")}
     n.target=hi;return say("已经是最高档，保持","Already at the top; kept")};
   const levelDown=()=>{const st=ENG_STEP[e.id];
-    if(e.unit!=="秒"&&st&&st.i>0&&e.id!=="pullup"){const prev=ENG_LADDERS[st.li][st.i-1];
+    if(e.unit!=="秒"&&st&&st.i>0&&e.id!=="pullup"&&!isMain(e)){const prev=ENG_LADDERS[st.li][st.i-1];
       if(!inSession.has(prev.id)){n.id=prev.id;n.name=prev.name;n.en=prev.en;n.tempo=null;n.note=null;n.noteEn=null;n.target=Math.min(8,engRange(n)[1]);
         return say("最近几次没达标（"+hist+"），先退到 "+prev.name,"Missed recently ("+hist+"): back to "+prev.en)}}
     if(e.tempo){n.tempo=null;n.target=Math.min(8,hi);return say("最近几次没达标，先去掉慢速","Missed recently: normal tempo again")}
@@ -94,7 +96,7 @@ function engPlanEx(e,H,inSession){
   keep();return say("上次 "+hist+(last.feel==="hard"?"（很难）":"")+"，保持","Last time "+hist+"; kept")}
 /* the session cap: 5–12 working sets (stretching doesn't count) */
 const ENG_CORE=new Set(["situp","kneeraise","legraise","bridge","slbridge"]);
-function engTrimRank(e){return e.unit==="秒"?0:ENG_CORE.has(e.id)?1:e.id==="pullup"?3:2}
+function engTrimRank(e){return isMain(e)?4:e.unit==="秒"?0:ENG_CORE.has(e.id)?1:e.id==="pullup"?3:2}
 function engCap(ex){const work=ex.filter(e=>e.unit!=="分钟");let tot=work.reduce((a,e)=>a+e.sets,0);const was=new Map(work.map(e=>[e,e.sets]));
   while(tot>ENG_SESSION_MAX){const e=work.filter(x=>x.sets>ENG_SETS_MIN).sort((a,b)=>engTrimRank(a)-engTrimRank(b)||b.sets-a.sets)[0];if(!e)break;e.sets--;tot--}
   while(tot<ENG_SESSION_MIN){const e=work.find(x=>x.sets<ENG_SETS_MAX);if(!e)break;e.sets++;tot++}

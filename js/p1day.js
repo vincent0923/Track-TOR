@@ -32,7 +32,7 @@ function extrasHtml(d){const doc=xDocFor(d,false),items=(doc&&doc.xs)||[],have=n
 function bodyHtml(d){const m=state.metrics[d]||{},a=intakeOf(d),g=dietGapOf(d),bits=[];
   if(a!=null)bits.push(T('摄入 ','In ')+Math.round(a)+' kcal'+(g!=null?' · '+(g>=0?T('缺口 ','deficit '):T('盈余 ','surplus '))+Math.round(Math.abs(g)):''));
   if(m.weight!=null||m.weightC!=null)bits.push(T('体重 ','Weight ')+(+(m.weight??m.weightC)).toFixed(1)+' kg');
-  if(m.waist!=null)bits.push(T('腰围 ','Waist ')+m.waist+' cm');if(m.pullups!=null)bits.push(T('引体 ','Pull-ups ')+m.pullups);
+  if(m.waist!=null)bits.push(T('腰围 ','Waist ')+m.waist+' cm');if(m.pullups!=null)bits.push(T('引体 ','Pull-ups ')+m.pullups);if(m.gm&&mainEx().id!=="pullup"&&m.gm[mainEx().id]!=null)bits.push(mainName()+' '+m.gm[mainEx().id]+' '+mainUnit());
   return bits.length?'<p class="muted" style="font-size:12px;margin-top:14px">'+bits.join(' · ')+'</p>':''}
 function render(){const d=curDay,dt=dateObj(d),ss=sessionsOn(d);
   const head=LANG==="en"?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dt.getDay()]+", "+MON_EN[dt.getMonth()]+" "+dt.getDate():(dt.getMonth()+1)+"月"+dt.getDate()+"日 周"+WD[dt.getDay()];

@@ -1,6 +1,6 @@
 /* ---------- backup: compact text, "PP2z:" + base64(deflate(json)); shared by both pages ---------- */
 /* metric columns in a backup row, in this order; new columns are only ever appended */
-const MK=["pullups","weight","waist","sleep","sleepH","weightC","hrv","rhr","active","steps","ex","exP","exL"];
+const MK=["pullups","weight","waist","sleep","sleepH","weightC","hrv","rhr","active","steps","ex","exP","exL","gm"];   /* gm (v1.46a): hand-logged main exercise other than pull-ups, {id: value} */
 /* session keys in S: u = push, l = pull, t = the third training day (added in v1.41a) */
 const KIND_KEY={push:"u",pull:"l",third:"t"},KEY_KIND={u:"push",l:"pull",t:"third"};
 function pristine(p,doc){if(doc.done||doc.note||doc.date||(doc.xs&&doc.xs.length))return false;return p.ex.every(e=>{const a=doc.sets&&doc.sets[e.id];return !a||(a.length===e.sets&&a.every(x=>!x.d&&+x.v===e.target))})}

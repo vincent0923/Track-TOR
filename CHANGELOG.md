@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.46a] — 2026-11-13
+
+### 新增 / Added
+- 🎯 **主项目标**：目标里的引体换成你自己选的主项。从训练计划的动作里选（打勾就自动记单组最好的一次，训练引擎不会把它换成别的动作，只让次数一直往上加），或者自己写一个（跑步 km、游泳分钟……），手动记。默认还是标准引体，原来的记录不变。
+- 🎯 **Main exercise goal**: the pull-up goal becomes a main exercise you choose. Pick a move from your plan (your best ticked set is recorded automatically, and the engine never swaps it for another move, it just keeps adding reps), or name your own (running km, swimming minutes…) and log it by hand. Pull-ups stay the default; nothing changes in your records.
+- 🃏 **日历和饮食记录也是毛玻璃卡片叠**：日历左右划换周或月（不再有箭头），右上角「今天」回来；饮食记录一张五天，更早的压在下面。
+- 🃏 **The calendar and food records are frosted card stacks too**: swipe the calendar for weeks or months (no more arrows), Today brings you back; food records come five days to a card, older ones underneath.
+
+### 修复 / Fixed
+- 之前恢复进度文件时对错动作的训练（反向划船记成引体），打开 app 时自动改回来。
+- Sessions an earlier restore put on the wrong moves (rows read as pull-ups) are put right when the app opens.
+
 ## [v1.45a] — 2026-11-13
 
 ### 新增 / Added

@@ -169,13 +169,13 @@ function untick(i){const x=run.sets[run.ex][i];if(!x||!x.d)return;x.d=false;
   lsSave();run.rest=0;clearInterval(restT);SFX.tap();renderFocus(true)}
 function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Math.floor((Date.now()-run.t0)/1000);
   run.doc.done=true;run.doc.date=today();lsSave();heroSid=null;engPlanAll();
-  let reps=0,sets=0,pu=0;run.sets.forEach((a,i)=>a.forEach(x=>{if(!x.d)return;sets++;if(p.ex[i].unit==="个")reps+=x.v;if(p.ex[i].id==="pullup")pu=Math.max(pu,x.v)}));
+  let reps=0,sets=0,pu=0;run.sets.forEach((a,i)=>a.forEach(x=>{if(!x.d)return;sets++;if(p.ex[i].unit==="个")reps+=x.v;if(isMain(p.ex[i]))pu=Math.max(pu,x.v)}));
   const best=run.best0;
   SFX.done();buzz([30,60,30,60,80]);
   cannons();celebrate(10,1);
   $("#focus").innerHTML='<div class="f-top"><span class="sp"></span><button class="mini" data-act="fclose" aria-label="'+T('关闭','Close')+'">'+ICON.x+'</button></div>'
     +'<div class="f-body"><div class="fin"><div class="medal">'+ICON.trophy+'</div><p class="eyebrow">'+LAB(p)+'</p><h2>'+T('练完了','Done')+'</h2>'
-    +(pu?'<span class="pill ac" style="margin-top:6px">'+T('引体单组 '+pu+' 个','Best pull-up set '+pu)+(pu>best?T(' · 新纪录',' · new best'):'')+'</span>':'')
+    +(pu?'<span class="pill ac" style="margin-top:6px">'+T(mainEx().zh+'单组 '+pu+(mainEx().unit==="个"?' 个':' '+mainUnit()),'Best '+(mainEx().en||mainEx().zh)+' set '+pu+(mainEx().unit==="个"?'':' '+mainUnit()))+(pu>best?T(' · 新纪录',' · new best'):'')+'</span>':'')
     +'<span class="coinchip big" style="margin-top:10px">'+COIN+'+'+fmt(coinTotal()-run.coins0)+' G</span>'
     +'<div class="stats"><div><b>'+sets+'</b><span>'+T('组','sets')+'</span></div><div><b>'+reps+'</b><span>'+T('次','reps')+'</span></div><div><b>'+Math.max(1,Math.round(secs/60))+'</b><span>'+T('分钟','min')+'</span></div></div></div></div>'
     +'<div class="f-bottom"><button class="btn ghost" data-act="cal" data-d="today" style="height:46px;font-size:15px">'+ICON.plus+T('加练','Extra practice')+'</button><button class="btn" data-act="fclose">'+T('好','OK')+'</button><p class="f-hint">'+(firstOpen()?T('下一次：','Next: ')+LAB(firstOpen()):T('计划全部完成','Plan complete'))+'</p></div>'}
@@ -283,7 +283,7 @@ async function shareDay(d){const day=state.diet[d]||{},items=day.items||[],tt=di
 
 /* ---------- progress view ---------- */
 const METRICS=[
-  {k:"pull",name:T("标准引体","Pull-ups"),unit:T("个","reps"),c:"var(--pull)",up:1,wide:1,pts:()=>pullSeries(),dec:0,rec:"rec:pullups"},
+  {k:"pull",get name(){return mainName()},get unit(){return mainUnit()},c:"var(--pull)",up:1,wide:1,pts:()=>mainSeries(),get dec(){return /km|kg/.test(mainEx().unit)?1:0},rec:"rec:pullups"},
   {k:"wt",name:T("体重","Weight"),unit:"kg",c:"var(--push)",up:0,pts:()=>avg7(wtMerged()),dec:1,sub:T("7 日均","7-day avg"),rec:"rec:weight"},
   {k:"waist",name:T("腰围","Waist"),unit:"cm",c:"var(--ac-text)",up:0,pts:()=>series("waist"),dec:1,rec:"rec:waist"},
   {k:"sleep",name:T("睡眠","Sleep"),unit:T("分","pts"),c:"var(--sleep)",up:1,pts:()=>series("sleep"),dec:0,rec:"sync"},
@@ -308,7 +308,7 @@ function deltaOf(m,pts,days){days=days==null?30:days;if(pts.length<2)return "";c
   const good=(d>0)===!!m.up;return '<span class="td" style="color:'+(good?"var(--good)":"var(--bad)")+'">'+(d>0?"↑ ":"↓ ")+Math.abs(d).toFixed(m.dec)+' '+m.unit+' · '+span+'</span>'}
 function goalsHtml(){const st=state.settings,gap=gapAllTime();
   const pu=pullSeries(),wt=avg7(wtMerged()),wz=series("waist");
-  const G=[{k:"pullups",n:T("引体","Pull-ups"),c:"var(--pull)",cur:pu.length?pu[pu.length-1].y:null,start:0,tg:+st.p||null,u:T("个","reps")},
+  const G=[{k:mainEx().id==="pullup"?"pullups":"main:"+mainEx().id,n:mainName().replace(/^标准/,""),c:"var(--pull)",cur:pu.length?pu[pu.length-1].y:null,start:0,tg:+st.p||null,u:mainUnit()},
     {k:"waist",n:T("腰围","Waist"),c:"var(--ac)",cur:wz.length?wz[wz.length-1].y:null,start:wz.length?wz[0].y:null,tg:+st.z||null,u:"cm"},
     {k:"weight",n:T("体重","Weight"),c:"var(--sleep)",cur:wt.length?+wt[wt.length-1].y.toFixed(1):null,start:wt.length?wt[0].y:null,tg:+st.w||null,u:"kg"},
     {k:"fat",n:T("减脂","Fat loss"),c:"#FFB020",cur:gap?+(gap.s/7700).toFixed(1):null,start:0,tg:+st.fat||null,u:"kg"}];

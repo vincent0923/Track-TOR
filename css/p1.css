@@ -451,3 +451,5 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .fstack[data-fs="hero"] .fs-peek i{background:var(--dark-solid);border-color:var(--dark-line)}
 .fs-peek i:first-child:not(:last-child){left:24px;right:24px;opacity:.45}
 .fs-peek i:last-child:not(:first-child){bottom:9px}
+.mask .mainpick{display:grid;gap:10px;padding:12px;border-radius:16px;background:var(--sub);margin-bottom:10px}
+.mask .mainpick .fgrid[hidden]{display:none}

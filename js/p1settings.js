@@ -18,19 +18,40 @@ function profileBody(){const s=st();
   return '<div class="fgrid"><label class="flabel">'+T("性别","Sex")+'<select id="sx"><option value=""></option><option value="m"'+(s.sex==="m"?" selected":"")+'>'+T("男","Male")+'</option><option value="f"'+(s.sex==="f"?" selected":"")+'>'+T("女","Female")+'</option></select></label>'
     +'<label class="flabel">'+T("出生年月","Birth month")+'<input id="bm" type="month" value="'+((s.b||"").slice(0,7))+'"></label>'
     +num("hh",T("身高（cm）","Height (cm)"),s.h,0.5)+num("cw",T("现在体重（kg）","Weight now (kg)"),"",0.1,lastW()!=null?lastW().toFixed(1):"")+'</div>'}
-function goalsBody(){const s=st();
-  return '<div class="fgrid">'+num("gp",T("目标引体（个）","Pull-up goal (reps)"),s.p,1)+num("gf",T("目标减脂（kg）","Fat-loss goal (kg)"),s.fat,0.1)
+/* moves to pick the main exercise from: the plan's days and what's planned next */
+function planMoves(){const seen={},out=[];const add=e=>{if(e&&e.id&&!seen[e.id]&&e.unit!=="分钟"){seen[e.id]=1;out.push({id:e.id,zh:String(e.name).replace(/（.*）/,""),en:String(e.en||e.name).replace(/\s*\(.*\)/,""),unit:e.unit})}};
+  add({id:"pullup",name:"标准引体",en:"Strict pull-ups",unit:"个"});
+  const pl=st().plan;(pl&&pl.days||[]).forEach(d=>d.ex.forEach(add));
+  planKinds().forEach(k=>{const n=nextOf(k);if(n)n.ex.forEach(add)});return out}
+const MAIN_UNITS=[["个","次","reps"],["秒","秒","s"],["分钟","分钟","min"],["km","km","km"],["kg","kg","kg"]];
+function mainBody(){const m=mainEx(),moves=planMoves(),cust=!!m.custom;
+  return '<div class="mainpick"><label class="flabel">'+T("主项","Main exercise")+'<select id="gmx">'+moves.map(x=>'<option value="'+esc(x.id)+'"'+(!cust&&x.id===m.id?' selected':'')+'>'+esc(T(x.zh,x.en||x.zh))+'</option>').join("")
+    +'<option value="__c"'+(cust?' selected':'')+'>'+T("其他（自己写，手动记录）","Other (your own, logged by hand)")+'</option></select></label>'
+    +'<div class="fgrid" id="gmc"'+(cust?'':' hidden')+'><label class="flabel">'+T("名字","Name")+'<input id="gmn" maxlength="20" value="'+esc(cust?m.zh:"")+'" placeholder="'+T("例如 跑步、游泳","e.g. Running, Swimming")+'"></label>'
+    +'<label class="flabel">'+T("单位","Unit")+'<select id="gmu">'+MAIN_UNITS.map(([v,z,e])=>'<option value="'+v+'"'+(cust&&m.unit===v?' selected':'')+'>'+T(z,e)+'</option>').join("")+'</select></label></div>'
+    +'<p class="calc-msg" style="margin:0">'+T("按单组（或单次）最好的一次算。训练计划里的动作打勾就自动记，训练引擎也不会把它换成别的动作。","Counted by your best single set or effort. A move from your plan is recorded as you tick it, and the engine won't swap it for another move.")+'</p></div>'}
+function goalsBody(){const s=st(),m=mainEx();
+  return mainBody()+'<div class="fgrid">'+num("gp",'<span>'+T("目标","Goal")+'（<i id="gpu" style="font-style:normal">'+mainUnit()+'</i>）</span>',s.p,m.unit==="km"||m.unit==="kg"?0.1:1)+num("gf",T("目标减脂（kg）","Fat-loss goal (kg)"),s.fat,0.1)
     +num("gw",T("目标体重（kg）","Target weight (kg)"),s.w,0.1)+num("gz",T("目标腰围（cm）","Target waist (cm)"),s.z,0.1)+'</div>'}
 function saveProfile(q){const s=st();s.sex=q("#sx").value||null;s.b=q("#bm").value||null;
   const h=numOrNull(q("#hh").value);if(h==null||h<100||h>230){s.h=s.hC||null;s.hSrc="coros"}else{s.h=h;s.hSrc="manual"}
   const w=numOrNull(q("#cw").value);if(w!=null&&w>=20&&w<=300)saveMetric(today(),{weight:+w.toFixed(1)})}
-function saveGoals(q){const s=st();[["gp","p",1],["gf","fat"],["gw","w"],["gz","z"]].forEach(([id,k,int])=>{const v=numOrNull(q("#"+id).value);if(v==null||v<=0)delete s[k];else s[k]=int?Math.round(v):v})}
+function saveMain(q){const s=st(),v=q("#gmx").value,old=mainEx().id;
+  if(v==="__c"){const name=q("#gmn").value.trim();if(!name)return;s.mainEx={id:"c:"+name,zh:name,en:name,unit:q("#gmu").value,custom:true}}
+  else{const x=planMoves().find(e=>e.id===v);if(x)s.mainEx=x.id==="pullup"?null:{id:x.id,zh:x.zh,en:x.en,unit:x.unit};if(!s.mainEx)delete s.mainEx}
+  if(mainEx().id!==old&&typeof engPlanAll==="function")engPlanAll()}
+/* the main exercise's goal can be a decimal (km, kg); the others as before */
+function bindMain(q){const sel=q("#gmx"),c=q("#gmc"),u=q("#gpu");if(!sel)return;
+  const sync=()=>{const cust=sel.value==="__c";c.hidden=!cust;const x=planMoves().find(e=>e.id===sel.value),un=cust?q("#gmu").value:(x?x.unit:"个");u.textContent=U(un)};
+  sel.addEventListener("change",sync);q("#gmu").addEventListener("change",sync)}
+function saveGoals(q){saveMain(q);const s=st(),dec=/km|kg/.test(mainEx().unit);[["gp","p",!dec],["gf","fat"],["gw","w"],["gz","z"]].forEach(([id,k,int])=>{const v=numOrNull(q("#"+id).value);if(v==null||v<=0)delete s[k];else s[k]=int?Math.round(v):v})}
 function openProfile(){const S=sheet(T("个人资料","Profile"),profileBody()+'<p class="calc-msg">'+T("用来算基础代谢和热量缺口。","Used for your resting burn and calorie gap.")+'</p>');
   S.q("[data-ok]").addEventListener("click",()=>{saveProfile(S.q);lsSave();S.close();renderAll();toast(T("已保存","Saved"))})}
-function openGoals(){const S=sheet(T("目标","Goals"),goalsBody()+'<p class="calc-msg">'+T("留空就是不设。","Leave blank for no goal.")+'</p>');
+function openGoals(){const S=sheet(T("目标","Goals"),goalsBody()+'<p class="calc-msg">'+T("留空就是不设。","Leave blank for no goal.")+'</p>');bindMain(S.q);
   S.q("[data-ok]").addEventListener("click",()=>{saveGoals(S.q);lsSave();S.close();renderAll();toast(T("目标已保存","Goals saved"))})}
 /* first visit: everything can stay blank and be changed later from the avatar */
 function openWelcome(){const S=sheet(T("欢迎来到推拉机","Welcome to track-TOR"),'<p class="calc-msg" style="margin:0">'+T("填几项，热量和目标进度才算得准。都可以留空，以后点右上角头像改。","A few details make the calorie and goal maths right. All optional; change them later from the avatar.")+'</p>'+profileBody()+goalsBody());
+  bindMain(S.q);
   S.q("[data-ok]").addEventListener("click",()=>{saveProfile(S.q);saveGoals(S.q);lsSave();S.close();renderAll();setTimeout(()=>openPlan(true),350)})}
 function sheetStatusTxt(){let s=null;try{s=JSON.parse(localStorage.getItem(SHEET_STATUS_K)||"null")}catch(e){}
   if(!s)return T("还没有同步","Not synced yet");return s.ok?T("上次同步 ","Last synced ")+s.at+T(" · "+s.rows+" 条 / "+s.days+" 天"," · "+s.rows+" rows / "+s.days+" days"):s.msg}

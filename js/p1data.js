@@ -26,19 +26,33 @@ function dnum(s){const p=s.split("-");return Date.UTC(+p[0],+p[1]-1,+p[2])/864e5
 function series(key){return Object.values(state.metrics).filter(m=>m[key]!=null&&m.date).sort((a,b)=>a.date<b.date?-1:1).map(m=>({date:m.date,x:dnum(m.date),y:+m[key]}))}
 function wtMerged(){return Object.values(state.metrics).filter(m=>m.date&&(m.weight!=null||m.weightC!=null)).sort((a,b)=>a.date<b.date?-1:1).map(m=>({date:m.date,x:dnum(m.date),y:+(m.weight??m.weightC)}))}
 function avg7(pts,n=7){return pts.map(p=>{const w=pts.filter(q=>q.x<=p.x&&q.x>p.x-n);return {x:p.x,y:w.reduce((a,q)=>a+q.y,0)/w.length,date:p.date}})}
-function pullSeries(){
-  const manual={},pull={};
-  Object.values(state.metrics).forEach(m=>{if(m.date&&m.pullups!=null)manual[m.date]=+m.pullups});
-  Object.entries(state.sessions).forEach(([sid,s])=>{
-    if(!s||!BYID[sid]||BYID[sid].kind!=="pull")return;
-    const it=s.xs&&s.xs.find(y=>y.id==="pullup"),sets=((s.sets&&s.sets.pullup)||[]).concat(it?it.sets:[]);
-    const top=Math.max(0,...sets.filter(x=>x.d).map(x=>+x.v||0));
-    if(!s.done&&!top)return;
-    const d=s.date||today();pull[d]=Math.max(pull[d]||0,top)});
-  const days=[...new Set(Object.keys(manual).concat(Object.keys(pull)))].sort(),out=[],last3=[];let man=null;
-  days.forEach(d=>{if(manual[d]!=null)man=manual[d];if(pull[d]!=null){last3.push(pull[d]);if(last3.length>3)last3.shift()}
+/* the main exercise: the one move shown as a goal. One of the plan's moves (tracked from training: the best set,
+   and the engine never swaps it for another move), or one the user names (logged by hand only). Pull-ups unless
+   chosen otherwise; their hand-logged numbers stay in metrics.pullups, any other move's in metrics.gm[id].
+   settings.mainEx = {id, zh, en, unit, custom}; the goal number is settings.p. */
+const MAIN_DEF={id:"pullup",zh:"标准引体",en:"Strict pull-ups",unit:"个"};
+function mainEx(){const m=state.settings&&state.settings.mainEx;return m&&m.id?m:MAIN_DEF}
+const isMain=e=>!!e&&e.id===mainEx().id;
+function mainName(){const m=mainEx();return T(m.zh,m.en||m.zh)}
+function mainUnit(){const u=mainEx().unit;return typeof U==="function"?U(u):u}
+function mainManualOf(m){const id=mainEx().id;return id==="pullup"?m.pullups:(m.gm&&m.gm[id])}
+/* every ticked set of a move, [date, value], from sessions, their extras and extras on days without a session */
+function setsOfMove(id,kind){const out=[];
+  Object.entries(state.sessions).forEach(([sid,s])=>{if(!s||!BYID[sid]||(kind&&BYID[sid].kind!==kind))return;const d=s.date||today();
+    ((s.sets&&s.sets[id])||[]).forEach(x=>{if(x.d)out.push([d,+x.v||0,sid])});
+    (s.xs||[]).forEach(it=>{if(it.id===id)it.sets.forEach(x=>{if(x.d)out.push([d,+x.v||0,sid])})})});
+  return out}
+/* the main exercise over time: the larger of the latest hand-logged number and the best set over the last 3
+   sessions it was trained in (a lower hand-logged number after a higher one replaces it, so a drop can be recorded) */
+function mainSeries(){const m=mainEx(),manual={},tr={};
+  Object.values(state.metrics).forEach(r=>{const v=r.date&&mainManualOf(r);if(v!=null)manual[r.date]=+v});
+  if(!m.custom){const by={};setsOfMove(m.id,m.id==="pullup"?"pull":null).forEach(([d,v,sid])=>{const k=sid;by[k]=by[k]||{d,v:0};by[k].v=Math.max(by[k].v,v);if(d<by[k].d)by[k].d=d});
+    Object.values(by).forEach(({d,v})=>{tr[d]=Math.max(tr[d]||0,v)})}
+  const days=[...new Set(Object.keys(manual).concat(Object.keys(tr)))].sort(),out=[],last3=[];let man=null;
+  days.forEach(d=>{if(manual[d]!=null)man=manual[d];if(tr[d]!=null){last3.push(tr[d]);if(last3.length>3)last3.shift()}
     const y=Math.max(man==null?0:man,...last3);if(y>0||man!=null)out.push({date:d,x:dnum(d),y})});
   return out}
+const pullSeries=mainSeries;
 lsLoad();
 
 /* ---------- training data ---------- */
@@ -83,7 +97,9 @@ function setMetric(date,patch){
 function saveMetric(date,patch){setMetric(date,patch);lsSave()}
 /* one number for a chosen date (pull-ups, weight or waist); empty clears that day's record */
 function openRecord(key){
-  const def={pullups:{name:T("标准引体","Strict pull-ups"),unit:T("个","reps"),step:1,mode:"numeric",min:0,max:200,int:true,hint:T("下巴过杠的标准引体向上","Strict reps, chin over the bar")},
+  const mu=mainEx().unit,mdec=mu==="km"||mu==="kg";
+  const def={pullups:mainEx().id==="pullup"?{name:T("标准引体","Strict pull-ups"),unit:T("个","reps"),step:1,mode:"numeric",min:0,max:200,int:true,hint:T("下巴过杠的标准引体向上","Strict reps, chin over the bar")}
+      :{name:mainName(),unit:mainUnit(),step:mdec?0.1:1,mode:mdec?"decimal":"numeric",min:0,max:100000,int:!mdec,hint:T("这次最好的一组 / 一次","Your best set or effort")},
     weight:{name:T("体重","Weight"),unit:"kg",step:0.1,mode:"decimal",min:20,max:300,hint:T("清晨空腹体重","Morning weight, before eating")},
     waist:{name:T("腰围","Waist"),unit:"cm",step:0.1,mode:"decimal",min:30,max:180,hint:T("量三次肚脐眼位置，选最大值或者平均值","Measure 3 times at the navel; take the largest or the average")}}[key];
   const m=document.createElement("div");
@@ -95,7 +111,10 @@ function openRecord(key){
     +'<div class="row" style="justify-content:flex-end"><button class="btn recsave" type="button" data-recsave aria-label="'+T("保存并关闭","Save and close")+'">'+SAVE_ICON+'</button></div></div>';
   document.body.appendChild(m);
   const dateEl=m.querySelector("#recDate"),valEl=m.querySelector("#recVal");
-  const load=()=>{const r=state.metrics[dateEl.value];valEl.value=r&&r[key]!=null?r[key]:""};
+  /* the main exercise's hand-logged number: metrics.pullups for pull-ups, metrics.gm[id] for any other move */
+  const gm=key==="pullups"&&mainEx().id!=="pullup"?mainEx().id:null;
+  const getV=r=>!r?null:gm?(r.gm&&r.gm[gm]):r[key];
+  const load=()=>{const r=state.metrics[dateEl.value],v=getV(r);valEl.value=v!=null?v:""};
   load();dateEl.addEventListener("change",load);
   m.querySelector("[data-close]").addEventListener("click",()=>m.remove());
   let armed=false;m.addEventListener("pointerdown",e=>{armed=e.target===m});m.addEventListener("click",e=>{if(e.target===m&&armed)m.remove()});
@@ -106,7 +125,9 @@ function openRecord(key){
   valEl.addEventListener("input",check);dateEl.addEventListener("change",check);
   saveBtn.addEventListener("click",()=>{if(!check())return;
     const date=dateEl.value||today(),v=numOrNull(valEl.value),r=state.metrics[date];
-    if(v!=null)saveMetric(date,{[key]:v});
+    if(gm){if(v!=null){const o=Object.assign({},r&&r.gm,{[gm]:v});saveMetric(date,{gm:o})}
+      else if(r&&r.gm&&r.gm[gm]!=null){delete r.gm[gm];if(!Object.keys(r.gm).length)delete r.gm;if(Object.keys(r).every(k=>k==="date"))delete state.metrics[date];lsSave()}}
+    else if(v!=null)saveMetric(date,{[key]:v});
     else if(r&&r[key]!=null){delete r[key];if(Object.keys(r).every(k=>k==="date"))delete state.metrics[date];lsSave()}
     m.remove();renderAll();toast(md(date)+T(" 的记录已保存"," saved"))});
   check();valEl.focus();
@@ -120,13 +141,9 @@ function openRecord(key){
    10/20/40 sessions 100/200/400, each goal reached 500. */
 function coinWeekKey(d){const x=dateObj0(d),k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x.getFullYear()+"-"+pad(x.getMonth()+1)+"-"+pad(x.getDate())}
 function dateObj0(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
-function pullBestTrained(){/* best strict pull-up set ticked in training, in date order, with each new best */
-  const sets=[];
-  Object.entries(state.sessions).forEach(([sid,s])=>{if(!s||!BYID[sid])return;const d=s.date||today();
-    ((s.sets&&s.sets.pullup)||[]).forEach(x=>{if(x.d)sets.push([d,+x.v||0])});
-    (s.xs||[]).forEach(it=>{if(it.id==="pullup")it.sets.forEach(x=>{if(x.d)sets.push([d,+x.v||0])})})});
-  Object.values(state.dayx||{}).forEach(dx=>(dx&&dx.xs||[]).forEach(it=>{if(it.id==="pullup")it.sets.forEach(x=>{if(x.d)sets.push([dx.date,+x.v||0])})}));
-  sets.sort((a,b)=>a[0]<b[0]?-1:1);let best=0;sets.forEach(([,v])=>{if(v>best)best=v});return best}
+function pullBestTrained(){/* best set of the main exercise ticked in training (a move the user named has none) */
+  const m=mainEx();if(m.custom)return 0;let best=0;setsOfMove(m.id).forEach(([,v])=>{if(v>best)best=v});
+  Object.values(state.dayx||{}).forEach(dx=>(dx&&dx.xs||[]).forEach(it=>{if(it.id===m.id)it.sets.forEach(x=>{if(x.d&&+x.v>best)best=+x.v})}));return best}
 function fatKgSure(){/* the smaller of the estimated fat loss and what the 7-day average weight did since the first food log */
   const g=gapAllTime();if(!g)return 0;const est=g.s/7700,ks=Object.keys(state.diet).sort(),a=wtMA7(ymdAdd(ks[0],-1)),b=wtMA7(ymdAdd(today(),-1));
   return Math.max(0,a!=null&&b!=null?Math.min(est,a-b):0)}
@@ -137,17 +154,17 @@ function coinBadges(){
   const days=Object.keys(dayMarks()).sort(),wk={};days.forEach(d=>{const k=coinWeekKey(d);wk[k]=(wk[k]||0)+1});
   let weekPts=0,run=0,weeks=0,prev=null;Object.keys(wk).sort().forEach(k=>{if(wk[k]<3){run=0;prev=k;return}
     const gap=prev?Math.round((dateObj0(k)-dateObj0(prev))/6048e5):1;run=(prev&&gap===1&&run>0)?run+1:1;prev=k;weeks++;weekPts+=Math.min(60,30+5*(run-1))});
-  const pb=pullBestTrained(),fat=fatKgSure(),wd=waistDrop(),wt=avg7(wtMerged()),wNow=wt.length?wt[wt.length-1].y:null,zz=series("waist");
+  const pb=pullBestTrained(),mb=Math.max(pb,0,...mainSeries().map(x=>x.y)),fat=fatKgSure(),wd=waistDrop(),wt=avg7(wtMerged()),wNow=wt.length?wt[wt.length-1].y:null,zz=series("waist");
   const zNow=zz.length?zz.slice(-3).reduce((s,p)=>s+p.y,0)/Math.min(3,zz.length):null,g=gapAllTime(),fatNow=g?g.s/7700:0;
   return [
     {k:"train",ic:"dumbbell",name:T("出勤","Turn up"),what:T("每练完一次训练","Every finished session"),pts:done*10,have:done,unit:T("次",""),step:1,per:10},
     {k:"week",ic:"flame",name:T("周连练","Weekly run"),what:T("一周练够 3 天；连着几周越给越多","3 training days in a week; more for each week in a row"),pts:weekPts,have:weeks,unit:T("周","wk"),step:1,per:30},
-    {k:"pr",ic:"pullup",name:T("引体纪录","Pull-up best"),what:T("训练里打勾的引体单组每多 1 个","Each extra rep in your best pull-up set, ticked in training"),pts:pb*50,have:pb,unit:T("个","reps"),step:1,per:50},
+    {k:"pr",ic:"pullup",name:T(mainEx().zh+"纪录",(mainEx().en||mainEx().zh)+" best"),what:T("训练里打勾的"+mainEx().zh+"单组每多 1 "+(mainEx().unit==="秒"?"秒（每 5 秒算 1）":"个"),"Each "+(mainEx().unit==="秒"?"5 s":"rep")+" more in your best "+(mainEx().en||mainEx().zh)+" set, ticked in training"),pts:(mainEx().unit==="秒"?Math.floor(pb/5):pb)*50,have:pb,unit:mainUnit(),step:1,per:50},
     {k:"fat",ic:"drop",name:T("减脂","Fat loss"),what:T("每减 0.5 kg 脂肪（估算和体重变化取小的）","Every 0.5 kg of fat (the smaller of the estimate and the weight trend)"),pts:Math.floor(fat/0.5)*50,have:+fat.toFixed(2),unit:"kg",step:0.5,per:50},
     {k:"waist",ic:"tape",name:T("腰围","Waist"),what:T("比第一次记录每少 1 cm","Every cm off since your first record"),pts:Math.floor(wd)*50,have:+wd.toFixed(1),unit:"cm",step:1,per:50},
     {k:"plan",ic:"flag",name:T("累计训练","Sessions"),what:T("累计练完 10、20、40 次","10, 20 and 40 sessions finished"),pts:(done>=10?100:0)+(done>=20?200:0)+(done>=40?400:0),have:done,unit:T("次",""),tiers:[10,20,40]},
-    {k:"goal",ic:"target",name:T("达成目标","Goals reached"),what:T("引体、腰围、体重、减脂，每达成一个自己设的目标","Each goal you set and reach: pull-ups, waist, weight, fat loss"),pts:500*[+st.p>0&&pb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,
-      have:[+st.p>0&&pb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,unit:T("个",""),tiers:[1,2,3,4]}]}
+    {k:"goal",ic:"target",name:T("达成目标","Goals reached"),what:T(mainEx().zh+"、腰围、体重、减脂，每达成一个自己设的目标","Each goal you set and reach: "+(mainEx().en||mainEx().zh)+", waist, weight, fat loss"),pts:500*[+st.p>0&&mb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,
+      have:[+st.p>0&&mb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,unit:T("个",""),tiers:[1,2,3,4]}]}
 function coinTotal(){return coinBadges().reduce((a,b)=>a+b.pts,0)}
 
 /* ---------- what js/coros.js expects from the page ---------- */
