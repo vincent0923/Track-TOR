@@ -208,6 +208,15 @@ document.getElementById("wFull").addEventListener("click",e=>{const b=e.target.c
 /* holding the fat-loss goal opens this switch: Settings › Charts & sync, scrolled to it, with a brief flash */
 function goWatchSetting(){setTab("me");const f=document.getElementById("foldSync"),r=document.getElementById("wFullRow");if(!f||!r)return;
   f.open=true;r.scrollIntoView({behavior:"smooth",block:"center"});r.classList.remove("flash");void r.offsetWidth;r.classList.add("flash")}
+/* holding the diet page's gap tile (0.5 s) opens the same switch; a plain tap still steps through the periods */
+(function(){const t=document.getElementById("dietGapTile");if(!t)return;let tm=0,held=false,sx=0,sy=0;
+  t.addEventListener("pointerdown",e=>{held=false;sx=e.clientX;sy=e.clientY;clearTimeout(tm);
+    tm=setTimeout(()=>{held=true;if(navigator.vibrate)navigator.vibrate(15);goWatchSetting()},500)});
+  t.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>10)clearTimeout(tm)});
+  ["pointerup","pointercancel","pointerleave"].forEach(k=>t.addEventListener(k,()=>clearTimeout(tm)));
+  t.addEventListener("contextmenu",e=>e.preventDefault());
+  t.addEventListener("click",e=>{if(held){held=false;e.stopPropagation();e.preventDefault()}});
+})();
 /* Body tab: when some data panels are switched off, a round + at the bottom shows that more can be added;
    it opens a row of the hidden panels, and tapping one turns it back on (the same switch as in Settings). */
 function paintAddPanel(){

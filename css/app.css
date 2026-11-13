@@ -2109,3 +2109,4 @@ html:root[data-skin="splitflow"] nav.tabs.tabs{left:12px;right:12px;bottom:calc(
 .wfinfo{margin:8px 2px 0;font-size:12px;line-height:1.6;color:var(--muted)}
 .wfull.flash{animation:wFlash 1.6s ease-out}
 @keyframes wFlash{0%,40%{box-shadow:0 0 0 3px var(--cta)}100%{box-shadow:0 0 0 3px transparent}}
+#dietGapTile{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
