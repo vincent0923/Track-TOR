@@ -313,7 +313,10 @@ function knobHtml(opts,cur,attr,label){const n=opts.length,i=Math.max(0,opts.fin
 /* the main exercise, week by week: 12 weeks of every ticked rep stacked as bricks, the best week in the second colour */
 function wkMon(d){return ymdAdd(d,-((dateObj(d).getDay()+6)%7))}
 function weeklyHtml(){const m=mainEx();if(m.custom)return "";const by={};
-  setsOfMove(m.id,m.id==="pullup"?"pull":null).forEach(([d,v])=>{const w=wkMon(d);by[w]=(by[w]||0)+v});
+  /* every ticked rep counts: any training day, extras added to a session, and extras on days without one */
+  const add=(d,sets)=>(sets||[]).forEach(x=>{if(x&&x.d){const w=wkMon(d);by[w]=(by[w]||0)+(+x.v||0)}});
+  Object.values(state.sessions).forEach(x=>{if(!x)return;const d=x.date||today();add(d,x.sets&&x.sets[m.id]);(x.xs||[]).forEach(it=>{if(it.id===m.id)add(d,it.sets)})});
+  Object.entries(state.dayx||{}).forEach(([d,x])=>((x&&x.xs)||[]).forEach(it=>{if(it.id===m.id)add(d,it.sets)}));
   const cur=wkMon(today()),weeks=[];for(let i=11;i>=0;i--)weeks.push(ymdAdd(cur,-7*i));
   const vals=weeks.map(w=>by[w]||0),mx=Math.max(...vals);if(!mx)return "";const best=vals.lastIndexOf(mx),tot=vals.reduce((a,b)=>a+b,0);
   return '<section class="card weekly"><div class="row" style="align-items:flex-start"><div class="sp"><p class="eyebrow">'+T('每周总数 · 12 周','Weekly total · 12 weeks')+'</p><h3 class="wkh">'+mainName()+'</h3></div>'
