@@ -562,14 +562,22 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
   --shadow:0 6px 0 var(--lip),0 14px 28px -6px rgba(30,24,14,.10);
   --num:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace}
 :root[data-theme="toy"][data-mode="dark"]{
-  --bg:#111318; --dot:#252934;
-  --card:#1B1E26; --line:#2B303C; --lip:#0A0B0E; --lit:inset 0 1px 0 rgba(255,255,255,.07); --sub:#12141A; --seg:#12141A;
-  --well-sh:inset 0 2px 5px rgba(0,0,0,.55),inset 0 -1px 0 rgba(255,255,255,.05);
-  --dark:#3858FF; --dark-solid:#3858FF; --dark-line:#192FA8;
-  --ink:#F5F3EE; --muted:#8A90A0; --ac:#3858FF; --on-ac:#FFFFFF; --ac-soft:rgba(56,88,255,.2); --ac-text:#8EA2FF; --ac-lip:#192FA8;
-  --red:#F0442E; --red-lip:#9E1F10; --yel:#F5BE30; --yel-lip:#A87A0A; --grn:#2ECF62; --grn-lip:#168238;
-  --push:#F0442E; --pull:#3858FF; --third:#F5BE30; --good:#2ECF62; --bad:#F0442E; --sleep:#A78BFA;
-  --shadow:0 6px 0 var(--lip),0 18px 34px -6px rgba(0,0,0,.65)}
+  /* glow-in-the-dark toys: candy keys on a deep indigo board, the cards themselves purple plastic */
+  --bg:#1C1747; --dot:#2E2770;
+  --card:#2A2363; --line:#3B338A; --lip:#120F33; --lit:inset 0 1px 0 rgba(255,255,255,.1); --sub:#1F1A50; --seg:#1F1A50;
+  --well-sh:inset 0 2px 5px rgba(0,0,0,.45),inset 0 -1px 0 rgba(255,255,255,.06);
+  --dark:#7B5CFF; --dark-solid:#7B5CFF; --dark-line:#4A2FC4; --track:rgba(255,255,255,.22);
+  --ink:#FFF6FF; --muted:#A8A1DC; --ac:#2EE6D6; --on-ac:#0B1E3A; --ac-soft:rgba(46,230,214,.18); --ac-text:#2EE6D6; --ac-lip:#0F9C90;
+  --red:#FF4F9A; --red-lip:#B01F63; --yel:#FFD23F; --yel-lip:#B88E00; --grn:#8BE83C; --grn-lip:#4E9A12;
+  --st1:rgba(46,230,214,.22); --st2:rgba(46,230,214,.58);
+  --push:#FF4F9A; --pull:#2EE6D6; --third:#FFD23F; --good:#8BE83C; --bad:#FF4F9A; --sleep:#C4A8FF;
+  --shadow:0 6px 0 var(--lip),0 18px 34px -6px rgba(0,0,0,.55)}
+/* keys in the night version carry dark text where the colour is light */
+:root[data-theme="toy"][data-mode="dark"] .dock button[aria-selected="true"]{color:var(--on-ac)}
+:root[data-theme="toy"][data-mode="dark"] .cal .dd.trn b{color:#16123A}
+:root[data-theme="toy"][data-mode="dark"] .cal .dd.trn[style*="--push"] b{color:#fff}
+:root[data-theme="toy"][data-mode="dark"] .cal .dd.today b{background:var(--yel);color:#16123A;box-shadow:0 3px 0 var(--yel-lip)}
+:root[data-theme="toy"][data-mode="dark"] .toast{background:var(--yel);color:#16123A;box-shadow:0 4px 0 var(--yel-lip)}
 /* the dotted board */
 :root[data-theme="toy"] body{background-image:radial-gradient(var(--dot) 1.35px,transparent 1.35px);background-size:20px 20px;background-attachment:scroll}
 :root[data-theme="toy"] h1,:root[data-theme="toy"] .hero h2,:root[data-theme="toy"] .big{font-weight:900}

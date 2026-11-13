@@ -49,7 +49,7 @@ function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>
 /* themes: each has a light and a dark version. aurora is free; others are bought with G (settings.buys, settings.theme) */
 const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,sw:["#F1F1EC","#4FAF6A","#070A10","#00F5D4"]},
   {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]},
-  {id:"toy",zh:"玩具",en:"Toy",price:90,sw:["#F4F1EA","#EB3B24","#2244FF","#F2B726"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"}];
+  {id:"toy",zh:"玩具",en:"Toy",price:90,sw:["#F4F1EA","#EB3B24","#1C1747","#FF4F9A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"}];
 function themeOwned(id){const t=THEMES.find(x=>x.id===id);return !!t&&(!t.price||(state.settings.buys||[]).some(b=>b.id===id))}
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const dark=m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),th=themeOwned(state.settings.theme)?state.settings.theme:"aurora";
