@@ -32,7 +32,7 @@ async function spCallback(){const q=new URLSearchParams(location.search),code=q.
   history.replaceState(null,"",spRedirect());if(!code||!saved||q.get("state")!==saved.state)return;
   try{await spToken({grant_type:"authorization_code",code,redirect_uri:spRedirect(),code_verifier:saved.v});spSetMode("on");localStorage.removeItem(SP_K+"-v");toast(T("已连接 Spotify","Spotify connected"));if(typeof advDone==="function")advDone("spotify");spStart()}
   catch(e){toast(T("连接 Spotify 失败","Couldn't connect Spotify"))}}
-async function spAuth(){if(!SP.tok)return null;if(Date.now()>SP.tok.x){try{await spToken({grant_type:"refresh_token",refresh_token:SP.tok.r})}catch(e){SP.tok=null;spSave();return null}}return SP.tok.a}
+async function spAuth(){spLoad();if(!SP.tok)return null;if(Date.now()>SP.tok.x){try{await spToken({grant_type:"refresh_token",refresh_token:SP.tok.r})}catch(e){SP.tok=null;spSave();return null}}return SP.tok.a}
 async function spApi(path,method,body){const a=await spAuth();if(!a)throw new Error("auth");
   const r=await fetch("https://api.spotify.com/v1"+path,{method:method||"GET",headers:Object.assign({Authorization:"Bearer "+a},body?{"Content-Type":"application/json"}:{}),body:body?JSON.stringify(body):undefined});
   if(r.status===401&&SP.tok){SP.tok.x=0;return spApi(path,method,body)}
@@ -89,15 +89,15 @@ function spPaint(){let el=document.getElementById("mini");const on=SP.demo||(spM
   el.innerHTML=spArt(s,"mp-art")+'<span class="mp-t"><b>'+esc(s&&s.title||(last?T("继续放「"+last.name+"」","Play "+last.name):T("Spotify 没在播放","Nothing playing")))+'</b><small>'+esc(s&&s.title?s.artist:last?T("上次的歌单","Your last playlist"):(s&&s.device)||"")+'</small></span>'
     +'<button class="mp-b" data-sp="toggle" aria-label="'+T("播放 / 暂停","Play / pause")+'">'+(s&&s.playing?SPI.pause:SPI.play)+'</button>'
     +'<button class="mp-b mp-n" data-sp="next" aria-label="'+T("下一首","Next")+'">'+SPI.next+'</button><i class="mp-bar"></i>';
-  el.classList.toggle("playing",!!(s&&s.playing));spTick();if(spSheetOpen())spPaintSheet()}
+  el.classList.toggle("playing",!!(s&&s.playing));spTick();if(spSheetOpen()&&SP.view!=="pl")spPaintSheet();else if(SP.view==="pl")spMarkPl()}
 function spTick(){const s=SP.st,el=document.getElementById("mini");if(!el||!s)return;const p=s.dur?spNow()/s.dur:0;el.style.setProperty("--p",p);
   const f=document.querySelector(".sp-full");if(f){f.style.setProperty("--p",p);const t=f.querySelectorAll(".sp-time span");if(t.length===2){t[0].textContent=spFmt(spNow());t[1].textContent="-"+spFmt(s.dur-spNow())}}}
 const spFmt=ms=>{const t=Math.max(0,Math.round(ms/1000));return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")};
 
 /* ---------- the full player (bottom sheet) ---------- */
 const spSheetOpen=()=>!!document.querySelector(".sheet.on .sp-full");
-function spOpen(){openSheet('<div class="sh-h"><h3>'+T('正在播放','Now playing')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><div class="sp-full"></div>');spPaintSheet()}
-function spPaintSheet(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;const s=SP.st||{};
+function spOpen(){SP.view="player";openSheet('<div class="sh-h"><h3>'+T('正在播放','Now playing')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><div class="sp-full"></div>');spPaintSheet()}
+function spPaintSheet(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;SP.view="player";const s=SP.st||{};
   f.innerHTML=spArt(s,"sp-art"+(s.playing?" on":""))+'<div class="sp-meta"><b>'+esc(s.title||T("Spotify 没在播放","Nothing playing"))+'</b><span class="muted">'+esc(s.artist||"")+'</span></div>'
     +'<div class="sp-prog"><i></i></div><div class="sp-time n muted"><span></span><span></span></div>'
     +'<div class="sp-ctl"><button class="mp-b sp-mode'+(s.shuf?' on':'')+'" data-sp="shuf" aria-pressed="'+!!s.shuf+'" aria-label="'+T("随机播放","Shuffle")+'">'+SPI.shuf+'</button><button class="mp-b" data-sp="prev" aria-label="'+T("上一首","Previous")+'">'+SPI.prev+'</button><button class="mp-b sp-big" data-sp="toggle" aria-label="'+T("播放 / 暂停","Play / pause")+'">'+(s.playing?SPI.pause:SPI.play)+'</button><button class="mp-b" data-sp="next" aria-label="'+T("下一首","Next")+'">'+SPI.next+'</button><button class="mp-b sp-mode'+(s.rep&&s.rep!=="off"?' on':'')+'" data-sp="rep" aria-label="'+T("循环","Repeat")+'">'+(s.rep==="track"?SPI.rep1:SPI.rep)+'</button></div>'
@@ -109,29 +109,33 @@ function spPaintSheet(){const f=document.querySelector(".sheet.on .sp-full");if(
 /* ---------- playlists: the user's own and followed ones; tap one to play it from the start (or shuffled) ---------- */
 const SP_DEMO_PL=[["晨练","Morning push"],["引体专用","Pull-up power"],["慢跑","Easy run"],["拉伸放松","Stretch & cool down"],["老歌","Oldies"],["专注","Focus"]].map(([z,e],i)=>({name:T(z,e),uri:"demo:"+i,n:[24,41,58,17,93,30][i],art:"",hue:[12,220,150,280,40,190][i]}));
 const spShuf=()=>{if(SP.st&&SP.st.shuf!=null&&!SP.demo)return SP.st.shuf;try{return localStorage.getItem(SP_K+"-shuf")==="1"}catch(e){return false}};
+/* while the grid is open a refresh only moves the "playing" mark */
+function spMarkPl(){const cur=SP.st&&SP.st.ctx,list=SP.demo?SP_DEMO_PL:SP.pls;if(!list)return;
+  document.querySelectorAll(".sheet.on .sp-cell").forEach(c=>{const p=list[+c.dataset.i],on=!!(p&&p.uri===cur);if(c.classList.contains("on")===on)return;c.classList.toggle("on",on);
+    const cv=c.querySelector(".sp-cover"),eq=cv&&cv.querySelector(".sp-eq");if(on&&!eq)cv.insertAdjacentHTML("beforeend",'<i class="sp-eq"><i></i><i></i><i></i></i>');if(!on&&eq)eq.remove()})}
 async function spPlaylists(){if(SP.demo)return SP_DEMO_PL;if(SP.pls&&Date.now()-SP.plsAt<300000)return SP.pls;const out=[];let url="/me/playlists?limit=50";
   for(let k=0;k<4&&url;k++){const j=await spApi(url);(j.items||[]).forEach(p=>{if(p)out.push({name:p.name,uri:p.uri,n:p.tracks?p.tracks.total:(p.items&&p.items.total)||0,art:(p.images||[]).slice(-1)[0]?.url||(p.images||[])[0]?.url||""})});
     url=j.next?j.next.replace("https://api.spotify.com/v1",""):null}
   SP.pls=out;SP.plsAt=Date.now();return out}
 /* playlists as a grid of big covers (easy to hit mid-workout): "open Spotify" and shuffle on top, a round × below */
-async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);
+async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";spLoad();
   const head='<div class="sp-plh"><a class="sp-pill" href="spotify:" data-spapp>'+SPI.app+'<span>'+T('打开 Spotify','Open Spotify')+'</span></a>'
     +'<button class="sp-pill sp-shufpill'+(spShuf()?' on':'')+'" type="button" data-spshuf aria-pressed="'+spShuf()+'">'+SPI.shuf+'<span>'+T('随机','Shuffle')+'</span></button></div>';
   const foot='<button class="sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button>';
   const bind=()=>{f.querySelector("[data-spback]").addEventListener("click",()=>{buzz(6);spPaintSheet()});
     const sh=f.querySelector("[data-spshuf]");sh.addEventListener("click",()=>{const on=!spShuf();try{localStorage.setItem(SP_K+"-shuf",on?"1":"0")}catch(e){}if(SP.st)SP.st.shuf=on;sh.classList.toggle("on",on);sh.setAttribute("aria-pressed",on);buzz(6)})};
-  if(!SP.demo&&SP.tok&&!/playlist-read-private/.test(SP.tok.s||"")){
+  const reconnect=()=>{
     f.innerHTML=head+'<p class="calc-msg">'+T('读歌单需要多一项授权，重新连接一次 Spotify 就好。','Reading playlists needs one more permission; connect Spotify once more.')+'</p><button class="btn" type="button" data-sprec>'+T('重新连接','Reconnect')+'</button>'+foot;
-    bind();f.querySelector("[data-sprec]").addEventListener("click",spConnect);return}
+    bind();f.querySelector("[data-sprec]").addEventListener("click",spConnect)};
   f.innerHTML=head+'<div class="sp-grid"><p class="muted" style="font-size:13px;grid-column:1/-1;text-align:center">'+T('读取中…','Loading…')+'</p></div>'+foot;bind();
-  let list=[];try{list=await spPlaylists()}catch(e){const g=f.querySelector(".sp-grid");if(g)g.innerHTML='<p class="muted" style="font-size:13px;grid-column:1/-1;text-align:center">'+T('读不到歌单，稍后再试','Couldn\'t load playlists; try later')+'</p>';return}
-  const cur=SP.st&&SP.st.ctx,box=f.querySelector(".sp-grid");if(!box)return;
+  let list=[];try{list=await spPlaylists()}catch(e){if(SP.view!=="pl")return;if(e.status===401||e.status===403){reconnect();return}const g=f.querySelector(".sp-grid");if(g)g.innerHTML='<p class="muted" style="font-size:13px;grid-column:1/-1;text-align:center">'+T('读不到歌单，稍后再试','Couldn\'t load playlists; try later')+'</p>';return}
+  const cur=SP.st&&SP.st.ctx,box=f.querySelector(".sheet.on .sp-grid")||f.querySelector(".sp-grid");if(!box||SP.view!=="pl")return;
   box.innerHTML=list.length?list.map((p,i)=>'<button class="sp-cell'+(p.uri===cur?' on':'')+'" type="button" data-i="'+i+'"><span class="sp-cover"'+(p.art?' style="background-image:url(\''+esc(p.art)+'\')"':p.hue!=null?' style="background:linear-gradient(135deg,hsl('+p.hue+' 80% 62%),hsl('+(p.hue+40)+' 70% 45%))"':'')+'>'+(p.art?'':SPI.note)+(p.uri===cur?'<i class="sp-eq"><i></i><i></i><i></i></i>':'')+'</span><span class="sp-name">'+esc(p.name)+'</span></button>').join("")
     :'<p class="muted" style="font-size:13px;grid-column:1/-1;text-align:center">'+T('你还没有歌单','No playlists yet')+'</p>';
   box.querySelectorAll("[data-i]").forEach(b=>b.addEventListener("click",()=>spPlayList(list[+b.dataset.i])))}
 function spLast(){try{return JSON.parse(localStorage.getItem(SP_K+"-last")||"null")}catch(e){return null}}
 async function spPlayList(p){buzz(10);if(typeof SFX!=="undefined")SFX.tap();
-  if(SP.demo){const s=SP.st;s.shuf=spShuf();Object.assign(s,{title:p.name+T(" · 第 1 首"," · track 1"),artist:T("推拉机 · 预览","Track-TOR · preview"),pos:0,playing:true,ctx:p.uri});SP.at=Date.now();spPaint();spPaintSheet();return}
+  if(SP.demo){const s=SP.st;s.shuf=spShuf();Object.assign(s,{title:p.name+T(" · 第 1 首"," · track 1"),artist:T("推拉机 · 预览","Track-TOR · preview"),pos:0,playing:true,ctx:p.uri});SP.at=Date.now();spPaint();return}
   try{localStorage.setItem(SP_K+"-last",JSON.stringify({name:p.name,uri:p.uri}))}catch(e){}
   const body={context_uri:p.uri},shuf=spShuf();
   const go=async dev=>{const q=dev?"?device_id="+encodeURIComponent(dev):"";await spApi("/me/player/shuffle?state="+shuf+(dev?"&device_id="+encodeURIComponent(dev):""),"PUT").catch(()=>{});await spApi("/me/player/play"+q,"PUT",body)};
@@ -139,7 +143,7 @@ async function spPlayList(p){buzz(10);if(typeof SFX!=="undefined")SFX.tap();
     if(e.status===404){try{const d=await spApi("/me/player/devices"),devs=(d&&d.devices)||[],pick=devs.find(x=>x.is_active)||devs.find(x=>/smartphone/i.test(x.type))||devs[0];
         if(!pick){toast(T("先打开手机上的 Spotify","Open Spotify on your phone first"));return}await go(pick.id)}catch(e2){toast(T("放不了这个歌单","Couldn't play that playlist"));return}}
     else{toast(e.status===403?T("控制需要 Spotify Premium","Control needs Spotify Premium"):T("放不了这个歌单","Couldn't play that playlist"));return}}
-  toast(T("开始播放「","Playing ")+p.name+T("」",""));spPaintSheet();setTimeout(spPull,900)}
+  toast(T("开始播放「","Playing ")+p.name+T("」",""));if(SP.st)SP.st.ctx=p.uri;spMarkPl();setTimeout(spPull,900)}
 
 /* ---------- Settings › Advanced › Spotify ---------- */
 const SP_PASTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h1.5A2.5 2.5 0 0 1 20 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-11A2.5 2.5 0 0 1 6.5 5H8"/></svg>';
@@ -168,5 +172,6 @@ function spStart(){spStop();SP.demo=spMode()==="demo";if(SP.demo){SP.st=Object.a
   SP.poll=setInterval(()=>{if(document.hidden)return;const s=SP.st;if(SP.demo&&s&&s.playing&&spNow()>=s.dur){s.pos=0;SP.at=Date.now()}
     if(!SP.demo&&Date.now()-SP.at>5000)spPull();spTick()},1000)}
 function spStop(){clearInterval(SP.poll);SP.poll=0;SP.demo=false;SP.st=null;spPaint()}
-document.addEventListener("visibilitychange",()=>{if(!document.hidden&&SP.poll&&!SP.demo)spPull()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)return;const had=!!SP.tok;spLoad();if(!had&&SP.tok&&spMode()==="on"){spStart();return}if(SP.poll&&!SP.demo)spPull()});
+addEventListener("storage",e=>{if(e.key===SP_K){spLoad();if(SP.tok&&spMode()==="on"&&!SP.poll)spStart()}});
 spLoad();spCallback().finally(spStart);
