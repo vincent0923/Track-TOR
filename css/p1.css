@@ -1457,3 +1457,16 @@ body:has(>.mask) #sheet.on .panel,.mask:has(~ .mask)>.sheet{filter:blur(5px) sat
 /* …and the start key: a soft swell and a glow in the cover's colour (scale/filter, so the skins' own transforms stay) */
 html.groove .hero .hgo{animation:grooveKey 1.04s ease-in-out infinite;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--alb,var(--ac)) 55%,transparent))}
 @keyframes grooveKey{0%,100%{scale:1}50%{scale:1.035}}
+/* the big player card (training page, calendar folded): cover on the left, title over previous / play / next */
+.mp-p{display:none}
+.mini-pl{transition:transform .4s var(--spring),height .45s var(--spring),border-radius .45s var(--spring),padding .45s var(--spring)}
+body.mini-big:not(:has(.focus.on)) .mini-pl{height:184px;display:grid;grid-template-columns:152px repeat(3,minmax(0,1fr));grid-template-rows:1fr auto;column-gap:10px;row-gap:6px;padding:16px 14px 18px 16px;border-radius:28px;align-items:center}
+body.mini-big:not(:has(.focus.on)) .mini-pl .mp-art{grid-row:1/3;width:152px;height:152px;border-radius:20px;box-shadow:0 10px 22px -10px rgba(0,0,0,.45)}
+body.mini-big:not(:has(.focus.on)) .mini-pl .mp-art svg{width:44px;height:44px}
+body.mini-big:not(:has(.focus.on)) .mini-pl .mp-t{grid-column:2/5;align-self:end;padding-left:6px}
+body.mini-big:not(:has(.focus.on)) .mini-pl .mp-t b{font-size:19px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+body.mini-big:not(:has(.focus.on)) .mini-pl .mp-t small{font-size:14px}
+body.mini-big:not(:has(.focus.on)) .mini-pl .mp-b{display:grid;justify-self:center;width:46px;height:46px}
+body.mini-big:not(:has(.focus.on)) .mini-pl .mp-b svg{width:24px;height:24px}
+body.mini-big:not(:has(.focus.on)) .mini-pl .mp-bar{left:18px;right:18px;bottom:7px;height:3px}
+body.has-mini.mini-big .wrap{padding-bottom:calc(304px + env(safe-area-inset-bottom))}

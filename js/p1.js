@@ -647,7 +647,9 @@ function paintHeader(v){const d=new Date();$("#today").textContent=LANG==="en"?[
 function placePc(anim){const b=document.querySelector('.dock [aria-selected="true"]'),pc=document.querySelector(".dock .pc");if(!b)return;
   if(!anim)pc.style.transition="none";pc.style.width=b.offsetWidth+"px";pc.style.transform="translateX("+(b.offsetLeft-6)+"px)";pc.style.left="6px";if(!anim){void pc.offsetWidth;pc.style.transition=""}}
 let cur="train";
-function show(v,anim,keep){cur=v;dustApply();document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
+/* with the calendar folded on the training page there is room: the mini player grows into a big card */
+function miniSize(){document.body.classList.toggle("mini-big",cur==="train"&&!monthOpen)}
+function show(v,anim,keep){cur=v;dustApply();miniSize();document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
   document.querySelectorAll(".dock button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
   ({train:renderTrainView,diet:renderDietView,prog:renderProgView})[v]();if(v==="diet"&&!keep)dietPull(false);paintHeader(v);requestAnimationFrame(()=>placePc(anim));
   try{localStorage.setItem(PK+"tab",v)}catch(e){}if(!keep)scrollTo({top:0})}
@@ -675,7 +677,7 @@ window.p1Sync=p1Sync;
     if(toy()){pk.style.transform="translateX("+max()+"px)";setTimeout(()=>{pk.style.transform=""},380)}p1Sync(false)})})();
 
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
-  if(a==="month"){monthOpen=!monthOpen;monthOff=0;weekOff=0;fsRender("cal")}
+  if(a==="month"){monthOpen=!monthOpen;monthOff=0;weekOff=0;fsRender("cal");miniSize()}
   /* Today: back to this week or month; already there, it opens today */
   else if(a==="caltoday"){monthOff=0;weekOff=0;fsReset("cal")}
   else if(a==="dietnow"){dietGrp=0;fsReset("diet")}

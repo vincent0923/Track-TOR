@@ -99,6 +99,7 @@ function spPaint(){spGroove();let el=document.getElementById("mini");const on=SP
   const s=SP.st;
   const last=(!s||!s.title)&&spLast();
   el.innerHTML=spArt(s,"mp-art")+'<span class="mp-t"><b>'+esc(s&&s.title||(last?T("继续放「"+last.name+"」","Play "+last.name):T("Spotify 没在播放","Nothing playing")))+'</b><small>'+esc(s&&s.title?s.artist:last?T("上次的歌单","Your last playlist"):(s&&s.device)||"")+'</small></span>'
+    +'<button class="mp-b mp-p" data-sp="prev" aria-label="'+T("上一首","Previous")+'">'+SPI.prev+'</button>'
     +'<button class="mp-b" data-sp="toggle" aria-label="'+T("播放 / 暂停","Play / pause")+'">'+(s&&s.playing?SPI.pause:SPI.play)+'</button>'
     +'<button class="mp-b mp-n" data-sp="next" aria-label="'+T("下一首","Next")+'">'+SPI.next+'</button><i class="mp-bar"></i>';
   el.classList.toggle("playing",!!(s&&s.playing));spTick();if(spSheetOpen()&&SP.view!=="pl")spPaintSheet();else if(SP.view==="pl")spMarkPl()}
