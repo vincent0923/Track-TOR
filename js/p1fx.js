@@ -105,8 +105,7 @@ const plop=(f,at,v)=>{tone(f,at,.12,"sine",v||.2,f*.35);fxHit(at,.05,700,.8,.05,
 const chip=(f,at,d,v)=>{tone(f,at,d||.07,"square",v||.045)};
 /* the pieces */
 const TOYC=["#EB3B24","#2244FF","#F2B726","#2AB858","#FFFFFF"];
-/* bricks are heavy: thrown harder than petals so they really fly before they clatter down */
-function brickP(x,y,ang,sp){const w=pick([16,24,32]),col=pick(TOYC);sp*=1.6;return {x,y,vx:Math.cos(ang)*sp*.9,vy:Math.sin(ang)*sp,g:.32,bounce:.32,fh:6,va:rnd(-.25,.25),decay:.0045,
+function brickP(x,y,ang,sp){const w=pick([16,24,32]),col=pick(TOYC);return {x,y,vx:Math.cos(ang)*sp*.9,vy:Math.sin(ang)*sp,g:.32,bounce:.32,fh:6,va:rnd(-.25,.25),decay:.0045,
   land:()=>landSnd(()=>{fxHit(0,.03,rnd(2600,4800),2,.09);tone(rnd(1400,2400),0,.018,"square",.025)}),
   draw:(c,p)=>{c.translate(p.x,p.y);c.rotate(p.a);const h=11;c.fillStyle=col;
     for(let k=0;k<w/8;k++){c.fillRect(-w/2+2+k*8,-h/2-3,5,3);c.fillStyle="rgba(255,255,255,.4)";c.fillRect(-w/2+2+k*8,-h/2-3,5,1);c.fillStyle=col}
@@ -131,7 +130,7 @@ function pixelP(x,y,ang,sp){const s=pick([6,6,9]),col=pick(["#E8892B","#E2513A",
 const bell=(f,at,v)=>{v=v||.07;tone(f,at,1.2,"sine",v);tone(f*2.01,at,.5,"sine",v*.3);tone(f*3.02,at,.18,"sine",v*.12)};
 const whoosh=(at,v)=>{fxHit(at,.5,900,.6,v||.05,"bandpass");fxHit(at+.08,.35,2400,.7,(v||.05)*.6,"bandpass")};
 const fxTone=()=>getComputedStyle(document.documentElement).getPropertyValue("--ac").trim()||"#4FAF6A";
-function petalP(x,y,ang,sp){const col=pick([fxTone(),fxTone(),"#FFFFFF","#FFE3EC","#F3F0FF"]),w=rnd(5,8),h=w*rnd(1.6,2.1);
+function petalP(x,y,ang,sp,cols){const col=pick(cols||[fxTone(),fxTone(),"#FFFFFF","#FFE3EC","#F3F0FF"]),w=rnd(5,8),h=w*rnd(1.6,2.1);
   return {x,y,vx:Math.cos(ang)*sp*.8,vy:Math.sin(ang)*sp*.8,g:.06,drag:.985,sway:.05,decay:.0055,va:rnd(-.08,.08),fl:rnd(0,6),
     draw:(c,p)=>{p.fl+=.09;c.translate(p.x,p.y);c.rotate(p.a);c.scale(Math.max(.2,Math.abs(Math.cos(p.fl))),1);c.fillStyle=col;c.beginPath();c.ellipse(0,0,w,h,0,0,7);c.fill();
       c.fillStyle="rgba(255,255,255,.35)";c.beginPath();c.ellipse(-w*.25,-h*.2,w*.35,h*.5,0,0,7);c.fill()}}}
@@ -152,13 +151,49 @@ function shutterP(x,y,big){return {x,y,vx:0,vy:0,r:10,decay:big?.016:.026,rot:0,
   draw:(c,p)=>{p.r+=big?11:7;p.rot+=.04;c.translate(p.x,p.y);c.rotate(p.rot);c.strokeStyle="rgba(255,255,255,.9)";c.lineWidth=(big?5:3)*p.life;c.shadowColor="#E8302A";c.shadowBlur=10;
     c.beginPath();for(let i=0;i<=6;i++){const a=i/6*Math.PI*2;i?c.lineTo(Math.cos(a)*p.r,Math.sin(a)*p.r):c.moveTo(Math.cos(a)*p.r,Math.sin(a)*p.r)}c.stroke()}}}
 function silverP(x,y,ang,sp){const r=rnd(1.5,3.2);return {x,y,vx:Math.cos(ang)*sp*.6,vy:Math.sin(ang)*sp*.6,g:.12,drag:.98,decay:.012,draw:(c,p)=>{c.fillStyle=pick(["#F1F1F0","#9EA3AA","#E8302A"]);c.beginPath();c.arc(p.x,p.y,r,0,7);c.fill()}}}
+/* leaves by season: fresh greens from March to August, autumn colours from September to February */
+const LEAF_SPRING=["#4FAF6A","#7CC36A","#2E8B57","#A8D86E","#5FB389","#C3E28A"],LEAF_FALL=["#D9542B","#E8892B","#F2B33D","#B8432F","#8C5A2E","#C9A227"];
+function leafP(x,y,ang,sp){const m=new Date().getMonth()+1,cols=m>=3&&m<=8?LEAF_SPRING:LEAF_FALL,col=pick(cols),l=rnd(9,15),w=l*rnd(.42,.55);
+  return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.07,drag:.985,sway:.05,decay:.005,va:rnd(-.09,.09),fl:rnd(0,6),
+    draw:(c,p)=>{p.fl+=.08;c.translate(p.x,p.y);c.rotate(p.a);c.scale(Math.max(.2,Math.abs(Math.cos(p.fl))),1);c.fillStyle=col;
+      c.beginPath();c.moveTo(0,-l);c.bezierCurveTo(w,-l*.5,w,l*.45,0,l);c.bezierCurveTo(-w,l*.45,-w,-l*.5,0,-l);c.fill();
+      c.strokeStyle="rgba(255,255,255,.35)";c.lineWidth=.9;c.beginPath();c.moveTo(0,-l*.85);c.lineTo(0,l*1.25);c.stroke()}}}
+/* flowers for the rose and copper skin: little five-petal blossoms among loose petals */
+function flowerP(x,y,ang,sp){const dark=document.documentElement.dataset.mode==="dark",cols=dark?["#F1C894","#E9B57D","#F4E3D0","#9FB6F2","#F7DCC0"]:["#F4C7C2","#E7A6A0","#FFFFFF","#F9E0E6","#D58783"],
+    col=pick(cols),r=rnd(6,10),mid=dark?"#FFF3DA":"#F7D78A";
+  if(Math.random()<.45)return petalP(x,y,ang,sp,cols);
+  return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.07,drag:.985,sway:.04,decay:.0055,va:rnd(-.06,.06),
+    draw:(c,p)=>{c.translate(p.x,p.y);c.rotate(p.a);c.fillStyle=col;for(let k=0;k<5;k++){c.save();c.rotate(k*Math.PI*2/5);c.beginPath();c.ellipse(0,-r*.62,r*.42,r*.62,0,0,7);c.fill();c.restore()}
+      c.fillStyle=mid;c.beginPath();c.arc(0,0,r*.28,0,7);c.fill()}}}
+/* MiniDiscs, for the MiniDisc skin: a translucent coloured shell, the disc showing through, a sliding shutter, and on
+   the label the cover of a song you played lately (MD_COVERS, filled by js/p1music.js; a plain label without Spotify) */
+const MD_SHELL=["rgba(40,120,235,.82)","rgba(232,62,48,.8)","rgba(245,150,30,.82)","rgba(240,200,40,.8)","rgba(232,80,150,.8)","rgba(30,170,190,.8)","rgba(60,60,70,.82)"];
+let MD_COVERS=[];
+function mdP(x,y,ang,sp){const w=rnd(34,46),sh=pick(MD_SHELL),im=MD_COVERS.length?pick(MD_COVERS):null;
+  return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.3,bounce:.38,fh:w*.5,va:rnd(-.18,.18),decay:.0045,fl:rnd(0,6),
+    land:()=>landSnd(()=>{fxHit(0,.025,rnd(1800,3000),1.6,.08);tone(rnd(300,420),0,.03,"triangle",.06,200)}),
+    draw:(c,p)=>{p.fl+=.05;const h=w*1.06;c.translate(p.x,p.y);c.rotate(p.a);c.scale(.75+.25*Math.abs(Math.cos(p.fl)),1);c.translate(-w/2,-h/2);
+      /* shell with the cut corner */
+      c.beginPath();c.moveTo(3,0);c.lineTo(w-6,0);c.lineTo(w,6);c.lineTo(w,h-3);c.quadraticCurveTo(w,h,w-3,h);c.lineTo(3,h);c.quadraticCurveTo(0,h,0,h-3);c.lineTo(0,3);c.quadraticCurveTo(0,0,3,0);c.closePath();
+      c.fillStyle=sh;c.fill();c.save();c.clip();
+      /* the disc inside */
+      const dx=w*.58,dy=h*.52,dr=w*.4,dg=c.createRadialGradient(dx,dy,dr*.15,dx,dy,dr);dg.addColorStop(0,"rgba(255,255,255,.9)");dg.addColorStop(.3,"rgba(200,220,255,.55)");dg.addColorStop(.65,"rgba(255,200,240,.45)");dg.addColorStop(1,"rgba(255,255,255,.2)");
+      c.fillStyle=dg;c.beginPath();c.arc(dx,dy,dr,0,7);c.fill();c.fillStyle="rgba(0,0,0,.25)";c.beginPath();c.arc(dx,dy,dr*.16,0,7);c.fill();
+      /* the shutter */
+      c.fillStyle="#C9CDD3";c.fillRect(w*.08,h*.8,w*.62,h*.16);c.fillStyle="rgba(0,0,0,.18)";for(let k=1;k<6;k++)c.fillRect(w*.08+k*w*.1,h*.82,1,h*.12);
+      /* the label: the cover of something you played */
+      const lw=w*.5,lh=w*.5;c.fillStyle="#fff";c.fillRect(w*.06,h*.07,lw,lh);
+      if(im&&im.complete&&im.naturalWidth)try{c.drawImage(im,w*.06+1.5,h*.07+1.5,lw-3,lh-3)}catch(e){}else{c.fillStyle="#111";c.fillRect(w*.06+3,h*.07+lh*.55,lw-6,lh*.2)}
+      /* gloss */
+      const gl=c.createLinearGradient(0,0,w,h);gl.addColorStop(0,"rgba(255,255,255,.4)");gl.addColorStop(.4,"rgba(255,255,255,0)");c.fillStyle=gl;c.fillRect(0,0,w,h);c.restore();
+      c.strokeStyle="rgba(255,255,255,.55)";c.lineWidth=1;c.stroke()}}}
 const THEME_FX={
-  aurora:{make:petalP,snd:big=>{(big?[784,988,1175,1568]:[988,1319]).forEach((f,i)=>bell(f,i*.09,.05))}},
+  aurora:{make:leafP,snd:big=>{(big?[784,988,1175,1568]:[988,1319]).forEach((f,i)=>bell(f,i*.09,.05))}},
   ember:{make:(x,y,a,s)=>foilP(x,y,a,s,["#FFB020","#F7D78A","#E8A64A","#D9714E"]),snd:big=>{(big?[659,831,988,1319]:[831,1109]).forEach((f,i)=>bell(f,i*.11,.055))}},
-  dyson:{make:(x,y,a,s)=>foilP(x,y,a,s,document.documentElement.dataset.mode==="dark"?["#E9B57D","#D49A5E","#F1C894"]:["#E7A6A0","#D58783","#F4C7C2"]),snd:big=>{whoosh(0,big?.07:.045);(big?[880,1109,1319]:[1109]).forEach((f,i)=>bell(f,.12+i*.1,.045))}},
+  dyson:{make:flowerP,snd:big=>{whoosh(0,big?.07:.045);(big?[880,1109,1319]:[1109]).forEach((f,i)=>bell(f,.12+i*.1,.045))}},
   mac:{make:glintP,snd:big=>{bell(big?1568:1760,0,.06);if(big)bell(2349,.12,.04)}},
   ipod:{make:glintP,snd:big=>{tone(2600,0,.006,"square",.02);bell(big?1319:1568,.02,.06);if(big)bell(1976,.14,.04)}},
-  md:{make:lcdP,snd:big=>{(big?[784,988,1175,1568,1976]:[1175,1568]).forEach((f,i)=>{chip(f,i*.05,.06,.035)})}},
+  md:{make:mdP,snd:big=>{fxHit(0,.02,2600,1.4,.08);fxHit(.06,.03,1500,1.2,.07);(big?[784,988,1175,1568]:[1175,1568]).forEach((f,i)=>chip(f,.1+i*.05,.06,.03))}},
   nikon:{make:silverP,shutter:true,snd:big=>{fxHit(0,.02,3000,1.5,.12);fxHit(.07,.03,1800,1.2,.1);tone(110,.0,.06,"sine",.12,70);if(big){fxHit(.25,.02,3000,1.5,.1);fxHit(.32,.03,1800,1.2,.08)}}},
   toy:{make:brickP,snd:big=>{const n=big?16:7;for(let k=0;k<n;k++)fxHit(k*.03+Math.random()*.03,.03,rnd(2400,5200),2.5,.08);tone(big?520:760,0,.12,"sine",.12,big?120:200)}},
   skeuo:{make:bearingP,ring:true,snd:big=>{tone(180,0,big?.6:.4,"sine",.14,big?1100:800);for(let k=0;k<(big?6:3);k++)clink(rnd(1800,3400),.05+k*.07,.06)}},
@@ -170,7 +205,13 @@ const themeFx=()=>THEME_FX[document.documentElement.dataset.theme];
 /* one burst: pieces fly from (x,y) in a cone around ang */
 function pxBurst(t,x,y,n,ang,spread,s0,s1,big){if(t.led){PX.wave(x,y,big);return}
   if(t.shutter){PX.flash(big?.55:.3);PX.add([shutterP(x,Math.min(y,PX.size()[1]*.55),big)])}
-  if(t.ring)PX.add([ringP(x,y,big)]);PX.add(Array.from({length:n},()=>t.make(x,y,ang+rnd(-spread,spread),rnd(s0,s1))))}
+  if(t.ring)PX.add([ringP(x,y,big)]);const H=PX.size()[1];
+  PX.add(Array.from({length:n},()=>{const p=t.make(x,y,ang+rnd(-spread,spread),rnd(s0,s1));if(p.bounce!=null)p.y=Math.min(p.y,H-(p.fh||6)-1);if(y>H*.55)pxAim(p,rnd(.08,.33)*H);return p}))}
+/* light things and heavy things alike reach the top third: find the throw that peaks at topY for this piece's gravity
+   and drag (a few quick trial flights), keeping its sideways share */
+function pxAim(p,topY){if(p.g>0){const peak=k=>{let y=p.y,vy=p.vy*k,vx=0;for(let i=0;i<600;i++){vy+=p.g;if(p.drag)vy*=p.drag;y+=vy;if(vy>=0)break}return y};
+    if(peak(1)<=topY)return;let lo=1,hi=6;for(let i=0;i<14;i++){const m=(lo+hi)/2;if(peak(m)>topY)lo=m;else hi=m}p.vy*=hi;p.vx*=Math.min(hi,1.6);return}
+  if(p.y>topY+40&&!p.g&&p.vy<=0)p.y=rnd(topY,p.y)}
 function themedCelebrate(t,n,big){const [W,H]=PX.size();let at=0;
   for(let i=0;i<n;i++){setTimeout(()=>{const x=rnd(.15,.85)*W;try{t.snd(false)}catch(e){}
     if(t.led)PX.wave(x,rnd(.25,.6)*H,false);else pxBurst(t,x,t.ring?rnd(.3,.6)*H:H+10,12,-Math.PI/2,.5,9,15,false)},at);at+=n>=6?160:230}

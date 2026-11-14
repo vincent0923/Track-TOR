@@ -224,9 +224,15 @@ function openMusic(){const mode=spMode(),con=!!(SP.tok&&mode==="on"),cid=spCid()
 p1Reg("music",openMusic);
 
 /* ---------- run ---------- */
+/* the MiniDisc skin's celebration puts the covers of songs you played lately on its little discs (MD_COVERS in
+   js/p1fx.js); without Spotify they stay plain */
+async function spMdCovers(){if(spMdCovers.done||typeof MD_COVERS==="undefined")return;spMdCovers.done=true;
+  try{const r=await spApi("/me/player/recently-played?limit=30"),seen=new Set();
+    ((r&&r.items)||[]).forEach(it=>{const u=spCover(it.track&&it.track.album&&it.track.album.images);if(u&&!seen.has(u)&&seen.size<14){seen.add(u);const im=new Image();im.src=u;MD_COVERS.push(im)}})}
+  catch(e){spMdCovers.done=false}}
 function spStart(){spStop();SP.demo=spMode()==="demo";if(SP.demo){SP.st=Object.assign({},SP_DEMO);SP.at=Date.now()}
   else if(!(spMode()==="on"&&SP.tok)){spPaint();return}
-  spPaint();if(!SP.demo)spPull();
+  spPaint();if(!SP.demo){spPull();spMdCovers()}
   SP.poll=setInterval(()=>{if(document.hidden)return;const s=SP.st;if(SP.demo&&s&&s.playing&&spNow()>=s.dur){s.pos=0;SP.at=Date.now()}
     if(!SP.demo&&Date.now()-SP.at>5000)spPull();spTick()},1000)}
 function spStop(){clearInterval(SP.poll);SP.poll=0;SP.demo=false;SP.st=null;spPaint()}
