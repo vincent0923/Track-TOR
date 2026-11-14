@@ -105,7 +105,8 @@ const plop=(f,at,v)=>{tone(f,at,.12,"sine",v||.2,f*.35);fxHit(at,.05,700,.8,.05,
 const chip=(f,at,d,v)=>{tone(f,at,d||.07,"square",v||.045)};
 /* the pieces */
 const TOYC=["#EB3B24","#2244FF","#F2B726","#2AB858","#FFFFFF"];
-function brickP(x,y,ang,sp){const w=pick([16,24,32]),col=pick(TOYC);return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.36,bounce:.32,fh:6,va:rnd(-.25,.25),decay:.0045,
+/* bricks are heavy: thrown harder than petals so they really fly before they clatter down */
+function brickP(x,y,ang,sp){const w=pick([16,24,32]),col=pick(TOYC);sp*=1.6;return {x,y,vx:Math.cos(ang)*sp*.9,vy:Math.sin(ang)*sp,g:.32,bounce:.32,fh:6,va:rnd(-.25,.25),decay:.0045,
   land:()=>landSnd(()=>{fxHit(0,.03,rnd(2600,4800),2,.09);tone(rnd(1400,2400),0,.018,"square",.025)}),
   draw:(c,p)=>{c.translate(p.x,p.y);c.rotate(p.a);const h=11;c.fillStyle=col;
     for(let k=0;k<w/8;k++){c.fillRect(-w/2+2+k*8,-h/2-3,5,3);c.fillStyle="rgba(255,255,255,.4)";c.fillRect(-w/2+2+k*8,-h/2-3,5,1);c.fillStyle=col}
