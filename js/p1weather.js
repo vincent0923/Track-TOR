@@ -108,7 +108,8 @@ function wxSnow(dt){const n=[21,33,48][WX.lv-1],m=Math.hypot(WX.gx,WX.gy),fx=WX.
 document.addEventListener("pointerdown",e=>{if(WX.fx==="none")return;if(typeof DeviceOrientationEvent!=="undefined"&&typeof DeviceOrientationEvent.requestPermission==="function")wxTiltOn();
   const x=e.clientX,y=e.clientY;WX.drops.forEach(d=>{if(!d.melt&&Math.hypot(d.x-x,d.y-y)<d.r+16)d.melt=.01});
   WX.flakes.forEach(f=>{if(!f.melt&&Math.hypot(f.x-x,f.y-y)<f.r+18)f.melt=.01})},{capture:true,passive:true});
-function wxTick(now){const dt=Math.min(.05,(now-WX.last)/1000);WX.last=now;const g=WX.ctx,dark=wxDark(),reduce=wxReduced();
+/* 30 frames a second is enough for drops and flakes and halves the cost of the full-screen canvas */
+function wxTick(now){if(now-WX.last<30){WX.raf=requestAnimationFrame(wxTick);return}const dt=Math.min(.07,(now-WX.last)/1000);WX.last=now;const g=WX.ctx,dark=wxDark(),reduce=wxReduced();
   g.setTransform(WX.dpr,0,0,WX.dpr,0,0);g.clearRect(0,0,WX.W,WX.H);
   if(WX.fx==="rain"){if(!reduce)wxRain(dt);else WX.drops.forEach(d=>{if(d.melt)d.melt=Math.min(1,d.melt+dt*4)});WX.drops.forEach(d=>wxDrawDrop(g,d,dark))}
   else if(WX.fx==="snow"){if(!reduce)wxSnow(dt);else if(!WX.flakes.length){wxSnow(0);WX.flakes.forEach(f=>f.y=Math.random()*WX.H)}

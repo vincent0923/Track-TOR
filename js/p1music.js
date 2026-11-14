@@ -7,7 +7,7 @@
 const SPC_K="tracktor-sp-cid";
 function spCid(){try{return (localStorage.getItem(SPC_K)||"").trim()}catch(e){return ""}}
 const SP_K="tracktor-sp",SPM_K="tracktor-p1-music";
-const SP_SCOPES="user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative";
+const SP_SCOPES="user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative user-read-recently-played";
 const SP={tok:null,st:null,at:0,poll:0,busy:false,demo:false};
 const spRedirect=()=>location.origin+location.pathname.replace(/index\.html$/,"");
 function spMode(){try{return localStorage.getItem(SPM_K)||""}catch(e){return ""}}
@@ -116,6 +116,12 @@ function spMarkPl(){const cur=SP.st&&SP.st.ctx,list=SP.demo?SP_DEMO_PL:SP.pls;if
 async function spPlaylists(){if(SP.demo)return SP_DEMO_PL;if(SP.pls&&Date.now()-SP.plsAt<300000)return SP.pls;const out=[];let url="/me/playlists?limit=50";
   for(let k=0;k<4&&url;k++){const j=await spApi(url);(j.items||[]).forEach(p=>{if(p)out.push({name:p.name,uri:p.uri,n:p.tracks?p.tracks.total:(p.items&&p.items.total)||0,art:(p.images||[]).slice(-1)[0]?.url||(p.images||[])[0]?.url||""})});
     url=j.next?j.next.replace("https://api.spotify.com/v1",""):null}
+  /* most recently listened first: the last 50 plays say which playlist each came from (needs user-read-recently-played;
+     without it the library order stays), plus playlists started here and the one playing now */
+  const at={};try{const r=await spApi("/me/player/recently-played?limit=50");((r&&r.items)||[]).forEach(it=>{const u=it.context&&it.context.uri,t=Date.parse(it.played_at)||0;if(u&&t>(at[u]||0))at[u]=t})}catch(e){}
+  try{Object.entries(JSON.parse(localStorage.getItem(SP_K+"-played")||"{}")).forEach(([u,t])=>{if(t>(at[u]||0))at[u]=t})}catch(e){}
+  if(SP.st&&SP.st.ctx)at[SP.st.ctx]=Date.now();
+  out.forEach((p,i)=>p.k=i);out.sort((a,b)=>(at[b.uri]||0)-(at[a.uri]||0)||a.k-b.k);
   SP.pls=out;SP.plsAt=Date.now();return out}
 /* playlists as a grid of big covers (easy to hit mid-workout): "open Spotify" and shuffle on top, a round × below */
 async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";spLoad();
@@ -136,7 +142,7 @@ async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");i
 function spLast(){try{return JSON.parse(localStorage.getItem(SP_K+"-last")||"null")}catch(e){return null}}
 async function spPlayList(p){buzz(10);if(typeof SFX!=="undefined")SFX.tap();
   if(SP.demo){const s=SP.st;s.shuf=spShuf();Object.assign(s,{title:p.name+T(" · 第 1 首"," · track 1"),artist:T("推拉机 · 预览","Track-TOR · preview"),pos:0,playing:true,ctx:p.uri});SP.at=Date.now();spPaint();return}
-  try{localStorage.setItem(SP_K+"-last",JSON.stringify({name:p.name,uri:p.uri}))}catch(e){}
+  try{localStorage.setItem(SP_K+"-last",JSON.stringify({name:p.name,uri:p.uri}));const pl=JSON.parse(localStorage.getItem(SP_K+"-played")||"{}");pl[p.uri]=Date.now();localStorage.setItem(SP_K+"-played",JSON.stringify(pl))}catch(e){}
   const body={context_uri:p.uri},shuf=spShuf();
   const go=async dev=>{const q=dev?"?device_id="+encodeURIComponent(dev):"";await spApi("/me/player/shuffle?state="+shuf+(dev?"&device_id="+encodeURIComponent(dev):""),"PUT").catch(()=>{});await spApi("/me/player/play"+q,"PUT",body)};
   try{await go(null)}catch(e){

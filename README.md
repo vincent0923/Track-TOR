@@ -26,7 +26,7 @@
 | 💪 随时加练 | 每个训练日都能加练，默认引体向上，也能加自定义项目 |
 | 🎆 爽感反馈 | 专注训练模式：一次一个动作，拇指位大勾，组间自动倒计时；每打一个勾放一支烟花，做完一个动作撒彩纸，整天练完礼炮加烟花，都带音效和震动；不想要可以在设定里关掉 |
 | 📈 看得见的进步 | 目标进度环，引体、体重、腰围、睡眠、HRV、静息心率的趋势卡片，点开看完整曲线、记一笔 |
-| 🪙 G | 力量、减脂、腰围有真实进步就拿 G，以后在设定里的 G 积分商场换主题 |
+| 🪙 G | 力量、减脂、腰围有真实进步就拿 G，以后在设定里的 G 分商店换主题 |
 | ⌚ 连接高驰 | 授权一次，自动续期，同步健康和活动数据 |
 | 🍽️ 饮食账本 | 在饮食页填总热量和蛋白质、脂肪、碳水、蔬菜，也能逐项记明细，自动算热量缺口和约合多少脂肪；也能粘贴任何在线表格的分享链接（Google 表格、腾讯文档或自己的网址），拉取每日饮食 |
 | 💾 进度文件 | 一键存成 txt 放在手机里，换手机选这个文件就能恢复 |
@@ -86,7 +86,7 @@ Most people don't need another training plan. They need a reason to keep going. 
 | 💪 Extra practice | Add extra sets to any session, pull-ups by default or any exercise you like |
 | 🎆 Feel-good rewards | A focus mode for training: one exercise at a time, a thumb-sized tick, automatic rest countdowns; a firework for every tick, confetti for every finished exercise, cannons and fireworks for the day, all with sound and a buzz; turn them off in Settings if you like |
 | 📈 Visible progress | Goal rings and trend cards for pull-ups, weight, waist, sleep, HRV, and resting heart rate; open one for the full chart or to log a value |
-| 🪙 G | Real progress in strength, fat loss and waist earns G (for Grind), to spend on themes in the G shop in Settings later |
+| 🪙 G | Real progress in strength, fat loss and waist earns G (for Grind), to spend on themes in the barGain store in Settings later |
 | ⌚ COROS connection | Authorize once and it renews itself, syncing your health and activity data |
 | 🍽️ Diet ledger | On the Diet tab, enter total calories plus protein, fat, carbs, and veg, or log item by item and see your calorie gap and the fat it adds up to. It can also pull your daily food from any online table by pasting its link (Google Sheets, Tencent Docs, or your own URL) |
 | 💾 Progress file | Save a txt file to your phone, then pick it to restore on a new one |

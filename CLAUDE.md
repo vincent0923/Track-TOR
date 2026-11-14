@@ -38,11 +38,13 @@
 - 中英双语都用 `T(中文, English)`；繁体不用另写。
 - 数据全部在 `localStorage` 的 `tracktor-data`：`sessions`（训练）、`metrics[日期]`（引体、体重、腰围、睡眠、HRV、静息心率、活动热量 active、其中运动记录的热量 ex、有功率计骑行的热量 exP、低强度运动的热量 exL、步数等；主项不是引体时手动记的数在 `gm[项目 id]`）、`diet[日期]`、`settings`（含 `plan` 训练计划、`weather` 天气城市、`mainEx` 主项，目标数是 `p`；`tiles` 进展页卡片的顺序和隐藏；`theme` 主题、`buys` 用 G 换购的记录）、`dayx[日期]`（没有训练的日子里的加练）。其他键都以 `tracktor-` 开头。
 - 主项（目标里的那个运动，`js/p1data.js` 的 `mainEx`/`mainSeries`）：默认标准引体；从计划动作选的打勾自动记、训练引擎不换它（`isMain`），自己写的只能手动记。
+- G 币图标 `COIN`（`js/p1.js`）是当下主题的 `.circ` 圆钮加金色 G、呼吸发光；商店叫「G 分商店 / barGain store」。
 - G（积分，Grind）从记录现算（`js/p1data.js` 的 `coinBadges`），不另存；余额 = 赚的 − `settings.buys` 里花掉的。
-- 主题（`js/p1.js` 的 `THEMES`，`css/p1.css` 里 `:root[data-theme=…]`，亮暗两版靠 `data-mode`）：一般要有亮、暗两版；只有一种样子的主题在 `THEMES` 里写 `fix:"light"|"dark"`，这时 `html[data-fixed]` 藏掉明暗开关和设定里的明暗选项，手机倾斜写进 `--lx`/`--ly`/`--rot`（`js/p1.js`），触感主题和随身机（`THEMES` 里 `lit`）的高光和金属反光用它们。主题字体放 `fonts/`（许可见 `fonts/THEMES-OFL.txt`），标题和大数字用 `--disp`，小数字用 `--num`。草木 · 极光免费，其他用 G 换。顶栏的明暗开关点一下切换，长按进主题页。
+- 主题（`js/p1.js` 的 `THEMES`，`css/p1.css` 里 `:root[data-theme=…]`，亮暗两版靠 `data-mode`）：一般要有亮、暗两版；只有一种样子的主题在 `THEMES` 里写 `fix:"light"|"dark"`，这时 `html[data-fixed]` 藏掉明暗开关和设定里的明暗选项，手机倾斜写进 `--lx`/`--ly`/`--rot`（`js/p1.js`），触感主题和随身机（`THEMES` 里 `lit`）的高光和金属反光用它们。主题字体放 `fonts/`（许可见 `fonts/THEMES-OFL.txt`），材质颗粒（拉丝、细颗粒、黏土粉、压纹皮、喷砂）是 `img/tex-*.webp`（从 SVG 噪声预先渲染，比现场算快；新材质也这样做），标题和大数字用 `--disp`，小数字用 `--num`。草木 · 极光免费，其他用 G 换。顶栏的明暗开关点一下切换，长按进主题页。
 - 训练计划：`settings.plan`（`js/engine.js` 的 `PRESETS`/`setPlan`）选 1–3 种训练日，内部类型固定是 `push`、`pull`、`third`（名字由计划定，`js/core.js` 的 `dayName`/`LAB`）；进度文件里训练的键前缀是 u、l、t。预设只是数据，以后用户写的计划也照这个格式。自由练 `id:"free"`（`js/engine.js` 的 `freeBase`/`freeLog`/`freePattern`）：没选过计划、也没练过正式训练的新用户默认是它；建议从最近 3 周的训练和加练里长出来（散步骑行这类不排），按部位多久没练排，每次至少 2 个动作 5 组；练法稳定后提示存成自定义计划。自定义计划 `id:"custom"`（`setCustomPlan`，面板 `openCustom`）：只用练过的动作（`engMoves`），每个动作从自己的上次记录接着练；自定义计划和自由练下引擎不换动作（`engCustom`）；一种训练日里找不到某动作的历史时，到所有训练和加练里找（`engMoveHist`）。
 - 训练引擎排的训练存在训练记录本身：`sessions[sid].ex` 是这次的动作、`feel` 是每个动作的感觉、`edited` 表示用户手改过。`js/core.js` 的 `registerPlanned` 把它们挂进 `PROGRAM`/`BYID`（可以超过第 20 天，`third-NN` 只靠它注册）。进度文件里对应追加的字段是 `pe`。
-- 新增文件要加进 `sw.js` 的缓存列表。
+- 新增文件要加进 `sw.js` 的缓存列表，资源列表变了就把 `CACHE_NAME` 的版本号加一。
+- 性能：会被拖动或移动的东西（卡堆顶牌、底栏高亮、底部面板、播放器）有 `will-change:transform`；不要再用 `backdrop-filter`（手机上最贵），面板一律不透明；页面背景不用 `background-attachment:fixed`。
 - 改了 `css/` 或 `js/` 下的任何文件，提交前先运行 `python3 tools/stamp.py`。它给 `index.html` 里的脚本和样式网址加上内容指纹（`?v=…`），这样手机上缓存的旧文件不会和新网页配在一起。不运行的话，更新后可能出现新网页配旧脚本、功能错乱。
 - 备份格式见 `js/backupcore.js`，新字段只能追加在 `MK` 末尾，旧版进度文件必须仍能导入。经典界面时期的进度文件也要能导入。用户说的「兼容到 v1.4」是一个里程碑，不是版本号 v1.40a：兼容一直保留，直到用户明确说可以停。顶层只能追加新字段（例如 v1.37a 加的 `pe`），旧文件没有它也要能导入。每次训练的数按它自己的动作单排：有 `pe` 用 `pe`，否则用 `js/core.js` 的 `baseEx`（原 20 天计划），绝不能用这台手机当前排的 `BYID`；恢复后用 `resetPlanned`。
 - 改动后用无头浏览器（Playwright）实际打开页面测试，确认没有报错再提交。
