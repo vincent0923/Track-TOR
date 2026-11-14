@@ -310,17 +310,18 @@ function finFit(){const b=$("#finBrief");if(b)b.classList.toggle("long",b.scroll
 function drawTrain(t){const {out,xs}=finToday(t),K=shColors(),d=dateObj(t),W=1080,P=72,cv=document.createElement("canvas"),c=cv.getContext("2d");
   const pr=document.createElement("i");pr.style.display="none";document.body.appendChild(pr);const kc=k=>{pr.style.color="var(--"+k+")";return getComputedStyle(pr).color};
   const F=(getComputedStyle(document.documentElement).getPropertyValue("--disp").trim()||'"Geist"')+',-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif',lh=64;
-  const blocks=out.map(o=>({h:o.h,col:kc(o.kind),rows:o.rows}));if(xs.length)blocks.push({h:T("加练","Extra practice"),col:K.ac,rows:xs,x:1});pr.remove();
-  const H=P+90+60+blocks.reduce((h,b)=>h+90+b.rows.length*lh+30,0)+90;
+  const blocks=out.map(o=>{const n=dayName(o.kind);return {h:T(n.zh,n.en),col:kc(o.kind),rows:o.rows}});if(xs.length)blocks.push({h:T("加练","Extra practice"),col:K.ac,rows:xs,x:1});pr.remove();
+  const H=P+90+60+blocks.reduce((h,b)=>h+90+b.rows.length*lh+30,0)+30;
   cv.width=W;cv.height=H;const bg=c.createLinearGradient(0,0,W,H);bg.addColorStop(0,K.card);bg.addColorStop(1,K.bg);c.fillStyle=bg;c.fillRect(0,0,W,H);
   c.save();c.globalAlpha=.22;const gl=c.createRadialGradient(W*.85,0,0,W*.85,0,W*.7);gl.addColorStop(0,K.ac);gl.addColorStop(1,"rgba(0,0,0,0)");c.fillStyle=gl;c.fillRect(0,0,W,H);c.restore();
   const tx=(s,x,y,font,col,al,op)=>{c.save();c.globalAlpha=op||1;c.font=font;c.fillStyle=col;c.textAlign=al||"left";c.fillText(HANT?s2t(s):s,x,y);c.restore()};
-  let y=P+60;tx((d.getMonth()+1)+"."+d.getDate()+T(" 练了什么"," · trained"),P,y,"800 64px "+F,K.ink);y+=60;
+  let y=P+60;tx((d.getMonth()+1)+"."+d.getDate(),P,y,"800 64px "+F,K.ink);y+=60;
   blocks.forEach(b=>{y+=80;if(b.x){c.fillStyle=b.col;c.beginPath();c.roundRect(P,y-34,8,40,4);c.fill();tx(b.h,P+26,y,"800 40px "+F,K.ink)}
     else{c.fillStyle=b.col;c.beginPath();c.arc(P+12,y-13,12,0,7);c.fill();tx(b.h,P+40,y,"800 40px "+F,K.ink)}
+    tx(T("组","Sets"),W-P,y,"600 28px "+F,K.muted,"right");
     y+=12;b.rows.forEach(r=>{c.save();c.globalAlpha=.14;c.fillStyle=K.ink;c.fillRect(P,y,W-2*P,2);c.restore();y+=lh;
       tx(r.n,P,y-18,"500 36px "+F,K.ink);tx(r.v,W-P,y-18,"700 38px "+F,K.ink,"right");if(r.pr){c.font="500 36px "+F;const w=c.measureText(HANT?s2t(r.n):r.n).width;tx(T("新纪录","Best"),P+w+20,y-20,"800 26px "+F,K.ac)}});y+=30});
-  tx(T("博G","bG"),W-P,H-48,"700 28px "+F,K.muted,"right",.8);return cv}
+  return cv}
 function finShare(t){t=t||today();const back=$("#sheet").classList.contains("on")&&$("#sheetBody").dataset.day===t;
   const name=T("训练","training")+"-"+t+".png",blobOf=()=>new Promise(res=>drawTrain(t).toBlob(res,"image/png"));
   openSheet('<div class="sh-h"><h3>'+T('分享图片','Share picture')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><img class="shimg" alt="">'
