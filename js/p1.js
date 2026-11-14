@@ -592,8 +592,9 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
     +'<div class="row" style="margin-bottom:16px"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+fmt(tot)+'</div></div></div>'
     +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+THEMES.map(th=>{const own=themeOwned(th.id),on=(themeOwned(state.settings.theme)?state.settings.theme:"aurora")===th.id;
       /* a chip per look (light and dark, or the one look), dressed like the skin's own keys: flat, toy or tactile */
-      const kind=th.id==="aurora"||th.id==="ember"?"flat":th.id==="toy"?"toy":"hard",chip=(bg,ac)=>'<span class="tsw '+kind+'" style="--b:'+bg+';--a:'+ac+'"><i></i></span>';
-      const chips=th.fix?chip(th.sw[0],th.sw[3]):chip(th.sw[0],th.sw[1])+chip(th.sw[2],th.sw[3]);
+      const kind=th.id==="aurora"||th.id==="ember"?"flat":th.id==="toy"?"toy":"hard",
+        chip=cs=>'<span class="tsw '+kind+(cs.length>2?' wide':'')+'" style="background-image:linear-gradient(90deg,'+cs.map((c,i)=>c+' '+(i*100/cs.length)+'% '+((i+1)*100/cs.length)+'%').join(",")+')"></span>';
+      const chips=th.fix?chip(th.sw):chip(th.sw.slice(0,2))+chip(th.sw.slice(2,4));
       return '<button class="thc'+(on?' on':'')+'" data-act="theme" data-id="'+th.id+'" aria-pressed="'+on+'"><span class="tsws">'+chips+'</span><b class="sp">'+T(th.zh,th.en)+'</b>'
         +(on?'<span class="thok on" aria-label="'+T('使用中','In use')+'">'+ICON.check+'</span>':own?'<span class="thok" aria-hidden="true"></span>':'<span class="pill'+(tot>=th.price?' ac':'')+'">'+COIN+' '+th.price+'</span>')+'</button>'}).join("")+shop+'</div><div style="height:18px"></div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('训练计划','Training plans')+'</p><div class="setlist" style="margin-bottom:18px">'+plans+'</div>'
