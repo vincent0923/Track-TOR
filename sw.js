@@ -1,4 +1,4 @@
-// Service Worker for 博G健身 track-TOR PWA
+// Service Worker for 博G (bG) PWA
 const CACHE_NAME = "tracktor-pwa-v16";
 const ASSETS = [
   "./",

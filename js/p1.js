@@ -1,4 +1,4 @@
-/* 博G健身 interface: the screens (training, diet, progress), the dock, the settings list and the bottom sheets. */
+/* 博G interface: the screens (training, diet, progress), the dock, the settings list and the bottom sheets. */
 
 /* ---------- small helpers ---------- */
 const $=s=>document.querySelector(s);
@@ -461,7 +461,7 @@ function drawShare(d,burn){const day=state.diet[d]||{},items=day.items||[],tt=di
   y+=96;tx(T("食物","Food"),P,y,"600 26px "+F,K.muted);cols.forEach((h,i)=>tx(h,W-P-(cols.length-1-i)*cw,y,"600 26px "+F,K.muted,"right"));
   y+=18;rows.forEach(r=>{c.save();c.globalAlpha=.14;c.fillStyle=K.ink;c.fillRect(P,y,W-2*P,2);c.restore();y+=lh;const f=r.tot?'800 32px '+F:rowFont;
     r.name.forEach((ln,k)=>tx(ln,P,y+k*lh-4,f,K.ink));r.v.forEach((v,i)=>tx(v,W-P-(cols.length-1-i)*cw,y-4,(r.tot?"800 ":"600 ")+"32px "+F,K.ink,"right"));y+=(r.name.length-1)*lh+28});
-  tx(T("博G健身","track-TOR"),W-P,H-44,"700 26px "+F,K.muted,"right",.8);return cv}
+  tx(T("博G","bG"),W-P,H-44,"700 26px "+F,K.muted,"right",.8);return cv}
 async function shareDay(d){let burn=true;try{burn=localStorage.getItem(SHB_K)!=="0"}catch(e){}
   const name=T("饮食","food")+"-"+d+".png",blobOf=()=>new Promise(res=>drawShare(d,burn).toBlob(res,"image/png"));
   openSheet('<div class="sh-h"><h3>'+T('分享图片','Share picture')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
@@ -660,7 +660,7 @@ function meSheet(){SHEET_UP=null;let m="auto";try{m=localStorage.getItem(PK+"mod
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="seg langseg" translate="no">'+[["zh","简中"],["zht","繁中"],["en","Eng"]].map(([k,l])=>'<button data-act="lang" data-l="'+k+'" aria-pressed="'+((HANT?"zht":LANG)===k)+'">'+l+'</button>').join("")+'</div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('更多','More')+'</p><div class="setlist">'
     +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:charts",BRAND.co,T("图表、同步和手表热量","Charts, sync & watch calories"))+'<button class="opt" data-act="advmenu">'+ICON.sliders+'<span class="sp">'+T("进阶","Advanced")+'</span>'+ICON.right+'</button>'+'</div>'
-    +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('博G健身 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+'</p>');CUR_SHEET=meSheet}
+    +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('博G ','bG ')+($("#ver")?$("#ver").textContent:"")+'</p>');CUR_SHEET=meSheet}
 
 /* ---------- header, dock, routing ---------- */
 /* the page title shrinks to fit beside the header buttons (wide theme fonts, long English words) */

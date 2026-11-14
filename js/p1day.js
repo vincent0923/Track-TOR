@@ -1,4 +1,4 @@
-/* 博G健身 main interface: one day. Tap a day on the calendar for what was done that day: the finished sessions (with
+/* 博G main interface: one day. Tap a day on the calendar for what was done that day: the finished sessions (with
    a way to correct them), extra practice (pull-ups by default, or any move), and that day's food and body numbers.
    Extras go in the day's finished session (doc.xs), or in dayx[date] on a day without one. */
 (function(){

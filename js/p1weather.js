@@ -1,4 +1,4 @@
-/* 博G健身 · weather: pick a city (search, or where you are now); the screen shows that city's weather.
+/* 博G · weather: pick a city (search, or where you are now); the screen shows that city's weather.
    Data: Open-Meteo (no key). Effects draw on one canvas that never takes taps (a tap still melts the drop under it), kept sparse so nothing is hidden.
    settings.weather = {name, lat, lon, off}. The last reading is cached in tracktor-wx. */
 ICON.rain='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 5.5a4 4 0 0 1 .5 7.97"/><path d="M8 18v2M12 16v3M16 18v2"/></svg>';

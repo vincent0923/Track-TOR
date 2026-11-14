@@ -1,4 +1,4 @@
-/* 博G健身 · mini player: a remote for Spotify through the Web API (Spotify Connect). The app on the phone plays; this
+/* 博G · mini player: a remote for Spotify through the Web API (Spotify Connect). The app on the phone plays; this
    page shows what's on and sends play / pause / next / previous / volume. Sign-in is PKCE with no server; the tokens
    live in tracktor-sp, which backups don't carry. Control needs Premium.
    The client id is the user's own (Settings › Advanced › Spotify, tracktor-sp-cid). A preview with a sample track
@@ -41,7 +41,7 @@ async function spApi(path,method,body){const a=await spAuth();if(!a)throw new Er
   if(!r.ok){const e=new Error((j&&j.error&&j.error.reason)||String(r.status));e.status=r.status;throw e}return j}
 
 /* ---------- state ---------- */
-const SP_DEMO={shuf:false,rep:"off",title:T("示例歌曲","Sample track"),artist:T("博G健身 · 预览","Track-TOR · preview"),art:"",dur:214000,pos:61000,playing:true,vol:62,device:T("这台手机","This phone")};
+const SP_DEMO={shuf:false,rep:"off",title:T("示例歌曲","Sample track"),artist:T("博G · 预览","bG · preview"),art:"",dur:214000,pos:61000,playing:true,vol:62,device:T("这台手机","This phone")};
 function spNow(){const s=SP.st;if(!s)return null;return s.playing?Math.min(s.dur,s.pos+(Date.now()-SP.at)):s.pos}
 async function spPull(){if(SP.demo||SP.busy)return;try{const j=await spApi("/me/player");
     if(!j||!j.item)SP.st=j&&j.device?{title:"",artist:"",art:"",dur:0,pos:0,playing:false,vol:j.device.volume_percent,device:j.device.name,idle:true}:null;
@@ -185,7 +185,7 @@ async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");i
   draw();spRank(list).then(ch=>{if(ch)draw()}).catch(()=>{})}
 function spLast(){try{return JSON.parse(localStorage.getItem(SP_K+"-last")||"null")}catch(e){return null}}
 async function spPlayList(p){buzz(10);if(typeof SFX!=="undefined")SFX.tap();
-  if(SP.demo){const s=SP.st;s.shuf=spShuf();Object.assign(s,{title:p.name+T(" · 第 1 首"," · track 1"),artist:T("博G健身 · 预览","Track-TOR · preview"),pos:0,playing:true,ctx:p.uri});SP.at=Date.now();spPaint();return}
+  if(SP.demo){const s=SP.st;s.shuf=spShuf();Object.assign(s,{title:p.name+T(" · 第 1 首"," · track 1"),artist:T("博G · 预览","bG · preview"),pos:0,playing:true,ctx:p.uri});SP.at=Date.now();spPaint();return}
   try{localStorage.setItem(SP_K+"-last",JSON.stringify({name:p.name,uri:p.uri}));const pl=JSON.parse(localStorage.getItem(SP_K+"-played")||"{}");pl[p.uri]=Date.now();localStorage.setItem(SP_K+"-played",JSON.stringify(pl))}catch(e){}
   const body={context_uri:p.uri};
   const go=async dev=>{await spApi("/me/player/play"+(dev?"?device_id="+encodeURIComponent(dev):""),"PUT",body)};

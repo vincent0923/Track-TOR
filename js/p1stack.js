@@ -1,4 +1,4 @@
-/* 博G健身 · frosted swipe stack: one way to move through cards everywhere (training days, calendar months and weeks,
+/* 博G · frosted swipe stack: one way to move through cards everywhere (training days, calendar months and weeks,
    food records five at a time). While a card is dragged sideways, the card that way lies under it as frosted glass;
    let go past the threshold and the top card flies off while the one below clears in 0.3 s. With nothing more that
    way, the card stretches like rubber and springs back. Finger to the right goes back in time, to the left forward;

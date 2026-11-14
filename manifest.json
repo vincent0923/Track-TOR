@@ -1,6 +1,6 @@
 {
-  "name": "博G健身 track-TOR",
-  "short_name": "博G健身",
+  "name": "博G",
+  "short_name": "博G",
   "description": "骑行佬练就薄肌上身的爽感健身记录 App",
   "start_url": "index.html",
   "scope": "./",

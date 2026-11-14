@@ -1,4 +1,4 @@
-/* 博G健身 · scratch to reveal, ported from Ovio's ScratchToReveal (MIT, © 2026 Jana Sundar,
+/* 博G · scratch to reveal, ported from Ovio's ScratchToReveal (MIT, © 2026 Jana Sundar,
    github.com/JanaSundar/ovio — licence in docs/OVIO-LICENSE.txt). The logic and the four worlds' coatings are Ovio's:
    the coating is measured on a grid of cells, past the threshold the rest clears by itself, Enter or Space reveals it.
    Ovio's React and Motion are swapped for plain DOM and CSS transitions; each skin picks the world that suits it.

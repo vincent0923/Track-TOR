@@ -1,4 +1,4 @@
-/* 博G健身 main interface: settings sheets. Training plan, profile, goals, the food table link, charts &
+/* 博G main interface: settings sheets. Training plan, profile, goals, the food table link, charts &
    watch calories, backup and restore (the progress file, js/backupcore.js), the first-visit welcome and the
    5-day backup reminder. Editors use the shared .mask > .sheet look (css/p1.css). */
 (function(){
@@ -54,7 +54,7 @@ function openProfile(){const S=sheet(T("个人资料","Profile"),profileBody()+'
 function openGoals(){const S=sheet(T("目标","Goals"),goalsBody()+'<p class="calc-msg">'+T("留空就是不设。","Leave blank for no goal.")+'</p>');bindMain(S.q);
   S.q("[data-ok]").addEventListener("click",()=>{saveGoals(S.q);lsSave();S.close();renderAll();toast(T("目标已保存","Goals saved"))})}
 /* first visit: everything can stay blank and be changed later from the avatar */
-function openWelcome(){const S=sheet(T("欢迎来到博G健身","Welcome to track-TOR"),'<p class="calc-msg" style="margin:0">'+T("填几项，热量和目标进度才算得准。都可以留空，以后点右上角头像改。","A few details make the calorie and goal maths right. All optional; change them later from the avatar.")+'</p>'+profileBody()+goalsBody());
+function openWelcome(){const S=sheet(T("欢迎来到博G","Welcome to bG"),'<p class="calc-msg" style="margin:0">'+T("填几项，热量和目标进度才算得准。都可以留空，以后点右上角头像改。","A few details make the calorie and goal maths right. All optional; change them later from the avatar.")+'</p>'+profileBody()+goalsBody());
   bindMain(S.q);
   S.q("[data-ok]").addEventListener("click",()=>{saveProfile(S.q);saveGoals(S.q);lsSave();S.close();renderAll();setTimeout(()=>openPlan(true),350)})}
 function sheetStatusTxt(){let s=null;try{s=JSON.parse(localStorage.getItem(SHEET_STATUS_K)||"null")}catch(e){}
@@ -118,6 +118,10 @@ function openBackup(){const t=lastBackupTs();
   S.q("[data-bkyes]").addEventListener("click",()=>{if(!pending)return;applyImport(pending);S.close()})}
 /* a G top-up file ("PP2g:" + {"id","g"}) adds G and touches nothing else; the same file counts once */
 function giftImport(txt){let o=null;try{o=JSON.parse(txt.slice(5))}catch(e){}
+  /* {"id","lock":"themes"}: every bought theme goes back on the shelf (its G comes back), the free one is worn again */
+  if(o&&o.lock==="themes"&&o.id){const s=st(),key="lock:"+String(o.id).slice(0,40);s.buys=s.buys||[];if(s.buys.some(b=>b.id===key)){toast(T("这份文件已经用过了","This file was already used"));return}
+    const ids=new Set(THEMES.map(t=>t.id));s.buys=s.buys.filter(b=>!ids.has(b.id));s.buys.push({id:key,g:0,d:today()});s.theme="aurora";lsSave();
+    if(typeof applyMode==="function")applyMode();toast(T("主题都锁上了，G 已退回","Themes locked again; your G is back"));if(typeof SFX!=="undefined")SFX.done();return}
   const g=o&&Math.round(+o.g),id=o&&String(o.id||"").slice(0,40);
   if(!id||!(g>0&&g<=100000)){toast(T("这不是有效的进度文件","Not a valid progress file"));return}
   const s=st(),key="gift:"+id;s.buys=s.buys||[];if(s.buys.some(b=>b.id===key)){toast(T("这份 G 已经加过了","This G was already added"));return}
