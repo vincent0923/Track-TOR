@@ -1366,7 +1366,7 @@ button,[role=button],a{touch-action:manipulation}
 /* ---------- focus: the move window and the move dial ---------- */
 .f-win{--w-bg:color-mix(in srgb,var(--ink) 5%,var(--bg));--w-sh:inset 0 2px 8px rgba(0,0,0,.12),inset 0 0 0 1px var(--line),0 1px 0 rgba(255,255,255,.7);
   display:grid;justify-items:center;gap:4px;width:min(100%,340px);padding:16px 18px 10px;border-radius:26px;background:var(--w-bg);box-shadow:var(--w-sh);color:var(--w-ink,var(--ink));overflow:hidden;margin-bottom:6px}
-.f-win h2{font-family:var(--disp,inherit)}
+.f-win h2{font-family:var(--disp,inherit);white-space:nowrap;overflow:hidden;max-width:100%}
 .f-win.flick h2{animation:winFlick .16s var(--ease)}
 @keyframes winFlick{from{transform:translateY(-30%);opacity:.3}to{transform:none;opacity:1}}
 :root[data-mode="dark"] .f-win{--w-bg:color-mix(in srgb,#000 38%,var(--bg));--w-sh:inset 0 3px 12px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.05),0 1px 0 rgba(255,255,255,.07)}

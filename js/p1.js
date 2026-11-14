@@ -223,7 +223,10 @@ function renderFocus(anim){
     +(p.ex.length>1&&run.askFeel==null?'<div class="f-dial" role="slider" tabindex="0" aria-label="'+T('转动换动作','Turn to change move')+'" aria-valuemin="1" aria-valuemax="'+p.ex.length+'" aria-valuenow="'+(run.ex+1)+'"><div class="dl-wheel"><i class="dl-knurl"></i></div><b class="dl-mark"></b></div>':'')+'<div class="f-dots">'+dots+'</div></div>'
     +'<div class="f-bottom" id="fBottom"><button class="mini f-x" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-bc">'+bottom+'</div><span class="f-x"></span></div>';
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
-  swipe($("#fBody"));dialBind($(".f-dial"));feelBind($(".feelbar"))}
+  winFit();if(document.fonts)document.fonts.ready.then(winFit);swipe($("#fBody"));dialBind($(".f-dial"));feelBind($(".feelbar"))}
+/* the move's name stays on one line: a long one shrinks to fit the window instead of wrapping */
+function winFit(){const h=$(".f-win h2");if(!h)return;h.style.fontSize="";const w=h.clientWidth;if(!w)return;
+  for(let k=0;k<12&&h.scrollWidth>w;k++){const f=parseFloat(getComputedStyle(h).fontSize);if(f<=14)break;h.style.fontSize=Math.max(14,f*w/h.scrollWidth*.98)+"px"}}
 function winHtml(i){const p=run.p,e=p.ex[i];return '<p class="eyebrow">'+LAB(p)+T(' · 动作 ',' · move ')+(i+1)+' / '+p.ex.length+'</p><h2>'+N(e)+'</h2><p class="f-note">'+(e.note?NOTE(e):"")+'</p>'}
 /* the move dial: a knurled thumb wheel like a camera's. Each notch (DL_STEP px of travel) is one move with a click;
    it keeps spinning after a flick and slows with a slightly different friction each time, so a hard spin lands
@@ -234,7 +237,7 @@ function dialBind(el){if(!el)return;const DL_KN=parseFloat(getComputedStyle(el).
   const idx=o=>((start-Math.round(o/DL_STEP))%n+n)%n;
   const paint=()=>{kn.style.transform="translateX("+(((off%DL_KN)+DL_KN)%DL_KN-DL_KN)+"px)";const i=idx(off);
     if(i!==shown){shown=i;const t=performance.now();if(t-lastSnd>22){lastSnd=t;SFX.detent()}if(t-lastBz>45){lastBz=t;buzz(4)}
-      if(win){win.innerHTML=winHtml(i);win.classList.remove("flick");void win.offsetWidth;win.classList.add("flick")}el.setAttribute("aria-valuenow",i+1)}};
+      if(win){win.innerHTML=winHtml(i);winFit();win.classList.remove("flick");void win.offsetWidth;win.classList.add("flick")}el.setAttribute("aria-valuenow",i+1)}};
   const commit=()=>{cancelAnimationFrame(raf);raf=0;el.classList.remove("spin");const i=idx(off);SFX.land();buzz(12);
     if(!run||i===run.ex){return}run.ex=i;setTimeout(()=>{if(run)renderFocus(true)},120)};
   const snap=()=>{const to=Math.round(off/DL_STEP)*DL_STEP,from=off,t0=performance.now();
