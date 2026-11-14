@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="aurora" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>推拉机组件板</title>
+<script>
+/* ?t=theme&m=light|dark&only=component-id ; CSS path differs between the repo (../../css) and the published page (css) */
+(function(){var q=new URLSearchParams(location.search),de=document.documentElement,t=q.get("t")||"aurora",m=q.get("m")||"light";
+  var FIX={tm4:"dark",skeuo:"light",braun:"light",clay:"light",md:"light",nikon:"dark",dyson:"light"};
+  de.dataset.theme=t;de.dataset.mode=FIX[t]||m;if(FIX[t])de.dataset.fixed="";
+  de.style.setProperty("--lx","30%");de.style.setProperty("--ly","10%");de.style.setProperty("--rot","0deg");de.style.setProperty("--rt",".5");
+  document.write('<link rel="stylesheet" href="../../css/p1.css">');
+  if(q.get("only"))document.write('<style>.grp,.spec{display:none!important}.spec[data-c="'+q.get("only").replace(/[^\w-]/g,"")+'"]{display:grid!important;margin:0!important}.grp:has(.spec[data-c="'+q.get("only").replace(/[^\w-]/g,"")+'"]){display:block!important;margin:0!important}.grp>h2,.spec>.lab{display:none!important}body{padding:14px!important}</style>');})();
+</script>
+<style>
+  html,body{min-height:0!important;height:auto}
+  body{padding:16px 16px 40px;overflow:hidden}
+  .grp{margin-bottom:28px}
+  .grp>h2{font:700 13px/1.3 var(--body);letter-spacing:.04em;color:var(--muted);margin:0 0 12px;text-transform:uppercase}
+  .spec{display:grid;gap:10px;margin-bottom:18px}
+  .spec>.lab{display:flex;gap:8px;align-items:baseline;font:600 12px/1.4 var(--body);color:var(--muted)}
+  .spec>.lab b{color:var(--ink);font-weight:700}
+  .spec>.lab code{font:500 11px/1 ui-monospace,monospace;opacity:.8}
+  .row2{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  /* specimens that are fixed in the app sit in the flow here */
+  .spec .dock{position:static;transform:none}
+  .spec .mini-pl{position:relative;left:auto;bottom:auto;transform:none;animation:none}
+  .spec .toast{position:static;transform:none;opacity:1;display:inline-flex}
+  .spec .sheet{position:relative;inset:auto;pointer-events:auto;background:none}
+  .spec .sheet .panel{position:relative;transform:none;visibility:visible;max-height:none}
+</style>
+</head>
+<body>
+
+<section class="grp" id="g-commit"><h2>确认 · 打勾 · 执行</h2>
+  <div class="spec" data-c="tick"><div class="lab"><b>打勾按钮</b><span>专注页：完成这一组</span><code>.tickb / .tickb.done</code></div>
+    <div class="row2"><button class="tickb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+    <button class="tickb done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button></div></div>
+  <div class="spec" data-c="hgo"><div class="lab"><b>开练</b><span>训练卡右上角</span><code>.hgo</code></div>
+    <div class="row2"><button class="hgo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg><span>开练</span></button></div></div>
+  <div class="spec" data-c="btn"><div class="lab"><b>主按钮 / 次按钮</b><span>面板底部：保存、记一笔、连接</span><code>.btn / .btn.ghost</code></div>
+    <div class="row2" style="display:grid;gap:10px"><button class="btn">保存并拉取</button><button class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>记一笔</button></div></div>
+</section>
+
+<section class="grp" id="g-toggle"><h2>开关 · 二选一 · 多选一</h2>
+  <div class="spec" data-c="switch"><div class="lab"><b>开关</b><span>设定 › 特效：光追、落灰、庆祝</span><code>.opt[role=switch] .sw</code></div>
+    <div class="setlist"><button class="opt" role="switch" aria-checked="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg><span class="sp">庆祝效果</span><span class="sw" aria-hidden="true"></span></button>
+    <button class="opt" role="switch" aria-checked="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/></svg><span class="sp">光追</span><span class="sw" aria-hidden="true"></span></button></div></div>
+  <div class="spec" data-c="modesw"><div class="lab"><b>明暗开关</b><span>顶栏：点切换，长按进主题</span><code>.modesw</code></div>
+    <div class="row2"><button class="modesw"><i class="kn"></i><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg><svg class="moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1z"/></svg></button></div></div>
+  <div class="spec" data-c="seg"><div class="lab"><b>分段按钮</b><span>设定 › 语言</span><code>.seg.langseg</code></div>
+    <div class="seg langseg"><button aria-pressed="true">简中</button><button aria-pressed="false">繁中</button><button aria-pressed="false">Eng</button></div></div>
+  <div class="spec" data-c="optpick"><div class="lab"><b>单选行</b><span>设定 › 外观：跟随手机 / 亮 / 暗</span><code>.opt[aria-pressed]</code></div>
+    <div class="setlist"><button class="opt" aria-pressed="true">跟随手机</button><button class="opt" aria-pressed="false">亮</button></div></div>
+  <div class="spec" data-c="mode"><div class="lab"><b>随机 / 循环</b><span>完整播放器两侧</span><code>.sp-ctl .sp-mode(.on)</code></div>
+    <div class="sp-ctl"><button class="mp-b sp-mode on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20l17-17M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></button><button class="mp-b sp-mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg></button></div></div>
+</section>
+
+<section class="grp" id="g-adjust"><h2>调节 · 数值 · 范围</h2>
+  <div class="spec" data-c="knob"><div class="lab"><b>旋钮</b><span>图表时间范围：转、点钮跳下一档、点标签</span><code>.knobw .knob .kl</code></div>
+    <div class="row2"><div class="knobw" style="--a:-23.3deg"><button class="kl" style="--a:-70deg">14天</button><button class="kl on" style="--a:-23.3deg">30天</button><button class="kl" style="--a:23.3deg">90天</button><button class="kl" style="--a:70deg">全部</button><button class="knob"><i></i></button></div></div></div>
+  <div class="spec" data-c="stepper"><div class="lab"><b>加减</b><span>专注页：次数 / 秒数</span><code>.f-num .mini</code></div>
+    <div class="f-num" style="justify-content:center"><button class="mini">−</button><b class="n">8</b><button class="mini">+</button></div></div>
+  <div class="spec" data-c="sets"><div class="lab"><b>组别</b><span>专注页：做完的 / 当前 / 没做</span><code>.f-sets i.dn / .cur</code></div>
+    <div class="f-sets"><i class="dn">8</i><i class="cur">第 2 组</i><i>3</i></div></div>
+  <div class="spec" data-c="vol"><div class="lab"><b>音量</b><span>完整播放器</span><code>.sp-vol input[range]</code></div>
+    <label class="sp-vol"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/></svg><input type="range" min="0" max="100" value="62"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/></svg></label></div>
+</section>
+
+<section class="grp" id="g-pick"><h2>选择 · 挑一个</h2>
+  <div class="spec" data-c="thc"><div class="lab"><b>主题卡</b><span>G 分商店</span><code>.thc(.on)</code></div>
+    <div class="setlist"><button class="thc on"><span class="sw"><i style="background:#F1F1EC"></i><i style="background:#4FAF6A"></i><i style="background:#070A10"></i><i style="background:#00F5D4"></i></span><span class="sp"><b>草木 · 极光</b><br><span class="muted" style="font-size:12px">亮、暗两版</span></span><span class="pill ac">使用中</span></button>
+    <button class="thc"><span class="sw"><i style="background:#F4F1EA"></i><i style="background:#EB3B24"></i><i style="background:#130C21"></i><i style="background:#9DF03A"></i></span><span class="sp"><b>玩具</b><br><span class="muted" style="font-size:12px">塑料按键、积木柱子、点阵底板</span></span><span class="pill"><span class="coin circ" aria-hidden="true"><b>G</b></span> 90</span></button></div></div>
+  <div class="spec" data-c="preset"><div class="lab"><b>计划卡</b><span>设定 › 训练计划</span><code>.preset(.on)</code></div>
+    <div style="display:grid;gap:8px"><button class="preset on"><b>自由练</b><span class="muted">按你最近练的建议</span></button><button class="preset"><b>推拉 · 两天</b><span class="muted">推一天、拉一天</span></button></div></div>
+  <div class="spec" data-c="cal"><div class="lab"><b>日历日子</b><span>训练页日历：练过 / 今天 / 选中</span><code>.cal .dd.trn / .today / .sel</code></div>
+    <div class="card cal"><div class="days"><div class="dd"><b>9</b></div><button class="dd trn" style="--kc:var(--push)"><b>10</b></button><button class="dd trn" style="--kc:var(--pull)"><b>11</b></button><button class="dd trn sel" style="--kc:var(--third)"><b>12</b></button><div class="dd"><b>13</b></div><button class="dd today"><b>14</b></button><div class="dd"><b>15</b></div></div>
+    <div class="calpill" style="--kc:var(--pull)"><i class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg></i><span>标准引体 · 反向划船</span></div></div></div>
+  <div class="spec" data-c="plgrid"><div class="lab"><b>歌单格子</b><span>播放器 › 歌单：正在放的有一圈</span><code>.sp-cell(.on)</code></div>
+    <div class="sp-full"><div class="sp-grid" style="max-height:none"><button class="sp-cell on"><span class="sp-cover" style="background:linear-gradient(135deg,hsl(12 80% 62%),hsl(52 70% 45%))"><i class="sp-eq"><i></i><i></i><i></i></i></span><span class="sp-name">晨练</span></button><button class="sp-cell"><span class="sp-cover" style="background:linear-gradient(135deg,hsl(220 80% 62%),hsl(260 70% 45%))"></span><span class="sp-name">引体专用</span></button><button class="sp-cell"><span class="sp-cover" style="background:linear-gradient(135deg,hsl(150 80% 62%),hsl(190 70% 45%))"></span><span class="sp-name">慢跑</span></button></div></div></div>
+</section>
+
+<section class="grp" id="g-nav"><h2>导航 · 打开 · 关闭 · 复位</h2>
+  <div class="spec" data-c="dock"><div class="lab"><b>底栏</b><span>三个页面</span><code>.dock .pc</code></div>
+    <nav class="dock" style="width:fit-content"><i class="pc" style="width:126px;transform:translateX(64px)"></i><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8a2 2 0 0 0 2 2v8"/><path d="M11 3v8a2 2 0 0 1-2 2"/><path d="M17 21V3c-2 1-3 4-3 8h3"/></svg></button><button aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg><span>训练</span></button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></button></nav></div>
+  <div class="spec" data-c="headbtn"><div class="lab"><b>顶栏圆钮</b><span>同步、设定</span><code>.top .circ</code></div>
+    <header class="top" style="padding:0"><div class="tr"><button class="circ" id="syncBtn"><i class="puck"><i class="syncdot ok"></i></i></button><button class="circ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></button></div></header></div>
+  <div class="spec" data-c="small"><div class="lab"><b>小圆钮</b><span>关闭、复位、加一笔</span><code>.mini / .fsreset</code></div>
+    <div class="row2"><button class="mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><button class="fsreset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button><button class="fsreset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div></div>
+  <div class="spec" data-c="row"><div class="lab"><b>菜单行</b><span>设定：进入下一级</span><code>.opt + chevron</code></div>
+    <div class="setlist"><button class="opt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/></svg><span class="sp">G 分商店</span><b class="n" style="font-size:14px">495 G</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button></div></div>
+  <div class="spec" data-c="pills"><div class="lab"><b>大胶囊 / 大关闭</b><span>播放器：歌单、打开 Spotify、关闭</span><code>.sp-plbtn / .sp-pill / .sp-x</code></div>
+    <div class="row2"><button class="sp-plbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h12M3 12h12M3 18h8"/><path d="M17 18V9l4-1"/><circle cx="15.5" cy="18" r="1.8"/></svg><span>歌单</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><span class="sp-pill"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1ED760"/><path d="M6.5 9.3c3.9-1.2 8-.9 11.3 1M7.1 12.4c3.2-.9 6.6-.6 9.3.9M7.7 15.3c2.5-.6 5-.4 7.1.7" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round"/></svg><span>打开 Spotify</span></span><button class="sp-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
+</section>
+
+<section class="grp" id="g-show"><h2>展示 · 数据 · 状态</h2>
+  <div class="spec" data-c="hero"><div class="lab"><b>训练卡</b><span>训练页最上面，卡堆</span><code>.hero.dark</code></div>
+    <section class="dark hero hcard"><i class="glowring"></i><div class="htop"><button class="hgo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg><span>开练</span></button></div><p class="eyebrow">可练</p><h2><i class="kd" style="background:var(--push)"></i>推练 D7</h2><p class="meta">6 个动作 · 13 组 · 约 21 分钟</p><ul class="exl"><li>下斜俯卧撑<b>3 × 6</b></li><li class="slow">弓箭手俯卧撑<b>3 × 6</b></li></ul></section></div>
+  <div class="spec" data-c="goals"><div class="lab"><b>目标板</b><span>进展页最上面</span><code>.dark .goals4 .ring</code></div>
+    <section class="dark"><p class="eyebrow" style="margin-bottom:14px">目标</p><div class="goals4">
+      <button><span class="ring"><svg width="66" height="66" viewBox="0 0 66 66"><circle cx="33" cy="33" r="29.5" stroke="var(--track)" stroke-width="7" fill="none"/><circle class="rv" cx="33" cy="33" r="29.5" stroke="var(--pull)" stroke-width="7" fill="none" stroke-dasharray="185.4" stroke-dashoffset="74"/></svg><span class="rl"><b class="n" style="font-size:15px;font-weight:800">60%</b></span></span><span><span class="gn">引体</span><br><span class="gv n">6 个</span></span></button>
+      <button><span class="ring"><svg width="66" height="66" viewBox="0 0 66 66"><circle cx="33" cy="33" r="29.5" stroke="var(--track)" stroke-width="7" fill="none"/><circle class="rv" cx="33" cy="33" r="29.5" stroke="var(--ac)" stroke-width="7" fill="none" stroke-dasharray="185.4" stroke-dashoffset="126"/></svg><span class="rl"><b class="n" style="font-size:15px;font-weight:800">32%</b></span></span><span><span class="gn">腰围</span><br><span class="gv n">80 cm</span></span></button>
+      <button><span class="ring"><svg width="66" height="66" viewBox="0 0 66 66"><circle cx="33" cy="33" r="29.5" stroke="var(--track)" stroke-width="7" fill="none"/><circle class="rv" cx="33" cy="33" r="29.5" stroke="var(--sleep)" stroke-width="7" fill="none" stroke-dasharray="185.4" stroke-dashoffset="94"/></svg><span class="rl"><b class="n" style="font-size:15px;font-weight:800">49%</b></span></span><span><span class="gn">体重</span><br><span class="gv n">63.6 kg</span></span></button>
+      <button><span class="ring"><svg width="66" height="66" viewBox="0 0 66 66"><circle cx="33" cy="33" r="29.5" stroke="var(--track)" stroke-width="7" fill="none"/><circle class="rv" cx="33" cy="33" r="29.5" stroke="#FFB020" stroke-width="7" fill="none" stroke-dasharray="185.4" stroke-dashoffset="148"/></svg><span class="rl"><b class="n" style="font-size:15px;font-weight:800">20%</b></span></span><span><span class="gn">减脂</span><br><span class="gv n">0.6 kg</span></span></button></div></section></div>
+  <div class="spec" data-c="tile"><div class="lab"><b>数据卡</b><span>进展页小卡</span><code>.tile</code></div>
+    <div class="bento"><button class="tile"><span class="tl"><i style="background:var(--push)"></i>体重 · 7 日均</span><span class="tv">63.6<small>kg</small></span><span class="td" style="color:var(--good)">↓ 0.7 kg · 30 天</span><svg class="spark" viewBox="0 0 150 44" preserveAspectRatio="none"><path d="M2 10C30 14 40 4 60 18S100 30 148 36" fill="none" stroke="var(--push)" stroke-width="2.6" stroke-linecap="round"/></svg></button><button class="tile"><span class="tl"><i style="background:var(--ac-text)"></i>腰围</span><span class="tv">80.0<small>cm</small></span><span class="td" style="color:var(--good)">↓ 1.0 cm · 30 天</span><svg class="spark" viewBox="0 0 150 44" preserveAspectRatio="none"><path d="M2 8C40 10 60 30 90 26S120 34 148 38" fill="none" stroke="var(--ac-text)" stroke-width="2.6" stroke-linecap="round"/></svg></button></div></div>
+  <div class="spec" data-c="bricks"><div class="lab"><b>积木柱状图</b><span>主项卡堆、饮食缺口</span><code>.mcard .bricks .bk</code></div>
+    <section class="card mcard"><span class="bkread n on">11.9 那周 · 35 个</span><span class="tl"><i style="background:var(--pull)"></i>每周总数 · 5 周</span><span class="tv">109<small>个</small></span><span class="td muted">本周 31 个</span>
+      <div class="bricks" style="--cols:5"><div class="bk" style="--c:var(--pull)"><div class="bks"><i style="--j:0"></i><i style="--j:1"></i></div><span class="bl">&nbsp;</span></div><div class="bk" style="--c:var(--pull)"><div class="bks"><i></i></div><span class="bl">&nbsp;</span></div><div class="bk" style="--c:var(--push)"><div class="bks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="bl">&nbsp;</span></div><div class="bk" style="--c:var(--pull)"><div class="bks"><i></i><i></i><i></i><i></i><i></i></div><span class="bl">&nbsp;</span></div><div class="bk" style="--c:var(--pull)"><div class="bks"><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="bl">&nbsp;</span></div></div>
+      <div class="row muted bkf"><span>10.12</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--pull)"></i>= 5 个</span><span>本周</span></div></section></div>
+  <div class="spec" data-c="pill"><div class="lab"><b>标签 · G 币</b><span>状态、脂肪估计、余额</span><code>.pill .gpill .coin</code></div>
+    <div class="row2"><span class="pill">换上</span><span class="pill ac">使用中</span><span class="pill good">−241</span><span class="pill bad">+315</span><span class="pill gpill good"><span>0.57 kg 脂肪</span><small>保守估计</small></span><span class="coinchip big"><span class="coin circ" aria-hidden="true"><b>G</b></span>+10 G</span></div></div>
+  <div class="spec" data-c="toast"><div class="lab"><b>提示条</b><span>操作后的一句话</span><code>.toast</code></div>
+    <div><div class="toast on">已复制</div></div></div>
+</section>
+
+<section class="grp" id="g-music"><h2>音乐</h2>
+  <div class="spec" data-c="mini"><div class="lab"><b>迷你播放器</b><span>底栏上方；专注页顶上变细条；左右划切歌</span><code>#mini.mini-pl</code></div>
+    <div class="mini-pl" style="--p:.4"><span class="mp-art" style="background:linear-gradient(135deg,#ff6a3d,#3d5afe)"></span><span class="mp-t"><b>Midnight Run</b><small>The Example Band</small></span><button class="mp-b"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.2" height="14" rx="1.4"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.4"/></svg></button><button class="mp-b mp-n"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 6.2v11.6a1 1 0 0 0 1.5.86L15 13.4v4.1a1 1 0 0 0 2 0v-11a1 1 0 0 0-2 0v4.1L6.5 5.34A1 1 0 0 0 5 6.2z"/></svg></button><i class="mp-bar"></i></div></div>
+  <div class="spec" data-c="transport"><div class="lab"><b>播放控制</b><span>完整播放器</span><code>.sp-ctl .sp-big</code></div>
+    <div class="sp-full" style="padding:0"><div class="sp-ctl"><button class="mp-b"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.2v11.6a1 1 0 0 1-1.5.86L9 13.4v4.1a1 1 0 0 1-2 0v-11a1 1 0 0 1 2 0v4.1l8.5-5.26A1 1 0 0 1 19 6.2z"/></svg></button><button class="mp-b sp-big"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></button><button class="mp-b"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 6.2v11.6a1 1 0 0 0 1.5.86L15 13.4v4.1a1 1 0 0 0 2 0v-11a1 1 0 0 0-2 0v4.1L6.5 5.34A1 1 0 0 0 5 6.2z"/></svg></button></div></div></div>
+</section>
+
+<script>
+/* tell the catalogue how tall this board is */
+function h(){try{parent.postMessage({board:location.search,h:Math.ceil(document.body.getBoundingClientRect().height)},"*")}catch(e){}}
+addEventListener("load",()=>{h();setTimeout(h,400);setTimeout(h,1200)});let last=0;new ResizeObserver(()=>{const v=Math.ceil(document.body.getBoundingClientRect().height);if(Math.abs(v-last)>2){last=v;h()}}).observe(document.body);
+</script>
+</body>
+</html>

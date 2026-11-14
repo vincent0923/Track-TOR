@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>推拉机组件目录</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* layout: a control bar on top, then one theme's board or one component across every theme; reference tables below */
+:root{
+  --bg:#F3F3F1;--panel:#FFFFFF;--fg:#1C1D1F;--muted:#6F7177;--line:rgba(20,22,26,.1);--accent:#3F7A57;--accent-soft:rgba(63,122,87,.12);
+  --f-ui:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC",sans-serif;--f-mono:ui-monospace,"SF Mono",Menlo,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111214;--panel:#1A1B1E;--fg:#ECEDEF;--muted:#9A9DA4;--line:rgba(255,255,255,.1);--accent:#6CC490;--accent-soft:rgba(108,196,144,.14);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111214;--panel:#1A1B1E;--fg:#ECEDEF;--muted:#9A9DA4;--line:rgba(255,255,255,.1);--accent:#6CC490;--accent-soft:rgba(108,196,144,.14);color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:14px/1.55 var(--f-ui)}
+[hidden]{display:none!important}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:26px;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-size:17px;margin:34px 0 10px;letter-spacing:-.01em}
+.lede{color:var(--muted);margin:6px 0 18px;max-width:68ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0;display:grid;gap:10px;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:6px 12px;font:600 13px/1 var(--f-ui);cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip:disabled{opacity:.4;cursor:default}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.lbl{font:700 11px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:44px}
+.stage{margin-top:16px}
+.single iframe{width:min(430px,100%);display:block;margin:0 auto;border:1px solid var(--line);border-radius:22px;background:var(--panel)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.cell{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel);min-width:0}
+.cell header{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;font:600 12px/1.3 var(--f-ui);border-bottom:1px solid var(--line)}
+.cell header span{color:var(--muted);font-weight:500}
+.cell iframe{width:100%;border:0;display:block}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:13px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+code{font:12px/1.4 var(--f-mono);background:var(--accent-soft);padding:1px 5px;border-radius:5px}
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.g{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.g b{display:block;margin-bottom:2px}
+.g p{margin:0;color:var(--muted);font-size:13px}
+ol{padding-left:20px;max-width:80ch}
+ol li{margin:4px 0}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+</style>
+<div class="wrap">
+  <h1>推拉机组件目录</h1>
+  <p class="lede">用 app 自己的样式表画出来的每一个组件，换主题就是 app 里真实的样子。上面选主题看全部组件，或者选一个组件看它在所有主题里的样子。</p>
+  <div class="bar">
+    <div class="row"><span class="lbl">视图</span><div class="chips" id="views"><button class="chip" data-v="one" aria-pressed="true">按用途 · 单个主题</button><button class="chip" data-v="all" aria-pressed="false">同一组件 · 全部主题</button></div></div>
+    <div class="row" id="rowTheme"><span class="lbl">主题</span><div class="chips" id="themes"></div></div>
+    <div class="row" id="rowMode"><span class="lbl">明暗</span><div class="chips" id="modes"><button class="chip" data-m="light" aria-pressed="true">亮</button><button class="chip" data-m="dark" aria-pressed="false">暗</button></div></div>
+    <div class="row" id="rowComp" hidden><span class="lbl">组件</span><div class="chips" id="comps"></div></div>
+  </div>
+  <div class="stage" id="stage"></div>
+
+  <h2>按用途分的七类</h2>
+  <div class="groups" id="groups"></div>
+
+  <h2>主题速查</h2>
+  <div class="tw"><table><thead><tr><th>主题</th><th>id</th><th>明暗</th><th>材质</th><th>字体</th><th>标志性部件</th></tr></thead><tbody id="themeRows"></tbody></table></div>
+
+  <h2>做一套新主题</h2>
+  <ol>
+    <li>在 <code>js/p1.js</code> 的 <code>THEMES</code> 加一项：<code>id</code>、名字、价格、四个色块；只有一种样子的加 <code>fix:"light"|"dark"</code>，要跟倾斜打光的加 <code>lit:1</code>。</li>
+    <li>在 <code>css/p1.css</code> 写 <code>:root[data-theme="新id"]</code> 的变量：<code>--bg --card --line --lit --sub --seg --dark --dark-solid --dark-line --track --ink --muted --ac --on-ac --ac-soft --ac-text --st1 --st2 --push --pull --third --good --bad --sleep --shadow</code>，需要的话加 <code>--disp --num --body</code> 字体。两版的再写一份 <code>[data-mode="dark"]</code>。</li>
+    <li>照下面七类逐个覆盖：卡片和面板（<code>.card .tile .hero.dark .dark .sheet .panel .dock</code>）、确认类、开关类、调节类、选择类、导航类、音乐，最后是 <code>.bricks .bks i</code> 和 <code>.knobw .knob</code>。在这页切到新主题，一类一类看。</li>
+    <li>材质颗粒用 <code>img/tex-*.webp</code>（新材质先用 SVG 噪声画好，再渲染成图片放进 <code>img/</code>）；不要用 <code>backdrop-filter</code>，面板一律不透明。</li>
+    <li>要有自己的庆祝和音效，写进 <code>js/p1fx.js</code> 的 <code>THEME_FX</code> 和 <code>SFX_TH</code>。</li>
+  </ol>
+</div>
+<script>
+const THEMES=[
+ ["aurora","草木 · 极光","两版","默认：石膏灰、细描边、柔和长阴影","Geist","绿色强调，冷淡克制",["#F1F1EC","#4FAF6A"]],
+ ["ember","暖砂 · 流金","两版","纸张颗粒、暖色多层阴影、大圆角","Fraunces（数字和标题）","温润衬线数字",["#F4EFE9","#D9714E"]],
+ ["toy","玩具","两版","奶油 / 深紫塑料，唇边，点阵底板","等宽数字","积木柱子、塑料钉日历、拉动同步滑块",["#F4F1EA","#EB3B24"]],
+ ["pocket","随身机","两版","油润半哑光塑料，暖灰 / 黑机身","Inter Tight，点阵字（Doto）","凹碟方键、嵌框点阵屏、旋钮、喇叭网孔",["#C6C9CB","#E39A2E"]],
+ ["mac","铝合金一体","两版","喷砂铝，钻石切边","系统字","黑色键帽、指纹键打勾、嵌框黑屏",["#D6D7DA","#0A84FF"]],
+ ["ipod","白瓷","两版","实心瓷块，彩色光斑底，亮顶边","系统字","蓝色渐变选中、点按转盘",["#FBFBFA","#2F7BEA"]],
+ ["tm4","钴蓝 · 合成器","只有暗","斜面蓝色阳极件，点阵底板","Doto（点阵，带辉光）","推子开关、键帽排、LED 辉光",["#123A6B","#2D76C6"]],
+ ["skeuo","拉丝铝 · 霓虹","只有亮","拉丝铝、顶光","Michroma（宽体仪表字）","金属旋钮、黑表圈表盘、青色霓虹、喇叭网孔柱子",["#86888D","#1FF5DC"]],
+ ["braun","米白 · 柿橙","只有亮","米白机身、凹碟","Inter Tight","方键、黑槽拨杆、滚花拨盘、柿橙圆点",["#D8D5CA","#F26422"]],
+ ["clay","黏土 · 薄荷","只有亮","网格纸、哑光黏土粉","Nunito","往左下的斜投影积木、发光薄荷圆环",["#E3E1DA","#7CE8C4"]],
+ ["md","迷你碟","只有亮","冰蓝拉丝阳极铝","Share Tech Mono（液晶）","段码液晶屏、橡胶小键、橙色播放键",["#BFC6D0","#FF6A13"]],
+ ["nikon","相机机身","只有暗","压纹皮革、镁合金","Inter Tight","红色饰条、滚花拨盘、快门键",["#141517","#E8302A"]],
+ ["dyson","磨砂工业","只有亮","镍灰粉体涂层","系统几何字","紫红按键、紫色亚克力板、铜色旋钮",["#C9C9CD","#C2187A"]]];
+const FIXED={tm4:"dark",skeuo:"light",braun:"light",clay:"light",md:"light",nikon:"dark",dyson:"light"};
+const GROUPS=[["确认 · 打勾 · 执行","按下去就做成一件事：打勾完成一组、开练、保存。全 app 最显眼的那一类，每个主题都要最好按、反馈最足。",["tick","hgo","btn"]],
+ ["开关 · 二选一 · 多选一","只改一个状态，不跳走：特效开关、明暗、语言、单选行、随机和循环。",["switch","modesw","seg","optpick","mode"]],
+ ["调节 · 数值 · 范围","在一个范围里取值：时间范围旋钮、次数加减、组别、音量。",["knob","stepper","sets","vol"]],
+ ["选择 · 挑一个","从一组东西里挑：主题、计划、日历里的一天、歌单。",["thc","preset","cal","plgrid"]],
+ ["导航 · 打开 · 关闭 · 复位","去别处或回来：底栏、顶栏圆钮、关闭、复位、菜单行、大胶囊。",["dock","headbtn","small","row","pills"]],
+ ["展示 · 数据 · 状态","只看不按（或点开看详情）：训练卡、目标板、数据卡、积木图、标签、G 币、提示条。",["hero","goals","tile","bricks","pill","toast"]],
+ ["音乐","迷你播放器和完整播放器的控制。",["mini","transport"]]];
+const NAMES={tick:"打勾按钮",hgo:"开练",btn:"主 / 次按钮",switch:"开关",modesw:"明暗开关",seg:"分段按钮",optpick:"单选行",mode:"随机 / 循环",knob:"旋钮",stepper:"加减",sets:"组别",vol:"音量",thc:"主题卡",preset:"计划卡",cal:"日历日子",plgrid:"歌单格子",dock:"底栏",headbtn:"顶栏圆钮",small:"小圆钮",row:"菜单行",pills:"大胶囊 / 大关闭",hero:"训练卡",goals:"目标板",tile:"数据卡",bricks:"积木柱状图",pill:"标签 · G 币",toast:"提示条",mini:"迷你播放器",transport:"播放控制"};
+let st={v:"one",t:"aurora",m:"light",c:"tick"};
+try{Object.assign(st,JSON.parse(localStorage.getItem("cat-state")||"{}"))}catch(e){}
+const $=s=>document.querySelector(s);
+const src=(t,m,only)=>"board.html?t="+t+"&m="+(FIXED[t]||m)+(only?"&only="+only:"");
+function chips(){
+  $("#themes").innerHTML=THEMES.map(x=>'<button class="chip" data-t="'+x[0]+'" aria-pressed="'+(st.t===x[0])+'"><i style="background:linear-gradient(135deg,'+x[6][0]+' 50%,'+x[6][1]+' 50%)"></i>'+x[1]+'</button>').join("");
+  $("#comps").innerHTML=GROUPS.flatMap(g=>g[2]).map(c=>'<button class="chip" data-c="'+c+'" aria-pressed="'+(st.c===c)+'">'+NAMES[c]+'</button>').join("");
+  document.querySelectorAll("#views .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===st.v));
+  document.querySelectorAll("#modes .chip").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.m===(FIXED[st.t]||st.m));b.disabled=st.v==="one"&&!!FIXED[st.t]});
+  $("#rowTheme").hidden=st.v!=="one";$("#rowMode").hidden=st.v!=="one";$("#rowComp").hidden=st.v!=="all"}
+function stage(){const s=$("#stage");
+  if(st.v==="one"){s.className="stage single";s.innerHTML='<iframe title="组件板" id="board" src="'+src(st.t,st.m)+'" style="height:1600px"></iframe>'}
+  else{s.className="stage grid";const list=[];THEMES.forEach(x=>{const modes=FIXED[x[0]]?[FIXED[x[0]]]:["light","dark"];modes.forEach(m=>list.push([x,m]))});
+    s.innerHTML=list.map(([x,m])=>'<div class="cell"><header>'+x[1]+'<span>'+(FIXED[x[0]]?(m==="dark"?"暗":"亮"):(m==="dark"?"暗":"亮"))+'</span></header><iframe title="'+x[1]+'" loading="lazy" src="'+src(x[0],m,st.c)+'" style="height:220px"></iframe></div>').join("")}
+  try{localStorage.setItem("cat-state",JSON.stringify(st))}catch(e){}}
+addEventListener("message",e=>{const d=e.data;if(!d||!d.board)return;document.querySelectorAll("#stage iframe").forEach(f=>{if(f.contentWindow===e.source)f.style.height=(d.h+2)+"px"})});
+document.addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b||b.disabled)return;
+  if(b.dataset.v)st.v=b.dataset.v;if(b.dataset.t)st.t=b.dataset.t;if(b.dataset.m)st.m=b.dataset.m;if(b.dataset.c)st.c=b.dataset.c;chips();stage()});
+$("#groups").innerHTML=GROUPS.map(g=>'<div class="g"><b>'+g[0]+'</b><p>'+g[1]+'</p><p style="margin-top:6px">'+g[2].map(c=>NAMES[c]).join(" · ")+'</p></div>').join("");
+$("#themeRows").innerHTML=THEMES.map(x=>'<tr><td><b>'+x[1]+'</b></td><td><code>'+x[0]+'</code></td><td>'+x[2]+'</td><td>'+x[3]+'</td><td>'+x[4]+'</td><td>'+x[5]+'</td></tr>').join("");
+chips();stage();
+</script>
+</html>
+
