@@ -45,7 +45,7 @@ const SP_DEMO={shuf:false,rep:"off",title:T("示例歌曲","Sample track"),artis
 function spNow(){const s=SP.st;if(!s)return null;return s.playing?Math.min(s.dur,s.pos+(Date.now()-SP.at)):s.pos}
 async function spPull(){if(SP.demo||SP.busy)return;try{const j=await spApi("/me/player");
     if(!j||!j.item)SP.st=j&&j.device?{title:"",artist:"",art:"",dur:0,pos:0,playing:false,vol:j.device.volume_percent,device:j.device.name,idle:true}:null;
-    else{const it=j.item;SP.st={title:it.name,artist:(it.artists||[]).map(a=>a.name).join(", ")||(it.show&&it.show.name)||"",art:spCover((it.album||it).images),
+    else{const it=j.item;SP.st={id:it.id,title:it.name,artist:(it.artists||[]).map(a=>a.name).join(", ")||(it.show&&it.show.name)||"",art:spCover((it.album||it).images),
       dur:it.duration_ms,pos:j.progress_ms||0,playing:!!j.is_playing,ctx:j.context&&j.context.uri,shuf:!!j.shuffle_state,smart:!!j.smart_shuffle,rep:j.repeat_state||"off",vol:j.device&&j.device.volume_percent,device:j.device&&j.device.name}}
     SP.at=Date.now();spPaint()}catch(e){if(e.message==="auth"){spSetMode("");spPaint()}}}
 async function spCmd(kind){const s=SP.st;buzz(8);if(typeof SFX!=="undefined")SFX.tap();
@@ -81,8 +81,18 @@ const SPI={play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13
 const spArt=(s,cls)=>'<span class="'+cls+'"'+(s&&s.art?' style="background-image:url(\''+esc(s.art)+'\')"':'')+'>'+(s&&s.art?'':SPI.note)+'</span>';
 /* easter egg: while music plays, the calorie bricks sway a little and pick up a faint glow in the cover's colours */
 let spAlbArt="";
+/* the beat: each song's tempo and energy from ReccoBeats (free, no key; Spotify no longer gives new apps audio features),
+   looked up by the Spotify track id; the moves then land on the song's beats, timed from where it is playing now */
+const SP_BPM={};
+async function spTempo(id){if(!id||SP_BPM[id]!==undefined)return SP_BPM[id];SP_BPM[id]=null;
+  try{const r=await fetch("https://api.reccobeats.com/v1/audio-features?ids="+encodeURIComponent(id));if(r.ok){const j=await r.json(),f=(j.content||[])[0];if(f&&f.tempo>30)SP_BPM[id]={t:+f.tempo,e:+f.energy||.6}}}catch(e){}
+  return SP_BPM[id]}
+function spBeat(){const de=document.documentElement,s=SP.st,b=s&&SP_BPM[s.id];if(!b){["--beat","--bd","--amp"].forEach(v=>de.style.removeProperty(v));return}
+  const bpm=b.t>160?b.t/2:b.t,beat=60/bpm,pos=(spNow()||0)/1000;
+  de.style.setProperty("--beat",beat.toFixed(3)+"s");de.style.setProperty("--bd",(-(pos%beat)).toFixed(3)+"s");de.style.setProperty("--amp",Math.max(.3,Math.min(1,b.e)).toFixed(2))}
 function spGroove(){const de=document.documentElement,s=SP.st,on=!!(s&&s.playing)&&!document.hidden&&(typeof grooveOn!=="function"||grooveOn())&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
-  de.classList.toggle("groove",on);if(!on||!s.art||s.art===spAlbArt)return;spAlbArt=s.art;
+  de.classList.toggle("groove",on);if(on&&s.id){if(SP_BPM[s.id]===undefined)spTempo(s.id).then(spBeat);else spBeat()}
+  if(!on||!s.art||s.art===spAlbArt)return;spAlbArt=s.art;
   const im=new Image();im.crossOrigin="anonymous";im.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=12;const x=c.getContext("2d");x.drawImage(im,0,0,12,12);
     const d=x.getImageData(0,0,12,12).data;let best=null,bs=-1;for(let k=0;k<d.length;k+=4){const r=d[k],g=d[k+1],b=d[k+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,sc=sat*(mx/255);if(sc>bs){bs=sc;best=[r,g,b]}}
     if(best)de.style.setProperty("--alb","rgb("+best.join(",")+")")}catch(e){}};im.src=s.art}
