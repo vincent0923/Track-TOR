@@ -60,7 +60,7 @@ const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,s
   {id:"braun",zh:"米白 · 柿橙",en:"Cream · Persimmon",price:90,fix:"light",sw:["#D8D5CA","#F6F5EF","#1C1B18","#F26422"],dz:"方键、凹碟、滚花拨盘",de:"Square keys, concave dishes, a fluted dial"},
   {id:"md",zh:"迷你碟",en:"Mini Disc",price:120,fix:"light",sw:["#BFC6D0","#D3DAE3","#AEB9A2","#FF6A13"],dz:"冰蓝拉丝铝、段码液晶、橡胶小键",de:"Ice-blue brushed aluminium, a segment LCD, rubber keys"},
   {id:"nikon",zh:"相机机身",en:"Camera Body",price:120,fix:"dark",sw:["#141517","#26272A","#9EA3AA","#E8302A"],dz:"压纹蒙皮、滚花拨盘、快门键",de:"Pebbled leatherette, knurled dials, a shutter button"},
-  {id:"dyson",zh:"磨砂工业",en:"Matte Machine",price:120,fix:"light",sw:["#C9C9CD","#DDDDE0","#5B2A86","#C2187A"],dz:"磨砂粉体涂层、紫红点缀、透明亚克力",de:"Matte powder coat, fuchsia accents, clear acrylic"},
+  {id:"dyson",zh:"磨砂工业",en:"Matte Machine",price:120,fix:"light",sw:["#B9BCC0","#CACDD0","#BF5F2B","#2E7CC7"],dz:"镍灰喷砂机身、铜色哑光、抛光钢旋纹按钮、红蓝小点",de:"Bead-blasted nickel, matte copper, spun-steel buttons, red and blue dots"},
   {id:"clay",zh:"黏土 · 薄荷",en:"Clay · Mint",price:90,fix:"light",sw:["#E3E1DA","#FFFFFF","#C7C5BD","#7CE8C4"],dz:"斜投影积木、网格纸、发光圆环",de:"Blocks with slanted shadows, grid paper, a glowing ring"}];
 function themeOwned(id){const t=THEMES.find(x=>x.id===id);return !!t&&(!t.price||(state.settings.buys||[]).some(b=>b.id===id))}
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
