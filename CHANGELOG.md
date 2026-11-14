@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.54a] — 2026-11-14
+
+### 新增 / Added
+- 🎶 **选歌单**：完整播放器里点「歌单」，列出你的 Spotify 歌单，点一个就开始放；可以随机播放
+- 🎶 **Pick a playlist**: tap Playlists in the full player to list your Spotify playlists and play one, shuffled if you like
+- 🔀 **随机和循环**：播放器多了随机播放和循环（整个歌单 / 单曲）两个按钮
+- 🔀 **Shuffle and repeat** buttons in the player (repeat the playlist or one track)
+- 🏋️ **训练时也能听**：开练后播放器变成专注页顶上的一条细条；在播放器上左右划切歌；没在放时一点就接着放上次的歌单
+- 🏋️ **Music while you train**: during a session the player becomes a slim bar at the top of the focus screen; swipe the player to change songs; when nothing is playing, one tap resumes your last playlist
+
 ## [v1.53a] — 2026-11-14
 
 ### 新增 / Added
