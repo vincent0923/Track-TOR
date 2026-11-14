@@ -170,9 +170,11 @@ function flowerP(x,y,ang,sp){const dark=document.documentElement.dataset.mode===
 const MD_SHELL=["rgba(40,120,235,.82)","rgba(232,62,48,.8)","rgba(245,150,30,.82)","rgba(240,200,40,.8)","rgba(232,80,150,.8)","rgba(30,170,190,.8)","rgba(60,60,70,.82)"];
 let MD_COVERS=[];
 function mdP(x,y,ang,sp){const w=rnd(34,46),sh=pick(MD_SHELL),im=MD_COVERS.length?pick(MD_COVERS):null;
-  return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.3,bounce:.38,fh:w*.5,va:rnd(-.18,.18),decay:.0045,fl:rnd(0,6),
+  return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.3,bounce:.38,fh:w*.5,va:rnd(-.08,.08),decay:.0045,fl:rnd(-.6,.6),fs:rnd(.035,.09)*(Math.random()<.5?-1:1),tilt:rnd(.15,.45),
     land:()=>landSnd(()=>{fxHit(0,.025,rnd(1800,3000),1.6,.08);tone(rnd(300,420),0,.03,"triangle",.06,200)}),
-    draw:(c,p)=>{p.fl+=.05;const h=w*1.06;c.translate(p.x,p.y);c.rotate(p.a);c.scale(.75+.25*Math.abs(Math.cos(p.fl)),1);c.translate(-w/2,-h/2);
+    /* it tumbles end over end: the face turns away (narrowing to its edge), the back comes round, and back again */
+    draw:(c,p)=>{if(p.y<(PX.size()[1]-w)||Math.abs(p.vy)>1)p.fl+=p.fs;const h=w*1.06,sx=Math.cos(p.fl),back=sx<0;c.translate(p.x,p.y);c.rotate(p.a);
+      c.transform(sx,Math.sin(p.fl)*p.tilt*.35,0,1,0,0);c.translate(-w/2,-h/2);
       /* shell with the cut corner */
       c.beginPath();c.moveTo(3,0);c.lineTo(w-6,0);c.lineTo(w,6);c.lineTo(w,h-3);c.quadraticCurveTo(w,h,w-3,h);c.lineTo(3,h);c.quadraticCurveTo(0,h,0,h-3);c.lineTo(0,3);c.quadraticCurveTo(0,0,3,0);c.closePath();
       c.fillStyle=sh;c.fill();c.save();c.clip();
@@ -181,9 +183,13 @@ function mdP(x,y,ang,sp){const w=rnd(34,46),sh=pick(MD_SHELL),im=MD_COVERS.lengt
       c.fillStyle=dg;c.beginPath();c.arc(dx,dy,dr,0,7);c.fill();c.fillStyle="rgba(0,0,0,.25)";c.beginPath();c.arc(dx,dy,dr*.16,0,7);c.fill();
       /* the shutter */
       c.fillStyle="#C9CDD3";c.fillRect(w*.08,h*.8,w*.62,h*.16);c.fillStyle="rgba(0,0,0,.18)";for(let k=1;k<6;k++)c.fillRect(w*.08+k*w*.1,h*.82,1,h*.12);
-      /* the label: the cover of something you played */
-      const lw=w*.5,lh=w*.5;c.fillStyle="#fff";c.fillRect(w*.06,h*.07,lw,lh);
-      if(im&&im.complete&&im.naturalWidth)try{c.drawImage(im,w*.06+1.5,h*.07+1.5,lw-3,lh-3)}catch(e){}else{c.fillStyle="#111";c.fillRect(w*.06+3,h*.07+lh*.55,lw-6,lh*.2)}
+      /* the label: the cover of something you played; the back shows the hub and the write-protect tab instead */
+      const lw=w*.5,lh=w*.5;
+      if(!back){c.fillStyle="#fff";c.fillRect(w*.06,h*.07,lw,lh);
+        if(im&&im.complete&&im.naturalWidth)try{c.drawImage(im,w*.06+1.5,h*.07+1.5,lw-3,lh-3)}catch(e){}else{c.fillStyle="#111";c.fillRect(w*.06+3,h*.07+lh*.55,lw-6,lh*.2)}}
+      else{c.fillStyle="rgba(0,0,0,.28)";c.fillRect(0,0,w,h);c.fillStyle="#2a2a2e";c.fillRect(w*.08,h*.08,w*.12,h*.06);c.fillStyle="rgba(255,255,255,.7)";c.beginPath();c.arc(w*.58,h*.52,w*.08,0,7);c.fill()}
+      /* turned edge-on, the plastic darkens */
+      c.fillStyle="rgba(0,0,0,"+(.35*(1-Math.abs(sx)))+")";c.fillRect(0,0,w,h);
       /* gloss */
       const gl=c.createLinearGradient(0,0,w,h);gl.addColorStop(0,"rgba(255,255,255,.4)");gl.addColorStop(.4,"rgba(255,255,255,0)");c.fillStyle=gl;c.fillRect(0,0,w,h);c.restore();
       c.strokeStyle="rgba(255,255,255,.55)";c.lineWidth=1;c.stroke()}}}

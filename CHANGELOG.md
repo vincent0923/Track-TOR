@@ -6,6 +6,24 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.59a] — 2026-11-14
+
+### 新增 / Added
+- 🎉 **每套主题都有自己的庆祝效果**：草木撒叶子（春夏绿叶、秋冬秋叶），粉瓷 · 铜蓝撒小花和花瓣，冰蓝拉丝撒小 MD 碟（标签是你最近在 Spotify 听的歌的封面），暖砂飘金箔，喷砂铝和白瓷是星光，黑皮压纹是快门；不管轻重都至少飞到屏幕上方三分之一。
+  **A celebration for every skin**: seasonal leaves, flowers and petals, little MiniDiscs wearing the covers of songs you played, gold leaf, glints, a shutter; everything reaches the top third of the screen.
+- 🎵 **律动跟着节拍**：放歌时积木、日历和开练键按每首歌的速度和能量在拍子上弹（ReccoBeats 查的 BPM），特效菜单里能关。
+  **Moves on the beat**: while music plays, the bricks, calendar and start key bounce on each song's beat (BPM from ReccoBeats); a switch in Effects turns it off.
+- 🔒 **训练计划要解锁**：推拉二分、自由练、自定义免费，其他预设 200 G。
+  **Plans to unlock**: push/pull, free and your own plan are included; the other presets cost 200 G.
+- 🔑 **开发者码**：长按 G 分商店的 G 币输入六位码；余额超过 999,999 显示 ∞。
+  **Developer code**: hold the store's G coin for a six-digit code; balances past 999,999 show as ∞.
+
+### 改进 / Changed
+- App 改名「博G」，英文 bG。换主题时画面渐变，放一次小庆祝；只有一种样子的主题，顶栏的明暗开关换成主题按钮。
+  The app is now 博G (bG). Changing theme cross-fades and plays a small celebration; one-look skins get a theme key in place of the light/dark switch.
+
+---
+
 ## [v1.58a] — 2026-11-14
 
 ### 新增 / Added
