@@ -71,13 +71,17 @@ applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change"
 /* tactile themes: the light on the materials follows the phone. Tilt moves the highlight (--lx/--ly) and turns the
    reflections on metal (--rot); the rest point drifts back, so holding still settles it. A mouse does the same. */
 /* how strong the light is: 0 off (still), 1 soft, 2 standard, 3 max; scales highlight alpha (--rt) and how far the tilt moves it */
-function rtLevel(){let v=2;try{const x=localStorage.getItem(PK+"rt");if(x!=null)v=+x}catch(e){}return [0,1,2,3].includes(v)?v:2}
-const RT_K=[0,.6,1,1.6];
-function rtApply(){const de=document.documentElement,k=RT_K[rtLevel()];de.style.setProperty("--rt",k?k:.6);if(!k){de.style.removeProperty("--lx");de.style.removeProperty("--ly");de.style.removeProperty("--rot")}}
+/* light: on (a gentle effect) or off (still); older stored levels 1–3 count as on */
+function rtLevel(){let v=1;try{const x=localStorage.getItem(PK+"rt");if(x!=null)v=+x}catch(e){}return v>0?1:0}
+const RT_K=[0,.5];
+function rtApply(){const de=document.documentElement,k=RT_K[rtLevel()];de.style.setProperty("--rt",k||.5);if(!k){de.style.removeProperty("--lx");de.style.removeProperty("--ly");de.style.removeProperty("--rot")}}
 rtApply();
-(function(){const de=document.documentElement,on=()=>"lit" in de.dataset&&rtLevel()>0&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* every change repaints every lit surface, so the light moves in coarse steps at most about 12 times a second */
+(function(){const de=document.documentElement,on=()=>"lit" in de.dataset&&rtLevel()>0&&!matchMedia("(prefers-reduced-motion: reduce)").matches;let last="",lastAt=0;
   let bg=null,bb=null,x=0,y=0,raf=0;
-  const put=()=>{raf=0;const k=RT_K[rtLevel()];de.style.setProperty("--lx",(30+x*1.6*k).toFixed(1)+"%");de.style.setProperty("--ly",(10+y*1.3*k).toFixed(1)+"%");de.style.setProperty("--rot",(x*3*k).toFixed(1)+"deg")};
+  const put=()=>{raf=0;const now=performance.now();if(now-lastAt<80){raf=requestAnimationFrame(put);return}
+    const k=RT_K[rtLevel()],lx=Math.round(30+x*1.6*k),ly=Math.round(10+y*1.3*k),rot=Math.round(x*3*k/2)*2,key=lx+","+ly+","+rot;if(key===last)return;last=key;lastAt=now;
+    de.style.setProperty("--lx",lx+"%");de.style.setProperty("--ly",ly+"%");de.style.setProperty("--rot",rot+"deg")};
   const go=(nx,ny)=>{x=Math.max(-25,Math.min(25,nx));y=Math.max(-20,Math.min(20,ny));if(!raf)raf=requestAnimationFrame(put)};
   const ori=e=>{if(!on()||e.gamma==null)return;if(bg==null){bg=e.gamma;bb=e.beta}bg+=(e.gamma-bg)*.02;bb+=(e.beta-bb)*.02;go(e.gamma-bg,e.beta-bb)};
   /* listen from the start (no events arrive until allowed); where the browser asks first, ask on the first tap */
@@ -548,8 +552,7 @@ function advSheet(){const row=(to,ic,t)=>'<button class="opt" data-act="go" data
 /* Effects: ray-traced light (a knob), weather, dust after days off, celebrations */
 function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+'" role="switch" aria-checked="'+on+'">'+ic+'<span class="sp">'+t+'</span><span class="sw" aria-hidden="true"></span></button>';
   openSheet('<div class="sh-h"><h3>'+T('特效','Effects')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
-    +'<div class="setlist"><div class="opt rtrow"><span class="sp"><b>'+T('光追','Ray-traced light')+'</b><br><span class="muted" style="font-size:12px;font-weight:500">'+T('高光和反光跟着手机倾斜','Highlights follow the tilt')+'</span></span>'
-    +knobHtml([[0,T("关","Off")],[1,T("柔","Soft")],[2,T("标准","Std")],[3,T("极致","Max")]],rtLevel(),v=>'data-act="rt" data-v="'+v+'"',T('光追','Ray-traced light'))+'</div>'
+    +'<div class="setlist">'+sw("rt",rtLevel()>0,ICON.spark,T('光追','Ray-traced light'))
     +'<button class="opt" data-act="go" data-to="p1:weather">'+ICON.rain+'<span class="sp">'+T('天气','Weather')+'</span>'+ICON.right+'</button>'
     +sw("dust",dustOn(),ICON.dust,T('两天没练就落灰','Dust after two days off'))
     +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+'</div>');CUR_SHEET=fxSheet}
@@ -636,7 +639,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="go"){if(b.closest("#sheet")&&CUR_SHEET){const cur=CUR_SHEET,up=SHEET_UP;P1_BACK=()=>{cur();SHEET_UP=up}}bridge(b.dataset.to)}
   else if(a==="lang")setLang(b.dataset.l);
   else if(a==="fxmenu"){const up=CUR_SHEET;fxSheet();SHEET_UP=up}
-  else if(a==="rt"){try{localStorage.setItem(PK+"rt",b.dataset.v)}catch(err){}rtApply();buzz(8)}
+  else if(a==="rt"){const on=rtLevel()===0;try{localStorage.setItem(PK+"rt",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);rtApply();buzz(8)}
   else if(a==="dust"){const on=!dustOn();try{localStorage.setItem(PK+"dust",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);dustApply()}
   else if(a==="fx"){const on=!fxOn();try{localStorage.setItem("tracktor-p1-fx",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);if(on){SFX.tap();celebrate(2,0)}}
   else if(a==="mode"){try{localStorage.setItem(PK+"mode",b.dataset.m)}catch(err){}applyMode();meSheet()}
