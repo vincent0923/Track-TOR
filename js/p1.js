@@ -216,14 +216,19 @@ function renderFocus(anim){
   else bottom='<button class="tickb" data-act="tick" aria-label="'+T('完成这一组','Set done')+'">'+ICON.check+'</button>';
   f.innerHTML='<div class="f-top"><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
     +'<div class="f-body" id="fBody"><div class="f-win">'+winHtml(run.ex)+'</div>'
-    +'<div class="f-sets">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
-    +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div>'
+    +'<div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
+    +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'
     +'<div class="f-num">'+(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n"><span id="fVal"'+(anim?' class="pop"':'')+'>'+val+'</span><small>'+U(e.unit)+'</small></b>'
     +(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div>'
     +(p.ex.length>1&&run.askFeel==null?'<div class="f-dial" role="slider" tabindex="0" aria-label="'+T('转动换动作','Turn to change move')+'" aria-valuemin="1" aria-valuemax="'+p.ex.length+'" aria-valuenow="'+(run.ex+1)+'"><div class="dl-wheel"><i class="dl-knurl"></i></div><b class="dl-mark"></b></div>':'')+'<div class="f-dots">'+dots+'</div></div>'
     +'<div class="f-bottom" id="fBottom"><button class="mini f-x" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-bc">'+bottom+'</div><span class="f-x"></span></div>';
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
-  winFit();if(document.fonts)document.fonts.ready.then(winFit);swipe($("#fBody"));dialBind($(".f-dial"));feelBind($(".feelbar"))}
+  setsCenter();winFit();if(document.fonts)document.fonts.ready.then(winFit);swipe($("#fBody"));dialBind($(".f-dial"));feelBind($(".feelbar"))}
+/* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
+function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
+  const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,x=v.clientWidth/2-(c.offsetLeft+c.offsetWidth/2);
+  if(run.setsX!=null&&run.setsK===run.ex){t.style.transition="none";t.style.transform="translateX("+run.setsX+"px)";void t.offsetWidth;t.style.transition=""}
+  t.style.transform="translateX("+x+"px)";run.setsX=x;run.setsK=run.ex}
 /* the move's name stays on one line: a long one shrinks to fit the window instead of wrapping */
 function winFit(){const h=$(".f-win h2");if(!h)return;h.style.fontSize="";const w=h.clientWidth;if(!w)return;
   for(let k=0;k<12&&h.scrollWidth>w;k++){const f=parseFloat(getComputedStyle(h).fontSize);if(f<=14)break;h.style.fontSize=Math.max(14,f*w/h.scrollWidth*.98)+"px"}}
