@@ -1439,7 +1439,8 @@ html.groove .bricks .bks i{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0
 @keyframes groove{from{transform:none}to{transform:translateY(-2px) scaleY(1.035)}}
 /* the playlist button and the round × take the skin's ghost button and round key; only their shape is fixed */
 .sp-plbtn.btn{width:auto!important;height:48px!important;padding:0 18px 0 16px!important;border-radius:999px!important;font-size:15px}
-.sp-x.circ{width:56px!important;height:56px!important;border-radius:50%!important}
+.sp-x.circ{width:48px!important;height:48px!important;border-radius:50%!important}
+.sp-x.circ svg{width:20px;height:20px}
 /* the same easter egg on the calendar: only the days trained and today keep the beat; rest days stay still */
 html.groove .cal .dd.trn b,html.groove .cal .dd.xo b,html.groove .cal .dd.today b{animation:grooveDay .52s ease-in-out infinite alternate;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--alb,var(--ac)) 55%,transparent))}
 html.groove .cal .dd:is(.trn,.xo,.today):nth-child(3n+1) b{animation-delay:-.17s}
