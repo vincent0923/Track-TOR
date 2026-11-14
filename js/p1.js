@@ -667,10 +667,16 @@ function themeFade(fn){if(!document.startViewTransition||matchMedia("(prefers-re
 const gShow=n=>n>999999?"∞":fmt(n);
 /* hold the big G coin for a six-digit code; only its SHA-256 fingerprint lives here */
 const G_CODE="c7b82c9175b5a8710a4e34474035a9a40b0b584e264eec68ef6df9237f0c87cd";
-async function gCodeOk(v){try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("bG:"+v));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("")===G_CODE}catch(e){return false}}
+/* a second code locks everything bought again (themes, plans), for testing the blind box; G spent on them comes back */
+const G_LOCK="d63f63f2418c6201d722fdd5f56eea4aa726231fe7bcc2341e92c1007106164c";
+async function gCodeHash(v){try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("bG:"+v));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return ""}}
+async function gCodeOk(v){return await gCodeHash(v)===G_CODE}
 function openCheat(){const S=p1Sheet("G",'<input id="gcode" class="gcode" type="tel" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••">','<span></span>');const inp=S.q("#gcode");setTimeout(()=>inp.focus(),80);
   inp.addEventListener("input",async()=>{inp.value=inp.value.replace(/\D/g,"").slice(0,6);if(inp.value.length<6)return;
-    if(await gCodeOk(inp.value)){state.settings.buys=(state.settings.buys||[]).concat([{id:"code:"+Date.now(),g:-50000,d:today()}]);lsSave();S.close();toast("+50,000 G");celebrate(10,1);SFX.done();coinSheet(false)}
+    const h=await gCodeHash(inp.value);
+    if(h===G_LOCK){const keep=b=>String(b.id).startsWith("code:")||(+b.g<0);state.settings.buys=(state.settings.buys||[]).filter(keep);lsSave();S.close();
+      themeFade(()=>{applyMode();coinSheet(false)});SFX.tap();buzz([20,40,20]);toast(T("已全部锁上","All locked"));return}
+    if(h===G_CODE){state.settings.buys=(state.settings.buys||[]).concat([{id:"code:"+Date.now(),g:-50000,d:today()}]);lsSave();S.close();toast("+50,000 G");celebrate(10,1);SFX.done();coinSheet(false)}
     else{inp.classList.remove("no");void inp.offsetWidth;inp.classList.add("no");buzz([30,40,30]);setTimeout(()=>{inp.value=""},350)}})}
 function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
   const nextOf=b=>{if(b.tiers){const n=b.tiers.find(t=>t>b.have);return n==null?null:n}const n=(Math.floor(b.have/b.step+1e-9)+1)*b.step;return +n.toFixed(2)};
