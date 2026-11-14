@@ -509,8 +509,19 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 /* theme cards in the G shop */
 .thc{display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;background:var(--sub);width:100%;text-align:left;border:1.5px solid transparent}
 .thc.on{border-color:var(--ac)}
-.thc .sw{display:flex;flex:none;width:52px;height:40px;border-radius:12px;overflow:hidden}
-.thc .sw i{flex:1}
+/* theme chips: one per look (light, dark), dressed like that skin's keys — flat, toy or tactile */
+.thc .tsws{display:flex;gap:6px;flex:none;width:86px}
+.tsw{position:relative;width:40px;height:40px;border-radius:12px;background:var(--b);display:grid;place-items:center;flex:none}
+.tsw i{width:16px;height:16px;border-radius:50%;background:var(--a)}
+.tsw.flat{box-shadow:inset 0 0 0 1px rgba(0,0,0,.07),0 3px 8px -3px rgba(0,0,0,.25)}
+.tsw.flat i{box-shadow:0 2px 5px -1px color-mix(in srgb,var(--a) 60%,transparent)}
+.tsw.toy{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),0 3px 0 color-mix(in srgb,var(--b) 72%,#000)}
+.tsw.toy i{width:18px;height:18px;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),0 2.5px 0 color-mix(in srgb,var(--a) 62%,#000)}
+.tsw.hard{background:linear-gradient(160deg,rgba(255,255,255,.28),rgba(255,255,255,0) 45%,rgba(0,0,0,.14)),var(--b);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 3px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.18),0 3px 6px -2px rgba(0,0,0,.4)}
+.tsw.hard i{background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--a) 45%,#fff),var(--a) 55%,color-mix(in srgb,var(--a) 65%,#000));box-shadow:0 0 0 1.5px rgba(0,0,0,.35),0 2px 3px rgba(0,0,0,.4),inset 0 1px 1px rgba(255,255,255,.6)}
+.thok{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--muted) 55%,transparent)}
+.thok.on{background:var(--ac);color:var(--on-ac);box-shadow:0 3px 8px -3px var(--ac)}
+.thok svg{width:16px;height:16px}
 .thc b{font-size:15px;font-weight:800}
 .thc .pill{flex:none}
 /* the folded training card is always the same height, whatever the day's name */
@@ -1475,3 +1486,4 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 .mask .chip[data-pv].run{color:var(--ac-text);border-color:var(--ac)}
 .mask .chip[data-pv].run::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--ac-soft);transform-origin:left;animation:pvRun 10s linear forwards}
 @keyframes pvRun{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.thc b.sp{text-align:left}
