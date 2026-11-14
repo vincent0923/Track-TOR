@@ -848,8 +848,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
     else if(a==="tick")tickSet();
     else if(a==="addset"){const arr=run.sets[run.ex],l=arr[arr.length-1];arr.push({v:l?l.v:run.p.ex[run.ex].target,d:false});run.doc.edited=true;lsSave();run.askFeel=null;SFX.tap();buzz(8);renderFocus(true)}
     else if(a==="inc"||a==="dec"){const ci=curSet();if(ci<0)return;run.doc.edited=true;const s=run.sets[run.ex][ci],st=run.p.ex[run.ex].unit==="秒"?5:1;s.v=Math.max(0,(+s.v||0)+(a==="inc"?st:-st));
-      run.sets[run.ex].forEach((x,i)=>{if(i>ci&&!x.d)x.v=s.v});lsSave();SFX.tap();const el=$("#fVal");el.textContent=s.v;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");
-      document.querySelectorAll(".f-sets i:not(.add)").forEach((x,i)=>{if(i>ci&&!run.sets[run.ex][i].d)x.textContent=i+1})}
+      /* only this set: the planned numbers for the rest stay put; the engine adjusts after sessions, never mid-session */lsSave();SFX.tap();const el=$("#fVal");el.textContent=s.v;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");}
     else if(a==="fshare"){SFX.tap();finShare()}
     else if(a==="fnext"){const n=run.sets.findIndex(x=>x.some(y=>!y.d));if(n>=0){run.ex=n;renderFocus(true)}}
   }});
