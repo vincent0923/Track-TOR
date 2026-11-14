@@ -7,7 +7,8 @@
 const SPC_K="tracktor-sp-cid";
 function spCid(){try{return (localStorage.getItem(SPC_K)||"").trim()}catch(e){return ""}}
 const SP_K="tracktor-sp",SPM_K="tracktor-p1-music";
-const SP_SCOPES="user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative user-read-recently-played";
+/* everything playback-related in one sign-in, so a later feature never has to ask again */
+const SP_SCOPES="user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-recently-played user-read-playback-position user-top-read playlist-read-private playlist-read-collaborative user-library-read user-library-modify user-follow-read user-read-private streaming";
 const SP={tok:null,st:null,at:0,poll:0,busy:false,demo:false};
 const spRedirect=()=>location.origin+location.pathname.replace(/index\.html$/,"");
 function spMode(){try{return localStorage.getItem(SPM_K)||""}catch(e){return ""}}
@@ -114,16 +115,37 @@ const spShuf=()=>{if(SP.st&&SP.st.shuf!=null&&!SP.demo)return SP.st.shuf;try{ret
 function spMarkPl(){const cur=SP.st&&SP.st.ctx,list=SP.demo?SP_DEMO_PL:SP.pls;if(!list)return;
   document.querySelectorAll(".sheet.on .sp-cell").forEach(c=>{const p=list[+c.dataset.i],on=!!(p&&p.uri===cur);if(c.classList.contains("on")===on)return;c.classList.toggle("on",on);
     const cv=c.querySelector(".sp-cover"),eq=cv&&cv.querySelector(".sp-eq");if(on&&!eq)cv.insertAdjacentHTML("beforeend",'<i class="sp-eq"><i></i><i></i><i></i></i>');if(!on&&eq)eq.remove()})}
+/* recent plays, newest first (Spotify keeps about the last 50; follow the cursor in case it gives more) */
+async function spRecent(){const out=[];let url="/me/player/recently-played?limit=50";
+  for(let k=0;k<4&&url;k++){const r=await spApi(url),items=(r&&r.items)||[];items.forEach(it=>{const t=it.track;if(t&&t.uri)out.push({u:t.uri,c:it.context&&it.context.uri,t:Date.parse(it.played_at)||0})});
+    const nx=r&&r.cursors&&r.cursors.before;url=items.length===50&&nx?"/me/player/recently-played?limit=50&before="+nx:null}
+  return out}
+/* a playlist's track uris, cached by snapshot so only changed playlists are fetched again */
+const SPT_K=SP_K+"-pt";
+async function spTracks(p,cache){const c=cache[p.uri];if(c&&c.s===p.snap)return c.t;const id=p.uri.split(":").pop(),t=[];
+  const pull=async base=>{let url=base+"?limit=100&offset=0";for(let k=0;k<5&&url;k++){const j=await spApi(url);((j&&j.items)||[]).forEach(x=>{const tr=x&&(x.item||x.track);if(tr&&tr.uri)t.push(tr.uri.split(":").pop())});
+    url=j&&j.next?j.next.replace("https://api.spotify.com/v1",""):null}};
+  try{await pull("/playlists/"+id+"/items")}catch(e){t.length=0;await pull("/playlists/"+id+"/tracks")}
+  cache[p.uri]={s:p.snap,t};return t}
 async function spPlaylists(){if(SP.demo)return SP_DEMO_PL;if(SP.pls&&Date.now()-SP.plsAt<300000)return SP.pls;const out=[];let url="/me/playlists?limit=50";
-  for(let k=0;k<4&&url;k++){const j=await spApi(url);(j.items||[]).forEach(p=>{if(p)out.push({name:p.name,uri:p.uri,n:p.tracks?p.tracks.total:(p.items&&p.items.total)||0,art:(p.images||[]).slice(-1)[0]?.url||(p.images||[])[0]?.url||""})});
+  for(let k=0;k<4&&url;k++){const j=await spApi(url);(j.items||[]).forEach(p=>{if(p)out.push({name:p.name,uri:p.uri,snap:p.snapshot_id||"",n:p.tracks?p.tracks.total:(p.items&&p.items.total)||0,art:(p.images||[]).slice(-1)[0]?.url||(p.images||[])[0]?.url||""})});
     url=j.next?j.next.replace("https://api.spotify.com/v1",""):null}
-  /* most recently listened first: the last 50 plays say which playlist each came from (needs user-read-recently-played;
-     without it the library order stays), plus playlists started here and the one playing now */
-  const at={};try{const r=await spApi("/me/player/recently-played?limit=50");((r&&r.items)||[]).forEach(it=>{const u=it.context&&it.context.uri,t=Date.parse(it.played_at)||0;if(u&&t>(at[u]||0))at[u]=t})}catch(e){}
+  /* first pass: when each playlist was last played from, plus playlists started here and the one playing now */
+  let rec=[];try{rec=await spRecent()}catch(e){}SP.rec=rec;
+  const at={};rec.forEach(r=>{if(r.c&&r.t>(at[r.c]||0))at[r.c]=r.t});
   try{Object.entries(JSON.parse(localStorage.getItem(SP_K+"-played")||"{}")).forEach(([u,t])=>{if(t>(at[u]||0))at[u]=t})}catch(e){}
   if(SP.st&&SP.st.ctx)at[SP.st.ctx]=Date.now();
-  out.forEach((p,i)=>p.k=i);out.sort((a,b)=>(at[b.uri]||0)-(at[a.uri]||0)||a.k-b.k);
-  SP.pls=out;SP.plsAt=Date.now();return out}
+  out.forEach((p,i)=>{p.k=i;p.at=at[p.uri]||0;p.hit=0});out.sort((a,b)=>b.at-a.at||a.k-b.k);
+  SP.pls=out;SP.plsAt=Date.now();SP.ranked=false;return out}
+/* second pass (slower, so the grid shows first): rank by how many of the recent plays are songs in each playlist,
+   newer plays counting a little more; ties keep the last-played order */
+async function spRank(list){if(SP.demo||SP.ranked||!SP.rec||!SP.rec.length)return false;let cache={};try{cache=JSON.parse(localStorage.getItem(SPT_K)||"{}")}catch(e){}
+  const n=SP.rec.length,w={};SP.rec.forEach((r,i)=>{w[r.u]=(w[r.u]||0)+1+(n-i)/n});
+  const ctxW={};SP.rec.forEach((r,i)=>{if(r.c)ctxW[r.c]=(ctxW[r.c]||0)+1+(n-i)/n});
+  let q=list.slice();const work=async()=>{while(q.length){const p=q.shift();try{const t=await spTracks(p,cache),seen=new Set(t);let h=0;seen.forEach(u=>{if(w["spotify:track:"+u])h+=w["spotify:track:"+u]});p.hit=Math.max(h,ctxW[p.uri]||0)}catch(e){p.hit=ctxW[p.uri]||0}}};
+  await Promise.all([work(),work(),work(),work()]);
+  const keep={};list.forEach(p=>{if(cache[p.uri])keep[p.uri]=cache[p.uri]});try{localStorage.setItem(SPT_K,JSON.stringify(keep))}catch(e){}
+  list.sort((a,b)=>b.hit-a.hit||b.at-a.at||a.k-b.k);SP.ranked=true;return true}
 /* playlists as a grid of big covers (easy to hit mid-workout): "open Spotify" and shuffle on top, a round × below */
 async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";spLoad();
   const head='<div class="sp-plh"><a class="sp-pill" href="spotify:" data-spapp>'+SPI.app+'<span>'+T('打开 Spotify','Open Spotify')+'</span></a>'
@@ -136,10 +158,11 @@ async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");i
     bind();f.querySelector("[data-sprec]").addEventListener("click",spConnect)};
   f.innerHTML=head+'<div class="sp-grid"><p class="muted" style="font-size:13px;grid-column:1/-1;text-align:center">'+T('读取中…','Loading…')+'</p></div>'+foot;bind();
   let list=[];try{list=await spPlaylists()}catch(e){if(SP.view!=="pl")return;if(e.status===401||e.status===403){reconnect();return}const g=f.querySelector(".sp-grid");if(g)g.innerHTML='<p class="muted" style="font-size:13px;grid-column:1/-1;text-align:center">'+T('读不到歌单，稍后再试','Couldn\'t load playlists; try later')+'</p>';return}
-  const cur=SP.st&&SP.st.ctx,box=f.querySelector(".sheet.on .sp-grid")||f.querySelector(".sp-grid");if(!box||SP.view!=="pl")return;
+  const draw=()=>{const cur=SP.st&&SP.st.ctx,box=f.querySelector(".sp-grid");if(!box||SP.view!=="pl"||!f.isConnected)return;
   box.innerHTML=list.length?list.map((p,i)=>'<button class="sp-cell'+(p.uri===cur?' on':'')+'" type="button" data-i="'+i+'"><span class="sp-cover"'+(p.art?' style="background-image:url(\''+esc(p.art)+'\')"':p.hue!=null?' style="background:linear-gradient(135deg,hsl('+p.hue+' 80% 62%),hsl('+(p.hue+40)+' 70% 45%))"':'')+'>'+(p.art?'':SPI.note)+(p.uri===cur?'<i class="sp-eq"><i></i><i></i><i></i></i>':'')+'</span><span class="sp-name">'+esc(p.name)+'</span></button>').join("")
     :'<p class="muted" style="font-size:13px;grid-column:1/-1;text-align:center">'+T('你还没有歌单','No playlists yet')+'</p>';
-  box.querySelectorAll("[data-i]").forEach(b=>b.addEventListener("click",()=>spPlayList(list[+b.dataset.i])))}
+  box.querySelectorAll("[data-i]").forEach(b=>b.addEventListener("click",()=>spPlayList(list[+b.dataset.i])))};
+  draw();spRank(list).then(ch=>{if(ch)draw()}).catch(()=>{})}
 function spLast(){try{return JSON.parse(localStorage.getItem(SP_K+"-last")||"null")}catch(e){return null}}
 async function spPlayList(p){buzz(10);if(typeof SFX!=="undefined")SFX.tap();
   if(SP.demo){const s=SP.st;s.shuf=spShuf();Object.assign(s,{title:p.name+T(" · 第 1 首"," · track 1"),artist:T("推拉机 · 预览","Track-TOR · preview"),pos:0,playing:true,ctx:p.uri});SP.at=Date.now();spPaint();return}
@@ -154,18 +177,15 @@ async function spPlayList(p){buzz(10);if(typeof SFX!=="undefined")SFX.tap();
 
 /* ---------- Settings › Advanced › Spotify ---------- */
 const SP_PASTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h1.5A2.5 2.5 0 0 1 20 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-11A2.5 2.5 0 0 1 6.5 5H8"/></svg>';
-const COPY_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
 function openMusic(){const mode=spMode(),con=!!(SP.tok&&mode==="on"),cid=spCid();
   const body='<label class="flabel">Client ID<span class="pastef"><input id="spcid" autocomplete="off" spellcheck="false" placeholder="'+T("粘贴 Spotify 开发者后台里的 Client ID","Paste the Client ID from the Spotify developer dashboard")+'" value="'+esc(cid)+'"><button type="button" class="pastebtn" data-sppaste aria-label="'+T("粘贴","Paste")+'">'+SP_PASTE+'</button></span></label>'
-    +'<label class="flabel">Redirect URI<span class="pastef"><input readonly value="'+esc(spRedirect())+'"><button type="button" class="pastebtn" data-spcopy aria-label="'+T("复制","Copy")+'">'+COPY_ICON+'</button></span></label>'
-    +'<p class="calc-msg">'+T("在 Spotify 开发者后台新建一个 App：Redirect URIs 填上面这个地址，API 只勾 Web API。控制播放需要 Premium。","Create an app in the Spotify developer dashboard with the Redirect URI above and only Web API ticked. Controlling playback needs Premium.")+'</p>'
+    +'<p class="calc-msg">'+T("控制播放需要 Spotify Premium。","Controlling playback needs Spotify Premium.")+'</p>'
     +(con?'<p class="wxnow">'+SPI.note+T('已连接 Spotify','Spotify connected')+'</p>':'')
     +'<div class="mode-tabs"><button type="button" data-spd="1" class="'+(mode==="demo"?"active":"")+'"'+(con?' hidden':'')+'>'+T('预览','Preview')+'</button><button type="button" data-spd="0" class="'+(mode!=="demo"&&!con?"active":"")+'"'+(con?' hidden':'')+'>'+T('不显示','Hidden')+'</button></div>';
   const S=p1Sheet("Spotify",body,con?'<button class="btn ghost wide" type="button" data-spx>'+T('断开','Disconnect')+'</button>':'<button class="btn wide" type="button" data-spc>'+T('连接 Spotify','Connect Spotify')+'</button>');
   const inp=S.q("#spcid"),save=()=>{const v=inp.value.replace(/[^A-Za-z0-9]/g,"").slice(0,64);inp.value=v;try{v?localStorage.setItem(SPC_K,v):localStorage.removeItem(SPC_K)}catch(e){}};
   inp.addEventListener("change",save);inp.addEventListener("focus",()=>setTimeout(()=>inp.select(),0));
   S.q("[data-sppaste]").addEventListener("click",async()=>{try{inp.value=await navigator.clipboard.readText();save();buzz(10)}catch(e){inp.focus();toast(T("读不到剪贴板，请长按输入框粘贴","Can't read the clipboard; long-press the box to paste"))}});
-  S.q("[data-spcopy]").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(spRedirect());toast(T("已复制","Copied"));buzz(10)}catch(e){toast(T("复制不了，请长按选择","Can't copy; long-press to select"))}});
   const c=S.q("[data-spc]");if(c)c.addEventListener("click",()=>{save();if(!spCid()){toast(T("先填 Client ID","Fill in the Client ID first"));inp.focus();return}if(spMode()==="demo"){spSetMode("");spStop()}spConnect()});
   const x=S.q("[data-spx]");if(x)x.addEventListener("click",()=>{SP.tok=null;spSave();spSetMode("");spStop();S.close()});
   S.m.querySelectorAll("[data-spd]").forEach(b=>b.addEventListener("click",()=>{const on=b.dataset.spd==="1";spSetMode(on?"demo":"");
