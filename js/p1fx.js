@@ -83,7 +83,7 @@ const PX=(function(){let cv=null,c=null,W=0,H=0,ps=[],run=false,led=null,flash=0
       c.fillStyle="rgba(107,184,255,"+(b*.28)+")";c.beginPath();c.arc(x,y,5.5,0,7);c.fill();
       c.fillStyle="rgba(235,246,255,"+b+")";c.beginPath();c.arc(x,y,2.3,0,7);c.fill()}}
   function frame(){c.clearRect(0,0,W,H);
-    if(flash>0){c.fillStyle="rgba(200,230,255,"+(flash*.4)+")";c.fillRect(0,0,W,H);flash-=.09}
+    if(flash>0){c.fillStyle="rgba("+(document.documentElement.dataset.theme==="nikon"?"255,255,255":"200,230,255")+","+(flash*.4)+")";c.fillRect(0,0,W,H);flash-=.09}
     if(led)drawLed();
     for(let i=ps.length-1;i>=0;i--){const p=ps[i];p.vy+=p.g||0;if(p.drag){p.vx*=p.drag;p.vy*=p.drag}if(p.sway)p.vx+=Math.sin((p.t=(p.t||0)+.08))*p.sway;
       p.x+=p.vx;p.y+=p.vy;p.a=(p.a||0)+(p.va||0);if(p.sq)p.sq*=.86;
@@ -91,7 +91,7 @@ const PX=(function(){let cv=null,c=null,W=0,H=0,ps=[],run=false,led=null,flash=0
       p.life=(p.life==null?1:p.life)-(p.decay||.006);if(p.life<=0||p.y>H+80||p.x<-90||p.x>W+90){ps.splice(i,1);continue}
       c.save();c.globalAlpha=Math.min(1,p.life*3);p.draw(c,p);c.restore()}
     if(ps.length||(led&&(led.waves.length||led.spark>0))||flash>0)requestAnimationFrame(frame);else{run=false;led=null;cv.remove();cv=null}}
-  return {add,wave,size:()=>{ensure();return [W,H]}}})();
+  return {add,wave,flash:v=>{ensure();flash=Math.max(flash,v);go()},size:()=>{ensure();return [W,H]}}})();
 const rnd=(a,b)=>a+Math.random()*(b-a),pick=a=>a[Math.floor(Math.random()*a.length)];
 let fxLandAt=0;const landSnd=f=>{const n=performance.now();if(n-fxLandAt<45)return;fxLandAt=n;try{f()}catch(e){}};
 /* noise hit for clatter and hats */
@@ -126,7 +126,39 @@ function blobP(x,y,ang,sp){const r=rnd(7,13),col=pick(["#A4E2CD","#C4F7E5","#F2B
 function pixelP(x,y,ang,sp){const s=pick([6,6,9]),col=pick(["#E8892B","#E2513A","#E7D4B4","#FFFFFF","#E8892B"]);return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.26,decay:.006,
   draw:(c,p)=>{const q=3,X=Math.round(p.x/q)*q,Y=Math.round(p.y/q)*q;if(p.life<.4&&(Math.floor(p.life*40)%2))return;c.fillStyle=col;c.fillRect(X,Y,s,s);c.fillStyle="rgba(0,0,0,.25)";c.fillRect(X,Y+s-2,s,2)}}}
 /* how each theme celebrates: make = one piece; snd = burst sound (big or not) */
+/* the quieter skins: petals, leaf, glints, LCD bits and a shutter, each with a soft sound */
+const bell=(f,at,v)=>{v=v||.07;tone(f,at,1.2,"sine",v);tone(f*2.01,at,.5,"sine",v*.3);tone(f*3.02,at,.18,"sine",v*.12)};
+const whoosh=(at,v)=>{fxHit(at,.5,900,.6,v||.05,"bandpass");fxHit(at+.08,.35,2400,.7,(v||.05)*.6,"bandpass")};
+const fxTone=()=>getComputedStyle(document.documentElement).getPropertyValue("--ac").trim()||"#4FAF6A";
+function petalP(x,y,ang,sp){const col=pick([fxTone(),fxTone(),"#FFFFFF","#FFE3EC","#F3F0FF"]),w=rnd(5,8),h=w*rnd(1.6,2.1);
+  return {x,y,vx:Math.cos(ang)*sp*.8,vy:Math.sin(ang)*sp*.8,g:.06,drag:.985,sway:.05,decay:.0055,va:rnd(-.08,.08),fl:rnd(0,6),
+    draw:(c,p)=>{p.fl+=.09;c.translate(p.x,p.y);c.rotate(p.a);c.scale(Math.max(.2,Math.abs(Math.cos(p.fl))),1);c.fillStyle=col;c.beginPath();c.ellipse(0,0,w,h,0,0,7);c.fill();
+      c.fillStyle="rgba(255,255,255,.35)";c.beginPath();c.ellipse(-w*.25,-h*.2,w*.35,h*.5,0,0,7);c.fill()}}}
+function foilP(x,y,ang,sp,cols){const col=pick(cols),s=rnd(5,10),k=[rnd(.6,1),rnd(.6,1),rnd(.6,1),rnd(.6,1)];
+  return {x,y,vx:Math.cos(ang)*sp*.8,vy:Math.sin(ang)*sp*.8,g:.07,drag:.984,sway:.035,decay:.006,va:rnd(-.12,.12),fl:rnd(0,6),
+    draw:(c,p)=>{p.fl+=.13;const sh=Math.cos(p.fl);c.translate(p.x,p.y);c.rotate(p.a);c.scale(Math.max(.15,Math.abs(sh)),1);
+      const g=c.createLinearGradient(-s,-s,s,s);g.addColorStop(0,"#FFFFFF");g.addColorStop(.35,col);g.addColorStop(1,"rgba(0,0,0,.35)");c.fillStyle=sh>0?g:col;
+      c.beginPath();c.moveTo(-s*k[0],-s*.5);c.lineTo(s*k[1],-s*.6);c.lineTo(s*k[2],s*.55);c.lineTo(-s*k[3],s*.5);c.closePath();c.fill()}}}
+function glintP(x,y,ang,sp){const r=rnd(4,11),col=pick(["#FFFFFF","#FFFFFF",fxTone()]),px=x+Math.cos(ang)*sp*rnd(4,16),py=y+Math.sin(ang)*sp*rnd(6,26);
+  return {x:px,y:py,vx:rnd(-.2,.2),vy:rnd(-.6,-.2),decay:rnd(.012,.02),tw:rnd(0,6),
+    draw:(c,p)=>{p.tw+=.25;const k=r*(.55+.45*Math.abs(Math.sin(p.tw)));c.translate(p.x,p.y);c.fillStyle=col;c.shadowColor=col;c.shadowBlur=8;
+      c.beginPath();c.moveTo(0,-k);c.quadraticCurveTo(0,0,k*.32,0);c.quadraticCurveTo(0,0,0,k);c.quadraticCurveTo(0,0,-k*.32,0);c.quadraticCurveTo(0,0,0,-k);c.fill();
+      c.beginPath();c.moveTo(-k*.7,0);c.quadraticCurveTo(0,0,0,-k*.12);c.quadraticCurveTo(0,0,k*.7,0);c.quadraticCurveTo(0,0,0,k*.12);c.quadraticCurveTo(0,0,-k*.7,0);c.fill()}}}
+function lcdP(x,y,ang,sp){const s=pick([5,5,8]),col=pick(["#FF6A13","#FF6A13","#2F5FA8","#FFFFFF"]);
+  return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.3,drag:.99,decay:.008,
+    draw:(c,p)=>{const q=4,X=Math.round(p.x/q)*q,Y=Math.round(p.y/q)*q;if(p.life<.35&&(Math.floor(p.life*40)%2))return;c.fillStyle=col;c.fillRect(X,Y,s,s/2.4|0||2)}}}
+function shutterP(x,y,big){return {x,y,vx:0,vy:0,r:10,decay:big?.016:.026,rot:0,
+  draw:(c,p)=>{p.r+=big?11:7;p.rot+=.04;c.translate(p.x,p.y);c.rotate(p.rot);c.strokeStyle="rgba(255,255,255,.9)";c.lineWidth=(big?5:3)*p.life;c.shadowColor="#E8302A";c.shadowBlur=10;
+    c.beginPath();for(let i=0;i<=6;i++){const a=i/6*Math.PI*2;i?c.lineTo(Math.cos(a)*p.r,Math.sin(a)*p.r):c.moveTo(Math.cos(a)*p.r,Math.sin(a)*p.r)}c.stroke()}}}
+function silverP(x,y,ang,sp){const r=rnd(1.5,3.2);return {x,y,vx:Math.cos(ang)*sp*.6,vy:Math.sin(ang)*sp*.6,g:.12,drag:.98,decay:.012,draw:(c,p)=>{c.fillStyle=pick(["#F1F1F0","#9EA3AA","#E8302A"]);c.beginPath();c.arc(p.x,p.y,r,0,7);c.fill()}}}
 const THEME_FX={
+  aurora:{make:petalP,snd:big=>{(big?[784,988,1175,1568]:[988,1319]).forEach((f,i)=>bell(f,i*.09,.05))}},
+  ember:{make:(x,y,a,s)=>foilP(x,y,a,s,["#FFB020","#F7D78A","#E8A64A","#D9714E"]),snd:big=>{(big?[659,831,988,1319]:[831,1109]).forEach((f,i)=>bell(f,i*.11,.055))}},
+  dyson:{make:(x,y,a,s)=>foilP(x,y,a,s,document.documentElement.dataset.mode==="dark"?["#E9B57D","#D49A5E","#F1C894"]:["#E7A6A0","#D58783","#F4C7C2"]),snd:big=>{whoosh(0,big?.07:.045);(big?[880,1109,1319]:[1109]).forEach((f,i)=>bell(f,.12+i*.1,.045))}},
+  mac:{make:glintP,snd:big=>{bell(big?1568:1760,0,.06);if(big)bell(2349,.12,.04)}},
+  ipod:{make:glintP,snd:big=>{tone(2600,0,.006,"square",.02);bell(big?1319:1568,.02,.06);if(big)bell(1976,.14,.04)}},
+  md:{make:lcdP,snd:big=>{(big?[784,988,1175,1568,1976]:[1175,1568]).forEach((f,i)=>{chip(f,i*.05,.06,.035)})}},
+  nikon:{make:silverP,shutter:true,snd:big=>{fxHit(0,.02,3000,1.5,.12);fxHit(.07,.03,1800,1.2,.1);tone(110,.0,.06,"sine",.12,70);if(big){fxHit(.25,.02,3000,1.5,.1);fxHit(.32,.03,1800,1.2,.08)}}},
   toy:{make:brickP,snd:big=>{const n=big?16:7;for(let k=0;k<n;k++)fxHit(k*.03+Math.random()*.03,.03,rnd(2400,5200),2.5,.08);tone(big?520:760,0,.12,"sine",.12,big?120:200)}},
   skeuo:{make:bearingP,ring:true,snd:big=>{tone(180,0,big?.6:.4,"sine",.14,big?1100:800);for(let k=0;k<(big?6:3);k++)clink(rnd(1800,3400),.05+k*.07,.06)}},
   tm4:{led:true,snd:big=>{(big?[523,659,784,1047,1319,1568,2093]:[784,1047,1568]).forEach((f,i)=>{chip(f,i*.045,.08,.05);tone(f/2,i*.045,.1,"sawtooth",.025)});if(big)tone(220,0,1,"sawtooth",.03,1760)}},
@@ -136,6 +168,7 @@ const THEME_FX={
 const themeFx=()=>THEME_FX[document.documentElement.dataset.theme];
 /* one burst: pieces fly from (x,y) in a cone around ang */
 function pxBurst(t,x,y,n,ang,spread,s0,s1,big){if(t.led){PX.wave(x,y,big);return}
+  if(t.shutter){PX.flash(big?.55:.3);PX.add([shutterP(x,Math.min(y,PX.size()[1]*.55),big)])}
   if(t.ring)PX.add([ringP(x,y,big)]);PX.add(Array.from({length:n},()=>t.make(x,y,ang+rnd(-spread,spread),rnd(s0,s1))))}
 function themedCelebrate(t,n,big){const [W,H]=PX.size();let at=0;
   for(let i=0;i<n;i++){setTimeout(()=>{const x=rnd(.15,.85)*W;try{t.snd(false)}catch(e){}

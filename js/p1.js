@@ -99,6 +99,8 @@ function dustDays(){let last="";Object.values(state.sessions).forEach(x=>{if(x&&
 function dustApply(){const de=document.documentElement,d=dustOn()?dustDays():0,lv=d<2?0:d<5?1:d<8?2:3,was=+(de.dataset.dust||0);
   let el=document.getElementById("dust");if(!el&&lv){el=document.createElement("div");el.id="dust";el.setAttribute("aria-hidden","true");document.body.appendChild(el)}
   if(!el)return;if(lv){el.classList.remove("wipe");de.dataset.dust=lv}else if(was){el.classList.add("wipe");delete de.dataset.dust}}
+/* skins with one look have no light/dark switch: a theme key takes its place */
+(function(){const b=$("#themeBtn");if(!b)return;b.innerHTML=ICON.palette;b.addEventListener("click",()=>{buzz(8);SFX.tap();coinSheet(true)})})();
 /* the header switch: tap flips light and dark; hold it for the themes */
 (function(){const b=$("#modeBtn");if(!b)return;let tm=0,held=false;
   b.addEventListener("pointerdown",()=>{held=false;clearTimeout(tm);tm=setTimeout(()=>{held=true;buzz(15);coinSheet(true)},500)});
@@ -598,7 +600,7 @@ function openBox(){const left=boxLeft();if(!left.length){toast(T("所有主题�
     const body=S.q(".form-body");body.innerHTML='<div class="scrhost"></div>';
     const act=S.q("[data-boxgo]").parentNode;act.innerHTML='<button class="btn ghost wide" type="button" data-boxok hidden>'+T('好','OK')+'</button><button class="btn wide" type="button" data-boxuse hidden>'+T('换上','Use it')+'</button>';
     act.querySelector("[data-boxok]").addEventListener("click",()=>{S.close();coinSheet(true)});
-    act.querySelector("[data-boxuse]").addEventListener("click",()=>{state.settings.theme=th.id;lsSave();applyMode();SFX.tap();S.close();coinSheet(true)});
+    act.querySelector("[data-boxuse]").addEventListener("click",()=>{state.settings.theme=th.id;lsSave();applyMode();SFX.tap();S.close();coinSheet(true);setTimeout(()=>celebrate(1,0),120)});
     let snd=0;SCR.mount(body.firstChild,{world,label:T("主题盲盒","Theme blind box"),hint:T("刮开","Scratch to reveal"),coin:T("用硬币刮","scratch with a coin"),there:T("就是它 ✿","there it is ✿"),
       content:'<span class="tsws">'+themeChips(th)+'</span><b>'+T(th.zh,th.en)+'</b>',
       onProgress(){const t=performance.now();if(t-snd>70){snd=t;if(typeof fxHit==="function")fxHit(0,.06,2600,.5,.025,"highpass");buzz(3)}},
@@ -731,7 +733,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
     if(!themeOwned(th.id)){const bal=coinTotal();if(bal<th.price){toast(T('还差 '+(th.price-bal)+' G','You need '+(th.price-bal)+' more G'));return}
       if(!confirm(T('用 '+th.price+' G 换购「'+th.zh+'」？','Spend '+th.price+' G on '+th.en+'?')))return;
       state.settings.buys=(state.settings.buys||[]).concat([{id:th.id,g:th.price,d:today()}]);celebrate(6,1)}
-    state.settings.theme=th.id;lsSave();applyMode();SFX.tap();coinSheet(true)}
+    state.settings.theme=th.id;lsSave();applyMode();SFX.tap();coinSheet(true);setTimeout(()=>celebrate(1,0),120)}
   else if(a==="thide"){e.stopPropagation();const c=tileCfg();if(!c.hidden.includes(b.dataset.k))c.hidden.push(b.dataset.k);tileSave(c);SFX.tap();renderProgView()}
   else if(a==="tadd")tileAddSheet();
   else if(a==="tshow"){const c=tileCfg();c.hidden=c.hidden.filter(k=>k!==b.dataset.k);tileSave(c);closeSheet();renderProgView()}
