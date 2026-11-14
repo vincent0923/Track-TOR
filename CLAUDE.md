@@ -45,7 +45,7 @@
 - 训练计划：`settings.plan`（`js/engine.js` 的 `PRESETS`/`setPlan`）选 1–3 种训练日，内部类型固定是 `push`、`pull`、`third`（名字由计划定，`js/core.js` 的 `dayName`/`LAB`）；进度文件里训练的键前缀是 u、l、t。预设只是数据，以后用户写的计划也照这个格式。自由练 `id:"free"`（`js/engine.js` 的 `freeBase`/`freeLog`/`freePattern`）：没选过计划、也没练过正式训练的新用户默认是它；建议从最近 3 周的训练和加练里长出来（散步骑行这类不排），按部位多久没练排，每次至少 2 个动作 5 组；练法稳定后提示存成自定义计划。自定义计划 `id:"custom"`（`setCustomPlan`，面板 `openCustom`）：只用练过的动作（`engMoves`），每个动作从自己的上次记录接着练；自定义计划和自由练下引擎不换动作（`engCustom`）；一种训练日里找不到某动作的历史时，到所有训练和加练里找（`engMoveHist`）。
 - 训练引擎排的训练存在训练记录本身：`sessions[sid].ex` 是这次的动作、`feel` 是每个动作的感觉、`edited` 表示用户手改过。`js/core.js` 的 `registerPlanned` 把它们挂进 `PROGRAM`/`BYID`（可以超过第 20 天，`third-NN` 只靠它注册）。进度文件里对应追加的字段是 `pe`。
 - 新增文件要加进 `sw.js` 的缓存列表，资源列表变了就把 `CACHE_NAME` 的版本号加一。
-- 性能：会被拖动或移动的东西（卡堆顶牌、底栏高亮、底部面板、播放器）有 `will-change:transform`；不要再用 `backdrop-filter`（手机上最贵），面板一律不透明；页面背景不用 `background-attachment:fixed`。
+- 性能：会被拖动或移动的东西（卡堆顶牌、底栏高亮、底部面板、播放器）有 `will-change:transform`；不要再用 `backdrop-filter`（手机上最贵），面板一律不透明；面板打开时背后的页面用一次 `filter:blur` 虚焦（`css/p1.css` 末尾，`body:has(#sheet.on)`/`body:has(>.mask)`）；页面背景不用 `background-attachment:fixed`。
 - 改了 `css/` 或 `js/` 下的任何文件，提交前先运行 `python3 tools/stamp.py`。它给 `index.html` 里的脚本和样式网址加上内容指纹（`?v=…`），这样手机上缓存的旧文件不会和新网页配在一起。不运行的话，更新后可能出现新网页配旧脚本、功能错乱。
 - 备份格式见 `js/backupcore.js`，新字段只能追加在 `MK` 末尾，旧版进度文件必须仍能导入。经典界面时期的进度文件也要能导入。用户说的「兼容到 v1.4」是一个里程碑，不是版本号 v1.40a：兼容一直保留，直到用户明确说可以停。顶层只能追加新字段（例如 v1.37a 加的 `pe`），旧文件没有它也要能导入。每次训练的数按它自己的动作单排：有 `pe` 用 `pe`，否则用 `js/core.js` 的 `baseEx`（原 20 天计划），绝不能用这台手机当前排的 `BYID`；恢复后用 `resetPlanned`。
 - 改动后用无头浏览器（Playwright）实际打开页面测试，确认没有报错再提交。

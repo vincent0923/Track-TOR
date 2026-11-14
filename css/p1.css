@@ -1270,13 +1270,8 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 .mp-n svg{width:19px;height:19px}
 .mp-bar{position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--ac) calc(var(--p,0)*100%),color-mix(in srgb,var(--ink) 10%,transparent) 0)}
 .sp-full{display:grid;justify-items:center;gap:10px;padding:0 0 4px}
-/* the cover as a record: round, a spindle hole and a few grooves, turning slowly while it plays */
-.sp-art{position:relative;width:min(46vw,184px);aspect-ratio:1;border-radius:50%;box-shadow:0 14px 30px -12px rgba(0,0,0,.5),0 0 0 3px color-mix(in srgb,var(--ink) 8%,transparent);animation:spin 24s linear infinite;animation-play-state:paused;will-change:transform}
-.sp-art.on{animation-play-state:running}
-.sp-art::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,var(--card) 0 6%,rgba(0,0,0,.45) 6.5% 7.5%,rgba(0,0,0,0) 8%),repeating-radial-gradient(circle,rgba(0,0,0,0) 0 3px,rgba(0,0,0,.05) 3px 4px),linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,0) 45%)}
-@keyframes spin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion: reduce){.sp-art{animation:none}}
+.sp-art{width:min(46vw,184px);aspect-ratio:1;border-radius:20px;box-shadow:0 14px 30px -12px rgba(0,0,0,.45);transform:scale(.94);transition:transform .5s var(--spring)}
+.sp-art.on{transform:none}
 .sp-art svg{width:64px;height:64px}
 .sp-meta{display:grid;justify-items:center;text-align:center;gap:2px;max-width:100%}
 .sp-meta b{font-size:20px;font-weight:800;letter-spacing:-.02em}
@@ -1450,3 +1445,11 @@ html.groove .cal .dd.trn b,html.groove .cal .dd.xo b,html.groove .cal .dd.today 
 html.groove .cal .dd:is(.trn,.xo,.today):nth-child(3n+1) b{animation-delay:-.17s}
 html.groove .cal .dd:is(.trn,.xo,.today):nth-child(3n+2) b{animation-delay:-.34s}
 @keyframes grooveDay{from{transform:none}to{transform:translateY(-1.5px) scale(1.05)}}
+/* an open panel puts what's behind it out of focus: one blur on the page layers (no backdrop-filter, which phones
+   redo on every frame) */
+.top,main,.dock,.mini-pl,.focus{transition:filter .28s var(--ease)}
+body:has(#sheet.on) :is(.top,main,.dock,.mini-pl,.focus.on),body:has(>.mask) :is(.top,main,.dock,.mini-pl,.focus.on){filter:blur(6px) saturate(.9)}
+/* panels stacked on panels: the one underneath goes out of focus too */
+#sheet .panel,.mask>.sheet{transition:filter .28s var(--ease)}
+body:has(>.mask) #sheet.on .panel,.mask:has(~ .mask)>.sheet{filter:blur(5px) saturate(.9)}
+@media (prefers-reduced-motion: reduce){.top,main,.dock,.mini-pl,.focus{transition:none}}
