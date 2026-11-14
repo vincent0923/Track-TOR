@@ -1,5 +1,5 @@
 /* Theme thumbnails for the blind box and the theme list: the three main pages (training, food, progress) of every
-   theme and look, filled with made-up demo data, shot in a headless browser and joined into one strip per look
+   theme and look, filled with made-up demo data, in English (one set for every language), shot in a headless browser and joined into one strip per look
    at img/th/<theme>-<light|dark>.webp. Run from the repo root after a theme or a main page changes visibly:
      python3 -m http.server 8765 &   then   node tools/thumbs.js
    Needs Playwright (require('playwright')). */
@@ -7,7 +7,7 @@ const {chromium}=require("playwright"),fs=require("fs"),path=require("path");
 const BASE="http://localhost:8765/index.html",OUT=path.join(__dirname,"..","img","th"),PW=330,PH=714;
 /* a few weeks of plausible training, food and body numbers, ending yesterday */
 function demo(){const ymd=d=>d.toISOString().slice(0,10),day=n=>{const d=new Date();d.setDate(d.getDate()-n);return ymd(d)};
-  const metrics={},diet={},foods=[["燕麦酸奶",28,9,52,0,410],["鸡胸肉沙拉",42,14,18,1,380],["牛肉饭",34,22,88,1,690],["鸡蛋两个",13,10,1,0,150],["三文鱼配蔬菜",36,20,12,1,400]];
+  const metrics={},diet={},foods=[["Oats & yoghurt",28,9,52,0,410],["Chicken salad",42,14,18,1,380],["Beef rice bowl",34,22,88,1,690],["Two eggs",13,10,1,0,150],["Salmon & greens",36,20,12,1,400]];
   for(let n=1;n<=42;n++){const d=day(n),k=42-n;metrics[d]={date:d,weight:+(74.6-k*.05+Math.sin(n)*.25).toFixed(1),active:420+((n*37)%260),sleep:70+((n*13)%22),hrv:52+((n*7)%14),rhr:56-((n*3)%5)};
     if(n%3===0)metrics[d].waist=+(84-k*.07).toFixed(1);
     if(n<=21)diet[d]={items:foods.slice(0,3+(n%3)).map(f=>({name:f[0],p:f[1],f:f[2],c:f[3],veg:f[4],kcal:f[5]}))}}
@@ -19,7 +19,7 @@ function demo(){const ymd=d=>d.toISOString().slice(0,10),day=n=>{const d=new Dat
   const D=demo();
   await pg.evaluate(D2=>{const dd={sessions:{},metrics:D2.metrics,diet:D2.diet,settings:{plan:"cyclist",sex:"m",height:178,birth:"1990-05-01",buys:[]}};
     localStorage.clear();localStorage.setItem("tracktor-data",JSON.stringify(dd));["welcomed"].forEach(k=>localStorage.setItem("tracktor-p1-"+k,"1"));
-    localStorage.setItem("tracktor-p1-fx","0");localStorage.setItem("tracktor-p1-dust","0");localStorage.setItem("tracktor-p1-rt","0")},{metrics:D.metrics,diet:D.diet});
+    localStorage.setItem("tracktor-p1-fx","0");localStorage.setItem("tracktor-lang","en");localStorage.setItem("tracktor-p1-dust","0");localStorage.setItem("tracktor-p1-rt","0")},{metrics:D.metrics,diet:D.diet});
   await pg.reload();await pg.waitForTimeout(600);
   /* finish the first sessions every other day, with pull-ups creeping up */
   await pg.evaluate(()=>{let n=0;for(const p of PROGRAM.slice(0,14)){const doc=sessionDoc(p.sid),k=n;p.ex.forEach(e=>doc.sets[e.id].forEach((x,i)=>{x.d=true;if(e.id==="pullup")x.v=Math.max(1,Math.round(2+k*.35-i*.5))}));
