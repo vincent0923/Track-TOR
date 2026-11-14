@@ -48,6 +48,9 @@ async function spPull(){if(SP.demo||SP.busy)return;try{const j=await spApi("/me/
     else{const it=j.item;SP.st={id:it.id,title:it.name,artist:(it.artists||[]).map(a=>a.name).join(", ")||(it.show&&it.show.name)||"",art:spCover((it.album||it).images),
       dur:it.duration_ms,pos:j.progress_ms||0,playing:!!j.is_playing,ctx:j.context&&j.context.uri,shuf:!!j.shuffle_state,smart:!!j.smart_shuffle,rep:j.repeat_state||"off",vol:j.device&&j.device.volume_percent,device:j.device&&j.device.name}}
     SP.at=Date.now();spPaint()}catch(e){if(e.message==="auth"){spSetMode("");spPaint()}}}
+/* play on the phone by default: Spotify otherwise starts on whatever device was last active (a sound bar at home).
+   The phone shows up as a "Smartphone" while Spotify is open there; if it isn't listed, Spotify picks as before */
+async function spPhone(){try{const d=await spApi("/me/player/devices"),ph=((d&&d.devices)||[]).find(x=>/smartphone/i.test(x.type));return ph?{id:ph.id,active:!!ph.is_active}:null}catch(e){return null}}
 async function spCmd(kind){const s=SP.st;buzz(8);if(typeof SFX!=="undefined")SFX.tap();
   if(kind==="shuf"||kind==="rep"){if(!s)return;if(kind==="shuf"){if(s.smart){s.smart=false;s.shuf=true}s.shuf=!s.shuf;try{localStorage.setItem(SP_K+"-shuf",s.shuf?"1":"0")}catch(e){}}else s.rep={off:"context",context:"track",track:"off"}[s.rep||"off"];
     spPaint();if(SP.demo)return;SP.busy=true;try{await spApi(kind==="shuf"?"/me/player/shuffle?state="+s.shuf:"/me/player/repeat?state="+s.rep,"PUT")}catch(e){if(e.status===403)toast(T("控制需要 Spotify Premium","Control needs Spotify Premium"))}SP.busy=false;setTimeout(spPull,600);return}
@@ -55,7 +58,8 @@ async function spCmd(kind){const s=SP.st;buzz(8);if(typeof SFX!=="undefined")SFX
   if(kind==="toggle"&&(!s||!s.title)&&spLast()){spPlayList(spLast());return}
   if(SP.demo){if(kind==="toggle"){s.pos=spNow();s.playing=!s.playing;SP.at=Date.now()}else if(kind==="next"||kind==="prev"){s.pos=0;SP.at=Date.now();s.playing=true}spPaint();return}
   SP.busy=true;try{
-    if(kind==="toggle"){if(s&&s.playing){s.pos=spNow();s.playing=false;spPaint();await spApi("/me/player/pause","PUT")}else{if(s){s.playing=true;SP.at=Date.now();spPaint()}await spApi("/me/player/play","PUT")}}
+    if(kind==="toggle"){if(s&&s.playing){s.pos=spNow();s.playing=false;spPaint();await spApi("/me/player/pause","PUT")}else{if(s){s.playing=true;SP.at=Date.now();spPaint()}const ph=await spPhone();
+      if(ph&&!ph.active)await spApi("/me/player","PUT",{device_ids:[ph.id],play:true});else await spApi("/me/player/play","PUT")}}
     else{/* repeat-one makes Spotify replay the same song on "next": like its own app, drop to repeat-all first */
       if(s&&s.rep==="track"){s.rep="context";await spApi("/me/player/repeat?state=context","PUT").catch(()=>{})}
       await spApi(kind==="next"?"/me/player/next":"/me/player/previous","POST")}}
@@ -202,7 +206,8 @@ async function spPlayList(p){buzz(10);if(typeof SFX!=="undefined")SFX.tap();
   try{localStorage.setItem(SP_K+"-last",JSON.stringify({name:p.name,uri:p.uri}));const pl=JSON.parse(localStorage.getItem(SP_K+"-played")||"{}");pl[p.uri]=Date.now();localStorage.setItem(SP_K+"-played",JSON.stringify(pl))}catch(e){}
   const body={context_uri:p.uri};
   const go=async dev=>{await spApi("/me/player/play"+(dev?"?device_id="+encodeURIComponent(dev):""),"PUT",body)};
-  try{await go(null)}catch(e){
+  const ph=await spPhone();
+  try{await go(ph?ph.id:null)}catch(e){
     if(e.status===404){try{const d=await spApi("/me/player/devices"),devs=(d&&d.devices)||[],pick=devs.find(x=>x.is_active)||devs.find(x=>/smartphone/i.test(x.type))||devs[0];
         if(!pick){toast(T("先打开手机上的 Spotify","Open Spotify on your phone first"));return}await go(pick.id)}catch(e2){toast(T("放不了这个歌单","Couldn't play that playlist"));return}}
     else{toast(e.status===403?T("控制需要 Spotify Premium","Control needs Spotify Premium"):T("放不了这个歌单","Couldn't play that playlist"));return}}
