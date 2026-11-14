@@ -75,7 +75,14 @@ const SPI={play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13
   smart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 4h4v4M7 20l14-14M21 16v4h-4M15 15l6 5"/><path d="M6 2.5l1 2.5 2.5 1-2.5 1L6 9.5 5 7 2.5 6 5 5z" fill="currentColor" stroke="none"/></svg>',
   shuf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20l17-17M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>'};
 const spArt=(s,cls)=>'<span class="'+cls+'"'+(s&&s.art?' style="background-image:url(\''+esc(s.art)+'\')"':'')+'>'+(s&&s.art?'':SPI.note)+'</span>';
-function spPaint(){let el=document.getElementById("mini");const on=SP.demo||(spMode()==="on"&&SP.tok);
+/* easter egg: while music plays, the calorie bricks sway a little and pick up a faint glow in the cover's colours */
+let spAlbArt="";
+function spGroove(){const de=document.documentElement,s=SP.st,on=!!(s&&s.playing)&&!document.hidden&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
+  de.classList.toggle("groove",on);if(!on||!s.art||s.art===spAlbArt)return;spAlbArt=s.art;
+  const im=new Image();im.crossOrigin="anonymous";im.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=12;const x=c.getContext("2d");x.drawImage(im,0,0,12,12);
+    const d=x.getImageData(0,0,12,12).data;let best=null,bs=-1;for(let k=0;k<d.length;k+=4){const r=d[k],g=d[k+1],b=d[k+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,sc=sat*(mx/255);if(sc>bs){bs=sc;best=[r,g,b]}}
+    if(best)de.style.setProperty("--alb","rgb("+best.join(",")+")")}catch(e){}};im.src=s.art}
+function spPaint(){spGroove();let el=document.getElementById("mini");const on=SP.demo||(spMode()==="on"&&SP.tok);
   document.body.classList.toggle("has-mini",!!on);if(!on){if(el)el.remove();return}
   if(!el){el=document.createElement("div");el.id="mini";el.className="mini-pl";document.body.appendChild(el);
     el.addEventListener("click",e=>{if(el.dataset.swiped){delete el.dataset.swiped;return}const b=e.target.closest("[data-sp]");if(b){e.stopPropagation();spCmd(b.dataset.sp);return}spOpen()});
@@ -153,11 +160,11 @@ async function spRank(list){if(SP.demo||SP.ranked||!SP.rec||!SP.rec.length)retur
   await Promise.all([work(),work(),work(),work()]);
   const keep={};list.forEach(p=>{if(cache[p.uri])keep[p.uri]=cache[p.uri]});try{localStorage.setItem(SPT_K,JSON.stringify(keep))}catch(e){}
   list.sort((a,b)=>b.hit-a.hit||b.at-a.at||a.k-b.k);SP.ranked=true;return true}
-/* playlists as a grid of big covers (easy to hit mid-workout): "open Spotify" and shuffle on top, a round × below */
+/* playlists as a grid of big covers (easy to hit mid-workout) */
 async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";spLoad();
-  const head='<div class="sp-plh"><a class="sp-pill" href="spotify:" data-spapp aria-label="'+T('打开 Spotify','Open Spotify')+'">'+BRAND.sp+'</a>'
-+'</div>';
-  const foot='<button class="sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button>';
+  /* one row along the bottom: the Spotify icon (tap opens the app, hold re-ranks) on the left, back to the player on the right */
+  const head='';
+  const foot='<div class="sp-plf"><a class="sp-pill" href="spotify:" data-spapp aria-label="'+T('打开 Spotify','Open Spotify')+'">'+BRAND.sp+'</a><button class="sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button></div>';
   const bind=()=>{f.querySelector("[data-spback]").addEventListener("click",()=>{buzz(6);spPaintSheet()});
     const ap=f.querySelector("[data-spapp]");let held=0;if(ap&&typeof holdOpen==="function"){holdOpen(ap,()=>{held=Date.now();if(!SP.demo)spReset()});ap.addEventListener("click",e=>{if(Date.now()-held<1500)e.preventDefault()})}
 };

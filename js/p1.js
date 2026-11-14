@@ -337,7 +337,7 @@ function gapData(){const t=today(),to=ymdAdd(t,-1),first=Object.keys(state.diet)
 /* bricks: a bar chart built from stacked bricks (cols: [{n bricks, c colour, l label}]). The bricks drop in when drawn;
    a finger run across lifts each column it passes in a ripple, with a light buzz. A still chart (inside a swipe stack,
    where a sideways finger turns the card) doesn't react. */
-function bricksHtml(cols,still){return '<div class="bricks'+(still?' still':'')+'" style="--cols:'+cols.length+'">'+cols.map((c,i)=>'<div class="bk" data-i="'+i+'"'+(c.t?' data-t="'+esc(c.t)+'"':'')+' style="--c:'+(c.c||'var(--ac)')+'"><div class="bks">'
+function bricksHtml(cols,still){return '<div class="bricks'+(still?' still':'')+'" style="--cols:'+cols.length+'">'+cols.map((c,i)=>'<div class="bk" data-i="'+i+'"'+(c.t?' data-t="'+esc(c.t)+'"':'')+' style="--i:'+i+';--c:'+(c.c||'var(--ac)')+'"><div class="bks">'
   +(c.n?Array.from({length:c.n},(_,j)=>'<i style="--j:'+j+';--d:'+(i*16+j*26)+'ms"></i>').join(""):'<i class="ghost"></i>')+'</div><span class="bl">'+(c.l||'&nbsp;')+'</span></div>').join("")+'</div>'}
 (function(){let box=null,last=null,hits=0,tm=0;
   const hit=e=>{const el=document.elementFromPoint(e.clientX,e.clientY),col=el&&el.closest(".bk");if(!col||col===last||!box||!box.contains(col))return;last=col;hits++;
