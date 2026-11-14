@@ -1499,13 +1499,17 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 /* the blind box: the app icon's envelope beside the balance; greyed once every theme is yours */
 .coinbig .coin{--cs:38px}
 .boxbtn{flex:none;width:62px;height:62px;padding:0;border-radius:18px;background:none;transition:transform .3s var(--spring)}
-.boxbtn .env{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3));transition:opacity .25s .5s,transform .35s var(--spring) .5s}
-.boxbtn .evflap{transform-origin:60px 26px;transform-box:view-box;transition:transform .45s cubic-bezier(.5,0,.3,1)}
-.boxbtn .envico{position:absolute;inset:0;width:100%;height:100%;border-radius:22%;opacity:0;transform:translateY(6px) scale(.5);filter:drop-shadow(0 6px 10px rgba(0,0,0,.3));transition:opacity .3s .45s,transform .45s var(--spring) .45s;pointer-events:none}
-.boxbtn.open{animation:none}
-.boxbtn.open .evflap{transform:scaleY(-1)}
-.boxbtn.open .env{opacity:0;transform:scale(.85)}
-.boxbtn.open .envico{opacity:1;transform:none}
+.boxbtn .env{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
+/* opening: the top flap folds back over its crease, its inside comes up behind the card, then the card with the
+   G coin slides out and settles; the end state is the app icon exactly */
+.boxbtn .evflap,.boxbtn .evflapb,.boxbtn .evcard{transform-box:fill-box;transform-origin:50% 0}
+.boxbtn .evflapb{transform:scaleY(0);opacity:1}
+.boxbtn .evcard{transform:translateY(330px);opacity:0}
+.boxbtn.open .evflap{transform:scaleY(0);filter:brightness(.55);transition:transform .34s cubic-bezier(.55,0,.8,.4),filter .34s ease-in}
+.boxbtn.open .evflapb{transform:scaleY(-1);opacity:0;transition:transform .32s cubic-bezier(.2,.6,.3,1) .34s,opacity .3s ease 1s}
+.boxbtn.open .evcard{transform:none;opacity:1;transition:transform .62s cubic-bezier(.22,1.25,.4,1) .5s,opacity .12s linear .5s}
+.boxbtn.open{animation:boxPop 1.2s ease both!important}
+@keyframes boxPop{0%{transform:none}8%{transform:scale(.93)}22%{transform:scale(1.04)}36%{transform:none}75%{transform:translateY(-3px) scale(1.03)}100%{transform:none}}
 .boxbtn.no{animation:boxNo .45s ease-in-out!important}
 @keyframes boxNo{20%{transform:translateX(-6px) rotate(-4deg)}40%{transform:translateX(6px) rotate(4deg)}60%{transform:translateX(-4px) rotate(-2deg)}80%{transform:translateX(3px)}}
 .boxbtn:active{transform:scale(.92)}
@@ -1601,7 +1605,7 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 .ovs-skin .ovs-track i{display:block;height:100%;background:var(--ac);transform-origin:left;transform:scaleX(var(--ovs-p,0));transition:transform .3s var(--ease)}
 .ovs-skin .ovs-content{gap:10px}
 .ovs-skin .ovs-content b{display:flex;align-items:center;gap:6px;font-size:17px}
-.sunmoon{width:18px;height:18px;flex:none;color:var(--muted)}
+.sunmoon{width:30px;height:16px;flex:none}
 /* a theme as a stack of its own pages */
 .thstk{position:relative;flex:none;display:block;width:calc(var(--w,34px) + 2 * var(--st,4px));height:calc(var(--w,34px) * 2.164 + 2 * var(--st,4px))}
 .thstk i{position:absolute;left:0;top:0;width:var(--w,34px);aspect-ratio:330/714;border-radius:calc(var(--w,34px) * .12);background-size:300% 100%;box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 3px 8px -3px rgba(0,0,0,.4);
