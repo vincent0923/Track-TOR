@@ -1390,3 +1390,4 @@ img.brand{width:22px;height:22px;flex:none;border-radius:6px;filter:none!importa
 .eyebrow img.brand{width:18px;height:18px;border-radius:5px}
 
 :root[data-theme="toy"] .dl-wheel::before{display:none}
+.shimg{display:block;width:100%;max-height:46dvh;object-fit:contain;border-radius:18px;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}

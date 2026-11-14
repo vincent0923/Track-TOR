@@ -438,28 +438,45 @@ function daySheet(d){const day=state.diet[d]||{},items=day.items||[],tt=dietTota
     +(day.note?'<p class="muted" style="font-size:12px;margin-top:12px">'+escHtml(day.note)+'</p>':'')
     +'<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet:'+d+'">'+ICON.pen+T('编辑这天','Edit this day')+'</button>')}
 
-/* a day's food as a picture to send to friends: the same table drawn on a canvas, then the share sheet (or a download) */
-async function shareDay(d){const day=state.diet[d]||{},items=day.items||[],tt=dietTotals(day),a=intakeOf(d),b=burnOfDate(d),g=dietGapOf(d);
-  const W=1080,P=64,S=2,cv=document.createElement("canvas"),c=cv.getContext("2d"),F='"Geist",-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif';
-  const cs=getComputedStyle(document.documentElement),ac=cs.getPropertyValue("--ac").trim()||"#00E0C2";
+/* a day's food as a picture to send to friends: the table drawn on a canvas in the current skin's colours. A panel
+   shows it first, with a switch for whether burn and deficit go in (remembered), then save it or share it */
+const SHB_K=PK+"shb";
+function shColors(){const pr=document.createElement("i"),rd=v=>{pr.style.color="var("+v+")";return getComputedStyle(pr).color};pr.style.display="none";document.body.appendChild(pr);
+  const o={bg:rd("--bg"),card:rd("--card"),ink:rd("--ink"),muted:rd("--muted"),ac:rd("--ac"),bad:rd("--bad"),good:rd("--good")};pr.remove();return o}
+function drawShare(d,burn){const day=state.diet[d]||{},items=day.items||[],tt=dietTotals(day),a=intakeOf(d),b=burnOfDate(d),g=dietGapOf(d),K=shColors();
+  const W=1080,P=64,cv=document.createElement("canvas"),c=cv.getContext("2d"),F=(getComputedStyle(document.documentElement).getPropertyValue("--disp").trim()||'"Geist"')+',-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif';
   const n0=x=>x==null||x===""?"–":String(Math.round(+x)),cols=[T("蛋白","Prot."),T("脂肪","Fat"),T("碳水","Carbs"),T("蔬菜","Veg"),"kcal"],cw=110,nameW=W-2*P-cw*cols.length-16;
-  const wrap=(t,w,font)=>{c.font=font;const out=[];let line="";for(const ch of (String(t).match(/[\u2e80-\u9fff\u3000-\u303f\uff00-\uffef]|[^\s\u2e80-\u9fff\u3000-\u303f\uff00-\uffef]+|\s+/g)||[])){if(c.measureText(line+ch).width>w&&line.trim()){out.push(line.trimEnd());line=ch.trimStart()}else line+=ch}if(line)out.push(line);return out.length?out:[""]};
+  const wrap=(t,w,font)=>{c.font=font;const out=[];let line="";for(const ch of (String(t).match(/[⺀-鿿　-〿＀-￯]|[^\s⺀-鿿　-〿＀-￯]+|\s+/g)||[])){if(c.measureText(line+ch).width>w&&line.trim()){out.push(line.trimEnd());line=ch.trimStart()}else line+=ch}if(line)out.push(line);return out.length?out:[""]};
   const rowFont='500 32px '+F,lh=42;
   const rows=items.map(it=>({name:wrap(HANT?s2t(it.name||""):(it.name||""),nameW,rowFont),v:[it.p,it.f,it.c,it.veg,it.kcal].map(n0)}));
   if(items.length>1)rows.push({name:[T("合计","Total")],v:[tt.p,tt.f,tt.c,tt.veg,tt.kcal].map(n0),tot:1});
   const H=P+70+40+90+60+66+rows.reduce((h,r)=>h+r.name.length*lh+28,0)+90;
-  cv.width=W;cv.height=H;const bg=c.createLinearGradient(0,0,W,H);bg.addColorStop(0,"#16293B");bg.addColorStop(1,"#0B1422");c.fillStyle=bg;c.fillRect(0,0,W,H);
-  const gl=c.createRadialGradient(W*.85,0,0,W*.85,0,W*.7);gl.addColorStop(0,ac+"55");gl.addColorStop(1,ac+"00");c.fillStyle=gl;c.fillRect(0,0,W,H);
-  const tx=(t,x,y,font,col,al)=>{c.font=font;c.fillStyle=col;c.textAlign=al||"left";c.fillText(HANT?s2t(t):t,x,y)};
-  let y=P+56;tx((dateObj(d).getMonth()+1)+"."+dateObj(d).getDate()+(LANG==="en"?"":" "+T("吃了什么","what I ate")),P,y,"800 60px "+F,"#fff");
-  y+=130;[[T("摄入","Intake"),fmt(a),"#fff"],[T("消耗","Burn"),fmt(b),"#fff"],[g==null||g>=0?T("缺口","Deficit"):T("盈余","Surplus"),g==null?"–":fmt(Math.abs(g)),g==null?"#fff":g>=0?ac:"#FF6B6B"]].forEach(([l,v,col],i)=>{const x=P+i*300;tx(l,x,y-44,"600 26px "+F,"rgba(255,255,255,.55)");tx(v,x,y+6,"800 52px "+F,col)});
-  y+=96;c.font="600 26px "+F;tx(T("食物","Food"),P,y,"600 26px "+F,"rgba(255,255,255,.55)");cols.forEach((h,i)=>tx(h,W-P-(cols.length-1-i)*cw,y,"600 26px "+F,"rgba(255,255,255,.55)","right"));
-  y+=18;rows.forEach(r=>{c.fillStyle="rgba(255,255,255,.1)";c.fillRect(P,y,W-2*P,2);y+=lh;const f=r.tot?'800 32px '+F:rowFont;
-    r.name.forEach((ln,k)=>tx(ln,P,y+k*lh-4,f,"#fff"));r.v.forEach((v,i)=>tx(v,W-P-(cols.length-1-i)*cw,y-4,(r.tot?"800 ":"600 ")+"32px "+F,"#fff","right"));y+=(r.name.length-1)*lh+28});
-  tx(T("推拉机","track-TOR"),W-P,H-44,"700 26px "+F,"rgba(255,255,255,.4)","right");
-  const blob=await new Promise(res=>cv.toBlob(res,"image/png")),name=T("饮食","food")+"-"+d+".png",file=new File([blob],name,{type:"image/png"});
-  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]})}catch(e){}return}
-  const url=URL.createObjectURL(blob),el=document.createElement("a");el.href=url;el.download=name;document.body.appendChild(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(url),1e4);toast(T("图片已保存","Picture saved"))}
+  cv.width=W;cv.height=H;const bg=c.createLinearGradient(0,0,W,H);bg.addColorStop(0,K.card);bg.addColorStop(1,K.bg);c.fillStyle=bg;c.fillRect(0,0,W,H);
+  c.save();c.globalAlpha=.22;const gl=c.createRadialGradient(W*.85,0,0,W*.85,0,W*.7);gl.addColorStop(0,K.ac);gl.addColorStop(1,"rgba(0,0,0,0)");c.fillStyle=gl;c.fillRect(0,0,W,H);c.restore();
+  const tx=(t,x,y,font,col,al,op)=>{c.save();c.globalAlpha=op||1;c.font=font;c.fillStyle=col;c.textAlign=al||"left";c.fillText(HANT?s2t(t):t,x,y);c.restore()};
+  let y=P+56;tx((dateObj(d).getMonth()+1)+"."+dateObj(d).getDate()+(LANG==="en"?"":" "+T("吃了什么","what I ate")),P,y,"800 60px "+F,K.ink);
+  const stats=[[T("摄入","Intake"),fmt(a),K.ink]];if(burn)stats.push([T("消耗","Burn"),fmt(b),K.ink],[g==null||g>=0?T("缺口","Deficit"):T("盈余","Surplus"),g==null?"–":fmt(Math.abs(g)),g==null?K.ink:g>=0?K.good:K.bad]);
+  y+=130;stats.forEach(([l,v,col],i)=>{const x=P+i*300;tx(l,x,y-44,"600 26px "+F,K.muted);tx(v,x,y+6,"800 52px "+F,col)});
+  y+=96;tx(T("食物","Food"),P,y,"600 26px "+F,K.muted);cols.forEach((h,i)=>tx(h,W-P-(cols.length-1-i)*cw,y,"600 26px "+F,K.muted,"right"));
+  y+=18;rows.forEach(r=>{c.save();c.globalAlpha=.14;c.fillStyle=K.ink;c.fillRect(P,y,W-2*P,2);c.restore();y+=lh;const f=r.tot?'800 32px '+F:rowFont;
+    r.name.forEach((ln,k)=>tx(ln,P,y+k*lh-4,f,K.ink));r.v.forEach((v,i)=>tx(v,W-P-(cols.length-1-i)*cw,y-4,(r.tot?"800 ":"600 ")+"32px "+F,K.ink,"right"));y+=(r.name.length-1)*lh+28});
+  tx(T("推拉机","track-TOR"),W-P,H-44,"700 26px "+F,K.muted,"right",.8);return cv}
+async function shareDay(d){let burn=true;try{burn=localStorage.getItem(SHB_K)!=="0"}catch(e){}
+  const name=T("饮食","food")+"-"+d+".png",blobOf=()=>new Promise(res=>drawShare(d,burn).toBlob(res,"image/png"));
+  openSheet('<div class="sh-h"><h3>'+T('分享图片','Share picture')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
+    +'<img class="shimg" alt="">'
+    +'<div class="setlist" style="margin-top:12px"><button class="opt" type="button" data-shb role="switch" aria-checked="'+burn+'"><span class="sp">'+T('带上消耗和缺口','Include burn and deficit')+'</span><span class="sw" aria-hidden="true"></span></button></div>'
+    +'<div class="row" style="gap:10px;margin-top:14px"><button class="btn ghost" type="button" data-shsave style="flex:1">'+T('存到相册','Save to photos')+'</button><button class="btn" type="button" data-shgo style="flex:1">'+ICON.share+T('分享','Share')+'</button></div>');
+  SHEET_UP=()=>daySheet(d);
+  const im=$("#sheet .shimg"),paint=()=>{im.src=drawShare(d,burn).toDataURL("image/jpeg",.85)};paint();
+  $("#sheet [data-shb]").addEventListener("click",e=>{burn=!burn;e.currentTarget.setAttribute("aria-checked",burn);try{localStorage.setItem(SHB_K,burn?"1":"0")}catch(err){}buzz(8);paint()});
+  /* saving: a download, which phones put where the gallery finds it; where the browser can't download (iOS), the share sheet's "Save image" */
+  $("#sheet [data-shsave]").addEventListener("click",async()=>{const blob=await blobOf(),file=new File([blob],name,{type:"image/png"});buzz(10);
+    if(/iP(hone|ad|od)/.test(navigator.userAgent)&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]})}catch(e){}return}
+    const url=URL.createObjectURL(blob),el=document.createElement("a");el.href=url;el.download=name;document.body.appendChild(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(url),1e4);toast(T("图片已存到相册","Saved to photos"))});
+  $("#sheet [data-shgo]").addEventListener("click",async()=>{const blob=await blobOf(),file=new File([blob],name,{type:"image/png"});buzz(10);
+    if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]})}catch(e){}return}
+    toast(T("这个浏览器不能直接分享，先存到相册再发","This browser can't share directly; save it first"))})}
 
 /* ---------- progress view ---------- */
 const METRICS=[
