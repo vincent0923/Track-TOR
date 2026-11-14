@@ -45,10 +45,10 @@ function spNow(){const s=SP.st;if(!s)return null;return s.playing?Math.min(s.dur
 async function spPull(){if(SP.demo||SP.busy)return;try{const j=await spApi("/me/player");
     if(!j||!j.item)SP.st=j&&j.device?{title:"",artist:"",art:"",dur:0,pos:0,playing:false,vol:j.device.volume_percent,device:j.device.name,idle:true}:null;
     else{const it=j.item;SP.st={title:it.name,artist:(it.artists||[]).map(a=>a.name).join(", ")||(it.show&&it.show.name)||"",art:((it.album||it).images||[]).slice(-2)[0]?.url||((it.album||it).images||[])[0]?.url||"",
-      dur:it.duration_ms,pos:j.progress_ms||0,playing:!!j.is_playing,ctx:j.context&&j.context.uri,shuf:!!j.shuffle_state,rep:j.repeat_state||"off",vol:j.device&&j.device.volume_percent,device:j.device&&j.device.name}}
+      dur:it.duration_ms,pos:j.progress_ms||0,playing:!!j.is_playing,ctx:j.context&&j.context.uri,shuf:!!j.shuffle_state,smart:!!j.smart_shuffle,rep:j.repeat_state||"off",vol:j.device&&j.device.volume_percent,device:j.device&&j.device.name}}
     SP.at=Date.now();spPaint()}catch(e){if(e.message==="auth"){spSetMode("");spPaint()}}}
 async function spCmd(kind){const s=SP.st;buzz(8);if(typeof SFX!=="undefined")SFX.tap();
-  if(kind==="shuf"||kind==="rep"){if(!s)return;if(kind==="shuf"){s.shuf=!s.shuf;try{localStorage.setItem(SP_K+"-shuf",s.shuf?"1":"0")}catch(e){}}else s.rep={off:"context",context:"track",track:"off"}[s.rep||"off"];
+  if(kind==="shuf"||kind==="rep"){if(!s)return;if(kind==="shuf"){if(s.smart){s.smart=false;s.shuf=true}s.shuf=!s.shuf;try{localStorage.setItem(SP_K+"-shuf",s.shuf?"1":"0")}catch(e){}}else s.rep={off:"context",context:"track",track:"off"}[s.rep||"off"];
     spPaint();if(SP.demo)return;SP.busy=true;try{await spApi(kind==="shuf"?"/me/player/shuffle?state="+s.shuf:"/me/player/repeat?state="+s.rep,"PUT")}catch(e){if(e.status===403)toast(T("控制需要 Spotify Premium","Control needs Spotify Premium"))}SP.busy=false;setTimeout(spPull,600);return}
   /* nothing playing: start the last playlist again */
   if(kind==="toggle"&&(!s||!s.title)&&spLast()){spPlayList(spLast());return}
@@ -72,6 +72,7 @@ const SPI={play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13
   back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
   rep:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
   rep1:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/><path d="M11 10h1v4" stroke-width="1.8"/></svg>',
+  smart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 4h4v4M7 20l14-14M21 16v4h-4M15 15l6 5"/><path d="M6 2.5l1 2.5 2.5 1-2.5 1L6 9.5 5 7 2.5 6 5 5z" fill="currentColor" stroke="none"/></svg>',
   shuf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20l17-17M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>'};
 const spArt=(s,cls)=>'<span class="'+cls+'"'+(s&&s.art?' style="background-image:url(\''+esc(s.art)+'\')"':'')+'>'+(s&&s.art?'':SPI.note)+'</span>';
 function spPaint(){let el=document.getElementById("mini");const on=SP.demo||(spMode()==="on"&&SP.tok);
@@ -100,7 +101,7 @@ function spOpen(){SP.view="player";openSheet('<div class="sh-h"><h3>'+T('正在�
 function spPaintSheet(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;SP.view="player";const s=SP.st||{};
   f.innerHTML=spArt(s,"sp-art"+(s.playing?" on":""))+'<div class="sp-meta"><b>'+esc(s.title||T("Spotify 没在播放","Nothing playing"))+'</b><span class="muted">'+esc(s.artist||"")+'</span></div>'
     +'<div class="sp-prog"><i></i></div><div class="sp-time n muted"><span></span><span></span></div>'
-    +'<div class="sp-ctl"><button class="mp-b sp-mode'+(s.shuf?' on':'')+'" data-sp="shuf" aria-pressed="'+!!s.shuf+'" aria-label="'+T("随机播放","Shuffle")+'">'+SPI.shuf+'</button><button class="mp-b" data-sp="prev" aria-label="'+T("上一首","Previous")+'">'+SPI.prev+'</button><button class="mp-b sp-big" data-sp="toggle" aria-label="'+T("播放 / 暂停","Play / pause")+'">'+(s.playing?SPI.pause:SPI.play)+'</button><button class="mp-b" data-sp="next" aria-label="'+T("下一首","Next")+'">'+SPI.next+'</button><button class="mp-b sp-mode'+(s.rep&&s.rep!=="off"?' on':'')+'" data-sp="rep" aria-label="'+T("循环","Repeat")+'">'+(s.rep==="track"?SPI.rep1:SPI.rep)+'</button></div>'
+    +'<div class="sp-ctl"><button class="mp-b sp-mode'+(s.shuf||s.smart?' on':'')+'" data-sp="shuf" aria-pressed="'+!!(s.shuf||s.smart)+'" aria-label="'+(s.smart?T("智能随机（在 Spotify 里开的）","Smart shuffle (turned on in Spotify)"):T("随机播放","Shuffle"))+'">'+(s.smart?SPI.smart:SPI.shuf)+'</button><button class="mp-b" data-sp="prev" aria-label="'+T("上一首","Previous")+'">'+SPI.prev+'</button><button class="mp-b sp-big" data-sp="toggle" aria-label="'+T("播放 / 暂停","Play / pause")+'">'+(s.playing?SPI.pause:SPI.play)+'</button><button class="mp-b" data-sp="next" aria-label="'+T("下一首","Next")+'">'+SPI.next+'</button><button class="mp-b sp-mode'+(s.rep&&s.rep!=="off"?' on':'')+'" data-sp="rep" aria-label="'+T("循环","Repeat")+'">'+(s.rep==="track"?SPI.rep1:SPI.rep)+'</button></div>'
     +'<label class="sp-vol"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/></svg><input type="range" min="0" max="100" value="'+(s.vol==null?50:s.vol)+'" aria-label="'+T("音量","Volume")+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke="none"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></label>'
     +'<button class="sp-plbtn" type="button" data-sppl>'+SPI.list+'<span>'+T('歌单','Playlists')+'</span>'+SPI.down+'</button>'
     +(s.device?'<p class="muted sp-dev">'+T('在「'+esc(s.device)+'」上播放','Playing on '+esc(s.device))+'</p>':'');
@@ -126,10 +127,10 @@ async function spPlaylists(){if(SP.demo)return SP_DEMO_PL;if(SP.pls&&Date.now()-
 /* playlists as a grid of big covers (easy to hit mid-workout): "open Spotify" and shuffle on top, a round × below */
 async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";spLoad();
   const head='<div class="sp-plh"><a class="sp-pill" href="spotify:" data-spapp>'+SPI.app+'<span>'+T('打开 Spotify','Open Spotify')+'</span></a>'
-    +'<button class="sp-pill sp-shufpill'+(spShuf()?' on':'')+'" type="button" data-spshuf aria-pressed="'+spShuf()+'">'+SPI.shuf+'<span>'+T('随机','Shuffle')+'</span></button></div>';
++'</div>';
   const foot='<button class="sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button>';
   const bind=()=>{f.querySelector("[data-spback]").addEventListener("click",()=>{buzz(6);spPaintSheet()});
-    const sh=f.querySelector("[data-spshuf]");sh.addEventListener("click",()=>{const on=!spShuf();try{localStorage.setItem(SP_K+"-shuf",on?"1":"0")}catch(e){}if(SP.st)SP.st.shuf=on;sh.classList.toggle("on",on);sh.setAttribute("aria-pressed",on);buzz(6)})};
+};
   const reconnect=()=>{
     f.innerHTML=head+'<p class="calc-msg">'+T('读歌单需要多一项授权，重新连接一次 Spotify 就好。','Reading playlists needs one more permission; connect Spotify once more.')+'</p><button class="btn" type="button" data-sprec>'+T('重新连接','Reconnect')+'</button>'+foot;
     bind();f.querySelector("[data-sprec]").addEventListener("click",spConnect)};
@@ -143,8 +144,8 @@ function spLast(){try{return JSON.parse(localStorage.getItem(SP_K+"-last")||"nul
 async function spPlayList(p){buzz(10);if(typeof SFX!=="undefined")SFX.tap();
   if(SP.demo){const s=SP.st;s.shuf=spShuf();Object.assign(s,{title:p.name+T(" · 第 1 首"," · track 1"),artist:T("推拉机 · 预览","Track-TOR · preview"),pos:0,playing:true,ctx:p.uri});SP.at=Date.now();spPaint();return}
   try{localStorage.setItem(SP_K+"-last",JSON.stringify({name:p.name,uri:p.uri}));const pl=JSON.parse(localStorage.getItem(SP_K+"-played")||"{}");pl[p.uri]=Date.now();localStorage.setItem(SP_K+"-played",JSON.stringify(pl))}catch(e){}
-  const body={context_uri:p.uri},shuf=spShuf();
-  const go=async dev=>{const q=dev?"?device_id="+encodeURIComponent(dev):"";await spApi("/me/player/shuffle?state="+shuf+(dev?"&device_id="+encodeURIComponent(dev):""),"PUT").catch(()=>{});await spApi("/me/player/play"+q,"PUT",body)};
+  const body={context_uri:p.uri};
+  const go=async dev=>{await spApi("/me/player/play"+(dev?"?device_id="+encodeURIComponent(dev):""),"PUT",body)};
   try{await go(null)}catch(e){
     if(e.status===404){try{const d=await spApi("/me/player/devices"),devs=(d&&d.devices)||[],pick=devs.find(x=>x.is_active)||devs.find(x=>/smartphone/i.test(x.type))||devs[0];
         if(!pick){toast(T("先打开手机上的 Spotify","Open Spotify on your phone first"));return}await go(pick.id)}catch(e2){toast(T("放不了这个歌单","Couldn't play that playlist"));return}}
