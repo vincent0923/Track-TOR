@@ -52,7 +52,11 @@ async function spPull(){if(SP.demo||SP.busy)return;try{const j=await spApi("/me/
    The phone shows up as a "Smartphone" while Spotify is open there; if it isn't listed, Spotify picks as before */
 async function spPhone(){try{const d=await spApi("/me/player/devices"),ph=((d&&d.devices)||[]).find(x=>/smartphone/i.test(x.type));return ph?{id:ph.id,active:!!ph.is_active}:null}catch(e){return null}}
 /* the phone's Spotify isn't open: open it, and when the user comes back here finish what they pressed */
-function spOpenApp(then){SP.pending=then;location.href="spotify:"}
+function spOpenApp(then){SP.pending={f:then,at:Date.now()};location.href="spotify:"}
+/* back from Spotify: if music is already playing (the user picked something there, Liked Songs say), leave it alone;
+   only when nothing plays, and within two minutes, finish the play that sent them there */
+async function spResume(){const p=SP.pending;SP.pending=null;if(!p||Date.now()-p.at>120000)return;
+  try{const j=await spApi("/me/player");if(j&&j.is_playing){spPull();return}}catch(e){}p.f()}
 async function spPhoneWait(){for(let i=0;i<5;i++){const ph=await spPhone();if(ph)return ph;await new Promise(r=>setTimeout(r,800))}return null}
 async function spCmd(kind,back){const s=SP.st;buzz(8);if(typeof SFX!=="undefined")SFX.tap();
   if(kind==="shuf"||kind==="rep"){if(!s)return;if(kind==="shuf"){if(s.smart){s.smart=false;s.shuf=true}s.shuf=!s.shuf;try{localStorage.setItem(SP_K+"-shuf",s.shuf?"1":"0")}catch(e){}}else s.rep={off:"context",context:"track",track:"off"}[s.rep||"off"];
@@ -245,6 +249,6 @@ function spStart(){spStop();SP.demo=spMode()==="demo";if(SP.demo){SP.st=Object.a
   SP.poll=setInterval(()=>{if(document.hidden)return;const s=SP.st;if(SP.demo&&s&&s.playing&&spNow()>=s.dur){s.pos=0;SP.at=Date.now()}
     if(!SP.demo&&Date.now()-SP.at>5000)spPull();spTick()},1000)}
 function spStop(){clearInterval(SP.poll);SP.poll=0;SP.demo=false;SP.st=null;spPaint()}
-document.addEventListener("visibilitychange",()=>{if(document.hidden)return;if(SP.pending){const f=SP.pending;SP.pending=null;setTimeout(f,300)}const had=!!SP.tok;spLoad();if(!had&&SP.tok&&spMode()==="on"){spStart();return}if(SP.poll&&!SP.demo)spPull()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)return;if(SP.pending)setTimeout(spResume,300);const had=!!SP.tok;spLoad();if(!had&&SP.tok&&spMode()==="on"){spStart();return}if(SP.poll&&!SP.demo)spPull()});
 addEventListener("storage",e=>{if(e.key===SP_K){spLoad();if(SP.tok&&spMode()==="on"&&!SP.poll)spStart()}});
 spLoad();spCallback().finally(spStart);
