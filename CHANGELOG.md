@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.64a] — 2026-11-14
+
+### 改进 / Changed
+- 🧗 **进阶更循序**：一个动作到顶后先改慢速，再加一组，组数加满了才换更难的动作（换时少一组）；连着两次没做的动作下次不再排，换上来的难动作退回下一级。
+  **Gentler progression**: at the top a move first slows down, then gains a set, and only then becomes a harder variation (one set fewer); a move skipped twice running drops out, and a harder variation you skip steps back down.
+- 🔰 **新手友好的推练**：推拉二分的推练从标准俯卧撑 3×8 和斜板俯卧撑 3×10 开始，不再一上来就是下斜和钻石俯卧撑。
+  **Beginner-friendly push day**: push-ups 3×8 and incline push-ups 3×10 to start, instead of decline and diamond push-ups.
+
+---
+
 ## [v1.63a] — 2026-11-14
 
 ### 新增 / Added
