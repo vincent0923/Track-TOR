@@ -6,6 +6,22 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.61a] — 2026-11-14
+
+### 新增 / Added
+- 📋 **练完的简报**：总结页是一张今天做完的简报（每个动作每组的数和所有加练），太长下方渐隐、点一下展开，右上角可以分享；不点「练完」接着加练，简报跟着更新。
+  **Today's brief**: the finish screen shows what you did today, every move's sets and every extra; long ones fade out and open with a tap, a share key sits top right, and extras done from here join it straight away.
+- 🪙 **G 飞进余额**：奖杯左边是余额，右边是这次赚的，G 币飞过去、余额数上去，「+N G」慢慢淡掉。
+  **G flies home**: balance left of the trophy, this session's G on the right; the coins fly over, the balance counts up and the "+N G" fades.
+
+### 改进 / Changed
+- 总结页底部：左边「+」加练、中间「练完」、下面写下一次；去掉组数、次数、分钟三个格子。
+  Finish screen: "+" for extras, "Finish", and what's next; the sets/reps/minutes tiles are gone.
+- G 分商店只显示已有的主题，盲盒上一个数字写着还有几套没解锁。
+  The store lists only themes you own; the blind box carries the number still locked.
+
+---
+
 ## [v1.60a] — 2026-11-14
 
 ### 新增 / Added

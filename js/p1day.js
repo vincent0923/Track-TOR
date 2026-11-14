@@ -5,6 +5,7 @@
 const QUICK=[["pullup","引体向上","Pull-ups","个"],["pushup","俯卧撑","Push-ups","个"],["squat","深蹲","Squats","个"],["plank","平板支撑","Plank","秒"],["hang","悬吊","Dead hang","秒"]];
 const qOf=id=>QUICK.find(q=>q[0]===id);
 const xName=it=>{const q=qOf(it.id);return q?T(q[1],q[2]):it.name};
+window.p1XName=xName;
 let editSid=null,curDay=null;
 function sessionsOn(d){return PROGRAM.filter(p=>{const s=state.sessions[p.sid];return s&&s.done&&s.date===d})}
 function xDocFor(d,make){const ss=sessionsOn(d);if(ss.length)return state.sessions[ss[0].sid];
@@ -43,9 +44,9 @@ function render(){const d=curDay,dt=dateObj(d),ss=sessionsOn(d);
   const body=$("#sheetBody"),sc=$("#sheet .panel").scrollTop;
   if($("#sheet").classList.contains("on")&&body.dataset.day===d){body.innerHTML=html;$("#sheet .panel").scrollTop=sc}else{openSheet(html);body.dataset.day=d}}
 function openDay(d){if(d==="today")d=today();if(d>today())return;curDay=d;editSid=null;Object.keys(pending).forEach(k=>delete pending[k]);
-  if(typeof run!=="undefined"&&run)closeRun();$("#sheetBody").dataset.day="";render()}
+  if(typeof run!=="undefined"&&run&&!run.finished)closeRun();$("#sheetBody").dataset.day="";render()}
 window.p1OpenDay=openDay;
-function changed(){if(typeof engFree==="function"&&engFree())engPlanAll();lsSave();if(typeof renderAll==="function")renderAll();render()}
+function changed(){if(typeof engFree==="function"&&engFree())engPlanAll();lsSave();if(typeof renderAll==="function")renderAll();render();if(typeof finRefresh==="function")finRefresh()}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
   if(a==="cal"){openDay(b.dataset.d);return}
   if(!curDay||!$("#sheet").classList.contains("on")||$("#sheetBody").dataset.day!==curDay)return;

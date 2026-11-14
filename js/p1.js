@@ -275,15 +275,42 @@ function untick(i){const x=run.sets[run.ex][i];if(!x||!x.d)return;x.d=false;
 function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Math.floor((Date.now()-run.t0)/1000);
   run.doc.done=true;run.doc.date=today();lsSave();heroSid=null;engPlanAll();
   let reps=0,sets=0,pu=0;run.sets.forEach((a,i)=>a.forEach(x=>{if(!x.d)return;sets++;if(p.ex[i].unit==="个")reps+=x.v;if(isMain(p.ex[i]))pu=Math.max(pu,x.v)}));
-  const best=run.best0;
   SFX.done();buzz([30,60,30,60,80]);
   cannons();celebrate(10,1);
+  run.pu=pu;const bal=coinTotal(),earn=bal-run.coins0;
   $("#focus").innerHTML='<div class="f-top"><span class="sp"></span><button class="mini" data-act="fclose" aria-label="'+T('关闭','Close')+'">'+ICON.x+'</button></div>'
-    +'<div class="f-body"><div class="fin"><div class="medal">'+ICON.trophy+'</div><p class="eyebrow">'+LAB(p)+'</p><h2>'+T('练完了','Done')+'</h2>'
-    +(pu?'<span class="pill ac" style="margin-top:6px">'+T(mainEx().zh+'单组 '+pu+(mainEx().unit==="个"?' 个':' '+mainUnit()),'Best '+(mainEx().en||mainEx().zh)+' set '+pu+(mainEx().unit==="个"?'':' '+mainUnit()))+(pu>best?T(' · 新纪录',' · new best'):'')+'</span>':'')
-    +'<span class="coinchip big" style="margin-top:10px">'+COIN+'+'+fmt(coinTotal()-run.coins0)+' G</span>'
-    +'<div class="stats"><div><b>'+sets+'</b><span>'+T('组','sets')+'</span></div><div><b>'+reps+'</b><span>'+T('次','reps')+'</span></div><div><b>'+Math.max(1,Math.round(secs/60))+'</b><span>'+T('分钟','min')+'</span></div></div></div></div>'
-    +'<div class="f-bottom"><button class="btn ghost" data-act="cal" data-d="today" style="height:46px;font-size:15px">'+ICON.plus+T('加练','Extra practice')+'</button><button class="btn" data-act="fclose">'+T('好','OK')+'</button><p class="f-hint">'+(firstOpen()?T('下一次：','Next: ')+LAB(firstOpen()):T('计划全部完成','Plan complete'))+'</p></div>'}
+    +'<div class="f-body"><div class="fin"><div class="fin-g"><span class="coinchip big fin-bal">'+COIN+'<b class="n" id="finBal">'+gShow(run.coins0)+'</b></span><div class="medal">'+ICON.trophy+'</div>'
+    +(earn>0?'<span class="coinchip big fin-earn" id="finEarn">+'+fmt(earn)+' G</span>':'<span></span>')+'</div>'
+    +'<p class="eyebrow">'+LAB(p)+'</p><h2>'+T('练完了','Done')+'</h2>'
+    +'<div class="fbrief" id="finBrief">'+finBriefHtml()+'</div></div></div>'
+    +'<div class="f-bottom"><button class="mini f-x" data-act="cal" data-d="today" aria-label="'+T('加练','Extra practice')+'">'+ICON.plus+'</button><div class="f-bc"><button class="btn" data-act="fclose">'+T('练完','Finish')+'</button>'
+    +'<p class="f-hint">'+(firstOpen()?T('下一次：','Next: ')+LAB(firstOpen()):T('计划全部完成','Plan complete'))+'</p></div><span class="f-x"></span></div>';
+  const fb=$("#finBrief");finFit();fb.addEventListener("click",e=>{if(e.target.closest("[data-act]")||!fb.classList.contains("long"))return;fb.classList.toggle("open");finFit();buzz(6)});
+  finCoins(run.coins0,bal)}
+/* the G earned flies over to the balance and counts it up, then the "+N G" fades away */
+function finCoins(from,to){const bEl=$("#finBal"),eEl=$("#finEarn");if(!bEl||!eEl||to<=from)return;
+  const n=Math.min(6,Math.max(2,Math.round((to-from)/10)));
+  setTimeout(()=>{if(!bEl.isConnected)return;const a=eEl.getBoundingClientRect(),b=bEl.parentNode.getBoundingClientRect();
+    for(let k=0;k<n;k++){const c=document.createElement("span");c.className="fin-fly";c.innerHTML=COIN;c.style.left=(a.left+16)+"px";c.style.top=(a.top+a.height/2-11)+"px";document.body.appendChild(c);
+      setTimeout(()=>{c.style.transform="translate("+(b.left+14-a.left-16)+"px,"+(-30-Math.random()*30)+"px) scale(1.1)";setTimeout(()=>{c.style.transform="translate("+(b.left+14-a.left-16)+"px,0) scale(.6)";c.style.opacity="0"},260);setTimeout(()=>{c.remove();tone(1300+k*90,0,.06,"sine",.06)},560)},k*110)}
+    const t0=performance.now()+400,dur=n*110+500;const go=t=>{if(!bEl.isConnected)return;const k=Math.max(0,Math.min(1,(t-t0)/dur));bEl.textContent=gShow(Math.round(from+(to-from)*k));
+      if(k<1)requestAnimationFrame(go);else{bEl.parentNode.classList.add("bump");eEl.classList.add("gone")}};requestAnimationFrame(go)},700)}
+/* today's brief on the finish screen: every session done today and every extra, in one card (it grows if you keep going) */
+function finToday(){const t=today(),out=[];
+  PROGRAM.filter(p=>{const d=state.sessions[p.sid];return d&&d.done&&d.date===t}).forEach(p=>{const doc=state.sessions[p.sid];
+    out.push({h:LAB(p),kind:p.kind,rows:p.ex.map(e=>{const a=(doc.sets[e.id]||[]).filter(x=>x.d);return a.length?{n:N(e),v:a.map(x=>x.v).join("·"),pr:run&&run.pu>run.best0&&isMain(e)&&a.some(x=>+x.v===run.pu)}:null}).filter(Boolean),xs:doc.xs||[]})});
+  const xs=[].concat(...out.map(o=>o.xs),(state.dayx[t]&&state.dayx[t].xs)||[]).filter(it=>it.sets.some(x=>x.d));
+  return {out,xs:xs.map(it=>({n:typeof p1XName==="function"?p1XName(it):it.name||it.id,v:it.sets.filter(x=>x.d).map(x=>x.v).join("·")}))}}
+function finBriefHtml(){const {out,xs}=finToday(),row=r=>'<div class="row"><span class="sp">'+r.n+(r.pr?' <i class="pill ac fb-pr">'+T('新纪录','Best')+'</i>':'')+'</span><b class="n">'+r.v+'</b></div>';
+  return '<div class="fb-in">'+out.map((o,i)=>'<div class="row fb-h"><i class="kd" style="background:var(--'+o.kind+')"></i><b class="sp">'+o.h+'</b>'+(i?'':'<button class="mini fb-share" data-act="fshare" aria-label="'+T('分享','Share')+'">'+ICON.share+'</button>')+'</div>'+o.rows.map(row).join("")).join("")
+    +(xs.length?'<p class="eyebrow fb-x">'+T('加练','Extra practice')+'</p>'+xs.map(row).join(""):'')+'</div>'}
+function finRefresh(){const b=$("#finBrief");if(run&&run.finished&&b){b.innerHTML=finBriefHtml();finFit()}}
+function finFit(){const b=$("#finBrief");if(b)b.classList.toggle("long",b.scrollHeight>b.clientHeight+4||b.classList.contains("open"))}
+function finShare(){const {out,xs}=finToday(),d=dateObj(today()),L=[];
+  L.push(LANG==="en"?MON_EN[d.getMonth()]+" "+d.getDate():(d.getMonth()+1)+"月"+d.getDate()+"日");
+  out.forEach(o=>{L.push("",o.h);o.rows.forEach(r=>L.push(r.n+"  "+r.v))});if(xs.length){L.push("",T("加练","Extra practice"));xs.forEach(r=>L.push(r.n+"  "+r.v))}
+  L.push("","— "+T("博G","bG"));const text=L.join("\n");
+  if(navigator.share)navigator.share({text}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>toast(T("已复制","Copied")),()=>{})}
 function swipe(el){let x0=null,y0=0;el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   el.addEventListener("touchend",e=>{if(x0==null||!run||run.askFeel!=null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
     if(Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx))return;const n=run.ex+(dx<0?1:-1);if(n<0||n>=run.p.ex.length)return;
@@ -624,14 +651,13 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
       +'<div class="bar" style="--c:'+(b.pts?'var(--ac)':'var(--muted)')+';height:6px;margin-top:6px"><i style="width:'+(pct*100)+'%"></i></div>'
       +'<p class="muted n" style="font-size:11px;margin-top:3px">'+(n==null?T('全部拿到','All earned'):T('现在 ','Now ')+b.have+' '+b.unit+T(' · 下一档 ',' · next at ')+n+' '+b.unit)+'</p></div></div>'}).join("");
   const plans='<div class="shopc"><div class="shopart" style="background:linear-gradient(135deg,#22C55E,#0EA5E9)"></div><div class="sp"><b>'+T('大家写的训练计划','Plans by other users')+'</b><p class="muted">'+T('用户写的训练计划，审核后上架','Training plans written by users, reviewed before they go up')+'</p></div><span class="pill">'+T('即将上线','Coming soon')+'</span></div>';
-  const shop=[[T("像素 RPG","Pixel RPG"),T("打勾就挥剑，练完打怪升级","Every tick swings a sword; level up as you train")],[T("Low poly 小镇","Low-poly town"),T("每个训练日在小镇里盖一栋楼","Every training day builds a house in town")]].map(([n,d])=>'<div class="shopc"><div class="shopart"></div><div class="sp"><b>'+n+'</b><p class="muted">'+d+'</p></div><div style="text-align:right"><span class="coinchip">'+COIN+'<b class="n">2,000</b></span><br><span class="pill" style="margin-top:6px">'+T('即将上线','Coming soon')+'</span></div></div>').join("");
   openSheet('<div class="sh-h"><h3>G</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="row" style="margin-bottom:16px;align-items:center"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+gShow(tot)+'</div></div>'
-    +'<button class="boxbtn'+(boxLeft().length?'':' done')+'" type="button" data-act="box" aria-label="'+T('主题盲盒','Theme blind box')+'"><img src="icon-192.png?v=4" alt=""></button></div>'
-    +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+THEMES.map(th=>{const own=themeOwned(th.id),on=(themeOwned(state.settings.theme)?state.settings.theme:"aurora")===th.id;
+    +'<button class="boxbtn'+(boxLeft().length?'':' done')+'" type="button" data-act="box" aria-label="'+T('主题盲盒','Theme blind box')+'"><img src="icon-192.png?v=4" alt="">'+(boxLeft().length?'<i class="boxn n">'+boxLeft().length+'</i>':'')+'</button></div>'
+    +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+THEMES.filter(th=>themeOwned(th.id)).map(th=>{const own=themeOwned(th.id),on=(themeOwned(state.settings.theme)?state.settings.theme:"aurora")===th.id;
       const chips=themeChips(th);
       return '<button class="thc'+(on?' on':'')+'" data-act="theme" data-id="'+th.id+'" aria-pressed="'+on+'"><span class="tsws">'+chips+'</span><b class="sp">'+T(th.zh,th.en)+'</b>'
-        +(on?'<span class="thok on" aria-label="'+T('使用中','In use')+'">'+ICON.check+'</span>':own?'<span class="thok" aria-hidden="true"></span>':'<span class="pill'+(tot>=th.price?' ac':'')+'">'+COIN+' '+th.price+'</span>')+'</button>'}).join("")+shop+'</div><div style="height:18px"></div>'
+        +(on?'<span class="thok on" aria-label="'+T('使用中','In use')+'">'+ICON.check+'</span>':own?'<span class="thok" aria-hidden="true"></span>':'<span class="pill'+(tot>=th.price?' ac':'')+'">'+COIN+' '+th.price+'</span>')+'</button>'}).join("")+'</div><div style="height:18px"></div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('训练计划','Training plans')+'</p><div class="setlist" style="margin-bottom:18px">'+plans+'</div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('怎么拿','How to earn')+'</p><div class="setlist">'+rows+'</div>');
   holdOpen($("#sheet .coinbig"),openCheat);
@@ -767,6 +793,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
     else if(a==="inc"||a==="dec"){const ci=curSet();if(ci<0)return;run.doc.edited=true;const s=run.sets[run.ex][ci],st=run.p.ex[run.ex].unit==="秒"?5:1;s.v=Math.max(0,(+s.v||0)+(a==="inc"?st:-st));
       run.sets[run.ex].forEach((x,i)=>{if(i>ci&&!x.d)x.v=s.v});lsSave();SFX.tap();const el=$("#fVal");el.textContent=s.v;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");
       document.querySelectorAll(".f-sets i:not(.add)").forEach((x,i)=>{if(i>ci&&!run.sets[run.ex][i].d)x.textContent=i+1})}
+    else if(a==="fshare"){SFX.tap();finShare()}
     else if(a==="fnext"){const n=run.sets.findIndex(x=>x.some(y=>!y.d));if(n>=0){run.ex=n;renderFocus(true)}}
   }});
 

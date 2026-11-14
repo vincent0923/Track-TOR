@@ -233,6 +233,28 @@ h1,h2,h3,p{margin:0}
 .fin .medal{width:84px;height:84px;border-radius:50%;background:var(--ac);color:var(--on-ac);display:grid;place-items:center;box-shadow:0 0 0 10px var(--ac-soft);margin-bottom:14px;animation:pop .6s var(--spring)}
 .fin .medal svg{width:42px;height:42px}
 .fin h2{font-size:34px}
+.fin{width:100%}
+.fin-g{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;width:100%;margin-bottom:14px}
+.fin-g .medal{margin-bottom:0}
+.fin-bal{justify-self:end;transition:transform .4s var(--spring)}
+.fin-bal.bump{animation:pop .45s var(--spring)}
+.fin-earn{justify-self:start;transition:opacity 1.6s var(--ease) .6s}
+.fin-earn.gone{opacity:0}
+.fin-fly{position:fixed;z-index:60;pointer-events:none;transition:transform .28s cubic-bezier(.3,.7,.4,1),opacity .28s;--cs:22px}
+.fbrief{width:100%;margin-top:14px;text-align:left;background:var(--card);border-radius:24px;padding:14px 16px;box-shadow:var(--shadow);max-height:34dvh;overflow:hidden;cursor:default}
+.fbrief.long:not(.open) .fb-in{-webkit-mask-image:linear-gradient(#000 55%,transparent 100%);mask-image:linear-gradient(#000 55%,transparent 100%)}
+.fbrief.long{cursor:pointer}
+.fbrief.open{max-height:none;overflow:visible}
+.fb-in{display:grid;gap:7px}
+.fb-in .row{gap:10px;font-size:15px;font-weight:500}
+.fb-in .row b.n{font-family:var(--num);font-weight:700;font-variant-numeric:tabular-nums}
+.fb-h{font-size:16px!important;margin-bottom:2px}
+.fb-h b{font-weight:800}
+.fb-h .kd{width:10px;height:10px;border-radius:50%;flex:none}
+.fb-share{width:34px;height:34px}
+.fb-share svg{width:16px;height:16px}
+.fb-x{margin-top:8px}
+.fb-pr{font-style:normal;font-size:10px;padding:2px 7px;vertical-align:2px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin-top:18px}
 .stats div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 6px;box-shadow:var(--shadow)}
 .stats b{display:block;font-family:var(--num);font-size:24px;font-weight:800;letter-spacing:-.04em}
@@ -1488,6 +1510,8 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 .boxbtn{flex:none;width:62px;height:62px;padding:0;border-radius:18px;background:none;transition:transform .3s var(--spring)}
 .boxbtn img{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
 .boxbtn:active{transform:scale(.92)}
+.boxbtn{position:relative}
+.boxn{position:absolute;top:-5px;right:-5px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--ac);color:var(--on-ac);font:800 12px/22px var(--num);font-style:normal;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .boxbtn.done img{filter:grayscale(1) opacity(.45)}
 .boxbtn:not(.done){animation:boxWiggle 4.5s ease-in-out infinite}
 @keyframes boxWiggle{0%,86%,100%{transform:none}89%{transform:rotate(-6deg)}92%{transform:rotate(5deg)}95%{transform:rotate(-3deg)}}
@@ -1565,3 +1589,4 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 .preset .pprice{float:right;margin-left:8px;font-size:12px}
 /* changing skin: the old screen dissolves into the new one */
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.45s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
+.f-body:has(.fin){min-height:0;overflow-y:auto;align-content:safe center}
