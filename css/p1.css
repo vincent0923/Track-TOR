@@ -1508,16 +1508,20 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 /* the blind box: the app icon's envelope beside the balance; greyed once every theme is yours */
 .coinbig .coin{--cs:38px}
 .boxbtn{flex:none;width:62px;height:62px;padding:0;border-radius:18px;background:none;transition:transform .3s var(--spring)}
-.boxbtn img{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
+.boxbtn .env{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3));transition:opacity .25s .5s,transform .35s var(--spring) .5s}
+.boxbtn .evflap{transform-origin:60px 26px;transform-box:view-box;transition:transform .45s cubic-bezier(.5,0,.3,1)}
+.boxbtn .envico{position:absolute;inset:0;width:100%;height:100%;border-radius:22%;opacity:0;transform:translateY(6px) scale(.5);filter:drop-shadow(0 6px 10px rgba(0,0,0,.3));transition:opacity .3s .45s,transform .45s var(--spring) .45s;pointer-events:none}
+.boxbtn.open{animation:none}
+.boxbtn.open .evflap{transform:scaleY(-1)}
+.boxbtn.open .env{opacity:0;transform:scale(.85)}
+.boxbtn.open .envico{opacity:1;transform:none}
+.boxbtn.no{animation:boxNo .45s ease-in-out!important}
+@keyframes boxNo{20%{transform:translateX(-6px) rotate(-4deg)}40%{transform:translateX(6px) rotate(4deg)}60%{transform:translateX(-4px) rotate(-2deg)}80%{transform:translateX(3px)}}
 .boxbtn:active{transform:scale(.92)}
 .boxbtn{position:relative}
 .boxn{position:absolute;top:-5px;right:-5px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--ac);color:var(--on-ac);font:800 12px/22px var(--num);font-style:normal;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.25)}
-.boxbtn.done img{filter:grayscale(1) opacity(.45)}
-.boxbtn:not(.done){animation:boxWiggle 4.5s ease-in-out infinite}
+.boxbtn.can{animation:boxWiggle 4.5s ease-in-out infinite}
 @keyframes boxWiggle{0%,86%,100%{transform:none}89%{transform:rotate(-6deg)}92%{transform:rotate(5deg)}95%{transform:rotate(-3deg)}}
-.boxq{display:grid;justify-items:center;gap:12px;text-align:center;padding:6px 0 4px}
-.boxq img{width:112px;height:112px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.3))}
-.boxq p{font-size:16px;font-weight:700}
 @media (prefers-reduced-motion: reduce){.boxbtn{animation:none!important}}
 /* ---------- scratch to reveal (js/scratch.js), the four worlds as Ovio draws them, in each skin's colours ---------- */
 .tsws{display:flex;gap:6px}

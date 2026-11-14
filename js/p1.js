@@ -632,23 +632,34 @@ function themeChips(th){const kind=th.id==="aurora"||th.id==="ember"?"flat":th.i
 /* the theme blind box: 100 G for a theme you don't have yet, picked at random, shown on a scratch card */
 const BOX_G=100;
 function boxLeft(){return THEMES.filter(t=>!themeOwned(t.id))}
-function openBox(){const left=boxLeft();if(!left.length){toast(T("所有主题都集齐了","You have every theme"));return}
-  const bal=coinTotal();if(bal<BOX_G){toast(T('还差 '+(BOX_G-bal)+' G','You need '+(BOX_G-bal)+' more G'));return}
-  const S=p1Sheet(T("主题盲盒","Theme blind box"),'<div class="boxq"><img src="icon-192.png?v=4" alt=""><p>'+T('花 '+BOX_G+' G 开一个主题盲盒？','Spend '+BOX_G+' G on a theme blind box?')+'</p></div>',
-    '<button class="btn wide" type="button" data-boxgo>'+COIN+' '+BOX_G+' G</button>');
-  S.q("[data-boxgo]").addEventListener("click",()=>{const now=boxLeft();if(!now.length||coinTotal()<BOX_G){S.close();return}
-    const th=now[Math.random()*now.length|0];
-    state.settings.buys=(state.settings.buys||[]).concat([{id:th.id,g:BOX_G,d:today(),box:1}]);lsSave();buzz(15);SFX.tap();
-    /* the scratch card is Ovio's, in the world that suits the skin */
-    const cur=state.settings.theme||"aurora",world={toy:"toy",clay:"toy",tm4:"retro",md:"retro",pocket:"retro",skeuo:"craft",braun:"craft",nikon:"craft"}[cur]||"minimal";
-    const body=S.q(".form-body");body.innerHTML='<div class="scrhost"></div>';
-    const act=S.q("[data-boxgo]").parentNode;act.innerHTML='<button class="btn ghost wide" type="button" data-boxok hidden>'+T('好','OK')+'</button><button class="btn wide" type="button" data-boxuse hidden>'+T('换上','Use it')+'</button>';
-    act.querySelector("[data-boxok]").addEventListener("click",()=>{const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;S.close();coinSheet(false);if(pn)pn.scrollTop=y});
-    act.querySelector("[data-boxuse]").addEventListener("click",()=>{const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;SFX.tap();S.close();themeFade(()=>{state.settings.theme=th.id;lsSave();applyMode();coinSheet(false);if(pn)pn.scrollTop=y});setTimeout(()=>celebrate(1,0),300)});
-    let snd=0;SCR.mount(body.firstChild,{world,label:T("主题盲盒","Theme blind box"),hint:T("刮开","Scratch to reveal"),coin:T("用硬币刮","scratch with a coin"),there:T("就是它 ✿","there it is ✿"),
-      content:'<span class="tsws">'+themeChips(th)+'</span><b>'+T(th.zh,th.en)+'</b>',
-      onProgress(){const t=performance.now();if(t-snd>70){snd=t;if(typeof fxHit==="function")fxHit(0,.06,2600,.5,.025,"highpass");buzz(3)}},
-      onReveal(){celebrate(8,1);buzz([20,40,30]);act.querySelectorAll("[hidden]").forEach(x=>x.hidden=false)}})})}
+/* the blind box is a closed envelope, always in colour; it shakes when it can't be opened (short of G, or nothing left) */
+const ENVELOPE='<svg class="env" viewBox="0 0 120 100" aria-hidden="true"><defs><linearGradient id="evB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E25E72"/><stop offset="1" stop-color="#B8324B"/></linearGradient>'
+  +'<linearGradient id="evL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EC7B88"/><stop offset="1" stop-color="#C2435A"/></linearGradient><linearGradient id="evR" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C33B52"/><stop offset="1" stop-color="#9E2841"/></linearGradient>'
+  +'<linearGradient id="evF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D24A61"/><stop offset="1" stop-color="#A42C44"/></linearGradient></defs>'
+  +'<rect x="6" y="26" width="108" height="68" rx="10" fill="url(#evB)"/>'
+  +'<path d="M6 36 L60 70 L6 94 Z" fill="url(#evL)"/><path d="M114 36 L60 70 L114 94 Z" fill="url(#evR)"/><path d="M8 94 L60 62 L112 94 Z" fill="#C8475E"/>'
+  +'<g class="evflap"><path d="M6 32 Q6 26 13 26 L107 26 Q114 26 114 32 L60 68 Z" fill="url(#evF)"/><path d="M8 30 L60 64 L112 30" fill="none" stroke="#FFD0D6" stroke-opacity=".55" stroke-width="1.2"/>'
+  +'<g transform="translate(60 60)"><circle r="11" fill="#F0BF55"/><circle r="11" fill="none" stroke="#B57A1A" stroke-opacity=".6" stroke-width="1.2"/><path d="M0 5.5 C-7 1 -8 -3.5 -5.5 -5.5 C-3.3 -7.3 -.8 -6 0 -4 C.8 -6 3.3 -7.3 5.5 -5.5 C8 -3.5 7 1 0 5.5 Z" fill="#B8324B"/></g></g>'
+  +'<rect x="6" y="26" width="108" height="68" rx="10" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="1"/></svg>';
+function boxBtnHtml(){const n=boxLeft().length;return '<button class="boxbtn'+(n&&coinTotal()>=BOX_G?' can':'')+'" type="button" data-act="box" aria-label="'+T('主题盲盒','Theme blind box')+'">'+ENVELOPE+'<img class="envico" src="icon-192.png?v=4" alt="">'+(n?'<i class="boxn n">'+n+'</i>':'')+'</button>'}
+function openBox(btn){btn=btn||$(".boxbtn");const left=boxLeft();
+  if(!left.length||coinTotal()<BOX_G){if(btn){btn.classList.remove("no");void btn.offsetWidth;btn.classList.add("no")}buzz([25,40,25]);return}
+  if(btn&&btn.classList.contains("open"))return;
+  /* the flap lifts, the app icon comes out, and the scratch card opens */
+  SFX.tap();buzz(15);if(btn)btn.classList.add("open");setTimeout(boxReveal,btn&&!matchMedia("(prefers-reduced-motion: reduce)").matches?900:0)}
+function boxReveal(){const now=boxLeft();if(!now.length||coinTotal()<BOX_G)return;
+  const th=now[Math.random()*now.length|0];
+  state.settings.buys=(state.settings.buys||[]).concat([{id:th.id,g:BOX_G,d:today(),box:1}]);lsSave();
+  const S=p1Sheet(T("主题盲盒","Theme blind box"),'<div class="scrhost"></div>','<button class="btn ghost wide" type="button" data-boxok hidden>'+T('好','OK')+'</button><button class="btn wide" type="button" data-boxuse hidden>'+T('换上','Use it')+'</button>');
+  /* the scratch card is Ovio's, in the world that suits the skin */
+  const cur=state.settings.theme||"aurora",world={toy:"toy",clay:"toy",tm4:"retro",md:"retro",pocket:"retro",skeuo:"craft",braun:"craft",nikon:"craft"}[cur]||"minimal";
+  const host=S.q(".scrhost"),act=S.q("[data-boxok]").parentNode;
+  act.querySelector("[data-boxok]").addEventListener("click",()=>{const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;S.close();coinSheet(false);if(pn)pn.scrollTop=y});
+  act.querySelector("[data-boxuse]").addEventListener("click",()=>{const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;SFX.tap();S.close();themeFade(()=>{state.settings.theme=th.id;lsSave();applyMode();coinSheet(false);if(pn)pn.scrollTop=y});setTimeout(()=>celebrate(1,0),300)});
+  let snd=0;SCR.mount(host,{world,label:T("主题盲盒","Theme blind box"),hint:T("刮开","Scratch to reveal"),coin:T("用硬币刮","scratch with a coin"),there:T("就是它 ✿","there it is ✿"),
+    content:'<span class="tsws">'+themeChips(th)+'</span><b>'+T(th.zh,th.en)+'</b>',
+    onProgress(){const t=performance.now();if(t-snd>70){snd=t;if(typeof fxHit==="function")fxHit(0,.06,2600,.5,.025,"highpass");buzz(3)}},
+    onReveal(){celebrate(8,1);buzz([20,40,30]);act.querySelectorAll("[hidden]").forEach(x=>x.hidden=false)}})}
 /* a new skin fades in over the old one, so the eye has a moment (the browser's view transition; a plain swap where
    there is none, or when motion is turned down) */
 function themeFade(fn){if(!document.startViewTransition||matchMedia("(prefers-reduced-motion: reduce)").matches){fn();return}try{document.startViewTransition(fn)}catch(e){fn()}}
@@ -671,7 +682,7 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
   const plans='<div class="shopc"><div class="shopart" style="background:linear-gradient(135deg,#22C55E,#0EA5E9)"></div><div class="sp"><b>'+T('大家写的训练计划','Plans by other users')+'</b><p class="muted">'+T('用户写的训练计划，审核后上架','Training plans written by users, reviewed before they go up')+'</p></div><span class="pill">'+T('即将上线','Coming soon')+'</span></div>';
   openSheet('<div class="sh-h"><h3>G</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="row" style="margin-bottom:16px;align-items:center"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+gShow(tot)+'</div></div>'
-    +'<button class="boxbtn'+(boxLeft().length?'':' done')+'" type="button" data-act="box" aria-label="'+T('主题盲盒','Theme blind box')+'"><img src="icon-192.png?v=4" alt="">'+(boxLeft().length?'<i class="boxn n">'+boxLeft().length+'</i>':'')+'</button></div>'
+    +boxBtnHtml()+'</div>'
     +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+THEMES.filter(th=>themeOwned(th.id)).map(th=>{const own=themeOwned(th.id),on=(themeOwned(state.settings.theme)?state.settings.theme:"aurora")===th.id;
       const chips=themeChips(th);
       return '<button class="thc'+(on?' on':'')+'" data-act="theme" data-id="'+th.id+'" aria-pressed="'+on+'"><span class="tsws">'+chips+'</span><b class="sp">'+T(th.zh,th.en)+'</b>'
@@ -774,7 +785,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="dshare")shareDay(b.dataset.d);
   else if(a==="freekeep"){const f=freePattern();if(f&&window.p1Custom)p1Custom(f.groups.length,false,f.groups)}
   else if(a==="freeoff"){const f=freePattern();if(f){state.settings.freeHintOff=f.id;lsSave();renderTrainView()}}
-  else if(a==="box")openBox();
+  else if(a==="box")openBox(b);
   else if(a==="theme"){const th=THEMES.find(x=>x.id===b.dataset.id);if(!th)return;
     if(!themeOwned(th.id)){const bal=coinTotal();if(bal<th.price){toast(T('还差 '+(th.price-bal)+' G','You need '+(th.price-bal)+' more G'));return}
       if(!confirm(T('用 '+th.price+' G 换购「'+th.zh+'」？','Spend '+th.price+' G on '+th.en+'?')))return;
