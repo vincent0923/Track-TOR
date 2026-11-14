@@ -89,6 +89,9 @@ async function spTempo(id){if(!id||SP_BPM[id]!==undefined)return SP_BPM[id];SP_B
   return SP_BPM[id]}
 function spBeat(){const de=document.documentElement,s=SP.st,b=s&&SP_BPM[s.id];if(!b){["--beat","--bd","--amp"].forEach(v=>de.style.removeProperty(v));return}
   const bpm=b.t>160?b.t/2:b.t,beat=60/bpm,pos=(spNow()||0)/1000;
+  /* restyling the page costs a little, so only when the song changes or the timing has drifted (a seek) */
+  const anchor=performance.now()/1000-pos,L=spBeat.last;
+  const dr=L?((anchor-L.anchor)%beat+beat)%beat:0;if(L&&L.id===s.id&&(dr<.08||dr>beat-.08))return;spBeat.last={id:s.id,anchor};
   de.style.setProperty("--beat",beat.toFixed(3)+"s");de.style.setProperty("--bd",(-(pos%beat)).toFixed(3)+"s");de.style.setProperty("--amp",Math.max(.3,Math.min(1,b.e)).toFixed(2))}
 function spGroove(){const de=document.documentElement,s=SP.st,on=!!(s&&s.playing)&&!document.hidden&&(typeof grooveOn!=="function"||grooveOn())&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
   de.classList.toggle("groove",on);if(on&&s.id){if(SP_BPM[s.id]===undefined)spTempo(s.id).then(spBeat);else spBeat()}
