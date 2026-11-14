@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.58a] — 2026-11-14
+
+### 新增 / Added
+- 🎁 **主题盲盒**：G 分商店顶上的信封，花 100 G 开一个盲盒，刮开刮刮卡，随机得到一个你还没有的主题；集齐了就不能再开。刮刮卡用 Ovio 的 Scratch to Reveal，按当前主题换成磨砂、复古屏、玩具或锡箔票的样子。
+  **Theme blind box**: the envelope at the top of the barGain store. 100 G opens it; scratch the card to get a theme you don't have yet, at random. Once you have them all it stays shut. The card is Ovio's Scratch to Reveal, as a matte, retro screen, toy or foil ticket to suit the skin.
+
+### 改进 / Changed
+- 主题列表改成按键样子的色板、能联想到质感的名字和打勾状态，不写描述。
+  The theme list shows key-shaped swatches, names that suggest the material and a tick, without descriptions.
+
+---
+
 ## [v1.57a] — 2026-11-14
 
 ### 新增 / Added
