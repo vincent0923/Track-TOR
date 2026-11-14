@@ -1,4 +1,4 @@
-/* 推拉机 · celebrations: fireworks (with a bang), confetti poppers and cannons, and a show for each new 2% step on a
+/* 博G健身 · celebrations: fireworks (with a bang), confetti poppers and cannons, and a show for each new 2% step on a
    goal. Settings › Appearance › Celebrations turns them off (tracktor-p1-fx = "0"); "reduce motion" also stops them.
    celebrate(n, big): n small rockets, then `big` large ones. Calls stack, so quick ticks add to the same show. */
 const FX_K="tracktor-p1-fx";

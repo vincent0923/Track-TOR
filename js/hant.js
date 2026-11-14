@@ -1,4 +1,4 @@
-/* 推拉机 · 繁體中文: the interface is written in Simplified Chinese; with tracktor-lang = "zht" every Chinese
+/* 博G健身 · 繁體中文: the interface is written in Simplified Chinese; with tracktor-lang = "zht" every Chinese
    text on the page is shown in Traditional characters (Taiwan forms). A character map covers what the app uses
    (generated with OpenCC s2tw), plus a few words where one character maps differently. Loaded before js/core.js. */
 let HANT=(()=>{try{return localStorage.getItem("tracktor-lang")==="zht"}catch(e){return false}})();

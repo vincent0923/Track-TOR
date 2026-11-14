@@ -59,7 +59,7 @@ async function decodeBackup(text){
 function backupFileName(){
   const d=new Date();
   const stamp=d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"-"+pad(d.getHours())+pad(d.getMinutes());
-  return T("推拉机进度","track-TOR-progress")+"-"+stamp+".txt";
+  return T("博G健身进度","track-TOR-progress")+"-"+stamp+".txt";
 }
 
 /* ---------- 每 5 天自动提醒备份进度（防浏览器清缓存丢数据） ---------- */

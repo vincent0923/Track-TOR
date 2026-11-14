@@ -1,4 +1,4 @@
-/* 推拉机 data helpers. js/core.js holds the programme, storage (lsLoad / lsSave) and sessionDoc; js/diet.js the
+/* 博G健身 data helpers. js/core.js holds the programme, storage (lsLoad / lsSave) and sessionDoc; js/diet.js the
    calorie maths and the food editor; this file the rest: series for charts, next sessions, records, G, sounds. */
 
 let toastT=0;

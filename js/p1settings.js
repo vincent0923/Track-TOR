@@ -1,4 +1,4 @@
-/* 推拉机 main interface: settings sheets. Training plan, profile, goals, the food table link, charts &
+/* 博G健身 main interface: settings sheets. Training plan, profile, goals, the food table link, charts &
    watch calories, backup and restore (the progress file, js/backupcore.js), the first-visit welcome and the
    5-day backup reminder. Editors use the shared .mask > .sheet look (css/p1.css). */
 (function(){
@@ -54,7 +54,7 @@ function openProfile(){const S=sheet(T("个人资料","Profile"),profileBody()+'
 function openGoals(){const S=sheet(T("目标","Goals"),goalsBody()+'<p class="calc-msg">'+T("留空就是不设。","Leave blank for no goal.")+'</p>');bindMain(S.q);
   S.q("[data-ok]").addEventListener("click",()=>{saveGoals(S.q);lsSave();S.close();renderAll();toast(T("目标已保存","Goals saved"))})}
 /* first visit: everything can stay blank and be changed later from the avatar */
-function openWelcome(){const S=sheet(T("欢迎来到推拉机","Welcome to track-TOR"),'<p class="calc-msg" style="margin:0">'+T("填几项，热量和目标进度才算得准。都可以留空，以后点右上角头像改。","A few details make the calorie and goal maths right. All optional; change them later from the avatar.")+'</p>'+profileBody()+goalsBody());
+function openWelcome(){const S=sheet(T("欢迎来到博G健身","Welcome to track-TOR"),'<p class="calc-msg" style="margin:0">'+T("填几项，热量和目标进度才算得准。都可以留空，以后点右上角头像改。","A few details make the calorie and goal maths right. All optional; change them later from the avatar.")+'</p>'+profileBody()+goalsBody());
   bindMain(S.q);
   S.q("[data-ok]").addEventListener("click",()=>{saveProfile(S.q);saveGoals(S.q);lsSave();S.close();renderAll();setTimeout(()=>openPlan(true),350)})}
 function sheetStatusTxt(){let s=null;try{s=JSON.parse(localStorage.getItem(SHEET_STATUS_K)||"null")}catch(e){}
