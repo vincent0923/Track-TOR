@@ -126,13 +126,17 @@ function giftImport(txt){let o=null;try{o=JSON.parse(txt.slice(5))}catch(e){}
   if(!id||!(g>0&&g<=100000)){toast(T("这不是有效的进度文件","Not a valid progress file"));return}
   const s=st(),key="gift:"+id;s.buys=s.buys||[];if(s.buys.some(b=>b.id===key)){toast(T("这份 G 已经加过了","This G was already added"));return}
   s.buys.push({id:key,g:-g,d:today()});lsSave();toast("+"+g+" G");if(typeof celebrate==="function")celebrate(6,1);if(typeof SFX!=="undefined")SFX.done()}
+/* plans to unlock: push/pull, free training and your own plan come with the app; the other presets cost G (bought ones
+   are kept in settings.buys as plan:<id>; the plan you are already on stays yours) */
+const PLAN_G=200;
+function planOwned(id){return id==="cyclist"||id==="free"||id==="custom"||(st().plan&&st().plan.id===id)||(st().buys||[]).some(b=>b.id==="plan:"+id)}
 /* training plan: pick a preset (1–3 training days) and rename its days */
 function openPlan(first){const cur=st().plan,curId=cur?cur.id:(Object.values(state.sessions).some(s=>s&&s.done)?"cyclist":"free");
   const names=(cur?cur.days:PRESETS[0].days).map(d=>'<label class="flabel">'+T("第 "+"ABC"[["push","pull","third"].indexOf(d.kind)]+" 天叫什么","Name of day "+"ABC"[["push","pull","third"].indexOf(d.kind)])+'<input data-dn="'+d.kind+'" value="'+esc(T(d.zh,d.en||d.zh))+'"></label>').join("");
   const S=sheet(T("训练计划","Training plan"),(first?'<p class="calc-msg" style="margin:0">'+T("选一个开始，以后在设定 › 训练计划里换或改名。引擎会按你每次的表现调整次数和组数。","Pick one to start; change or rename it later in Settings › Training plan. The engine tunes reps and sets to how you do.")+'</p>':'')
     /* free training: no plan, the suggestion follows what you log */
     +'<button type="button" class="preset'+(curId==="free"?' on':'')+'" data-pre="free"><b>'+T("自由练：练什么都行","Free: train however you like")+'</b><span class="muted">'+T("不用选计划。按你最近 3 周练过的动作排，轮换部位，每个动作从上次接着加；每次至少 2 个动作、5 组。散步、骑车这类只记录，不排进去。","No plan needed. Built from the moves you've done in the last 3 weeks, rotating body parts, each move carrying on from last time; at least 2 moves and 5 sets. Walks, rides and the like are recorded, not planned.")+'</span></button>'
-    +PRESETS.map(p=>'<button type="button" class="preset'+(p.id===curId?' on':'')+'" data-pre="'+p.id+'"><b>'+T(p.zh,p.en)+'</b><span class="muted">'+T(p.dz,p.de)+'</span><span class="pdays">'+p.days.map(d=>'<i style="background:var(--k'+d.kind+')"></i>'+T(d.zh,d.en)).join("")+'</span></button>').join("")
+    +PRESETS.map(p=>'<button type="button" class="preset'+(p.id===curId?' on':'')+(planOwned(p.id)?'':' locked')+'" data-pre="'+p.id+'"><b>'+T(p.zh,p.en)+(planOwned(p.id)?'':'<span class="pill pprice'+(coinTotal()>=PLAN_G?' ac':'')+'">'+COIN+' '+PLAN_G+'</span>')+'</b><span class="muted">'+T(p.dz,p.de)+'</span><span class="pdays">'+p.days.map(d=>'<i style="background:var(--k'+d.kind+')"></i>'+T(d.zh,d.en)).join("")+'</span></button>').join("")
     /* your own plan: pick how many training days, then put your moves on them */
     +'<div class="preset custom'+(curId==="custom"?' on':'')+'"><b>'+T("自定义：用你练过的动作","Your own: the moves you already do")+'</b><span class="muted">'+T("按你以前的组数、次数和时间接着练，一点点加难度，不加新动作。","Carries on from your own sets, reps and times and makes them a little harder each time; no new moves.")+'</span>'
       +'<span class="cdays">'+[1,2,3].map(n=>'<button type="button" class="chip" data-cust="'+n+'" aria-pressed="'+(curId==="custom"&&cur.days.length===n)+'">'+T(n+" 天",n+(n>1?" days":" day"))+'</button>').join("")+'</span></div>'
@@ -142,7 +146,11 @@ function openPlan(first){const cur=st().plan,curId=cur?cur.id:(Object.values(sta
     if(id===(st().plan&&st().plan.id)){return}
     if(id==="free"){if(!first&&!confirm(T("换成自由练？接下来的训练按你最近练的排，练过的记录不动。","Switch to free training? Upcoming sessions follow what you've been doing; past records stay.")))return;
       setFreePlan();S.close();renderAll();toast(T("训练计划：自由练","Plan: free training"));if(!first)openPlan(false);return}
-    const p=PRESETS.find(x=>x.id===id);if(!first&&!confirm(T("换成「"+p.zh+"」？接下来的训练按新计划排，练过的记录不动。","Switch to "+p.en+"? Upcoming sessions follow the new plan; past records stay.")))return;
+    const p=PRESETS.find(x=>x.id===id);
+    if(!planOwned(id)){const bal=coinTotal();if(bal<PLAN_G){toast(T('还差 '+(PLAN_G-bal)+' G','You need '+(PLAN_G-bal)+' more G'));return}
+      if(!confirm(T('用 '+PLAN_G+' G 解锁「'+p.zh+'」并换成它？练过的记录不动。','Unlock '+p.en+' for '+PLAN_G+' G and switch to it? Past records stay.')))return;
+      st().buys=(st().buys||[]).concat([{id:"plan:"+id,g:PLAN_G,d:today()}]);if(typeof celebrate==="function")celebrate(6,1)}
+    else if(!first&&!confirm(T("换成「"+p.zh+"」？接下来的训练按新计划排，练过的记录不动。","Switch to "+p.en+"? Upcoming sessions follow the new plan; past records stay.")))return;
     setPlan(id);S.close();renderAll();toast(T("训练计划：","Plan: ")+T(p.zh,p.en));if(first)return;openPlan(false)});
   if(S.q("[data-ok]"))S.q("[data-ok]").addEventListener("click",()=>{const pl=st().plan;if(pl)S.m.querySelectorAll("[data-dn]").forEach(i=>{const d=pl.days.find(x=>x.kind===i.dataset.dn),v=i.value.trim();if(d&&v){if(LANG==="en")d.en=v;else d.zh=v}});
     if(!pl&&!first)setPlan("cyclist");lsSave();S.close();renderAll();toast(T("已保存","Saved"))})}
