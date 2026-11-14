@@ -56,9 +56,13 @@ async function spCmd(kind){const s=SP.st;buzz(8);if(typeof SFX!=="undefined")SFX
   if(SP.demo){if(kind==="toggle"){s.pos=spNow();s.playing=!s.playing;SP.at=Date.now()}else if(kind==="next"||kind==="prev"){s.pos=0;SP.at=Date.now();s.playing=true}spPaint();return}
   SP.busy=true;try{
     if(kind==="toggle"){if(s&&s.playing){s.pos=spNow();s.playing=false;spPaint();await spApi("/me/player/pause","PUT")}else{if(s){s.playing=true;SP.at=Date.now();spPaint()}await spApi("/me/player/play","PUT")}}
-    else if(kind==="next")await spApi("/me/player/next","POST");else if(kind==="prev")await spApi("/me/player/previous","POST")}
-  catch(e){if(e.status===404)toast(T("先在 Spotify 里放一首","Play something in Spotify first"));else if(e.status===403)toast(T("控制需要 Spotify Premium","Control needs Spotify Premium"))}
-  SP.busy=false;setTimeout(spPull,kind==="toggle"?400:700)}
+    else{/* repeat-one makes Spotify replay the same song on "next": like its own app, drop to repeat-all first */
+      if(s&&s.rep==="track"){s.rep="context";await spApi("/me/player/repeat?state=context","PUT").catch(()=>{})}
+      await spApi(kind==="next"?"/me/player/next":"/me/player/previous","POST")}}
+  catch(e){if(e.status===404)toast(T("先在 Spotify 里放一首","Play something in Spotify first"));else if(e.status===403)toast(T("控制需要 Spotify Premium","Control needs Spotify Premium"));else toast(T("Spotify 没响应，再试一次","Spotify didn't respond; try again"))}
+  SP.busy=false;
+  /* Spotify reports the new song a moment late (longer on speakers): look again until it changes */
+  if(kind==="toggle"){setTimeout(spPull,400);return}const was=s&&s.title;[700,1600,3000].forEach(t=>setTimeout(()=>{if(!SP.st||SP.st.title===was)spPull()},t))}
 let spVolT=0;function spVol(v){if(!SP.st)return;SP.st.vol=v;if(SP.demo)return;clearTimeout(spVolT);spVolT=setTimeout(()=>spApi("/me/player/volume?volume_percent="+v,"PUT").catch(()=>{}),250)}
 
 /* ---------- the capsule above the dock ---------- */
@@ -108,9 +112,9 @@ function spOpen(){SP.view="player";openSheet('<div class="sh-h"><h3>'+T('正在�
 function spPaintSheet(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;SP.view="player";const s=SP.st||{};
   f.innerHTML=spArt(s,"sp-art"+(s.playing?" on":""))+'<div class="sp-meta"><b>'+esc(s.title||T("Spotify 没在播放","Nothing playing"))+'</b><span class="muted">'+esc(s.artist||"")+'</span></div>'
     +'<div class="sp-prog"><i></i></div><div class="sp-time n muted"><span></span><span></span></div>'
-    +'<div class="sp-ctl"><button class="mp-b sp-mode'+(s.shuf||s.smart?' on':'')+'" data-sp="shuf" aria-pressed="'+!!(s.shuf||s.smart)+'" aria-label="'+(s.smart?T("智能随机（在 Spotify 里开的）","Smart shuffle (turned on in Spotify)"):T("随机播放","Shuffle"))+'">'+(s.smart?SPI.smart:SPI.shuf)+'</button><button class="mp-b" data-sp="prev" aria-label="'+T("上一首","Previous")+'">'+SPI.prev+'</button><button class="mp-b sp-big" data-sp="toggle" aria-label="'+T("播放 / 暂停","Play / pause")+'">'+(s.playing?SPI.pause:SPI.play)+'</button><button class="mp-b" data-sp="next" aria-label="'+T("下一首","Next")+'">'+SPI.next+'</button><button class="mp-b sp-mode'+(s.rep&&s.rep!=="off"?' on':'')+'" data-sp="rep" aria-label="'+T("循环","Repeat")+'">'+(s.rep==="track"?SPI.rep1:SPI.rep)+'</button></div>'
+    +'<div class="sp-ctl"><button class="mp-b sp-mode'+(s.shuf||s.smart?' on':'')+'" data-sp="shuf" aria-pressed="'+!!(s.shuf||s.smart)+'" aria-label="'+(s.smart?T("智能随机（在 Spotify 里开的）","Smart shuffle (turned on in Spotify)"):T("随机播放","Shuffle"))+'">'+(s.smart?SPI.smart:SPI.shuf)+'</button><button class="mp-b" data-sp="prev" aria-label="'+T("上一首","Previous")+'">'+SPI.prev+'</button><button class="mp-b hgo sp-big" data-sp="toggle" aria-label="'+T("播放 / 暂停","Play / pause")+'">'+(s.playing?SPI.pause:SPI.play)+'</button><button class="mp-b" data-sp="next" aria-label="'+T("下一首","Next")+'">'+SPI.next+'</button><button class="mp-b sp-mode'+(s.rep&&s.rep!=="off"?' on':'')+'" data-sp="rep" aria-label="'+T("循环","Repeat")+'">'+(s.rep==="track"?SPI.rep1:SPI.rep)+'</button></div>'
     +'<label class="sp-vol"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z"/></svg><input type="range" min="0" max="100" value="'+(s.vol==null?50:s.vol)+'" aria-label="'+T("音量","Volume")+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="currentColor" stroke="none"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></label>'
-    +'<button class="sp-plbtn" type="button" data-sppl>'+SPI.list+'<span>'+T('歌单','Playlists')+'</span>'+SPI.down+'</button>'
+    +'<button class="btn ghost sp-plbtn" type="button" data-sppl>'+SPI.list+'<span>'+T('歌单','Playlists')+'</span>'+SPI.down+'</button>'
     +(s.device?'<p class="muted sp-dev">'+T('在「'+esc(s.device)+'」上播放','Playing on '+esc(s.device))+'</p>':'');
   f.querySelectorAll("[data-sp]").forEach(b=>b.addEventListener("click",()=>spCmd(b.dataset.sp)));
   f.querySelector(".sp-vol input").addEventListener("input",e=>spVol(+e.target.value));f.querySelector("[data-sppl]").addEventListener("click",spPlView);spTick()}
@@ -164,7 +168,7 @@ async function spRank(list){if(SP.demo||SP.ranked||!SP.rec||!SP.rec.length)retur
 async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";spLoad();
   /* one row along the bottom: the Spotify icon (tap opens the app, hold re-ranks) on the left, back to the player on the right */
   const head='';
-  const foot='<div class="sp-plf"><a class="sp-pill" href="spotify:" data-spapp aria-label="'+T('打开 Spotify','Open Spotify')+'">'+BRAND.sp+'</a><button class="sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button></div>';
+  const foot='<div class="sp-plf"><a class="sp-pill" href="spotify:" data-spapp aria-label="'+T('打开 Spotify','Open Spotify')+'">'+BRAND.sp+'</a><button class="circ sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button></div>';
   const bind=()=>{f.querySelector("[data-spback]").addEventListener("click",()=>{buzz(6);spPaintSheet()});
     const ap=f.querySelector("[data-spapp]");let held=0;if(ap&&typeof holdOpen==="function"){holdOpen(ap,()=>{held=Date.now();if(!SP.demo)spReset()});ap.addEventListener("click",e=>{if(Date.now()-held<1500)e.preventDefault()})}
 };

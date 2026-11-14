@@ -338,7 +338,7 @@ h1,h2,h3,p{margin:0}
 .mask .chip[aria-pressed="true"]{background:var(--ac-soft);color:var(--ac-text);border-color:transparent}
 .mask .eyebrow{margin:0}
 .mask .btn{display:flex;align-items:center;justify-content:center;gap:8px}
-.mask .btn:not(.ghost):not(.recsave){background:var(--ac);color:var(--on-ac);border:0;border-radius:999px;font-weight:800}
+.mask :where(.btn:not(.ghost):not(.recsave)){background:var(--ac);color:var(--on-ac);border:0;border-radius:999px;font-weight:800}
 .mask #corosAuthBtn{background:var(--ac)!important;color:var(--on-ac)!important;border:0!important;border-radius:999px!important;height:48px;font-weight:800}
 
 /* one day: tap a calendar day */
@@ -1123,7 +1123,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="dyson"] .btn,:root[data-theme="dyson"] .hgo,:root[data-theme="dyson"] .dock .pc,:root[data-theme="dyson"] .opt[aria-pressed="true"],:root[data-theme="dyson"] .preset.on,:root[data-theme="dyson"] .thc.on,:root[data-theme="dyson"] .seg button[aria-pressed="true"],:root[data-theme="dyson"] .mask .mode-tabs button.active,:root[data-theme="dyson"] .pill.ac{background:radial-gradient(120% 90% at 30% 10%,rgba(255,255,255,.18),rgba(255,255,255,0) 60%),#C2187A;color:#fff;border-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 3px rgba(0,0,0,.15),0 4px 10px -3px rgba(194,24,122,.45)}
 :root[data-theme="dyson"] .btn.ghost{background:linear-gradient(180deg,#6A6E76,#4E5259);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 4px 10px -3px rgba(0,0,0,.3)}
 :root[data-theme="dyson"] .btn:active,:root[data-theme="dyson"] .hgo:active{transform:scale(.98)}
-:root[data-theme="dyson"] .circ,:root[data-theme="dyson"] .fsreset,:root[data-theme="dyson"] .mini{background:radial-gradient(circle at 40% 30%,#F6E6D8,#D9A779 50%,#A86E3F 100%);border:0;color:#3A2410;box-shadow:0 0 0 1px rgba(120,70,30,.35),0 4px 8px -2px rgba(80,40,10,.35),inset 0 1px 0 rgba(255,255,255,.6)}
+:root[data-theme="dyson"] .circ,:root[data-theme="dyson"] .fsreset,:root[data-theme="dyson"] .mini{background:radial-gradient(circle at 40% 30%,#F4F4F6,#B4B5BB 50%,#6E6F76 100%);border:0;color:#1E1E23;box-shadow:0 0 0 1px rgba(30,30,40,.35),0 4px 8px -2px rgba(80,40,10,.35),inset 0 1px 0 rgba(255,255,255,.6)}
 :root[data-theme="dyson"] .opt,:root[data-theme="dyson"] .seg,:root[data-theme="dyson"] .calpill,:root[data-theme="dyson"] .thc,:root[data-theme="dyson"] .preset,:root[data-theme="dyson"] .mask .mode-tabs,:root[data-theme="dyson"] .mask input,:root[data-theme="dyson"] .mask select,:root[data-theme="dyson"] .mask textarea{background:#D2D2D6;border-color:transparent;box-shadow:inset 0 1px 3px rgba(0,0,0,.14),0 1px 0 rgba(255,255,255,.6)}
 :root[data-theme="dyson"] .dock button{color:var(--muted)}
 :root[data-theme="dyson"] .tickb{background:repeating-conic-gradient(from var(--rot),rgba(255,255,255,.0) 0deg 10deg,rgba(255,255,255,.12) 10deg 20deg),radial-gradient(circle,#E25AAE 0%,#C2187A 55%,#8A0C55 100%);color:#fff;box-shadow:0 0 0 7px rgba(110,40,160,.55),0 0 0 8px rgba(255,255,255,.5),0 16px 26px -8px rgba(120,20,90,.5),inset 0 2px 4px rgba(255,255,255,.4)}
@@ -1133,8 +1133,8 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="dyson"] .cal .dd.today b{background:#C2187A;color:#fff}
 :root[data-theme="dyson"] .fs-peek i,:root[data-theme="dyson"] .fstack[data-fs="hero"] .fs-peek i{background:#D0D0D4;border:0}
 :root[data-theme="dyson"] .fstack>.fs-top,:root[data-theme="dyson"] .fstack[data-fs="hero"]>.fs-top{box-shadow:var(--shadow)}
-:root[data-theme="dyson"] .knobw .knob{background:radial-gradient(circle at 40% 30%,#F6E6D8,#D9A779 50%,#A86E3F 100%);box-shadow:0 0 0 4px rgba(110,40,160,.5),0 8px 14px -4px rgba(80,40,10,.4)}
-:root[data-theme="dyson"] .knobw .knob i{background:#3A2410}
+:root[data-theme="dyson"] .knobw .knob{background:radial-gradient(circle at 40% 30%,#F4F4F6,#B4B5BB 50%,#6E6F76 100%);box-shadow:0 0 0 4px rgba(110,40,160,.5),0 8px 14px -4px rgba(20,20,30,.4)}
+:root[data-theme="dyson"] .knobw .knob i{background:#1E1E23}
 :root[data-theme="dyson"] .bricks{background:#D2D2D6;box-shadow:inset 0 1px 3px rgba(0,0,0,.14)}
 :root[data-theme="dyson"] .opt[aria-checked="true"] .sw{background:#C2187A}
 :root[data-theme="mac"]{--bead:url(../img/tex-6.webp);--bg:#D6D7DA;--glow:none;--card:#E3E4E6;--line:rgba(0,0,0,.08);--lit:inset 0 1px 0 rgba(255,255,255,.9);--sub:#CDCED1;--seg:#CDCED1;--dark:#1C1C1E;--dark-solid:#1C1C1E;--dark-line:#000;--track:rgba(255,255,255,.18);--ink:#1D1D1F;--muted:#6E6E73;--ac:#0A84FF;--on-ac:#fff;--ac-soft:rgba(10,132,255,.13);--ac-text:#0066CC;--st1:rgba(10,132,255,.22);--st2:rgba(10,132,255,.58);--push:#0A84FF;--pull:#FF9F0A;--third:#8E8E93;--kpush:var(--push);--kpull:var(--pull);--kthird:var(--third);--good:#1F9D55;--bad:#E5484D;--sleep:#7D6BD6;--mat:linear-gradient(180deg,#E8E9EB 0%,#DCDDE0 100%);--spec:radial-gradient(140% 90% at var(--lx) var(--ly),rgba(255,255,255,calc(.45*var(--rt))),rgba(255,255,255,0) 55%);--chamfer:inset 0 0 0 1px rgba(255,255,255,.75),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(0,0,0,.1);--shadow:var(--chamfer),0 0 0 .5px rgba(0,0,0,.18),0 2px 3px rgba(0,0,0,.08),0 12px 24px -10px rgba(0,0,0,.22),0 30px 50px -26px rgba(0,0,0,.3);--key:linear-gradient(180deg,#2B2B2E 0%,#1A1A1C 100%);--keysh:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 .5px #000,0 1px 1px rgba(0,0,0,.4);--disp:-apple-system,BlinkMacSystemFont,"Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--num:-apple-system,BlinkMacSystemFont,"Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
@@ -1248,7 +1248,8 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 .sp-time{width:100%;display:flex;justify-content:space-between;font-size:11px;font-weight:600;margin-top:-8px}
 .sp-ctl{display:flex;align-items:center;gap:18px}
 .sp-ctl .mp-b{width:46px;height:46px}.sp-ctl .mp-b svg{width:28px;height:28px}
-.sp-ctl .sp-big{width:62px;height:62px;background:var(--ac);color:var(--on-ac);box-shadow:0 10px 24px -10px var(--ac)}
+/* the play key wears the skin's main-button look (it carries .hgo, like 开练); only its shape is fixed here */
+.sp-ctl .sp-big{color:var(--on-ac);width:62px!important;height:62px!important;padding:0!important;border-radius:50%!important;justify-content:center;gap:0}
 .sp-ctl .sp-big svg{width:32px;height:32px}
 .sp-vol{display:flex;align-items:center;gap:10px;width:100%;color:var(--muted)}
 .sp-vol svg{width:18px;height:18px;flex:none}
@@ -1404,3 +1405,6 @@ img.brand{width:22px;height:22px;flex:none;border-radius:6px;filter:none!importa
 html.groove #v-diet .bricks .bks{animation:groove .52s ease-in-out infinite alternate;animation-delay:calc(var(--i,0) * -90ms);transform-origin:bottom;will-change:transform}
 html.groove #v-diet .bricks .bks i{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 0 rgba(0,0,0,.28),0 0 7px color-mix(in srgb,var(--alb,var(--ac)) 45%,transparent);background:color-mix(in srgb,var(--c) 84%,var(--alb,var(--ac)))}
 @keyframes groove{from{transform:none}to{transform:translateY(-2px) scaleY(1.035)}}
+/* the playlist button and the round × take the skin's ghost button and round key; only their shape is fixed */
+.sp-plbtn.btn{width:auto!important;height:48px!important;padding:0 18px 0 16px!important;border-radius:999px!important;font-size:15px}
+.sp-x.circ{width:56px!important;height:56px!important;border-radius:50%!important}
