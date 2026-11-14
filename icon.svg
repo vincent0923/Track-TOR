@@ -1,43 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<defs>
-<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F47A5E"/><stop offset="1" stop-color="#E4513A"/></linearGradient>
-<linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".97"/><stop offset="1" stop-color="#F3F0EE" stop-opacity=".93"/></linearGradient>
-<linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".9"/><stop offset=".45" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
-<filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur stdDeviation="14.0"/></filter>
-<filter id="bs" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6.0"/></filter>
-<clipPath id="tc"><rect x="86.0" y="86.0" width="340.0" height="340.0" rx="78.0"/></clipPath>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<defs><linearGradient id="foil" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBE3A0"/><stop offset=".35" stop-color="#E8B04A"/><stop offset=".6" stop-color="#FFF0C2"/><stop offset="1" stop-color="#B9801F"/></linearGradient>
+ <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E6FC0"/><stop offset="1" stop-color="#123A6B"/></linearGradient>
+ <radialGradient id="coin" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FFF1BF"/><stop offset=".45" stop-color="#F0BF55"/><stop offset="1" stop-color="#B57A1A"/></radialGradient>
+ <linearGradient id="rose" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E25E72"/><stop offset="1" stop-color="#B8324B"/></linearGradient>
+ <clipPath id="tile"><rect width="512" height="512" rx="92"/></clipPath>
+ <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4B93DE"/><stop offset=".55" stop-color="#2D76C6"/><stop offset="1" stop-color="#1A4E92"/></linearGradient>
+ <radialGradient id="bgl" cx=".28" cy=".08" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+ <filter id="grain" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 -.18"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+ <linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFBF2"/><stop offset="1" stop-color="#EFE2C8"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E9B44C"/><stop offset=".5" stop-color="#F7D78A"/><stop offset="1" stop-color="#D99A2B"/></linearGradient>
+ <linearGradient id="gG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3C8BDE"/><stop offset="1" stop-color="#1D5BA8"/></linearGradient>
+ <linearGradient id="left" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EC7B88"/><stop offset=".55" stop-color="#D9576A"/><stop offset="1" stop-color="#C2435A"/></linearGradient>
+ <linearGradient id="right" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C33B52"/><stop offset="1" stop-color="#9E2841"/></linearGradient>
+ <linearGradient id="back" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E1C31"/><stop offset="1" stop-color="#A42C44"/></linearGradient>
+ <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A1020" stop-opacity=".45"/><stop offset="1" stop-color="#5A1020" stop-opacity="0"/></linearGradient>
+ <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>
+ <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+ <radialGradient id="vig" cx=".5" cy=".45" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></radialGradient>
 </defs>
-<rect width="512" height="512" rx="112" fill="url(#bg)"/>
-<rect x="92.0" y="108.0" width="328.0" height="340.0" rx="78.0" fill="#8A2A18" opacity=".35" filter="url(#sh)"/>
-<rect x="86.0" y="86.0" width="340.0" height="340.0" rx="78.0" fill="url(#glass)"/>
-<g clip-path="url(#tc)"><rect x="86.0" y="86.0" width="340.0" height="170.0" fill="url(#sheen)" opacity=".7"/></g>
-<rect x="87.0" y="87.0" width="338.0" height="338.0" rx="77.0" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-opacity=".95"/>
-<ellipse cx="260.0" cy="346.0" rx="112.0" ry="9.0" fill="#3A2A20" opacity=".22" filter="url(#bs)"/>
-<rect x="152.5" y="302.5" width="67.0" height="39.0" rx="8.0" fill="#EE5A44"/>
-<rect x="156.5" y="304.5" width="59.0" height="3.5" rx="1.8" fill="#FF8E76"/>
-<rect x="155.5" y="335.5" width="61.0" height="4.5" rx="2.2" fill="#B83A27" opacity=".65"/>
-<rect x="152.5" y="258.5" width="67.0" height="39.0" rx="8.0" fill="#EE5A44"/>
-<rect x="156.5" y="260.5" width="59.0" height="3.5" rx="1.8" fill="#FF8E76"/>
-<rect x="155.5" y="291.5" width="61.0" height="4.5" rx="2.2" fill="#B83A27" opacity=".65"/>
-<rect x="222.5" y="302.5" width="67.0" height="39.0" rx="8.0" fill="#3B46E6"/>
-<rect x="226.5" y="304.5" width="59.0" height="3.5" rx="1.8" fill="#7079FF"/>
-<rect x="225.5" y="335.5" width="61.0" height="4.5" rx="2.2" fill="#252DA8" opacity=".65"/>
-<rect x="222.5" y="258.5" width="67.0" height="39.0" rx="8.0" fill="#3B46E6"/>
-<rect x="226.5" y="260.5" width="59.0" height="3.5" rx="1.8" fill="#7079FF"/>
-<rect x="225.5" y="291.5" width="61.0" height="4.5" rx="2.2" fill="#252DA8" opacity=".65"/>
-<rect x="222.5" y="214.5" width="67.0" height="39.0" rx="8.0" fill="#3B46E6"/>
-<rect x="226.5" y="216.5" width="59.0" height="3.5" rx="1.8" fill="#7079FF"/>
-<rect x="225.5" y="247.5" width="61.0" height="4.5" rx="2.2" fill="#252DA8" opacity=".65"/>
-<rect x="292.5" y="302.5" width="67.0" height="39.0" rx="8.0" fill="#5FDDB0"/>
-<rect x="296.5" y="304.5" width="59.0" height="3.5" rx="1.8" fill="#A8F6D9"/>
-<rect x="295.5" y="335.5" width="61.0" height="4.5" rx="2.2" fill="#2FA37C" opacity=".65"/>
-<rect x="292.5" y="258.5" width="67.0" height="39.0" rx="8.0" fill="#5FDDB0"/>
-<rect x="296.5" y="260.5" width="59.0" height="3.5" rx="1.8" fill="#A8F6D9"/>
-<rect x="295.5" y="291.5" width="61.0" height="4.5" rx="2.2" fill="#2FA37C" opacity=".65"/>
-<rect x="292.5" y="214.5" width="67.0" height="39.0" rx="8.0" fill="#5FDDB0"/>
-<rect x="296.5" y="216.5" width="59.0" height="3.5" rx="1.8" fill="#A8F6D9"/>
-<rect x="295.5" y="247.5" width="61.0" height="4.5" rx="2.2" fill="#2FA37C" opacity=".65"/>
-<path d="M292.5 209.5V178.5Q292.5 170.5 300.5 170.5H329.5A30.0 30.0 0 0 1 359.5 200.5V209.5Z" fill="#5FDDB0"/>
-<path d="M300.5 172.5H329.5" stroke="#A8F6D9" stroke-width="3.5" stroke-linecap="round"/>
-<rect x="295.5" y="203.5" width="61.0" height="4.5" rx="2.2" fill="#2FA37C" opacity=".65"/>
+<rect x="14" y="30" width="484" height="476" rx="88" fill="#000" opacity=".28" filter="url(#soft)"/><linearGradient id="edge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A3F78"/><stop offset=".3" stop-color="#7A1A2E"/><stop offset="1" stop-color="#4E0E1C"/></linearGradient><rect x="10" y="22" width="492" height="482" rx="90" fill="url(#edge)"/><rect x="10" y="22" width="492" height="482" rx="90" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="2"/><g transform="translate(10 0) scale(.9609375 .9375)"><g clip-path="url(#tile)">
+ <rect width="512" height="512" fill="url(#bg)"/>
+ <rect width="512" height="512" fill="#fff" filter="url(#grain)" opacity=".5"/>
+ <rect width="512" height="512" fill="url(#bgl)"/>
+ <g>
+  <!-- the inside back of the envelope -->
+  <path d="M0 120 L512 120 L512 512 L0 512 Z" fill="url(#back)"/>
+<rect x="40" y="30" width="432" height="420" rx="24" fill="#3A0A16" opacity=".45" filter="url(#soft)" transform="translate(0 10)"/>
+  <rect x="40" y="22" width="432" height="420" rx="24" fill="url(#card)"/>
+  <rect x="40" y="22" width="432" height="420" rx="24" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/>
+  
+  <g transform="translate(256 196) scale(1.62)"><circle r="96" fill="#000" opacity=".25" filter="url(#soft2)" transform="translate(0 6)"/><circle r="96" fill="url(#coin)"/><circle r="80" fill="none" stroke="#9A6510" stroke-opacity=".45" stroke-width="3"/><circle r="96" fill="none" stroke="#FFF3CC" stroke-opacity=".7" stroke-width="2"/>
+<g transform="scale(.82)"><path d="M58 -40 A72 72 0 1 0 70 22 L70 8 L18 8" fill="none" stroke="#9A6510" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 3)" opacity=".6"/><path d="M58 -40 A72 72 0 1 0 70 22 L70 8 L18 8" fill="none" stroke="#FFE7A6" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+  <!-- the envelope front: a darker right flap and a lighter left flap over it, each casting a little shade -->
+  <path d="M512 190 L270 410 L512 512 Z" fill="#3A0A16" opacity=".35" filter="url(#soft)" transform="translate(-8 -12)"/>
+  <path d="M512 190 L270 410 L512 512 Z" fill="url(#right)"/>
+  <path d="M512 190 L270 410" stroke="#fff" stroke-opacity=".22" stroke-width="3"/>
+  <path d="M0 114 L512 498 L512 512 L0 512 Z" fill="#3A0A16" opacity=".4" filter="url(#soft)" transform="translate(8 -14)"/>
+  <path d="M0 114 L512 498 L512 512 L0 512 Z" fill="url(#left)"/>
+  <path d="M0 114 L512 498" stroke="#FFD0D6" stroke-opacity=".7" stroke-width="3"/>
+  <!-- the heart, pressed into the left flap -->
+  <g transform="translate(92 416) scale(1.45)">
+   <path d="M0 30 C-34 8 -40 -14 -27 -26 C-16 -36 -3 -30 0 -20 C3 -30 16 -36 27 -26 C40 -14 34 8 0 30 Z" fill="#9E2841" opacity=".85"/>
+   <path d="M0 30 C-34 8 -40 -14 -27 -26 C-16 -36 -3 -30 0 -20 C3 -30 16 -36 27 -26 C40 -14 34 8 0 30 Z" fill="none" stroke="#6E1426" stroke-opacity=".55" stroke-width="3" transform="translate(-1 -2)"/>
+   <path d="M-2 31 C-34 10 -40 -12 -28 -24" fill="none" stroke="#FFB3BD" stroke-opacity=".55" stroke-width="2.4" transform="translate(1 3)"/>
+  </g>
+ </g>
+ <!-- light from above on the whole tile, a soft edge shade -->
+ <rect width="512" height="512" fill="url(#vig)"/>
+ <rect x="1" y="1" width="510" height="510" rx="91" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
+</g></g>
 </svg>

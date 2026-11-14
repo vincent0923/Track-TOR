@@ -1,5 +1,5 @@
 // Service Worker for 推拉机 track-TOR PWA
-const CACHE_NAME = "tracktor-pwa-v13";
+const CACHE_NAME = "tracktor-pwa-v14";
 const ASSETS = [
   "./",
   "./index.html",
@@ -20,12 +20,12 @@ const ASSETS = [
   "./js/p1day.js",
   "./js/p1weather.js",
   "./js/p1music.js",
-  "./manifest.json?v=2",
-  "./icon-192.png?v=2",
-  "./icon-512.png?v=2",
-  "./icon.svg?v=2",
-  "./icon-maskable-512.png?v=2",
-  "./apple-touch-icon.png?v=2",
+  "./manifest.json?v=3",
+  "./icon-192.png?v=3",
+  "./icon-512.png?v=3",
+  "./icon.svg?v=3",
+  "./icon-maskable-512.png?v=3",
+  "./apple-touch-icon.png?v=3",
   "./fonts/geist-wght.woff2",
   "./img/tex-0.webp",
   "./img/tex-1.webp",
