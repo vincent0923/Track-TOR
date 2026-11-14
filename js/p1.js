@@ -270,6 +270,22 @@ function dietCard(g){const all=dietDays(),keys=all.slice(g*7,g*7+7);
       return '<button data-act="day" data-d="'+d+'"><span class="dt">'+dayLabel(d)+'</span><span class="di n">'+(a!=null?fmt(a)+' kcal':'–')+'</span>'+(g!=null?'<span class="pill '+(g>=0?"good":"bad")+'">'+(g>=0?"−":"+")+fmt(Math.abs(g))+'</span>':'')+'<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>'}).join("")+'</div></section>'}
 function dietListHtml(){const n=Math.ceil(dietDays().length/7);if(dietGrp>=n)dietGrp=Math.max(0,n-1);return fsWrap("diet",dietCard(dietGrp),n-1)}
 const DIET_FS={get:dir=>{const n=Math.ceil(dietDays().length/7),g=dietGrp+dir;return g<0||g>=n?null:dietCard(g)},commit:dir=>{dietGrp+=dir},render:dietListHtml,peekDir:1};
+/* long-press (half a second, finger kept still) opens a panel */
+function holdOpen(el,fn){if(!el)return;let tm=0;el.addEventListener("contextmenu",e=>e.preventDefault());
+  el.addEventListener("pointerdown",e=>{clearTimeout(tm);const x=e.clientX,y=e.clientY;tm=setTimeout(()=>{tm=0;off();buzz(15);fn()},500);
+    const cancel=ev=>{if(ev.type!=="pointermove"||Math.hypot(ev.clientX-x,ev.clientY-y)>10){clearTimeout(tm);off()}};
+    const off=()=>["pointermove","pointerup","pointercancel"].forEach(k=>removeEventListener(k,cancel));["pointermove","pointerup","pointercancel"].forEach(k=>addEventListener(k,cancel))})}
+/* the protein target: blank follows the daily recommendation (shown grey), a number is the user's own */
+function openProtein(){const t=today(),rec=proteinRec(t),w=weightAtDate(t),own=+state.settings.pg>0?+state.settings.pg:"";
+  const kg=v=>(v/w).toFixed(1);
+  const S=p1Sheet(T("蛋白质目标","Protein target"),'<div class="row" style="align-items:flex-end;gap:10px"><label class="flabel sp">'+T("每天（g）","Per day (g)")+'<input id="pg" type="number" inputmode="numeric" step="1" min="0" value="'+own+'" placeholder="'+rec+'"></label>'
+    +'<button class="mini info" type="button" aria-expanded="false" aria-label="'+T("推荐范围","Recommended range")+'" style="margin-bottom:12px">i</button></div>'
+    +'<div class="theory" hidden><p><b>'+T("增肌同时减脂","Building muscle while losing fat")+'</b>'+T("每公斤体重每天 1.6–2.2 g。按你现在 "+w.toFixed(1)+" kg，是 "+Math.round(1.6*w)+"–"+Math.round(2.2*w)+" g。热量缺口越大、人越瘦，越该靠近上限。","1.6–2.2 g per kg of body weight a day. At "+w.toFixed(1)+" kg that is "+Math.round(1.6*w)+"–"+Math.round(2.2*w)+" g. The bigger the deficit and the leaner you are, the nearer the top.")+'</p>'
+    +'<p><b>'+T("灰字怎么来的","Where the grey number comes from")+'</b>'+T("用性别、年龄、身高、体重估出去脂体重，每公斤去脂体重 2.2 g，再保持在上面的范围里；60 岁以上多 10%。今天是 "+rec+" g（每公斤 "+kg(rec)+" g），体重变了每天跟着变。","Lean mass estimated from sex, age, height and weight, 2.2 g per kg of it, kept inside the range above; 10% more from 60 on. Today that is "+rec+" g ("+kg(rec)+" g/kg); it moves with your weight.")+'</p>'
+    +'<p><b>'+T("怎么吃","How to eat it")+'</b>'+T("分到 3–4 餐，每餐 20–40 g，练完那餐别落下。","Spread over 3–4 meals of 20–40 g each, including the one after training.")+'</p>'
+    +'<p class="muted">'+T("留空就用推荐值。","Leave blank to follow the recommendation.")+'</p></div>');
+  const ib=S.q(".info"),th=S.q(".theory");ib.addEventListener("click",()=>{th.hidden=!th.hidden;ib.setAttribute("aria-expanded",!th.hidden);buzz(6)});
+  S.q("[data-ok]").addEventListener("click",()=>{const v=Math.round(+S.q("#pg").value);if(v>0)state.settings.pg=v;else delete state.settings.pg;lsSave();S.close();renderAll();toast(T("蛋白质目标已保存","Protein target saved"))})}
 function renderDietView(){const v=$("#v-diet"),t=today();
   const tin=intakeOf(t),tb=burnOfDate(t),gap=tin!=null&&tb!=null?tb-tin:null,pr=proteinOf(t),need=proteinNeed(t);
   const y=ymdAdd(t,-1),yg=dietGapOf(y);
@@ -278,12 +294,12 @@ function renderDietView(){const v=$("#v-diet"),t=today();
   else if(tin!=null)hero+='<p class="eyebrow">'+T('今天 · 摄入','Today · intake')+'</p><div class="big">'+fmt(tin)+'<small>kcal</small></div><p class="muted" style="font-size:12px;margin-top:4px">'+T('消耗等手表同步','Burn waits for the watch')+(yg!=null?T(' · 昨天缺口 ',' · yesterday ')+fmt(yg):'')+'</p>';
   else hero+='<p class="eyebrow">'+T('今天','Today')+'</p><div class="big" style="font-size:26px">'+T('还没记','Nothing yet')+'</div><p class="muted" style="font-size:12px;margin-top:4px">'+(yg!=null?T('昨天'+(yg>=0?'缺口 ':'盈余 '),'Yesterday '+(yg>=0?'deficit ':'surplus '))+fmt(Math.abs(yg))+' kcal':T('点下面记一笔','Log below'))+'</p>';
   const pp=pr!=null&&need?pr/need:0;
-  hero+='</div><div class="ring">'+ringSvg(76,8,pp,"var(--sleep)","var(--sub)")+'<span class="rl"><b class="n" style="font-size:16px;font-weight:800">'+(pr!=null?Math.round(pr):"–")+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ '+Math.round(need)+' g</span></span></div></div>';
+  hero+='</div><div class="ring" id="protRing">'+ringSvg(76,8,pp,"var(--sleep)","var(--sub)")+'<span class="rl"><b class="n" style="font-size:16px;font-weight:800">'+(pr!=null?Math.round(pr):"–")+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ '+Math.round(need)+' g</span></span></div></div>';
   if(tin!=null&&tb!=null){const mx=Math.max(tin,tb);hero+='<div class="ib"><i style="width:'+(tin/mx*100)+'%;background:var(--ink)"></i><i style="width:'+(Math.max(0,tb-tin)/mx*100)+'%;background:var(--good);opacity:.35"></i></div>'
     +'<div class="legend"><span><i style="background:var(--ink)"></i>'+T('摄入','Intake')+'</span><span><i style="background:var(--good);opacity:.5"></i>'+T('缺口','Deficit')+'</span><span style="margin-left:auto"><i style="background:var(--sleep)"></i>'+T('蛋白质','Protein')+'</span></div>'}
   hero+='<div class="addrow"><button class="fsreset" data-act="go" data-to="diet" aria-label="'+T('记一笔','Log food')+'">'+ICON.plus+'</button></div></section>';
   const week=gapStackHtml();
-  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+dietListHtml();animateRings(v);fsBind("gap",GAP_FS);fsBind("diet",DIET_FS)}
+  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+dietListHtml();animateRings(v);fsBind("gap",GAP_FS);fsBind("diet",DIET_FS);holdOpen($("#protRing"),openProtein)}
 /* the gap card: swipe it sideways (or tap a dot) to step through 7, 14, 30 days and since the first log; the
    big figure turns over like a split-flap board. Only finished days count (the window ends yesterday). */
 const GAP_RANGES=[7,14,30,0];

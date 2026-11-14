@@ -403,8 +403,8 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .exwrap .exl{margin:14px 0 0}
 .planlead{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
 .planlead p{flex:1;font-size:13px;line-height:1.5}
-.planlead .info{font-size:13px;font-weight:800;font-style:italic;font-family:Georgia,serif}
-.planlead .info[aria-expanded="true"]{background:var(--ac-soft);color:var(--ac-text)}
+.planlead .info,.mask .info{font-size:13px;font-weight:800;font-style:italic;font-family:Georgia,serif}
+.planlead .info[aria-expanded="true"],.mask .info[aria-expanded="true"]{background:var(--ac-soft);color:var(--ac-text)}
 .theory{display:grid;gap:10px;padding:14px;border-radius:18px;background:var(--sub);margin-bottom:12px;font-size:13px;line-height:1.55}
 .theory b{display:block;font-weight:800;margin-bottom:2px}
 .hcard.locked .eyebrow{display:flex;align-items:center;gap:5px}

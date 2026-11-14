@@ -56,7 +56,17 @@ function proteinOf(date){
   if(!d || !d.items || !d.items.length) return null;
   return d.items.some(it=>numVal(it.p)!==null) ? dietTotals(d).p : null;
 }
-function proteinNeed(date){ return PROTEIN_PER_KG * weightAtDate(date); }
+/* recommended daily protein for building muscle while losing fat: 2.2 g per kg of lean mass (lean mass from the
+   Deurenberg body-fat estimate, which uses sex, age, height and weight), kept between 1.6 and 2.2 g per kg of body
+   weight; 10% more from 60 on. settings.pg is the user's own target and wins when set. */
+function proteinRec(date){
+  const p = profile(), w = weightAtDate(date), h = (p.h || H_FALLBACK) / 100, a = ageAtDate(date), sx = p.sex==="m" ? 1 : p.sex==="f" ? 0 : 0.5;
+  const bf = Math.min(45, Math.max(8, 1.2 * w / (h * h) + 0.23 * a - 10.8 * sx - 5.4)) / 100;
+  let g = Math.max(PROTEIN_PER_KG * w, 2.2 * w * (1 - bf));
+  if(a >= 60) g *= 1.1;
+  return Math.round(Math.min(g, PROTEIN_MAX_PER_KG * w));
+}
+function proteinNeed(date){ const c = +profile().pg; return c > 0 ? c : proteinRec(date); }
 function proteinCap(date){ return PROTEIN_MAX_PER_KG * weightAtDate(date); }
 function intakeOf(date){
   const d = state.diet[date];

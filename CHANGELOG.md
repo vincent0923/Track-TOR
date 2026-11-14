@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.55a] — 2026-11-14
+
+### 新增 / Added
+- 🥚 **蛋白质目标**：长按饮食页的蛋白质圆环，打开蛋白质目标。灰字是按你的性别、年龄、身高、体重每天算的推荐值，可以自己填一个目标，留空就跟着推荐；「i」里是增肌同时减脂的推荐范围（每公斤体重 1.6–2.2 g）和怎么吃。
+  **Protein target**: long-press the protein ring on the food page. The grey number is a daily recommendation from your sex, age, height and weight; type your own target or leave it blank to follow it. The "i" explains the range for building muscle while losing fat (1.6–2.2 g per kg) and how to spread it.
+
+### 改进 / Changed
+- Spotify 面板去掉 Redirect URI 一栏；连接时一次要齐播放相关的权限；歌单按最近播放的歌出自哪个歌单排序；在歌单格子里滚动不会再把面板拉下来。
+  The Spotify panel drops the Redirect URI field; connecting asks for every playback permission at once; playlists are ranked by how many recent plays they hold; scrolling the playlist grid no longer pulls the panel closed.
+
+---
+
 ## [v1.54a] — 2026-11-14
 
 ### 新增 / Added
