@@ -85,7 +85,9 @@ const SFX_BASE={tick:()=>{tone(784,0,.09,"triangle",.2);tone(1175,.06,.16,"trian
   ex:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,i*.07,.18,"triangle",.18))},
   rest:()=>{tone(880,0,.12,"sine",.2);tone(880,.18,.2,"sine",.2)},
   done:()=>{[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.09,.3,"triangle",.2));tone(1568,.5,.6,"sine",.12)},
-  tap:()=>tone(1400,0,.04,"sine",.06)};
+  tap:()=>tone(1400,0,.04,"sine",.06),
+  /* one notch of the move dial: a dry click, then the landing */
+  detent:()=>{tone(3400,0,.007,"square",.03);if(typeof fxHit==="function")fxHit(0,.016,5200,1.4,.09)},land:()=>{tone(1900,0,.012,"square",.035);tone(240,0,.05,"triangle",.12,140)}};
 /* the toy skin sounds like toys: a bubble pop for a tick, a xylophone run, a cuckoo for the end of a rest,
    a toy-trumpet fanfare, and a plastic click for taps */
 const xylo=(f,at,v)=>{tone(f,at,.35,"sine",v||.22);tone(f*4,at,.06,"sine",(v||.22)*.35);tone(f*2.76,at,.12,"triangle",(v||.22)*.18)};
@@ -93,7 +95,8 @@ const SFX_TOY={tick:()=>{tone(950,0,.11,"sine",.26,240);tone(1900,0,.02,"square"
   ex:()=>{[1047,1175,1319,1568,2093].forEach((f,i)=>xylo(f,i*.065,.2))},
   rest:()=>{tone(784,0,.16,"sine",.22,740);tone(622,.22,.26,"sine",.22,590)},
   done:()=>{[[523,0],[659,.12],[784,.24],[1047,.36],[784,.52],[1047,.64]].forEach(([f,t])=>{tone(f,t,.16,"square",.06);tone(f,t,.16,"triangle",.14)});xylo(2093,.82,.18)},
-  tap:()=>{tone(1800,0,.018,"square",.05);tone(320,0,.03,"triangle",.1,180)}};
+  tap:()=>{tone(1800,0,.018,"square",.05);tone(320,0,.03,"triangle",.1,180)},
+  detent:()=>{tone(2200,0,.012,"square",.04);tone(420,0,.02,"triangle",.07,260)},land:()=>{tone(950,0,.09,"sine",.2,300)}};
 /* each skin can bring its own sounds (SFX_TH in js/p1fx.js); anything it leaves out falls back to the base set */
 const SFX=new Proxy({},{get:(o,k)=>{const th=document.documentElement.dataset.theme;if(th==="toy")return SFX_TOY[k];const t=typeof SFX_TH!=="undefined"&&SFX_TH[th];return (t&&t[k])||SFX_BASE[k]}});
 const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};

@@ -209,16 +209,42 @@ function renderFocus(anim){
   else if(run.rest>0)bottom=restHtml();
   else if(ci<0)bottom='<button class="tickb done" disabled>'+ICON.check+'</button><button class="f-hint" data-act="fnext">'+T('这个动作完成了 · 下一个 →','Done with this one · next →')+'</button>';
   else if(e.unit==="秒")bottom='<button class="tickb" data-act="timer" aria-label="'+T('开始计时','Start the timer')+'">'+(run.timing?'<svg class="tr" viewBox="0 0 112 112"><circle cx="56" cy="56" r="52" id="tRing" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg>'+ICON.check:ICON.play)+'</button><p class="f-hint">'+(run.timing?T("做完了就点，提前结束也算","Tap when done; stopping early counts"):T("点一下开始计时","Tap to start the timer"))+'</p>';
-  else bottom='<button class="tickb" data-act="tick" aria-label="'+T('完成这一组','Set done')+'">'+ICON.check+'</button><p class="f-hint">'+T('左右滑动换动作','Swipe for other moves')+'</p>';
+  else bottom='<button class="tickb" data-act="tick" aria-label="'+T('完成这一组','Set done')+'">'+ICON.check+'</button>';
   f.innerHTML='<div class="f-top"><button class="mini" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-dots">'+dots+'</div><span class="f-time n" id="fTime">0:00</span></div>'
-    +'<div class="f-body" id="fBody"><p class="eyebrow">'+LAB(p)+T(' · 动作 ',' · move ')+(run.ex+1)+' / '+p.ex.length+'</p><h2>'+N(e)+'</h2><p class="f-note">'+(e.note?NOTE(e):"")+'</p>'
+    +'<div class="f-body" id="fBody"><div class="f-win">'+winHtml(run.ex)+'</div>'
     +'<div class="f-sets">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")+'</div>'
     +'<div class="f-num">'+(ci<0||run.timing?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n'+(anim?" pop":"")+'" id="fVal">'+(run.timing?run.timeLeft:val)+'</b>'
     +(ci<0||run.timing?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div>'
-    +'<p class="f-unit">'+U(e.unit)+(ci<0?T(' · 全部 '+a.length+' 组完成',' · all '+a.length+' sets done'):T(' · 第 '+(ci+1)+' 组 / 共 '+a.length+' 组',' · set '+(ci+1)+' of '+a.length))+'</p></div>'
+    +'<p class="f-unit">'+U(e.unit)+(ci<0?T(' · 全部 '+a.length+' 组完成',' · all '+a.length+' sets done'):T(' · 第 '+(ci+1)+' 组 / 共 '+a.length+' 组',' · set '+(ci+1)+' of '+a.length))+'</p>'
+    +(p.ex.length>1&&!run.timing&&run.askFeel==null?'<div class="f-dial" role="slider" tabindex="0" aria-label="'+T('转动换动作','Turn to change move')+'" aria-valuemin="1" aria-valuemax="'+p.ex.length+'" aria-valuenow="'+(run.ex+1)+'"><div class="dl-wheel"><i class="dl-knurl"></i></div><b class="dl-mark"></b></div>':'')+'</div>'
     +'<div class="f-bottom" id="fBottom">'+bottom+'</div>';
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
-  swipe($("#fBody"))}
+  swipe($("#fBody"));dialBind($(".f-dial"))}
+function winHtml(i){const p=run.p,e=p.ex[i];return '<p class="eyebrow">'+LAB(p)+T(' · 动作 ',' · move ')+(i+1)+' / '+p.ex.length+'</p><h2>'+N(e)+'</h2><p class="f-note">'+(e.note?NOTE(e):"")+'</p>'}
+/* the move dial: a knurled thumb wheel like a camera's. Each notch (DL_STEP px of travel) is one move with a click;
+   it keeps spinning after a flick and slows with a slightly different friction each time, so a hard spin lands
+   on a move by chance; it wraps around, settles on the nearest notch, and the window shows the move as it passes */
+const DL_STEP=26,DL_KN=12;
+function dialBind(el){if(!el)return;const kn=el.querySelector(".dl-knurl"),win=$(".f-win"),n=run.p.ex.length,start=run.ex;
+  let off=0,last=0,raf=0,drag=null,shown=start,lastSnd=0,lastBz=0;
+  const idx=o=>((start-Math.round(o/DL_STEP))%n+n)%n;
+  const paint=()=>{kn.style.transform="translateX("+(((off%DL_KN)+DL_KN)%DL_KN-DL_KN)+"px)";const i=idx(off);
+    if(i!==shown){shown=i;const t=performance.now();if(t-lastSnd>22){lastSnd=t;SFX.detent()}if(t-lastBz>45){lastBz=t;buzz(4)}
+      if(win){win.innerHTML=winHtml(i);win.classList.remove("flick");void win.offsetWidth;win.classList.add("flick")}el.setAttribute("aria-valuenow",i+1)}};
+  const commit=()=>{cancelAnimationFrame(raf);raf=0;el.classList.remove("spin");const i=idx(off);SFX.land();buzz(12);
+    if(!run||i===run.ex){return}run.ex=i;run.rest=0;clearInterval(restT);setTimeout(()=>{if(run)renderFocus(true)},120)};
+  const snap=()=>{const to=Math.round(off/DL_STEP)*DL_STEP,from=off,t0=performance.now();
+    const go=t=>{const k=Math.min(1,(t-t0)/180),e=1-Math.pow(1-k,3);off=from+(to-from)*e;paint();if(k<1)raf=requestAnimationFrame(go);else commit()};raf=requestAnimationFrame(go)};
+  const coast=v=>{const fr=.955+Math.random()*.02;let t1=performance.now();
+    const go=t=>{const dt=Math.min(40,t-t1);t1=t;off+=v*dt;v*=Math.pow(fr,dt/16);paint();if(Math.abs(v)>.08)raf=requestAnimationFrame(go);else snap()};raf=requestAnimationFrame(go)};
+  ["touchstart","touchmove","touchend"].forEach(k=>el.addEventListener(k,e=>e.stopPropagation(),{passive:true}));
+  el.addEventListener("pointerdown",e=>{cancelAnimationFrame(raf);raf=0;el.setPointerCapture(e.pointerId);el.classList.add("spin");drag={x:e.clientX,o:off,pts:[[performance.now(),e.clientX]]}});
+  el.addEventListener("pointermove",e=>{if(!drag)return;off=drag.o+(e.clientX-drag.x);const t=performance.now();drag.pts.push([t,e.clientX]);while(drag.pts.length>2&&t-drag.pts[0][0]>90)drag.pts.shift();paint()});
+  const up=e=>{if(!drag)return;const p=drag.pts,a=p[0],b=p[p.length-1],v=b[0]-a[0]>5&&performance.now()-b[0]<70?(b[1]-a[1])/(b[0]-a[0]):0;drag=null;
+    if(Math.abs(v)>.35)coast(Math.max(-6,Math.min(6,v*1.15)));else snap()};
+  el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
+  el.addEventListener("keydown",e=>{if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;e.preventDefault();cancelAnimationFrame(raf);off+=e.key==="ArrowRight"?-DL_STEP:DL_STEP;off=Math.round(off/DL_STEP)*DL_STEP;paint();commit()});
+  paint()}
 function restHtml(){return '<div class="rest"><p class="eyebrow">'+T('组间休息','Rest')+'</p><div class="big" id="rLeft">'+Math.floor(run.rest/60)+':'+pad(run.rest%60)+'</div>'
   +'<div class="bar"><i id="rBar" style="width:'+(run.rest/run.restMax*100)+'%"></i></div><div class="row"><button data-act="rplus">'+T('+30 秒','+30 s')+'</button><button class="ac" data-act="rskip">'+T('跳过','Skip')+'</button></div></div>'}
 function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].o=maxOrdOf(run.doc)+1;a[ci].d=true;if(v!=null)a[ci].v=v;lsSave();

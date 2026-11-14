@@ -6,6 +6,14 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.56a] — 2026-11-14
+
+### 新增 / Added
+- 🎛️ **动作拨轮**：专注模式里动作名放进一个跟主题配套的窗口，下面加一个相机那样的滚花拨轮。拨一格换一个动作，每格咔哒一声；用力一拨带惯性转，随机停在一个动作上。
+  **Move dial**: in focus mode the move name sits in a themed window, with a knurled camera-style thumb wheel below. One notch is one move, with a click each; flick it hard and it spins on and lands on a move at random.
+
+---
+
 ## [v1.55a] — 2026-11-14
 
 ### 新增 / Added

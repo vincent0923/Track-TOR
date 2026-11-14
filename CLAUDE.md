@@ -17,7 +17,7 @@
 - 只写以后一直有效的约定和找东西的线索，保持简短。做过什么看 `git log` 和 `CHANGELOG.md`，产品现在什么样看 `docs/PRODUCT.md`，打算做什么看私人文档「推拉机：私人规划与施工清单」。
 
 ## 每次发版
-- 现在的版本号是 v1.55a。
+- 现在的版本号是 v1.56a。
 - 只有加了新功能才升版本号。只改视觉或音效、没有新功能的改动，不升版本号、不写 CHANGELOG，测试通过后直接提交推送，不用问。
 - 版本号三处同步：`index.html` 里的 `#ver`，`README.md` 中英文各一处。
 - `CHANGELOG.md` 加一条，中英双语。
@@ -32,7 +32,7 @@
 - 爽感是核心：打勾放烟花、练完礼炮（`js/p1fx.js`）；有自己庆祝效果的主题写在 `THEME_FX`，音效在 `SFX_TH`（玩具在 `js/p1data.js` 的 `SFX_TOY`）。设定 › 外观 › 特效里放光追强弱（`tracktor-p1-rt`）、天气、落灰（`tracktor-p1-dust`）、庆祝效果。
 - 设定的层级：从设定菜单打开的面板关掉回到上一级（`js/p1.js` 的 `SHEET_UP`/`CUR_SHEET`，`js/p1settings.js` 的面板用 `P1_BACK`）。凡是要填外部链接或密钥的都放在 设定 › 进阶（饮食表格、记账 AI 的格式、Spotify）；每连好一项第一次给 1000 G（`settings.adv`，`advDone`）。
 - 组件目录 `docs/catalog/`（`index.html` 外壳、`board.html` 组件板，直接用 `../../css/p1.css`，开本地服务器从仓库根目录打开）：每个组件按用途分七类（确认、开关、调节、选择、导航、展示、音乐），可以单个主题看或一个组件看全部主题；加了新主题记得在 `index.html` 的 `THEMES` 和 `FIXED` 里登记，加了新组件在 `board.html` 加一个 `.spec`。
-- 通用组件（`js/p1.js`）：积木柱状图 `bricksHtml`（每列可带 `t`，手指划过时显示在卡片的 `.bkread`；在卡堆里积木区域不翻牌）、旋钮 `knobHtml`（标签是普通按钮，带自己的 `data-act`）。
+- 通用组件（`js/p1.js`）：积木柱状图 `bricksHtml`（每列可带 `t`，手指划过时显示在卡片的 `.bkread`；在卡堆里积木区域不翻牌）、旋钮 `knobHtml`（标签是普通按钮，带自己的 `data-act`）、专注页的动作窗口 `.f-win` 和滚花拨轮 `dialBind`（每个主题在 `css/p1.css` 末尾用 `--w-*`/`--d-*` 换样子，咔哒声是 `SFX.detent`/`SFX.land`）。
 
 ## 代码结构
 - 静态网页，无构建，只有一个界面 `index.html`（经典界面和 29 套主题 v1.43a 删了，代码在分支 `backup-classic-v1.42a`）。样式 `css/p1.css`。脚本按 `index.html` 里的顺序加载、共享全局作用域：`js/hant.js`（繁体：把页面上的简体逐字换成台湾用字，`tracktor-lang` 是 `zht`）、`js/core.js`（计划、存储、`T`）、`js/diet.js`（热量算法、饮食面板）、`js/confetti.js`、`js/sheetcore.js`（饮食表格的解析和拉取）、`js/backupcore.js`（进度文件）、`js/p1data.js`（图表数据、下一次训练、记录面板、G、音效）、`js/p1fx.js`（烟花、彩带、目标 2% 庆祝）、`js/p1stack.js`（毛玻璃 swipe stack：`fsWrap`/`fsBind`/`fsGo`）、`js/coros.js`（高驰）、`js/engine.js`（训练引擎和计划预设）、`js/p1.js`（界面）、`js/p1settings.js`（设定面板、备份恢复、欢迎页、备份提醒）、`js/p1day.js`（日历点某天）、`js/p1weather.js`（天气；`p1settings.js` 用 `p1Sheet`/`p1Reg` 把面板借给它）、`js/p1music.js`（迷你播放器：通过 Spotify Web API 遥控手机上的 Spotify，PKCE 登录不用服务器；用户自己的 Client ID 在 `tracktor-sp-cid`（设定 › 进阶 › Spotify 里粘贴），回调地址是网站根目录；令牌在 `tracktor-sp`，不进备份；`tracktor-p1-music` 是 on / demo）。
