@@ -1344,3 +1344,7 @@ button,[role=button],a{touch-action:manipulation}
 :root[data-theme="dyson"] .f-dial{--d-body:#5B2A86;--d-hi:#9A6BC6;--d-lo:#2C1145}
 :root[data-theme="mac"] .f-dial{--d-body:#A9ABB0;--d-hi:#F4F5F7;--d-lo:#5D5F64}
 :root[data-theme="ipod"] .f-win{--w-bg:linear-gradient(180deg,#DCE6EF,#C8D4DF);--w-ink:#151516;--w-sh:inset 0 2px 6px rgba(0,0,0,.2),0 0 0 3px #FBFBFA,0 0 0 4px rgba(0,0,0,.08);border-radius:12px}
+/* the services' own app icons keep their own colours in every skin */
+img.brand{width:22px;height:22px;flex:none;border-radius:6px;filter:none!important;opacity:1!important;mix-blend-mode:normal!important;box-shadow:none!important;background:none!important}
+.sp-pill img.brand{width:32px;height:32px;border-radius:50%}
+.eyebrow img.brand{width:18px;height:18px;border-radius:5px}

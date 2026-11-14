@@ -592,10 +592,12 @@ $("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()})
 /* going back: a settings panel closes to the menu it was opened from (SHEET_UP for sheets in the main panel,
    P1_BACK for the separate panels from js/p1settings.js); CUR_SHEET is the menu showing now */
 let SHEET_UP=null,CUR_SHEET=null,P1_BACK=null;
+/* the services' own app icons, as images so no skin can recolour them */
+const BRAND={sp:'<img class="brand" alt="" src="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Ccircle cx="12" cy="12" r="12" fill="%231ED760"/%3E%3Cpath d="M6.2 9.2c4-1.2 8.3-.9 11.6 1.1M6.9 12.4c3.3-.9 6.9-.6 9.6 1M7.6 15.4c2.6-.6 5.2-.4 7.4.8" fill="none" stroke="%23000" stroke-width="1.8" stroke-linecap="round"/%3E%3C/svg%3E">',co:'<img class="brand" alt="" src="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Crect width="24" height="24" rx="5.5" fill="%23000"/%3E%3Cpath d="M12 4.6 18.4 8.3v7.4L12 19.4 5.6 15.7V8.3z" fill="none" stroke="%23F0202E" stroke-width="2.3" stroke-linejoin="round"/%3E%3Cpath d="M12 8.6 15 10.3v3.4L12 15.4 9 13.7v-3.4z" fill="none" stroke="%23F0202E" stroke-width="1.6" stroke-linejoin="round"/%3E%3C/svg%3E">'};
 /* Advanced: everything that talks to an outside service by a link or a key */
 function advSheet(){const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>'+T('进阶','Advanced')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><div class="setlist">'
-    +row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:aifmt",ICON.spark,T("记账 AI 的格式","Format for your food-logging AI"))+row("p1:music",ICON.music,"Spotify")+'</div>');CUR_SHEET=advSheet}
+    +row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:aifmt",ICON.spark,T("记账 AI 的格式","Format for your food-logging AI"))+row("p1:music",BRAND.sp,"Spotify")+'</div>');CUR_SHEET=advSheet}
 /* Effects: ray-traced light (a knob), weather, dust after days off, celebrations */
 function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+'" role="switch" aria-checked="'+on+'">'+ic+'<span class="sp">'+t+'</span><span class="sw" aria-hidden="true"></span></button>';
   openSheet('<div class="sh-h"><h3>'+T('特效','Effects')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
@@ -611,7 +613,7 @@ function meSheet(){SHEET_UP=null;let m="auto";try{m=localStorage.getItem(PK+"mod
     +'<button class="opt" data-act="shop">'+ICON.palette+'<span class="sp">'+T('G 分商店','barGain store')+'</span><b class="n" style="font-size:14px">'+fmt(coinTotal())+' G</b>'+ICON.right+'</button></div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="seg langseg" translate="no">'+[["zh","简中"],["zht","繁中"],["en","Eng"]].map(([k,l])=>'<button data-act="lang" data-l="'+k+'" aria-pressed="'+((HANT?"zht":LANG)===k)+'">'+l+'</button>').join("")+'</div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('更多','More')+'</p><div class="setlist">'
-    +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'<button class="opt" data-act="advmenu">'+ICON.sliders+'<span class="sp">'+T("进阶","Advanced")+'</span>'+ICON.right+'</button>'+'</div>'
+    +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:charts",BRAND.co,T("图表、同步和手表热量","Charts, sync & watch calories"))+'<button class="opt" data-act="advmenu">'+ICON.sliders+'<span class="sp">'+T("进阶","Advanced")+'</span>'+ICON.right+'</button>'+'</div>'
     +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('推拉机 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+'</p>');CUR_SHEET=meSheet}
 
 /* ---------- header, dock, routing ---------- */

@@ -45,7 +45,7 @@ const SP_DEMO={shuf:false,rep:"off",title:T("示例歌曲","Sample track"),artis
 function spNow(){const s=SP.st;if(!s)return null;return s.playing?Math.min(s.dur,s.pos+(Date.now()-SP.at)):s.pos}
 async function spPull(){if(SP.demo||SP.busy)return;try{const j=await spApi("/me/player");
     if(!j||!j.item)SP.st=j&&j.device?{title:"",artist:"",art:"",dur:0,pos:0,playing:false,vol:j.device.volume_percent,device:j.device.name,idle:true}:null;
-    else{const it=j.item;SP.st={title:it.name,artist:(it.artists||[]).map(a=>a.name).join(", ")||(it.show&&it.show.name)||"",art:((it.album||it).images||[]).slice(-2)[0]?.url||((it.album||it).images||[])[0]?.url||"",
+    else{const it=j.item;SP.st={title:it.name,artist:(it.artists||[]).map(a=>a.name).join(", ")||(it.show&&it.show.name)||"",art:spCover((it.album||it).images),
       dur:it.duration_ms,pos:j.progress_ms||0,playing:!!j.is_playing,ctx:j.context&&j.context.uri,shuf:!!j.shuffle_state,smart:!!j.smart_shuffle,rep:j.repeat_state||"off",vol:j.device&&j.device.volume_percent,device:j.device&&j.device.name}}
     SP.at=Date.now();spPaint()}catch(e){if(e.message==="auth"){spSetMode("");spPaint()}}}
 async function spCmd(kind){const s=SP.st;buzz(8);if(typeof SFX!=="undefined")SFX.tap();
@@ -68,7 +68,6 @@ const SPI={play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13
   prev:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.2v11.6a1 1 0 0 1-1.5.86L9 13.4v4.1a1 1 0 0 1-2 0v-11a1 1 0 0 1 2 0v4.1l8.5-5.26A1 1 0 0 1 19 6.2z"/></svg>',
   note:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>',
   down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
-  app:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1ED760"/><path d="M6.5 9.3c3.9-1.2 8-.9 11.3 1M7.1 12.4c3.2-.9 6.6-.6 9.3.9M7.7 15.3c2.5-.6 5-.4 7.1.7" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round"/></svg>',
   list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h12M3 12h12M3 18h8"/><path d="M17 18V9l4-1"/><circle cx="15.5" cy="18" r="1.8"/></svg>',
   back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
   rep:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
@@ -127,8 +126,16 @@ async function spTracks(p,cache){const c=cache[p.uri];if(c&&c.s===p.snap)return 
     url=j&&j.next?j.next.replace("https://api.spotify.com/v1",""):null}};
   try{await pull("/playlists/"+id+"/items")}catch(e){t.length=0;await pull("/playlists/"+id+"/tracks")}
   cache[p.uri]={s:p.snap,t};return t}
+/* covers: the smallest one still sharp in a third of the screen (Spotify lists 640, 300 and 60 px; mosaics too) */
+function spCover(im){im=(im||[]).filter(x=>x&&x.url);if(!im.length)return "";const w=x=>x.width||0;if(!im.some(w))return im[0].url;
+  const ok=im.filter(x=>w(x)>=240).sort((a,b)=>w(a)-w(b));return (ok[0]||im.slice().sort((a,b)=>w(b)-w(a))[0]).url}
+const SP_NEED=["user-read-recently-played","playlist-read-private","user-modify-playback-state"];
+/* long-press the Spotify button: forget the cached playlists and their songs and rank again; a sign-in missing a
+   permission the ranking needs is renewed once (asks for everything at once) */
+function spReset(){const s=(SP.tok&&SP.tok.s)||"";if(SP.tok&&SP_NEED.some(k=>!s.split(" ").includes(k))){toast(T("重新授权一次，之后不用再授权","Sign in once more; it won't ask again"));setTimeout(spConnect,700);return}
+  try{localStorage.removeItem(SPT_K)}catch(e){}SP.pls=null;SP.rec=null;SP.ranked=false;toast(T("已清空歌单缓存，重新排序","Playlist cache cleared; ranking again"));spPlView()}
 async function spPlaylists(){if(SP.demo)return SP_DEMO_PL;if(SP.pls&&Date.now()-SP.plsAt<300000)return SP.pls;const out=[];let url="/me/playlists?limit=50";
-  for(let k=0;k<4&&url;k++){const j=await spApi(url);(j.items||[]).forEach(p=>{if(p)out.push({name:p.name,uri:p.uri,snap:p.snapshot_id||"",n:p.tracks?p.tracks.total:(p.items&&p.items.total)||0,art:(p.images||[]).slice(-1)[0]?.url||(p.images||[])[0]?.url||""})});
+  for(let k=0;k<4&&url;k++){const j=await spApi(url);(j.items||[]).forEach(p=>{if(p)out.push({name:p.name,uri:p.uri,snap:p.snapshot_id||"",n:p.tracks?p.tracks.total:(p.items&&p.items.total)||0,art:spCover(p.images)})});
     url=j.next?j.next.replace("https://api.spotify.com/v1",""):null}
   /* first pass: when each playlist was last played from, plus playlists started here and the one playing now */
   let rec=[];try{rec=await spRecent()}catch(e){}SP.rec=rec;
@@ -148,10 +155,11 @@ async function spRank(list){if(SP.demo||SP.ranked||!SP.rec||!SP.rec.length)retur
   list.sort((a,b)=>b.hit-a.hit||b.at-a.at||a.k-b.k);SP.ranked=true;return true}
 /* playlists as a grid of big covers (easy to hit mid-workout): "open Spotify" and shuffle on top, a round × below */
 async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";spLoad();
-  const head='<div class="sp-plh"><a class="sp-pill" href="spotify:" data-spapp>'+SPI.app+'<span>'+T('打开 Spotify','Open Spotify')+'</span></a>'
+  const head='<div class="sp-plh"><a class="sp-pill" href="spotify:" data-spapp>'+BRAND.sp+'<span>'+T('打开 Spotify','Open Spotify')+'</span></a>'
 +'</div>';
   const foot='<button class="sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button>';
   const bind=()=>{f.querySelector("[data-spback]").addEventListener("click",()=>{buzz(6);spPaintSheet()});
+    const ap=f.querySelector("[data-spapp]");let held=0;if(ap&&typeof holdOpen==="function"){holdOpen(ap,()=>{held=Date.now();if(!SP.demo)spReset()});ap.addEventListener("click",e=>{if(Date.now()-held<1500)e.preventDefault()})}
 };
   const reconnect=()=>{
     f.innerHTML=head+'<p class="calc-msg">'+T('读歌单需要多一项授权，重新连接一次 Spotify 就好。','Reading playlists needs one more permission; connect Spotify once more.')+'</p><button class="btn" type="button" data-sprec>'+T('重新连接','Reconnect')+'</button>'+foot;
