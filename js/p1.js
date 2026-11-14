@@ -306,11 +306,27 @@ function finBriefHtml(){const {out,xs}=finToday(),row=r=>'<div class="row"><span
     +(xs.length?'<p class="xhead fb-x">'+T('加练','Extra practice')+'</p>'+xs.map(row).join(""):'')+'</div>'}
 function finRefresh(){const b=$("#finBrief");if(run&&run.finished&&b){b.innerHTML=finBriefHtml();finFit()}}
 function finFit(){const b=$("#finBrief");if(b)b.classList.toggle("long",b.scrollHeight>b.clientHeight+4||b.classList.contains("open"))}
-function finShare(t){t=t||today();const {out,xs}=finToday(t),d=dateObj(t),L=[];
-  L.push(LANG==="en"?MON_EN[d.getMonth()]+" "+d.getDate():(d.getMonth()+1)+"月"+d.getDate()+"日");
-  out.forEach(o=>{L.push("",o.h);o.rows.forEach(r=>L.push(r.n+"  "+r.v))});if(xs.length){L.push("",T("加练","Extra practice"));xs.forEach(r=>L.push(r.n+"  "+r.v))}
-  L.push("","— "+T("博G","bG"));const text=L.join("\n");
-  if(navigator.share)navigator.share({text}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>toast(T("已复制","Copied")),()=>{})}
+/* the day's training as a picture (what people post): drawn on a canvas in the skin's colours, previewed, then saved or shared */
+function drawTrain(t){const {out,xs}=finToday(t),K=shColors(),d=dateObj(t),W=1080,P=72,cv=document.createElement("canvas"),c=cv.getContext("2d");
+  const pr=document.createElement("i");pr.style.display="none";document.body.appendChild(pr);const kc=k=>{pr.style.color="var(--"+k+")";return getComputedStyle(pr).color};
+  const F=(getComputedStyle(document.documentElement).getPropertyValue("--disp").trim()||'"Geist"')+',-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif',lh=64;
+  const blocks=out.map(o=>({h:o.h,col:kc(o.kind),rows:o.rows}));if(xs.length)blocks.push({h:T("加练","Extra practice"),col:K.ac,rows:xs,x:1});pr.remove();
+  const H=P+90+60+blocks.reduce((h,b)=>h+90+b.rows.length*lh+30,0)+90;
+  cv.width=W;cv.height=H;const bg=c.createLinearGradient(0,0,W,H);bg.addColorStop(0,K.card);bg.addColorStop(1,K.bg);c.fillStyle=bg;c.fillRect(0,0,W,H);
+  c.save();c.globalAlpha=.22;const gl=c.createRadialGradient(W*.85,0,0,W*.85,0,W*.7);gl.addColorStop(0,K.ac);gl.addColorStop(1,"rgba(0,0,0,0)");c.fillStyle=gl;c.fillRect(0,0,W,H);c.restore();
+  const tx=(s,x,y,font,col,al,op)=>{c.save();c.globalAlpha=op||1;c.font=font;c.fillStyle=col;c.textAlign=al||"left";c.fillText(HANT?s2t(s):s,x,y);c.restore()};
+  let y=P+60;tx((d.getMonth()+1)+"."+d.getDate()+T(" 练了什么"," · trained"),P,y,"800 64px "+F,K.ink);y+=60;
+  blocks.forEach(b=>{y+=80;if(b.x){c.fillStyle=b.col;c.beginPath();c.roundRect(P,y-34,8,40,4);c.fill();tx(b.h,P+26,y,"800 40px "+F,K.ink)}
+    else{c.fillStyle=b.col;c.beginPath();c.arc(P+12,y-13,12,0,7);c.fill();tx(b.h,P+40,y,"800 40px "+F,K.ink)}
+    y+=12;b.rows.forEach(r=>{c.save();c.globalAlpha=.14;c.fillStyle=K.ink;c.fillRect(P,y,W-2*P,2);c.restore();y+=lh;
+      tx(r.n,P,y-18,"500 36px "+F,K.ink);tx(r.v,W-P,y-18,"700 38px "+F,K.ink,"right");if(r.pr){c.font="500 36px "+F;const w=c.measureText(HANT?s2t(r.n):r.n).width;tx(T("新纪录","Best"),P+w+20,y-20,"800 26px "+F,K.ac)}});y+=30});
+  tx(T("博G","bG"),W-P,H-48,"700 28px "+F,K.muted,"right",.8);return cv}
+function finShare(t){t=t||today();const back=$("#sheet").classList.contains("on")&&$("#sheetBody").dataset.day===t;
+  const name=T("训练","training")+"-"+t+".png",blobOf=()=>new Promise(res=>drawTrain(t).toBlob(res,"image/png"));
+  openSheet('<div class="sh-h"><h3>'+T('分享图片','Share picture')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><img class="shimg" alt="">'
+    +'<div class="row" style="gap:10px;margin-top:14px"><button class="btn ghost" type="button" data-shsave style="flex:1">'+T('存到相册','Save to photos')+'</button><button class="btn" type="button" data-shgo style="flex:1">'+ICON.share+T('分享','Share')+'</button></div>');
+  if(back)SHEET_UP=()=>p1OpenDay(t);
+  $("#sheet .shimg").src=drawTrain(t).toDataURL("image/jpeg",.85);shareImgBind(blobOf,name)}
 function swipe(el){let x0=null,y0=0;el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   el.addEventListener("touchend",e=>{if(x0==null||!run||run.askFeel!=null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
     if(Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx))return;const n=run.ex+(dx<0?1:-1);if(n<0||n>=run.p.ex.length)return;
@@ -500,6 +516,8 @@ async function shareDay(d){let burn=true;try{burn=localStorage.getItem(SHB_K)!==
   const im=$("#sheet .shimg"),paint=()=>{im.src=drawShare(d,burn).toDataURL("image/jpeg",.85)};paint();
   $("#sheet [data-shb]").addEventListener("click",e=>{burn=!burn;e.currentTarget.setAttribute("aria-checked",burn);try{localStorage.setItem(SHB_K,burn?"1":"0")}catch(err){}buzz(8);paint()});
   /* saving: a download, which phones put where the gallery finds it; where the browser can't download (iOS), the share sheet's "Save image" */
+  shareImgBind(blobOf,name)}
+function shareImgBind(blobOf,name){
   $("#sheet [data-shsave]").addEventListener("click",async()=>{const blob=await blobOf(),file=new File([blob],name,{type:"image/png"});buzz(10);
     if(/iP(hone|ad|od)/.test(navigator.userAgent)&&navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]})}catch(e){}return}
     const url=URL.createObjectURL(blob),el=document.createElement("a");el.href=url;el.download=name;document.body.appendChild(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(url),1e4);toast(T("图片已存到相册","Saved to photos"))});
