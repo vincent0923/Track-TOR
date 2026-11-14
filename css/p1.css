@@ -566,8 +566,8 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"][data-mode="dark"] .dock button[aria-selected="true"]{color:var(--on-ac)}
 :root[data-theme="toy"][data-mode="dark"] .cal .dd.trn b{color:#152007}
 :root[data-theme="toy"][data-mode="dark"] .cal .dd.trn[style*="--third"] b{color:#fff}
-:root[data-theme="toy"][data-mode="dark"] .cal .dd.today b{background:var(--yel);color:#152007;box-shadow:calc(var(--tx,0) * -2.4px) calc(3.0px + var(--ty,0) * 1.2px) 0 var(--yel-lip)}
-:root[data-theme="toy"][data-mode="dark"] .toast{background:var(--yel);color:#152007;box-shadow:calc(var(--tx,0) * -3.2px) calc(4.0px + var(--ty,0) * 1.6px) 0 var(--yel-lip)}
+:root[data-theme="toy"][data-mode="dark"] .cal .dd.today b{background:var(--yel);color:#152007;box-shadow:0 3px 0 var(--yel-lip)}
+:root[data-theme="toy"][data-mode="dark"] .toast{background:var(--yel);color:#152007;box-shadow:0 4px 0 var(--yel-lip)}
 /* the dotted board */
 :root[data-theme="toy"] body{background-image:radial-gradient(var(--dot) 1.35px,transparent 1.35px);background-size:20px 20px;background-attachment:scroll}
 :root[data-theme="toy"] h1,:root[data-theme="toy"] .hero h2,:root[data-theme="toy"] .big{font-weight:900}
@@ -582,28 +582,28 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] .hero .exl .slow{background:var(--sub)}
 :root[data-theme="toy"] .glowring{display:none}
 /* primary-colour keys that sink when pressed */
-:root[data-theme="toy"] .btn,:root[data-theme="toy"] .hgo{border-radius:14px;box-shadow:calc(var(--tx,0) * -3.2px) calc(4.0px + var(--ty,0) * 1.6px) 0 var(--ac-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transition:transform .1s cubic-bezier(.34,1.56,.64,1),box-shadow .1s}
-:root[data-theme="toy"] .hgo{background:var(--red);box-shadow:calc(var(--tx,0) * -3.2px) calc(4.0px + var(--ty,0) * 1.6px) 0 var(--red-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transform:rotate(-2deg)}
+:root[data-theme="toy"] .btn,:root[data-theme="toy"] .hgo{border-radius:14px;box-shadow:0 4px 0 var(--ac-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transition:transform .1s cubic-bezier(.34,1.56,.64,1),box-shadow .1s}
+:root[data-theme="toy"] .hgo{background:var(--red);box-shadow:0 4px 0 var(--red-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transform:rotate(-2deg)}
 :root[data-theme="toy"] .btn:active,:root[data-theme="toy"] .hgo:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ac-lip)}
 :root[data-theme="toy"] .hgo:active{box-shadow:0 1px 0 var(--red-lip)}
-:root[data-theme="toy"] .btn.ghost{background:color-mix(in srgb,var(--ink) 8%,var(--card));color:var(--ink);border:0;box-shadow:calc(var(--tx,0) * -3.2px) calc(4.0px + var(--ty,0) * 1.6px) 0 var(--lip),inset 0 1.5px 0 rgba(255,255,255,.35)}
+:root[data-theme="toy"] .btn.ghost{background:color-mix(in srgb,var(--ink) 8%,var(--card));color:var(--ink);border:0;box-shadow:0 4px 0 var(--lip),inset 0 1.5px 0 rgba(255,255,255,.35)}
 :root[data-theme="toy"] .btn.ghost:active{box-shadow:0 1px 0 var(--lip)}
-:root[data-theme="toy"] .circ,:root[data-theme="toy"] .fsreset,:root[data-theme="toy"] .mini{background:var(--card);border:1.5px solid var(--line);box-shadow:calc(var(--tx,0) * -2.4px) calc(3.0px + var(--ty,0) * 1.2px) 0 var(--lip);color:var(--ink);transition:transform .1s,box-shadow .1s}
+:root[data-theme="toy"] .circ,:root[data-theme="toy"] .fsreset,:root[data-theme="toy"] .mini{background:var(--card);border:1.5px solid var(--line);box-shadow:0 3px 0 var(--lip);color:var(--ink);transition:transform .1s,box-shadow .1s}
 :root[data-theme="toy"] .circ:active,:root[data-theme="toy"] .fsreset:active,:root[data-theme="toy"] .mini:active{transform:translateY(2px);box-shadow:0 1px 0 var(--lip)}
 :root[data-theme="toy"] .dark .fsreset{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.25);box-shadow:0 3px 0 rgba(0,0,0,.25);color:#fff}
 /* recessed wells: options, segments, pills, the calendar line */
 :root[data-theme="toy"] .opt,:root[data-theme="toy"] .seg,:root[data-theme="toy"] .calpill,:root[data-theme="toy"] .thc,:root[data-theme="toy"] .preset{background:var(--sub);box-shadow:var(--well-sh);border:1.5px solid rgba(255,255,255,.4)}
 :root[data-theme="toy"][data-mode="dark"] .opt,:root[data-theme="toy"][data-mode="dark"] .seg,:root[data-theme="toy"][data-mode="dark"] .calpill,:root[data-theme="toy"][data-mode="dark"] .thc,:root[data-theme="toy"][data-mode="dark"] .preset{border-color:rgba(255,255,255,.05)}
-:root[data-theme="toy"] .opt[aria-pressed="true"],:root[data-theme="toy"] .preset.on,:root[data-theme="toy"] .thc.on{background:var(--yel);color:#181615;box-shadow:calc(var(--tx,0) * -3.2px) calc(4.0px + var(--ty,0) * 1.6px) 0 var(--yel-lip),inset 0 1.5px 0 rgba(255,255,255,.45);border-color:transparent}
-:root[data-theme="toy"] .seg button[aria-pressed="true"]{background:var(--red);color:#fff;box-shadow:calc(var(--tx,0) * -2.4px) calc(3.0px + var(--ty,0) * 1.2px) 0 var(--red-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transform:translateY(-1px)}
+:root[data-theme="toy"] .opt[aria-pressed="true"],:root[data-theme="toy"] .preset.on,:root[data-theme="toy"] .thc.on{background:var(--yel);color:#181615;box-shadow:0 4px 0 var(--yel-lip),inset 0 1.5px 0 rgba(255,255,255,.45);border-color:transparent}
+:root[data-theme="toy"] .seg button[aria-pressed="true"]{background:var(--red);color:#fff;box-shadow:0 3px 0 var(--red-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transform:translateY(-1px)}
 /* the dock: a plastic tray, the chosen tab a blue key */
-:root[data-theme="toy"] .dock{background:var(--card);border:1.5px solid var(--line);box-shadow:calc(var(--tx,0) * -4.0px) calc(5.0px + var(--ty,0) * 2.0px) 0 var(--lip),0 12px 26px rgba(0,0,0,.14)}
+:root[data-theme="toy"] .dock{background:var(--card);border:1.5px solid var(--line);box-shadow:0 5px 0 var(--lip),0 12px 26px rgba(0,0,0,.14)}
 :root[data-theme="toy"] .dock button{color:var(--muted)}
 :root[data-theme="toy"] .dock button[aria-selected="true"]{color:#fff}
-:root[data-theme="toy"] .dock .pc{border-radius:14px;box-shadow:calc(var(--tx,0) * -3.2px) calc(4.0px + var(--ty,0) * 1.6px) 0 var(--ac-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transition:transform .45s cubic-bezier(.34,1.8,.64,1),width .45s cubic-bezier(.34,1.8,.64,1)}
+:root[data-theme="toy"] .dock .pc{border-radius:14px;box-shadow:0 4px 0 var(--ac-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transition:transform .45s cubic-bezier(.34,1.8,.64,1),width .45s cubic-bezier(.34,1.8,.64,1)}
 /* bars are stacked bricks */
 /* the tick: a big round arcade button */
-:root[data-theme="toy"] .tickb{background:var(--red);color:#fff;box-shadow:calc(var(--tx,0) * -6.4px) calc(8.0px + var(--ty,0) * 3.2px) 0 var(--red-lip),0 16px 28px rgba(0,0,0,.24),inset 0 3px 0 rgba(255,255,255,.28),inset 0 -4px 8px rgba(0,0,0,.2);transition:transform .1s,box-shadow .1s}
+:root[data-theme="toy"] .tickb{background:var(--red);color:#fff;box-shadow:0 8px 0 var(--red-lip),0 16px 28px rgba(0,0,0,.24),inset 0 3px 0 rgba(255,255,255,.28),inset 0 -4px 8px rgba(0,0,0,.2);transition:transform .1s,box-shadow .1s}
 :root[data-theme="toy"] .tickb:active{transform:translateY(6px);box-shadow:0 2px 0 var(--red-lip),inset 0 3px 0 rgba(255,255,255,.28)}
 :root[data-theme="toy"] .tickb.done{background:var(--sub);color:var(--muted);box-shadow:var(--well-sh)}
 /* calendar days are little pegs */
@@ -611,14 +611,14 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] .cal .dd.today b{background:var(--ink);color:var(--bg);box-shadow:0 3px 0 #000}
 /* the light/dark switch is the recessed capsule with a plastic puck */
 :root[data-theme="toy"] .modesw{background:var(--sub);box-shadow:var(--well-sh);border:1.5px solid rgba(255,255,255,.5)}
-:root[data-theme="toy"] .modesw .kn{background:var(--card);border:1px solid var(--line);box-shadow:calc(var(--tx,0) * -2.4px) calc(3.0px + var(--ty,0) * 1.2px) 0 var(--lip),inset 0 1.5px 0 rgba(255,255,255,.9);transition:transform .55s cubic-bezier(.34,1.65,.64,1)}
+:root[data-theme="toy"] .modesw .kn{background:var(--card);border:1px solid var(--line);box-shadow:0 3px 0 var(--lip),inset 0 1.5px 0 rgba(255,255,255,.9);transition:transform .55s cubic-bezier(.34,1.65,.64,1)}
 :root[data-theme="toy"] .modesw .kn::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--yel);box-shadow:0 0 6px var(--yel)}
 /* sheets and the deck */
 :root[data-theme="toy"] .sheet .panel,:root[data-theme="toy"] .mask .sheet{border:1.5px solid var(--line);box-shadow:0 -6px 0 var(--lip)}
-:root[data-theme="toy"] .fs-peek i{background:var(--card);border:1.5px solid var(--line);box-shadow:calc(var(--tx,0) * -3.2px) calc(4.0px + var(--ty,0) * 1.6px) 0 var(--lip)}
+:root[data-theme="toy"] .fs-peek i{background:var(--card);border:1.5px solid var(--line);box-shadow:0 4px 0 var(--lip)}
 :root[data-theme="toy"] .fstack>.fs-top{box-shadow:var(--shadow)}
 :root[data-theme="toy"] .toast{background:#141413;color:#fff;border:0;box-shadow:0 4px 0 #000}
-:root[data-theme="toy"] .pill.ac{background:var(--yel);color:#181615;box-shadow:calc(var(--tx,0) * -1.6px) calc(2.0px + var(--ty,0) * 0.8px) 0 var(--yel-lip)}
+:root[data-theme="toy"] .pill.ac{background:var(--yel);color:#181615;box-shadow:0 2px 0 var(--yel-lip)}
 /* a little life: pressed things wobble back */
 @keyframes toyPop{0%{transform:scale(.94)}55%{transform:scale(1.04)}100%{transform:none}}
 :root[data-theme="toy"] .cal button.dd:active b{animation:toyPop .35s cubic-bezier(.34,1.56,.64,1)}
@@ -657,9 +657,9 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 /* toy: star-history bricks: 8px bricks, a 2px dark lip under each, a 1px lit top, 1px between */
   background-image:repeating-linear-gradient(to top,rgba(0,0,0,0) 0 1px,rgba(0,0,0,.38) 1px 3px,rgba(0,0,0,0) 3px 10px,rgba(255,255,255,.32) 10px 11px)!important;filter:none}
 /* toy: thicker panels: a lit top edge, a deeper 7px lip, a soft floor shadow */
-:root[data-theme="toy"]{--lip:#D2CAB6;--shadow:inset 0 1.5px 0 rgba(255,255,255,.95),calc(var(--tx,0) * -5.6px) calc(7.0px + var(--ty,0) * 2.8px) 0 var(--lip),0 8px 0 rgba(60,45,20,.08),0 18px 30px -8px rgba(30,24,14,.16)}
-:root[data-theme="toy"][data-mode="dark"]{--lip:#0B0615;--shadow:inset 0 1.5px 0 rgba(255,255,255,.12),calc(var(--tx,0) * -5.6px) calc(7.0px + var(--ty,0) * 2.8px) 0 var(--lip),0 8px 0 rgba(0,0,0,.25),0 20px 32px -8px rgba(0,0,0,.6)}
-:root[data-theme="toy"] .fs-peek i{box-shadow:calc(var(--tx,0) * -5.6px) calc(7.0px + var(--ty,0) * 2.8px) 0 var(--lip)}
+:root[data-theme="toy"]{--lip:#D2CAB6;--shadow:inset 0 1.5px 0 rgba(255,255,255,.95),0 7px 0 var(--lip),0 8px 0 rgba(60,45,20,.08),0 18px 30px -8px rgba(30,24,14,.16)}
+:root[data-theme="toy"][data-mode="dark"]{--lip:#0B0615;--shadow:inset 0 1.5px 0 rgba(255,255,255,.12),0 7px 0 var(--lip),0 8px 0 rgba(0,0,0,.25),0 20px 32px -8px rgba(0,0,0,.6)}
+:root[data-theme="toy"] .fs-peek i{box-shadow:0 7px 0 var(--lip)}
 :root[data-theme="toy"] .sheet .panel,:root[data-theme="toy"] .mask .sheet{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),0 -7px 0 var(--lip)}
 
 /* single-look themes (no light/dark pair): the header switch goes away and the mode is fixed */
@@ -1017,7 +1017,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-dust="3"] #dust{opacity:1}
 #dust.wipe{opacity:0;clip-path:inset(0 0 0 100%);transition:clip-path 1.1s cubic-bezier(.6,0,.2,1),opacity .4s ease 1s}
 /* knobs and bricks in each theme's material */
-:root[data-theme="toy"] .knobw .knob{background:var(--yel);box-shadow:0 0 0 4px var(--sub),calc(var(--tx,0) * -4.0px) calc(5.0px + var(--ty,0) * 2.0px) 0 var(--yel-lip),0 10px 16px -4px rgba(0,0,0,.3)}
+:root[data-theme="toy"] .knobw .knob{background:var(--yel);box-shadow:0 0 0 4px var(--sub),0 5px 0 var(--yel-lip),0 10px 16px -4px rgba(0,0,0,.3)}
 :root[data-theme="toy"] .knobw .knob i{background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.25)}
 :root[data-theme="toy"] .bks i{border-radius:3px;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.15),0 2px 0 color-mix(in srgb,var(--c) 55%,#000)}
 :root[data-theme="toy"] .bks{gap:3px}
@@ -1374,7 +1374,7 @@ button.f-x svg{width:18px;height:18px}
 :root[data-theme="clay"] .dl-wheel::after{background:linear-gradient(180deg,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 20%,rgba(0,0,0,0) 80%,rgba(30,60,48,.2) 100%)}
 /* the progress marks, dressed for each skin */
 :root[data-theme="toy"] .f-dots{gap:6px}
-:root[data-theme="toy"] .f-dots i{height:10px;border-radius:5px;box-shadow:calc(var(--tx,0) * -2.4px) calc(3.0px + var(--ty,0) * 1.2px) 0 var(--lip)}
+:root[data-theme="toy"] .f-dots i{height:10px;border-radius:5px;box-shadow:0 3px 0 var(--lip)}
 :root[data-theme="toy"] .f-dots i.dn{background:var(--yel,var(--ac))}
 :root[data-theme="tm4"] .f-dots i,:root[data-theme="skeuo"] .f-dots i,:root[data-theme="pocket"] .f-dots i{height:6px;width:6px;max-width:6px;flex:none;border-radius:50%;background:rgba(0,0,0,.35);box-shadow:inset 0 1px 1px rgba(0,0,0,.5)}
 :root[data-theme="tm4"] .f-dots,:root[data-theme="skeuo"] .f-dots,:root[data-theme="pocket"] .f-dots{gap:10px}
@@ -1393,5 +1393,4 @@ img.brand{width:22px;height:22px;flex:none;border-radius:6px;filter:none!importa
 .sp-pill img.brand{width:48px;height:48px;border-radius:50%;box-shadow:0 4px 12px -4px rgba(0,0,0,.4)!important}
 .eyebrow img.brand{width:18px;height:18px;border-radius:5px}
 
-:root[data-theme="toy"] .dl-wheel::before{display:none}
 .shimg{display:block;width:100%;max-height:46dvh;object-fit:contain;border-radius:18px;box-shadow:0 8px 24px -10px rgba(0,0,0,.4)}

@@ -13,8 +13,6 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
   **Share panel**: preview first, choose whether burn and deficit go in, save to photos; the picture uses the current skin's colours and fonts.
 - 🧱 **做旧**：两天没练开始变旧，分三档（2–4、5–7、8 天起），边缘斑驳一档比一档往里蔓延，裂纹和划痕更多。
   **Wear and tear**: after two days off the screen ages in three steps (2–4, 5–7, 8+ days), with grime creeping in from the edges, more cracks and scratches.
-- 🧸 **玩具主题的 3D 按键**：开着光追时，按键露出的侧面跟着手机倾斜变化。
-  **Toy keys in 3D**: with light tracing on, the keys show their sides as the phone tilts.
 
 ### 改进 / Changed
 - 动作拨轮每个主题有自己的纹路，上下边缘有倒角，拟物主题的反光和按钮同一个光源；拨动声改成不尖的机械咔哒；进度移到拨轮下面，退出键在左下角。

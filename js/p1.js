@@ -75,16 +75,14 @@ applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change"
 /* light: on (a gentle effect) or off (still); older stored levels 1–3 count as on */
 function rtLevel(){let v=1;try{const x=localStorage.getItem(PK+"rt");if(x!=null)v=+x}catch(e){}return v>0?1:0}
 const RT_K=[0,.5];
-function rtApply(){const de=document.documentElement,k=RT_K[rtLevel()];de.style.setProperty("--rt",k||.5);if(!k){["--lx","--ly","--rot","--tx","--ty"].forEach(v=>de.style.removeProperty(v))}}
+function rtApply(){const de=document.documentElement,k=RT_K[rtLevel()];de.style.setProperty("--rt",k||.5);if(!k){["--lx","--ly","--rot"].forEach(v=>de.style.removeProperty(v))}}
 rtApply();
 /* every change repaints every lit surface, so the light moves in coarse steps at most about 12 times a second */
-(function(){const de=document.documentElement,on=()=>("lit" in de.dataset||de.dataset.theme==="toy")&&rtLevel()>0&&!matchMedia("(prefers-reduced-motion: reduce)").matches;let last="",lastAt=0;
+(function(){const de=document.documentElement,on=()=>"lit" in de.dataset&&rtLevel()>0&&!matchMedia("(prefers-reduced-motion: reduce)").matches;let last="",lastAt=0;
   let bg=null,bb=null,x=0,y=0,raf=0;
   const put=()=>{raf=0;const now=performance.now();if(now-lastAt<80){raf=requestAnimationFrame(put);return}
     const k=RT_K[rtLevel()],lx=Math.round(30+x*1.6*k),ly=Math.round(10+y*1.3*k),rot=Math.round(x*3*k/2)*2,key=lx+","+ly+","+rot;if(key===last)return;last=key;lastAt=now;
-    de.style.setProperty("--lx",lx+"%");de.style.setProperty("--ly",ly+"%");de.style.setProperty("--rot",rot+"deg");
-    /* the toy skin's plastic keys show their sides as the phone tilts: --tx/--ty run -1…1 */
-    de.style.setProperty("--tx",(Math.round(x/25*5)/5).toFixed(1));de.style.setProperty("--ty",(Math.round(y/20*5)/5).toFixed(1))};
+    de.style.setProperty("--lx",lx+"%");de.style.setProperty("--ly",ly+"%");de.style.setProperty("--rot",rot+"deg")};
   const go=(nx,ny)=>{x=Math.max(-25,Math.min(25,nx));y=Math.max(-20,Math.min(20,ny));if(!raf)raf=requestAnimationFrame(put)};
   const ori=e=>{if(!on()||e.gamma==null)return;if(bg==null){bg=e.gamma;bb=e.beta}bg+=(e.gamma-bg)*.02;bb+=(e.beta-bb)*.02;go(e.gamma-bg,e.beta-bb)};
   /* listen from the start (no events arrive until allowed); where the browser asks first, ask on the first tap */
