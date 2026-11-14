@@ -157,8 +157,8 @@ h1,h2,h3,p{margin:0}
 .sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0);transition:background .3s var(--ease);pointer-events:none}
 .sheet.on{background:rgba(0,0,0,.42);pointer-events:auto}
 .sheet:not(.on) .panel{visibility:hidden;transition:transform .45s var(--ease),visibility 0s .45s}
-.sheet .panel{width:100%;max-width:480px;max-height:88dvh;overflow:auto;background:var(--card);border-radius:28px 28px 0 0;padding:10px 18px calc(22px + env(safe-area-inset-bottom));
-  transform:translateY(105%);transition:transform .45s var(--ease);box-shadow:0 -10px 40px -10px rgba(0,0,0,.3)}
+.sheet .panel{width:calc(100% - 20px);max-width:460px;max-height:86dvh;overflow:auto;background:var(--card);border-radius:30px;margin:0 10px calc(10px + env(safe-area-inset-bottom));padding:10px 18px 20px;
+  transform:translateY(calc(100% + 60px));transition:transform .45s var(--ease);box-shadow:0 -10px 40px -10px rgba(0,0,0,.3)}
 .sheet.on .panel{transform:none}
 .grab{width:38px;height:5px;border-radius:999px;background:var(--seg);margin:0 auto 14px}
 .sh-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
@@ -240,9 +240,9 @@ h1,h2,h3,p{margin:0}
 .mask{--surface:var(--card);--sunk:var(--sub);--cta:var(--ac);--push:var(--bad);--f-num:var(--num);--f-body:var(--body);
   position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.42);animation:mIn .3s var(--ease)}
 @keyframes mIn{from{background:rgba(0,0,0,0)}}
-.mask .sheet{position:relative;inset:auto;z-index:auto;pointer-events:auto;align-items:stretch;justify-content:normal;transition:none;width:100%;max-width:480px!important;max-height:90dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:14px;align-content:start;background:var(--card);color:var(--ink);
-  border-radius:28px 28px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px -10px rgba(0,0,0,.3);animation:sUp .45s var(--ease)}
-@keyframes sUp{from{transform:translateY(100%)}}
+.mask .sheet{position:relative;inset:auto;z-index:auto;pointer-events:auto;align-items:stretch;justify-content:normal;transition:none;width:calc(100% - 20px);max-width:460px!important;max-height:88dvh;margin:0 10px calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:14px;align-content:start;background:var(--card);color:var(--ink);
+  border-radius:30px;padding:18px 18px 18px;box-shadow:0 -10px 40px -10px rgba(0,0,0,.3);animation:sUp .45s var(--ease)}
+@keyframes sUp{from{transform:translateY(calc(100% + 20px))}}
 .mask .sheet>h3,.mask .sheet>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0;font-size:19px;font-weight:800;letter-spacing:-.03em}
 .mask .iconbtn{width:30px;height:30px;border-radius:50%;border:0;background:var(--sub);color:var(--muted);display:grid;place-items:center;padding:0;cursor:pointer;flex:none}
 .mask .iconbtn svg{width:15px;height:15px}
@@ -586,7 +586,7 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] .hgo{background:var(--red);box-shadow:0 4px 0 var(--red-lip),inset 0 1.5px 0 rgba(255,255,255,.28);transform:rotate(-2deg)}
 :root[data-theme="toy"] .btn:active,:root[data-theme="toy"] .hgo:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ac-lip)}
 :root[data-theme="toy"] .hgo:active{box-shadow:0 1px 0 var(--red-lip)}
-:root[data-theme="toy"] .btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:0 4px 0 var(--lip)}
+:root[data-theme="toy"] .btn.ghost{background:color-mix(in srgb,var(--ink) 8%,var(--card));color:var(--ink);border:0;box-shadow:0 4px 0 var(--lip),inset 0 1.5px 0 rgba(255,255,255,.35)}
 :root[data-theme="toy"] .btn.ghost:active{box-shadow:0 1px 0 var(--lip)}
 :root[data-theme="toy"] .circ,:root[data-theme="toy"] .fsreset,:root[data-theme="toy"] .mini{background:var(--card);border:1.5px solid var(--line);box-shadow:0 3px 0 var(--lip);color:var(--ink);transition:transform .1s,box-shadow .1s}
 :root[data-theme="toy"] .circ:active,:root[data-theme="toy"] .fsreset:active,:root[data-theme="toy"] .mini:active{transform:translateY(2px);box-shadow:0 1px 0 var(--lip)}
