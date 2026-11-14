@@ -600,11 +600,14 @@ function openBox(){const left=boxLeft();if(!left.length){toast(T("所有主题�
     const body=S.q(".form-body");body.innerHTML='<div class="scrhost"></div>';
     const act=S.q("[data-boxgo]").parentNode;act.innerHTML='<button class="btn ghost wide" type="button" data-boxok hidden>'+T('好','OK')+'</button><button class="btn wide" type="button" data-boxuse hidden>'+T('换上','Use it')+'</button>';
     act.querySelector("[data-boxok]").addEventListener("click",()=>{const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;S.close();coinSheet(false);if(pn)pn.scrollTop=y});
-    act.querySelector("[data-boxuse]").addEventListener("click",()=>{const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;state.settings.theme=th.id;lsSave();applyMode();SFX.tap();S.close();coinSheet(false);if(pn)pn.scrollTop=y;setTimeout(()=>celebrate(1,0),120)});
+    act.querySelector("[data-boxuse]").addEventListener("click",()=>{const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;SFX.tap();S.close();themeFade(()=>{state.settings.theme=th.id;lsSave();applyMode();coinSheet(false);if(pn)pn.scrollTop=y});setTimeout(()=>celebrate(1,0),300)});
     let snd=0;SCR.mount(body.firstChild,{world,label:T("主题盲盒","Theme blind box"),hint:T("刮开","Scratch to reveal"),coin:T("用硬币刮","scratch with a coin"),there:T("就是它 ✿","there it is ✿"),
       content:'<span class="tsws">'+themeChips(th)+'</span><b>'+T(th.zh,th.en)+'</b>',
       onProgress(){const t=performance.now();if(t-snd>70){snd=t;if(typeof fxHit==="function")fxHit(0,.06,2600,.5,.025,"highpass");buzz(3)}},
       onReveal(){celebrate(8,1);buzz([20,40,30]);act.querySelectorAll("[hidden]").forEach(x=>x.hidden=false)}})})}
+/* a new skin fades in over the old one, so the eye has a moment (the browser's view transition; a plain swap where
+   there is none, or when motion is turned down) */
+function themeFade(fn){if(!document.startViewTransition||matchMedia("(prefers-reduced-motion: reduce)").matches){fn();return}try{document.startViewTransition(fn)}catch(e){fn()}}
 /* a balance past what fits on screen shows as ∞, until it is spent back down to 999,999 */
 const gShow=n=>n>999999?"∞":fmt(n);
 /* hold the big G coin for a six-digit code; only its SHA-256 fingerprint lives here */
@@ -734,7 +737,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
       if(!confirm(T('用 '+th.price+' G 换购「'+th.zh+'」？','Spend '+th.price+' G on '+th.en+'?')))return;
       state.settings.buys=(state.settings.buys||[]).concat([{id:th.id,g:th.price,d:today()}]);celebrate(6,1)}
     /* redraw the list where it was: the panel keeps its scroll, so the row under your finger stays put */
-    const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;state.settings.theme=th.id;lsSave();applyMode();SFX.tap();coinSheet(false);if(pn)pn.scrollTop=y;setTimeout(()=>celebrate(1,0),120)}
+    const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;SFX.tap();themeFade(()=>{state.settings.theme=th.id;lsSave();applyMode();coinSheet(false);if(pn)pn.scrollTop=y});setTimeout(()=>celebrate(1,0),300)}
   else if(a==="thide"){e.stopPropagation();const c=tileCfg();if(!c.hidden.includes(b.dataset.k))c.hidden.push(b.dataset.k);tileSave(c);SFX.tap();renderProgView()}
   else if(a==="tadd")tileAddSheet();
   else if(a==="tshow"){const c=tileCfg();c.hidden=c.hidden.filter(k=>k!==b.dataset.k);tileSave(c);closeSheet();renderProgView()}
