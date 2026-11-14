@@ -210,22 +210,22 @@ function renderFocus(anim){
   else if(ci<0)bottom='<button class="tickb done" disabled>'+ICON.check+'</button><button class="f-hint" data-act="fnext">'+T('这个动作完成了 · 下一个 →','Done with this one · next →')+'</button>';
   else if(e.unit==="秒")bottom='<button class="tickb" data-act="timer" aria-label="'+T('开始计时','Start the timer')+'">'+(run.timing?'<svg class="tr" viewBox="0 0 112 112"><circle cx="56" cy="56" r="52" id="tRing" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg>'+ICON.check:ICON.play)+'</button><p class="f-hint">'+(run.timing?T("做完了就点，提前结束也算","Tap when done; stopping early counts"):T("点一下开始计时","Tap to start the timer"))+'</p>';
   else bottom='<button class="tickb" data-act="tick" aria-label="'+T('完成这一组','Set done')+'">'+ICON.check+'</button>';
-  f.innerHTML='<div class="f-top"><button class="mini" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-dots">'+dots+'</div><span class="f-time n" id="fTime">0:00</span></div>'
+  f.innerHTML='<div class="f-top"><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
     +'<div class="f-body" id="fBody"><div class="f-win">'+winHtml(run.ex)+'</div>'
     +'<div class="f-sets">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")+'</div>'
     +'<div class="f-num">'+(ci<0||run.timing?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n'+(anim?" pop":"")+'" id="fVal">'+(run.timing?run.timeLeft:val)+'</b>'
     +(ci<0||run.timing?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div>'
     +'<p class="f-unit">'+U(e.unit)+(ci<0?T(' · 全部 '+a.length+' 组完成',' · all '+a.length+' sets done'):T(' · 第 '+(ci+1)+' 组 / 共 '+a.length+' 组',' · set '+(ci+1)+' of '+a.length))+'</p>'
-    +(p.ex.length>1&&!run.timing&&run.askFeel==null?'<div class="f-dial" role="slider" tabindex="0" aria-label="'+T('转动换动作','Turn to change move')+'" aria-valuemin="1" aria-valuemax="'+p.ex.length+'" aria-valuenow="'+(run.ex+1)+'"><div class="dl-wheel"><i class="dl-knurl"></i></div><b class="dl-mark"></b></div>':'')+'</div>'
-    +'<div class="f-bottom" id="fBottom">'+bottom+'</div>';
+    +(p.ex.length>1&&!run.timing&&run.askFeel==null?'<div class="f-dial" role="slider" tabindex="0" aria-label="'+T('转动换动作','Turn to change move')+'" aria-valuemin="1" aria-valuemax="'+p.ex.length+'" aria-valuenow="'+(run.ex+1)+'"><div class="dl-wheel"><i class="dl-knurl"></i></div><b class="dl-mark"></b></div>':'')+'<div class="f-dots">'+dots+'</div></div>'
+    +'<div class="f-bottom" id="fBottom"><button class="mini f-x" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-bc">'+bottom+'</div><span class="f-x"></span></div>';
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
   swipe($("#fBody"));dialBind($(".f-dial"))}
 function winHtml(i){const p=run.p,e=p.ex[i];return '<p class="eyebrow">'+LAB(p)+T(' · 动作 ',' · move ')+(i+1)+' / '+p.ex.length+'</p><h2>'+N(e)+'</h2><p class="f-note">'+(e.note?NOTE(e):"")+'</p>'}
 /* the move dial: a knurled thumb wheel like a camera's. Each notch (DL_STEP px of travel) is one move with a click;
    it keeps spinning after a flick and slows with a slightly different friction each time, so a hard spin lands
    on a move by chance; it wraps around, settles on the nearest notch, and the window shows the move as it passes */
-const DL_STEP=26,DL_KN=12;
-function dialBind(el){if(!el)return;const kn=el.querySelector(".dl-knurl"),win=$(".f-win"),n=run.p.ex.length,start=run.ex;
+const DL_STEP=26;
+function dialBind(el){if(!el)return;const DL_KN=parseFloat(getComputedStyle(el).getPropertyValue("--d-p"))||12,kn=el.querySelector(".dl-knurl"),win=$(".f-win"),n=run.p.ex.length,start=run.ex;
   let off=0,last=0,raf=0,drag=null,shown=start,lastSnd=0,lastBz=0;
   const idx=o=>((start-Math.round(o/DL_STEP))%n+n)%n;
   const paint=()=>{kn.style.transform="translateX("+(((off%DL_KN)+DL_KN)%DL_KN-DL_KN)+"px)";const i=idx(off);

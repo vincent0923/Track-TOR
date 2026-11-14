@@ -148,12 +148,12 @@ function themedCannons(t){const [W,H]=PX.size();[0,250,500].forEach(d=>setTimeou
 /* themed sounds for ticks, a finished exercise, the end of a rest, the finished session and taps */
 const SFX_TH={
   tm4:{tick:()=>{chip(1047,0,.05,.05);chip(2093,.05,.07,.045)},ex:()=>[523,659,784,1047,1568].forEach((f,i)=>chip(f,i*.05,.07,.05)),
-    rest:()=>{chip(1568,0,.06);chip(1568,.12,.06)},done:()=>{[523,659,784,1047,1319,1568,2093].forEach((f,i)=>{chip(f,i*.06,.1,.05);tone(f/2,i*.06,.12,"sawtooth",.02)})},tap:()=>chip(2400,0,.012,.03),detent:()=>chip(3000,0,.008,.03),land:()=>{chip(1568,0,.04,.04);chip(2093,.04,.05,.035)}},
+    rest:()=>{chip(1568,0,.06);chip(1568,.12,.06)},done:()=>{[523,659,784,1047,1319,1568,2093].forEach((f,i)=>{chip(f,i*.06,.1,.05);tone(f/2,i*.06,.12,"sawtooth",.02)})},tap:()=>chip(2400,0,.012,.03),detent:()=>click(1700,1,.07,190),land:()=>{click(1200,.9,.09,140);chip(523,.02,.05,.03)}},
   skeuo:{tick:()=>clink(2200,0,.09),ex:()=>[1600,2000,2400,3000].forEach((f,i)=>clink(f,i*.07,.07)),rest:()=>{clink(1500,0);clink(1500,.2)},
-    done:()=>{tone(160,0,.7,"sine",.14,900);[1800,2250,2700,3600].forEach((f,i)=>clink(f,.2+i*.09,.07))},tap:()=>tone(3400,0,.01,"sine",.05),detent:()=>{tone(5200,0,.008,"sine",.07);fxHit(0,.012,7000,2,.06)},land:()=>clink(2600,0,.07)},
+    done:()=>{tone(160,0,.7,"sine",.14,900);[1800,2250,2700,3600].forEach((f,i)=>clink(f,.2+i*.09,.07))},tap:()=>tone(3400,0,.01,"sine",.05),detent:()=>click(2300,1.6,.07,210),land:()=>{click(1600,1.3,.09,150);clink(1300,.01,.04)}},
   braun:{tick:()=>{tone(2600,0,.008,"square",.04);ding(1319,.01,.1)},ex:()=>{ding(1319,0);ding(1047,.18)},rest:()=>{ding(1047,0);ding(1047,.3)},
     done:()=>{ding(1047,0);ding(1319,.2);ding(1568,.4);ding(2093,.65,.1)},tap:()=>tone(2600,0,.008,"square",.04)},
   clay:{tick:()=>plop(340,0,.22),ex:()=>[260,330,400,500].forEach((f,i)=>plop(f,i*.08,.17)),rest:()=>{plop(220,0);plop(220,.2)},
-    done:()=>[260,330,400,500,620].forEach((f,i)=>plop(f,i*.09,.18)),tap:()=>tone(520,0,.03,"sine",.08,300),detent:()=>tone(700,0,.025,"sine",.09,380),land:()=>plop(300,0,.2)},
+    done:()=>[260,330,400,500,620].forEach((f,i)=>plop(f,i*.09,.18)),tap:()=>tone(520,0,.03,"sine",.08,300),detent:()=>{click(700,.7,.05);tone(320,0,.035,"sine",.09,200)},land:()=>plop(300,0,.2)},
   pocket:{tick:()=>{chip(988,0,.04);chip(1319,.04,.06)},ex:()=>[659,784,988,1319].forEach((f,i)=>chip(f,i*.06)),rest:()=>{chip(1319,0,.06);chip(988,.1,.08)},
-    done:()=>{[523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>chip(f,i*.07,.08));fxHit(.56,.05,8000,1,.05,"highpass")},tap:()=>chip(1800,0,.015,.03),detent:()=>chip(2600,0,.008,.028),land:()=>{chip(988,0,.04);chip(1319,.04,.05)}}};
+    done:()=>{[523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>chip(f,i*.07,.08));fxHit(.56,.05,8000,1,.05,"highpass")},tap:()=>chip(1800,0,.015,.03),detent:()=>click(1500,1,.07,180),land:()=>{click(1100,.9,.09,130);chip(659,.02,.04,.03)}}};
