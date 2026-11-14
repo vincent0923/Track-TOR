@@ -1454,3 +1454,6 @@ body:has(#sheet.on) :is(.top,main,.dock,.mini-pl,.focus.on),body:has(>.mask) :is
 #sheet .panel,.mask>.sheet{transition:filter .28s var(--ease)}
 body:has(>.mask) #sheet.on .panel,.mask:has(~ .mask)>.sheet{filter:blur(5px) saturate(.9)}
 @media (prefers-reduced-motion: reduce){.top,main,.dock,.mini-pl,.focus{transition:none}}
+/* …and the start key: a soft swell and a glow in the cover's colour (scale/filter, so the skins' own transforms stay) */
+html.groove .hero .hgo{animation:grooveKey 1.04s ease-in-out infinite;filter:drop-shadow(0 0 8px color-mix(in srgb,var(--alb,var(--ac)) 55%,transparent))}
+@keyframes grooveKey{0%,100%{scale:1}50%{scale:1.035}}

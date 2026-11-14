@@ -81,7 +81,7 @@ const SPI={play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13
 const spArt=(s,cls)=>'<span class="'+cls+'"'+(s&&s.art?' style="background-image:url(\''+esc(s.art)+'\')"':'')+'>'+(s&&s.art?'':SPI.note)+'</span>';
 /* easter egg: while music plays, the calorie bricks sway a little and pick up a faint glow in the cover's colours */
 let spAlbArt="";
-function spGroove(){const de=document.documentElement,s=SP.st,on=!!(s&&s.playing)&&!document.hidden&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
+function spGroove(){const de=document.documentElement,s=SP.st,on=!!(s&&s.playing)&&!document.hidden&&(typeof grooveOn!=="function"||grooveOn())&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
   de.classList.toggle("groove",on);if(!on||!s.art||s.art===spAlbArt)return;spAlbArt=s.art;
   const im=new Image();im.crossOrigin="anonymous";im.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=12;const x=c.getContext("2d");x.drawImage(im,0,0,12,12);
     const d=x.getImageData(0,0,12,12).data;let best=null,bs=-1;for(let k=0;k<d.length;k+=4){const r=d[k],g=d[k+1],b=d[k+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,sc=sat*(mx/255);if(sc>bs){bs=sc;best=[r,g,b]}}
