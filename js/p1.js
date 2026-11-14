@@ -296,17 +296,17 @@ function finCoins(from,to){const bEl=$("#finBal"),eEl=$("#finEarn");if(!bEl||!eE
     const t0=performance.now()+400,dur=n*110+500;const go=t=>{if(!bEl.isConnected)return;const k=Math.max(0,Math.min(1,(t-t0)/dur));bEl.textContent=gShow(Math.round(from+(to-from)*k));
       if(k<1)requestAnimationFrame(go);else{bEl.parentNode.classList.add("bump");eEl.classList.add("gone")}};requestAnimationFrame(go)},700)}
 /* today's brief on the finish screen: every session done today and every extra, in one card (it grows if you keep going) */
-function finToday(){const t=today(),out=[];
+function finToday(t){t=t||today();const out=[];
   PROGRAM.filter(p=>{const d=state.sessions[p.sid];return d&&d.done&&d.date===t}).forEach(p=>{const doc=state.sessions[p.sid];
-    out.push({h:LAB(p),kind:p.kind,rows:p.ex.map(e=>{const a=(doc.sets[e.id]||[]).filter(x=>x.d);return a.length?{n:N(e),v:a.map(x=>x.v).join("·"),pr:run&&run.pu>run.best0&&isMain(e)&&a.some(x=>+x.v===run.pu)}:null}).filter(Boolean),xs:doc.xs||[]})});
+    out.push({h:LAB(p),kind:p.kind,rows:p.ex.map(e=>{const a=(doc.sets[e.id]||[]).filter(x=>x.d);return a.length?{n:N(e),v:a.map(x=>x.v).join("·"),pr:t===today()&&run&&run.pu>run.best0&&isMain(e)&&a.some(x=>+x.v===run.pu)}:null}).filter(Boolean),xs:doc.xs||[]})});
   const xs=[].concat(...out.map(o=>o.xs),(state.dayx[t]&&state.dayx[t].xs)||[]).filter(it=>it.sets.some(x=>x.d));
   return {out,xs:xs.map(it=>({n:typeof p1XName==="function"?p1XName(it):it.name||it.id,v:it.sets.filter(x=>x.d).map(x=>x.v).join("·")}))}}
 function finBriefHtml(){const {out,xs}=finToday(),row=r=>'<div class="row"><span class="sp">'+r.n+(r.pr?' <i class="pill ac fb-pr">'+T('新纪录','Best')+'</i>':'')+'</span><b class="n">'+r.v+'</b></div>';
   return '<div class="fb-in">'+out.map((o,i)=>'<div class="row fb-h"><i class="kd" style="background:var(--'+o.kind+')"></i><b class="sp">'+o.h+'</b>'+(i?'':'<button class="mini fb-share" data-act="fshare" aria-label="'+T('分享','Share')+'">'+ICON.share+'</button>')+'</div>'+o.rows.map(row).join("")).join("")
-    +(xs.length?'<p class="eyebrow fb-x">'+T('加练','Extra practice')+'</p>'+xs.map(row).join(""):'')+'</div>'}
+    +(xs.length?'<p class="xhead fb-x">'+T('加练','Extra practice')+'</p>'+xs.map(row).join(""):'')+'</div>'}
 function finRefresh(){const b=$("#finBrief");if(run&&run.finished&&b){b.innerHTML=finBriefHtml();finFit()}}
 function finFit(){const b=$("#finBrief");if(b)b.classList.toggle("long",b.scrollHeight>b.clientHeight+4||b.classList.contains("open"))}
-function finShare(){const {out,xs}=finToday(),d=dateObj(today()),L=[];
+function finShare(t){t=t||today();const {out,xs}=finToday(t),d=dateObj(t),L=[];
   L.push(LANG==="en"?MON_EN[d.getMonth()]+" "+d.getDate():(d.getMonth()+1)+"月"+d.getDate()+"日");
   out.forEach(o=>{L.push("",o.h);o.rows.forEach(r=>L.push(r.n+"  "+r.v))});if(xs.length){L.push("",T("加练","Extra practice"));xs.forEach(r=>L.push(r.n+"  "+r.v))}
   L.push("","— "+T("博G","bG"));const text=L.join("\n");

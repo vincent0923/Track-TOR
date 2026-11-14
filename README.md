@@ -54,7 +54,7 @@
 
 产品定位、设计取向和现有功能见 [产品说明](docs/PRODUCT.md)，版本记录见 [更新日志](CHANGELOG.md)。
 
-当前版本 **v1.61a**。Alpha 表示已经在日常使用，还在持续打磨。
+当前版本 **v1.62a**。Alpha 表示已经在日常使用，还在持续打磨。
 
 © 2026 vincent0923，保留所有权利。见 [LICENSE](LICENSE)。数字字体 Geist 按 SIL Open Font License 附带，许可见 [fonts/GEIST-OFL.txt](fonts/GEIST-OFL.txt)。「玩具」皮肤照开源的 [Ovio UI](https://ovioui.vercel.app)（MIT）toy 风格用纯 CSS 重做。庆祝用的彩带和粒子来自 [canvas-confetti](https://github.com/catdad/canvas-confetti)（ISC，见 [docs/CANVAS-CONFETTI-LICENSE.txt](docs/CANVAS-CONFETTI-LICENSE.txt)）。部分图标来自 [Lucide](https://lucide.dev)（ISC 许可，见 [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)）。
 
@@ -116,6 +116,6 @@ Switch the language under the avatar › Language.
 
 See the [product notes](docs/PRODUCT.md) (in Chinese) for positioning, design principles, and how things work today, and the [changelog](CHANGELOG.md) for version history.
 
-Current version: **v1.61a**. Alpha means it's in daily use and still being refined.
+Current version: **v1.62a**. Alpha means it's in daily use and still being refined.
 
 © 2026 vincent0923. All rights reserved. See [LICENSE](LICENSE). The Geist number font is included under the SIL Open Font License; see [fonts/GEIST-OFL.txt](fonts/GEIST-OFL.txt). The Toy skin follows the toy look of the open-source [Ovio UI](https://ovioui.vercel.app) (MIT), redone in plain CSS. Celebration confetti comes from [canvas-confetti](https://github.com/catdad/canvas-confetti) (ISC; see [docs/CANVAS-CONFETTI-LICENSE.txt](docs/CANVAS-CONFETTI-LICENSE.txt)). Some icons come from [Lucide](https://lucide.dev) (ISC license; see [docs/LUCIDE-LICENSE.txt](docs/LUCIDE-LICENSE.txt)).

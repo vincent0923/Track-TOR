@@ -74,8 +74,21 @@ function engDoneAll(){return ["push","pull","third"].flatMap(engDone).sort((a,b)
 /* a custom plan, and free training, keep the user's own moves: harder means more reps, slower, more sets, never another move */
 const engCustom=()=>!!(state.settings.plan&&(state.settings.plan.id==="custom"||state.settings.plan.id==="free"));
 /* one exercise's result in one finished session */
+/* extra practice is part of the day: sets of the same move logged after the session fill the sets it missed, and
+   any more beyond those, at half the target or better, mean there was more in the tank (unless it felt tough or hard) */
+function engDayXs(d){if(!d)return [];const out=[];Object.values(state.sessions).forEach(s=>{if(s&&s.done&&s.date===d&&s.xs)out.push(...s.xs)});
+  if(state.dayx&&state.dayx[d]&&state.dayx[d].xs)out.push(...state.dayx[d].xs);return out}
 function engResult(p,id){const doc=state.sessions[p.sid],e=p.ex.find(x=>x.id===id);if(!e)return null;const a=(doc.sets&&doc.sets[id])||[];
-  return {target:e.target,planned:a.length||e.sets,got:a.filter(x=>x.d).map(x=>+x.v||0),feel:doc.feel&&doc.feel[id]||null,tempo:engTempo(e)}}
+  const r={target:e.target,planned:a.length||e.sets,got:a.filter(x=>x.d).map(x=>+x.v||0),feel:doc.feel&&doc.feel[id]||null,tempo:engTempo(e)};
+  const xg=[].concat(...engDayXs(doc.date).filter(it=>it.id===id).map(it=>it.sets.filter(x=>x.d).map(x=>+x.v||0))).sort((x,y)=>y-x);
+  if(xg.length){const miss=Math.max(0,r.planned-r.got.length);r.got=r.got.concat(xg.slice(0,miss));const left=xg.slice(miss);
+    if(left.some(v=>v>=r.target*0.5)&&r.feel!=="tough"&&r.feel!=="hard")r.feel="easy";r.xtra=xg}
+  return r}
+/* a move done as extra practice on another training day counts too, when its best set reached the target */
+function engXRecs(id,target){const out=[],days=new Set(Object.values(state.sessions).filter(s=>s&&s.done&&s.date).map(s=>s.date));
+  days.forEach(d=>{if(PROGRAM.some(p=>{const s=state.sessions[p.sid];return s&&s.done&&s.date===d&&p.ex.some(e=>e.id===id)}))return;
+    const got=[].concat(...engDayXs(d).filter(it=>it.id===id).map(it=>it.sets.filter(x=>x.d).map(x=>+x.v||0)));
+    if(got.length&&Math.max(...got)>=target)out.push([d,{target:Math.min(...got),planned:got.length,got,feel:null,tempo:null}])});return out}
 /* the old programme wrote the tempo into the name */
 function engTempo(e){return e.tempo||(/慢速\s*3-1-1/.test(e.name||"")?"3-1-1":null)}
 const engMin=a=>a.length?Math.min(...a):0;
@@ -135,7 +148,9 @@ function engPlanSession(kind,hist,sim,base){
   const rough=p=>p.ex.filter(e=>{const r=engResult(p,e.id);if(!r)return false;const [lo,hi]=engRange(e);return e.unit!=="分钟"&&engVerdict(r,lo,hi).miss}).length>=2;
   const deload=!sim&&hist.length>=2&&rough(hist[hist.length-1])&&rough(hist[hist.length-2]);
   let ex=base.map(e=>{
-    const tp=engTempo(e);let H=engFree()?[]:hist.slice(-ENG_LOOK).map(p=>engResult(p,e.id)).filter(r=>r&&r.tempo===tp);
+    const tp=engTempo(e),win=hist.slice(-ENG_LOOK);let H=engFree()?[]:win.map(p=>[state.sessions[p.sid].date||"",engResult(p,e.id)]).filter(x=>x[1]&&x[1].tempo===tp);
+    if(H.length&&!tp){const from=H[0][0];H=H.concat(engXRecs(e.id,e.target).filter(x=>x[0]>=from)).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0)}
+    H=H.map(x=>x[1]);
     if(!H.length)H=engMoveHist(e.id).filter(r=>r.tempo===tp).slice(-ENG_LOOK);
     if(sim&&sim[e.id])H.push(sim[e.id]);
     const n=engPlanEx(Object.assign({sets:e.sets},e,{tempo:tp}),H.slice(-ENG_LOOK),inSession);
@@ -175,7 +190,9 @@ function setFreePlan(){state.settings.plan=freePlanDoc();
 /* one move's results, oldest first, from finished sessions and from extra practice */
 function engMoveHist(id){const out=[];
   engDoneAll().forEach(p=>{const r=engResult(p,id);if(r&&r.got.length)out.push([state.sessions[p.sid].date||"",r])});
-  const xs=(d,items)=>(items||[]).forEach(it=>{if(it.id!==id)return;const got=it.sets.filter(x=>x.d).map(x=>+x.v||0);if(got.length)out.push([d,{target:Math.min(...got),planned:got.length,got,feel:null,tempo:null}])});
+  /* extras on a day whose session had the move are already in that session's result */
+  const inSess=new Set(engDoneAll().filter(p=>p.ex.some(e=>e.id===id)).map(p=>state.sessions[p.sid].date));
+  const xs=(d,items)=>(items||[]).forEach(it=>{if(it.id!==id||inSess.has(d))return;const got=it.sets.filter(x=>x.d).map(x=>+x.v||0);if(got.length)out.push([d,{target:Math.min(...got),planned:got.length,got,feel:null,tempo:null}])});
   Object.values(state.sessions).forEach(s=>{if(s&&s.date)xs(s.date,s.xs)});Object.values(state.dayx||{}).forEach(x=>{if(x&&x.date)xs(x.date,x.xs)});
   return out.sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0).map(x=>x[1])}
 /* the strength moves of the last 3 weeks, each with its newest record, and which moves each day had */

@@ -6,6 +6,20 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.62a] — 2026-11-14
+
+### 新增 / Added
+- 🧮 **加练算进训练引擎**：训练日当天加练同一个动作，先补没做完的组，多出来的说明还有余力；别的训练日加练到目标的动作也算一次记录。
+  **Extras feed the engine**: same-day extra sets of a move fill the sets you missed, and more beyond that count as room to spare; a move done to target as an extra on another training day counts as a record too.
+- 📤 **回看哪天都能分享**：日历点开某天，右上角分享，和练完的简报一样。
+  **Share any day**: the day panel has a share key top right, the same brief as after training.
+
+### 改进 / Changed
+- 修改记录时把一组减到 0 就删掉；关闭按钮挪到右下角；去掉面板底部的摄入、体重那行；「加练」标题更醒目。
+  Taking a set down to 0 while editing deletes it; close moved bottom right; the intake/weight line is gone; "Extra practice" stands out.
+
+---
+
 ## [v1.61a] — 2026-11-14
 
 ### 新增 / Added

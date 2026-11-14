@@ -1590,3 +1590,10 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 /* changing skin: the old screen dissolves into the new one */
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.45s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
 .f-body:has(.fin){min-height:0;overflow-y:auto;align-content:safe center}
+/* "Extra practice": a heading with an accent bar, on the day panel and in the brief */
+.xhead{display:flex;align-items:center;gap:8px;margin:20px 0 10px;font-size:17px;font-weight:800;letter-spacing:-.01em;color:var(--ink)}
+.xhead::before{content:"";width:4px;height:18px;border-radius:2px;background:var(--ac);box-shadow:0 0 10px color-mix(in srgb,var(--ac) 60%,transparent)}
+.fbrief .xhead{margin:10px 0 2px;font-size:15px}
+/* the close key sits bottom right, under the thumb, and stays there while the panel scrolls */
+.sh-foot{position:sticky;bottom:0;display:flex;justify-content:flex-end;padding-top:14px;margin-top:6px;pointer-events:none}
+.sh-foot .mini{pointer-events:auto}
