@@ -1,5 +1,5 @@
 // Service Worker for 推拉机 track-TOR PWA
-const CACHE_NAME = "tracktor-pwa-v12";
+const CACHE_NAME = "tracktor-pwa-v13";
 const ASSETS = [
   "./",
   "./index.html",
@@ -20,12 +20,12 @@ const ASSETS = [
   "./js/p1day.js",
   "./js/p1weather.js",
   "./js/p1music.js",
-  "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.png",
-  "./icon.svg",
-  "./icon-maskable-512.png",
-  "./apple-touch-icon.png",
+  "./manifest.json?v=2",
+  "./icon-192.png?v=2",
+  "./icon-512.png?v=2",
+  "./icon.svg?v=2",
+  "./icon-maskable-512.png?v=2",
+  "./apple-touch-icon.png?v=2",
   "./fonts/geist-wght.woff2",
   "./img/tex-0.webp",
   "./img/tex-1.webp",
@@ -56,10 +56,10 @@ self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;   // COROS and other sites go straight to the network
-  // Network first for the page and its code; the cached copy
+  // Network first for the page, its code and the manifest (so a new app icon is seen); the cached copy
   // is used only when offline. Scripts and styles carry a ?v= stamp from tools/stamp.py, so a new page can't
   // pick up old ones; when a newly stamped copy is stored, the copies with older stamps are dropped.
-  if (e.request.mode === "navigate" || /\.(html|js|css)$/.test(url.pathname) || url.pathname.endsWith("/")) {
+  if (e.request.mode === "navigate" || /\.(html|js|css|json)$/.test(url.pathname) || url.pathname.endsWith("/")) {
     e.respondWith(
       fetch(e.request).then((resp) => {
         if (resp && resp.status === 200) {
