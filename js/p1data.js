@@ -163,6 +163,9 @@ function fatKgSure(){/* the smaller of the estimated fat loss and what the 7-day
   const g=gapAllTime();if(!g)return 0;const est=g.s/7700,ks=Object.keys(state.diet).sort(),a=wtMA7(ymdAdd(ks[0],-1)),b=wtMA7(ymdAdd(today(),-1));
   return Math.max(0,a!=null&&b!=null?Math.min(est,a-b):0)}
 function waistDrop(){const z=series("waist");if(z.length<2)return 0;const last=z.slice(-3),avg=last.reduce((s,p)=>s+p.y,0)/last.length;return Math.max(0,z[0].y-avg)}
+/* advanced setup: each outside service connected for the first time is worth 1000 G (settings.adv, kept in backups) */
+function advDone(k){const s=state.settings,a=s.adv=s.adv||{};if(a[k])return;a[k]=today();lsSave();
+  setTimeout(()=>{toast(T("进阶设置完成 +1000 G","Advanced setup done +1000 G"));if(typeof celebrate==="function")celebrate(6,1)},600)}
 function coinBadges(){
   const st=state.settings,done=PROGRAM.filter(p=>state.sessions[p.sid]&&state.sessions[p.sid].done).length;
   /* weeks with 3+ training days, and the run of such weeks each belongs to */
@@ -179,7 +182,8 @@ function coinBadges(){
     {k:"waist",ic:"tape",name:T("腰围","Waist"),what:T("比第一次记录每少 1 cm","Every cm off since your first record"),pts:Math.floor(wd)*50,have:+wd.toFixed(1),unit:"cm",step:1,per:50},
     {k:"plan",ic:"flag",name:T("累计训练","Sessions"),what:T("累计练完 10、20、40 次","10, 20 and 40 sessions finished"),pts:(done>=10?100:0)+(done>=20?200:0)+(done>=40?400:0),have:done,unit:T("次",""),tiers:[10,20,40]},
     {k:"goal",ic:"target",name:T("达成目标","Goals reached"),what:T(mainEx().zh+"、腰围、体重、减脂，每达成一个自己设的目标","Each goal you set and reach: "+(mainEx().en||mainEx().zh)+", waist, weight, fat loss"),pts:500*[+st.p>0&&mb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,
-      have:[+st.p>0&&mb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,unit:T("个",""),tiers:[1,2,3,4]}]}
+      have:[+st.p>0&&mb>=+st.p,+st.z>0&&zNow!=null&&zNow<=+st.z,+st.w>0&&wNow!=null&&wNow<=+st.w,+st.fat>0&&fatNow>=+st.fat].filter(Boolean).length,unit:T("个",""),tiers:[1,2,3,4]},
+    {k:"adv",ic:"flag",name:T("进阶设置","Advanced setup"),what:T("每连好一项：饮食表格、Spotify","Each one you connect: food table, Spotify"),pts:1000*Object.keys(st.adv||{}).length,have:Object.keys(st.adv||{}).length,unit:T("项",""),tiers:[1,2]}]}
 /* G earned minus G spent on themes (settings.buys) */
 function coinSpent(){return (state.settings.buys||[]).reduce((a,b)=>a+(+b.g||0),0)}
 function coinTotal(){return coinBadges().reduce((a,b)=>a+b.pts,0)-coinSpent()}

@@ -1258,4 +1258,6 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="ipod"] .fs-peek i{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 :root[data-theme="ipod"] .opt,:root[data-theme="ipod"] .seg,:root[data-theme="ipod"] .calpill,:root[data-theme="ipod"] .thc,:root[data-theme="ipod"] .preset{background:rgba(255,255,255,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(255,255,255,.4),0 1px 3px rgba(30,40,60,.08)}
 :root[data-theme="ipod"][data-mode="dark"] .opt,:root[data-theme="ipod"][data-mode="dark"] .seg,:root[data-theme="ipod"][data-mode="dark"] .calpill,:root[data-theme="ipod"][data-mode="dark"] .thc,:root[data-theme="ipod"][data-mode="dark"] .preset{background:rgba(255,255,255,.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 1px 3px rgba(0,0,0,.3)}
-
+.langseg{display:flex;width:100%;padding:4px}
+.langseg button{flex:1;height:40px;font-size:14px}
+.mask .btn.wide{height:46px;padding:0 22px;font-size:15px}

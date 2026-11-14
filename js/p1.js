@@ -15,7 +15,7 @@ function renderAll(){if(typeof show==="function"&&typeof cur!=="undefined")show(
 const WD_ZH=["日","一","二","三","四","五","六"],WD_EN=["Su","Mo","Tu","We","Th","Fr","Sa"],WD=LANG==="en"?WD_EN.slice():WD_ZH.slice();
 const MON_EN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmt=v=>v==null?"–":Math.round(v).toLocaleString("en-US");
-const ICON={music:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>',dust:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 3l-8 8"/><path d="M8.5 10.5l5 5"/><path d="M8.5 10.5C6.5 10.5 4 12 3 20c3-.3 6.5-1.3 10.5-4.5"/><path d="M6.5 17.5l2-3M9.8 17.6l1.3-2.3"/></svg>',
+const ICON={palette:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10.5" cy="7.5" r="1.2" fill="currentColor"/><circle cx="15" cy="8" r="1.2" fill="currentColor"/></svg>',music:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>',dust:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 3l-8 8"/><path d="M8.5 10.5l5 5"/><path d="M8.5 10.5C6.5 10.5 4 12 3 20c3-.3 6.5-1.3 10.5-4.5"/><path d="M6.5 17.5l2-3M9.8 17.6l1.3-2.3"/></svg>',
   chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
   left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>',
   right:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
@@ -530,13 +530,21 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('怎么拿','How to earn')+'</p><div class="setlist">'+rows+'</div>');
   if(shopFirst)setTimeout(()=>{const el=document.getElementById("shop");if(el)el.scrollIntoView({block:"start"})},50)}
 /* ---------- sheet ---------- */
-function openSheet(html){$("#sheetBody").innerHTML=html;$("#sheet").classList.add("on");document.body.style.overflow="hidden"}
-function closeSheet(){$("#sheet").classList.remove("on");if(!run)document.body.style.overflow=""}
+function openSheet(html){$("#sheetBody").innerHTML=html;$("#sheet").classList.add("on");document.body.style.overflow="hidden";CUR_SHEET=null}
+/* closing goes back up a level when the panel came from a menu; hard=true just closes (opening a separate panel) */
+function closeSheet(hard){if(!hard&&SHEET_UP&&$("#sheet").classList.contains("on")){const f=SHEET_UP;SHEET_UP=null;f();return}SHEET_UP=null;$("#sheet").classList.remove("on");if(!run)document.body.style.overflow=""}
 $("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
 (function(){const pnl=$("#sheet .panel");let y0=null,dy=0;
   pnl.addEventListener("touchstart",e=>{if(pnl.scrollTop>0)return;y0=e.touches[0].clientY;dy=0},{passive:true});
   pnl.addEventListener("touchmove",e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);pnl.style.transition="none";pnl.style.transform="translateY("+dy+"px)"},{passive:true});
   pnl.addEventListener("touchend",()=>{if(y0==null)return;pnl.style.transition="";pnl.style.transform="";if(dy>90)closeSheet();y0=null})})();
+/* going back: a settings panel closes to the menu it was opened from (SHEET_UP for sheets in the main panel,
+   P1_BACK for the separate panels from js/p1settings.js); CUR_SHEET is the menu showing now */
+let SHEET_UP=null,CUR_SHEET=null,P1_BACK=null;
+/* Advanced: everything that talks to an outside service by a link or a key */
+function advSheet(){const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
+  openSheet('<div class="sh-h"><h3>'+T('进阶','Advanced')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><div class="setlist">'
+    +row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:aifmt",ICON.spark,T("记账 AI 的格式","Format for your food-logging AI"))+row("p1:music",ICON.music,"Spotify")+'</div>');CUR_SHEET=advSheet}
 /* Effects: ray-traced light (a knob), weather, dust after days off, celebrations */
 function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+'" role="switch" aria-checked="'+on+'">'+ic+'<span class="sp">'+t+'</span><span class="sw" aria-hidden="true"></span></button>';
   openSheet('<div class="sh-h"><h3>'+T('特效','Effects')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
@@ -544,17 +552,17 @@ function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+
     +knobHtml([[0,T("关","Off")],[1,T("柔","Soft")],[2,T("标准","Std")],[3,T("极致","Max")]],rtLevel(),v=>'data-act="rt" data-v="'+v+'"',T('光追','Ray-traced light'))+'</div>'
     +'<button class="opt" data-act="go" data-to="p1:weather">'+ICON.rain+'<span class="sp">'+T('天气','Weather')+'</span>'+ICON.right+'</button>'
     +sw("dust",dustOn(),ICON.dust,T('两天没练就落灰','Dust after two days off'))
-    +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+'</div>')}
-function meSheet(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
+    +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+'</div>');CUR_SHEET=fxSheet}
+function meSheet(){SHEET_UP=null;let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>'+T('设定','Settings')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">'+T('外观','Appearance')+'</p>'
     +'<div class="setlist">'+("fixed" in document.documentElement.dataset?[]:[["auto",T("跟随手机","Match the phone")],["light",T("亮","Light")],["dark",T("暗","Dark")]]).map(([k,l])=>'<button class="opt" data-act="mode" data-m="'+k+'" aria-pressed="'+(m===k)+'">'+l+'</button>').join("")
     +'<button class="opt" data-act="fxmenu">'+ICON.spark+'<span class="sp">'+T('特效','Effects')+'</span>'+ICON.right+'</button>'
-    +'<button class="opt" data-act="shop">'+COIN+'<span class="sp">'+T('G 积分商场','G shop')+'</span><b class="n" style="font-size:14px">'+fmt(coinTotal())+' G</b>'+ICON.right+'</button></div>'
-    +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="knobrow" translate="no">'+knobHtml([["zh","简中"],["zht","繁中"],["en","Eng"]],HANT?"zht":LANG,k=>'data-act="lang" data-l="'+k+'"',T('语言','Language'))+'</div>'
+    +'<button class="opt" data-act="shop">'+ICON.palette+'<span class="sp">'+T('G 积分商场','G shop')+'</span><b class="n" style="font-size:14px">'+fmt(coinTotal())+' G</b>'+ICON.right+'</button></div>'
+    +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="seg langseg" translate="no">'+[["zh","简中"],["zht","繁中"],["en","Eng"]].map(([k,l])=>'<button data-act="lang" data-l="'+k+'" aria-pressed="'+((HANT?"zht":LANG)===k)+'">'+l+'</button>').join("")+'</div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('更多','More')+'</p><div class="setlist">'
-    +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+row("p1:music",ICON.music,T("音乐","Music"))+'</div>'
-    +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('推拉机 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+'</p>')}
+    +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:charts",ICON.sliders,T("图表、同步和手表热量","Charts, sync & watch calories"))+'<button class="opt" data-act="advmenu">'+ICON.sliders+'<span class="sp">'+T("进阶","Advanced")+'</span>'+ICON.right+'</button>'+'</div>'
+    +'<p class="muted" style="font-size:11px;text-align:center;margin-top:18px">'+T('推拉机 ','track-TOR ')+($("#ver")?$("#ver").textContent:"")+'</p>');CUR_SHEET=meSheet}
 
 /* ---------- header, dock, routing ---------- */
 /* the page title shrinks to fit beside the header buttons (wide theme fonts, long English words) */
@@ -618,15 +626,16 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="tshow"){const c=tileCfg();c.hidden=c.hidden.filter(k=>k!==b.dataset.k);tileSave(c);closeSheet();renderProgView()}
   else if(a==="tdone"){tileEdit=false;SFX.tap();renderProgView()}
   else if(a==="close")closeSheet();
+  else if(a==="advmenu"){const up=CUR_SHEET;advSheet();SHEET_UP=up}
   else if(a==="day")daySheet(b.dataset.d);
   else if(a==="metric"){if(tileEdit)return;chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
   else if(a==="goal")bridge("goals");
   else if(a==="coins")coinSheet(false);
-  else if(a==="shop")coinSheet(true);
-  else if(a==="go")bridge(b.dataset.to);
+  else if(a==="shop"){const up=b.closest("#sheet")?CUR_SHEET:null;coinSheet(true);SHEET_UP=up}
+  else if(a==="go"){if(b.closest("#sheet")&&CUR_SHEET){const cur=CUR_SHEET,up=SHEET_UP;P1_BACK=()=>{cur();SHEET_UP=up}}bridge(b.dataset.to)}
   else if(a==="lang")setLang(b.dataset.l);
-  else if(a==="fxmenu")fxSheet();
+  else if(a==="fxmenu"){const up=CUR_SHEET;fxSheet();SHEET_UP=up}
   else if(a==="rt"){try{localStorage.setItem(PK+"rt",b.dataset.v)}catch(err){}rtApply();buzz(8)}
   else if(a==="dust"){const on=!dustOn();try{localStorage.setItem(PK+"dust",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);dustApply()}
   else if(a==="fx"){const on=!fxOn();try{localStorage.setItem("tracktor-p1-fx",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);if(on){SFX.tap();celebrate(2,0)}}

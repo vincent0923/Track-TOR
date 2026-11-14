@@ -1,9 +1,11 @@
 /* 推拉机 · mini player: a remote for Spotify through the Web API (Spotify Connect). The app on the phone plays; this
    page shows what's on and sends play / pause / next / previous / volume. Sign-in is PKCE with no server; the tokens
    live in tracktor-sp, which backups don't carry. Control needs Premium.
-   Until a client id is set, Settings › Music offers a preview with a sample track so the look can be tried.
+   The client id is the user's own (Settings › Advanced › Spotify, tracktor-sp-cid); until there is one, the panel offers a
+   preview with a sample track so the look can be tried.
    tracktor-p1-music: "on" (connected player shown), "demo" (preview), anything else: hidden. */
-const SP_CLIENT_ID="";
+const SPC_K="tracktor-sp-cid";
+function spCid(){try{return (localStorage.getItem(SPC_K)||"").trim()}catch(e){return ""}}
 const SP_K="tracktor-sp",SPM_K="tracktor-p1-music";
 const SP_SCOPES="user-read-playback-state user-modify-playback-state user-read-currently-playing";
 const SP={tok:null,st:null,at:0,poll:0,busy:false,demo:false};
@@ -15,20 +17,20 @@ function spSave(){try{SP.tok?localStorage.setItem(SP_K,JSON.stringify(SP.tok)):l
 const b64u=a=>btoa(String.fromCharCode(...new Uint8Array(a))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 
 /* ---------- sign-in (authorization code with PKCE) ---------- */
-async function spConnect(){if(!SP_CLIENT_ID)return;const v=b64u(crypto.getRandomValues(new Uint8Array(48))),state=b64u(crypto.getRandomValues(new Uint8Array(12)));
+async function spConnect(){if(!spCid())return;const v=b64u(crypto.getRandomValues(new Uint8Array(48))),state=b64u(crypto.getRandomValues(new Uint8Array(12)));
   const ch=b64u(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)));
   try{localStorage.setItem(SP_K+"-v",JSON.stringify({v,state}))}catch(e){}
-  location.href="https://accounts.spotify.com/authorize?"+new URLSearchParams({client_id:SP_CLIENT_ID,response_type:"code",redirect_uri:spRedirect(),
+  location.href="https://accounts.spotify.com/authorize?"+new URLSearchParams({client_id:spCid(),response_type:"code",redirect_uri:spRedirect(),
     code_challenge_method:"S256",code_challenge:ch,scope:SP_SCOPES,state})}
 async function spToken(body){const r=await fetch("https://accounts.spotify.com/api/token",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:new URLSearchParams(Object.assign({client_id:SP_CLIENT_ID},body))});
+    body:new URLSearchParams(Object.assign({client_id:spCid()},body))});
   if(!r.ok)throw new Error("token "+r.status);const j=await r.json();
   SP.tok={a:j.access_token,r:j.refresh_token||(SP.tok&&SP.tok.r),x:Date.now()+(j.expires_in-60)*1000};spSave()}
 /* back from Spotify with ?code=… */
 async function spCallback(){const q=new URLSearchParams(location.search),code=q.get("code");if(!code&&!q.get("error"))return;
   let saved=null;try{saved=JSON.parse(localStorage.getItem(SP_K+"-v")||"null")}catch(e){}
   history.replaceState(null,"",spRedirect());if(!code||!saved||q.get("state")!==saved.state)return;
-  try{await spToken({grant_type:"authorization_code",code,redirect_uri:spRedirect(),code_verifier:saved.v});spSetMode("on");localStorage.removeItem(SP_K+"-v");toast(T("已连接 Spotify","Spotify connected"));spStart()}
+  try{await spToken({grant_type:"authorization_code",code,redirect_uri:spRedirect(),code_verifier:saved.v});spSetMode("on");localStorage.removeItem(SP_K+"-v");toast(T("已连接 Spotify","Spotify connected"));if(typeof advDone==="function")advDone("spotify");spStart()}
   catch(e){toast(T("连接 Spotify 失败","Couldn't connect Spotify"))}}
 async function spAuth(){if(!SP.tok)return null;if(Date.now()>SP.tok.x){try{await spToken({grant_type:"refresh_token",refresh_token:SP.tok.r})}catch(e){SP.tok=null;spSave();return null}}return SP.tok.a}
 async function spApi(path,method,body){const a=await spAuth();if(!a)throw new Error("auth");
@@ -86,21 +88,28 @@ function spPaintSheet(){const f=document.querySelector(".sheet.on .sp-full");if(
   f.querySelectorAll("[data-sp]").forEach(b=>b.addEventListener("click",()=>spCmd(b.dataset.sp)));
   f.querySelector(".sp-vol input").addEventListener("input",e=>spVol(+e.target.value));spTick()}
 
-/* ---------- Settings › Music ---------- */
-function openMusic(){const mode=spMode(),con=!!(SP.tok&&mode==="on");
-  const body=SP_CLIENT_ID
-    ?(con?'<p class="wxnow">'+SPI.note+T('已连接 Spotify','Spotify connected')+'</p><button class="btn ghost" type="button" data-spx>'+T('断开','Disconnect')+'</button>'
-        :'<p class="muted" style="font-size:13px;margin:0">'+T('连上后，底栏上方会出现一个小播放器，能看正在放什么、暂停、切歌、调音量。控制需要 Spotify Premium。','A small player appears above the tab bar: what\'s on, pause, skip, volume. Control needs Spotify Premium.')+'</p><button class="btn" type="button" data-spc>'+T('连接 Spotify','Connect Spotify')+'</button>')
-    :'<div class="mode-tabs"><button type="button" data-spd="1" class="'+(mode==="demo"?"active":"")+'">'+T('预览','Preview')+'</button><button type="button" data-spd="0" class="'+(mode!=="demo"?"active":"")+'">'+T('关','Off')+'</button></div>';
-  const S=p1Sheet(T("音乐","Music"),body,' ');
-  const c=S.q("[data-spc]");if(c)c.addEventListener("click",spConnect);
+/* ---------- Settings › Advanced › Spotify ---------- */
+const SP_PASTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h1.5A2.5 2.5 0 0 1 20 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-11A2.5 2.5 0 0 1 6.5 5H8"/></svg>';
+const COPY_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
+function openMusic(){const mode=spMode(),con=!!(SP.tok&&mode==="on"),cid=spCid();
+  const body='<label class="flabel">Client ID<span class="pastef"><input id="spcid" autocomplete="off" spellcheck="false" placeholder="'+T("粘贴 Spotify 开发者后台里的 Client ID","Paste the Client ID from the Spotify developer dashboard")+'" value="'+esc(cid)+'"><button type="button" class="pastebtn" data-sppaste aria-label="'+T("粘贴","Paste")+'">'+SP_PASTE+'</button></span></label>'
+    +'<label class="flabel">Redirect URI<span class="pastef"><input readonly value="'+esc(spRedirect())+'"><button type="button" class="pastebtn" data-spcopy aria-label="'+T("复制","Copy")+'">'+COPY_ICON+'</button></span></label>'
+    +'<p class="calc-msg">'+T("在 Spotify 开发者后台新建一个 App：Redirect URIs 填上面这个地址，API 只勾 Web API。控制播放需要 Premium。","Create an app in the Spotify developer dashboard with the Redirect URI above and only Web API ticked. Controlling playback needs Premium.")+'</p>'
+    +(con?'<p class="wxnow">'+SPI.note+T('已连接 Spotify','Spotify connected')+'</p>':'')
+    +'<div class="mode-tabs"><button type="button" data-spd="1" class="'+(mode==="demo"?"active":"")+'"'+(con?' hidden':'')+'>'+T('预览','Preview')+'</button><button type="button" data-spd="0" class="'+(mode!=="demo"&&!con?"active":"")+'"'+(con?' hidden':'')+'>'+T('不显示','Hidden')+'</button></div>';
+  const S=p1Sheet("Spotify",body,con?'<button class="btn ghost wide" type="button" data-spx>'+T('断开','Disconnect')+'</button>':'<button class="btn wide" type="button" data-spc>'+T('连接 Spotify','Connect Spotify')+'</button>');
+  const inp=S.q("#spcid"),save=()=>{const v=inp.value.replace(/[^A-Za-z0-9]/g,"").slice(0,64);inp.value=v;try{v?localStorage.setItem(SPC_K,v):localStorage.removeItem(SPC_K)}catch(e){}};
+  inp.addEventListener("change",save);inp.addEventListener("focus",()=>setTimeout(()=>inp.select(),0));
+  S.q("[data-sppaste]").addEventListener("click",async()=>{try{inp.value=await navigator.clipboard.readText();save();buzz(10)}catch(e){inp.focus();toast(T("读不到剪贴板，请长按输入框粘贴","Can't read the clipboard; long-press the box to paste"))}});
+  S.q("[data-spcopy]").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(spRedirect());toast(T("已复制","Copied"));buzz(10)}catch(e){toast(T("复制不了，请长按选择","Can't copy; long-press to select"))}});
+  const c=S.q("[data-spc]");if(c)c.addEventListener("click",()=>{save();if(!spCid()){toast(T("先填 Client ID","Fill in the Client ID first"));inp.focus();return}if(spMode()==="demo"){spSetMode("");spStop()}spConnect()});
   const x=S.q("[data-spx]");if(x)x.addEventListener("click",()=>{SP.tok=null;spSave();spSetMode("");spStop();S.close()});
   S.m.querySelectorAll("[data-spd]").forEach(b=>b.addEventListener("click",()=>{const on=b.dataset.spd==="1";spSetMode(on?"demo":"");
     S.m.querySelectorAll("[data-spd]").forEach(o=>o.classList.toggle("active",o===b));on?spStart():spStop()}))}
 p1Reg("music",openMusic);
 
 /* ---------- run ---------- */
-function spStart(){spStop();SP.demo=spMode()==="demo"&&!SP_CLIENT_ID;if(SP.demo){SP.st=Object.assign({},SP_DEMO);SP.at=Date.now()}
+function spStart(){spStop();SP.demo=spMode()==="demo";if(SP.demo){SP.st=Object.assign({},SP_DEMO);SP.at=Date.now()}
   else if(!(spMode()==="on"&&SP.tok)){spPaint();return}
   spPaint();if(!SP.demo)spPull();
   SP.poll=setInterval(()=>{if(document.hidden)return;const s=SP.st;if(SP.demo&&s&&s.playing&&spNow()>=s.dur){s.pos=0;SP.at=Date.now()}

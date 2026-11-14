@@ -309,6 +309,7 @@ async function pullSheetQuiet(opts){
     setSheetStatus({ok:true,msg:"",ts:Date.now(),at:pad(d.getMonth()+1)+"-"+pad(d.getDate())+" "+pad(d.getHours())+":"+pad(d.getMinutes()),rows,days:nDays});
     const note=T("已拉取 "+rows+" 条 / "+nDays+" 天","Pulled "+rows+" rows / "+nDays+" days");
     if(!opts.silent)toast(note);
+    if(typeof advDone==="function")advDone("sheet");
     return {ok:true,rows,days:nDays,note};
   }catch(e){return fail(T("拉取失败，稍后再试","Pull failed; try again later"))}
   finally{sheetBusy=false}

@@ -7,7 +7,8 @@ const SAVE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 function sheet(title,body,actions){const m=document.createElement("div");m.className="mask";
   m.innerHTML='<div class="sheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><h3><span>'+esc(title)+'</span><button class="iconbtn" type="button" data-x aria-label="'+T("关闭","Close")+'">'+CLOSE_ICON+'</button></h3>'
     +'<div class="form-body">'+body+'</div><div class="row" style="justify-content:flex-end;gap:10px">'+(actions||'<button class="btn recsave" type="button" data-ok aria-label="'+T("保存","Save")+'">'+SAVE+'</button>')+'</div></div>';
-  document.body.appendChild(m);const close=()=>m.remove();
+  /* closing a panel opened from a settings menu goes back to that menu */
+  document.body.appendChild(m);const close=()=>{m.remove();if(typeof P1_BACK==="function"&&!document.querySelector(".mask")){const f=P1_BACK;P1_BACK=null;f()}};
   m.querySelector("[data-x]").addEventListener("click",close);
   let armed=false;m.addEventListener("pointerdown",e=>{armed=e.target===m});m.addEventListener("click",e=>{if(e.target===m&&armed)close()});
   return {m,close,q:s=>m.querySelector(s)}}
@@ -166,9 +167,30 @@ function openCustom(n,first,preset){const cur=st().plan,isC=cur&&cur.id==="custo
     const empty=days.findIndex(d=>!d.ids.length);if(empty>=0){toast(T(days[empty].zh+" 还没有动作",days[empty].zh+" has no moves yet"));return}
     if(!first&&!isC&&!preset&&!confirm(T("换成自定义计划？接下来的训练按它排，练过的记录不动。","Switch to your own plan? Upcoming sessions follow it; past records stay.")))return;
     setCustomPlan(days);S.close();renderAll();toast(T("训练计划：自定义","Plan: your own"))})}
-const OPEN={plan:()=>openPlan(false),profile:openProfile,goals:openGoals,table:openTable,charts:openCharts,backup:openBackup};
+/* the rules to hand an AI that keeps the food table, so the table reads cleanly here (see js/sheetcore.js) */
+const AI_FMT=()=>T(`请帮我把每天吃的东西记到一张 Google 表格里，格式这样：
+1. 第一行是表头：日期 | 食物 | 蛋白质 | 脂肪 | 碳水 | 蔬菜 | 热量
+2. 一行只写一种食物（一餐吃了三样就写三行）。
+3. 日期写成 2026-11-14 这样。
+4. 蛋白质、脂肪、碳水、蔬菜的单位是克，热量是千卡，格子里只写数字。
+5. 估不出来的格子留空；热量留空时会按 蛋白质×4 + 脂肪×9 + 碳水×4 算。
+6. 想补充说明就单独写一行，食物列写「备注：……」，数字格留空。
+7. 不用加合计行；如果加，食物列写「合计」。
+8. 表格的共享设置是「知道链接的任何人都可以查看」。`,`Please keep what I eat in a Google Sheet like this:
+1. First row is the header: Date | Food | Protein | Fat | Carbs | Veg | Calories
+2. One food per row (three things in a meal means three rows).
+3. Dates like 2026-11-14.
+4. Protein, fat, carbs and veg in grams, calories in kcal; numbers only in those cells.
+5. Leave a cell empty if you can't estimate it; empty calories are worked out as protein×4 + fat×9 + carbs×4.
+6. For a note, use its own row with "Notes: …" in the Food column and the number cells empty.
+7. No total rows needed; if you add one, write "Total" in the Food column.
+8. Share the sheet so anyone with the link can view it.`);
+function openAiFmt(){const S=sheet(T("记账 AI 的格式","Format for your food-logging AI"),'<p class="calc-msg">'+T("把下面这段发给帮你记饮食的 AI，它记出来的表格这里就能直接读。","Give this to the AI that logs your food; the sheet it keeps will read straight in here.")+'</p><textarea id="aif" readonly rows="12" style="font-size:13px;line-height:1.5">'+esc(AI_FMT())+'</textarea>',
+    '<button class="btn wide" type="button" data-cp>'+T("复制","Copy")+'</button>');
+  S.q("[data-cp]").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(AI_FMT());toast(T("已复制","Copied"));buzz(10)}catch(e){const t=S.q("#aif");t.focus();t.select();toast(T("复制不了，请长按选择","Can't copy; long-press to select"))}})}
+const OPEN={plan:()=>openPlan(false),profile:openProfile,goals:openGoals,table:openTable,charts:openCharts,backup:openBackup,aifmt:openAiFmt};
 window.p1Sheet=sheet;window.p1Custom=openCustom;window.p1Reg=(k,f)=>{OPEN[k]=f};
-window.p1Open=k=>{if(typeof closeSheet==="function")closeSheet();OPEN[k]()};
+window.p1Open=k=>{if(typeof closeSheet==="function")closeSheet(true);OPEN[k]()};
 /* first visit and the 5-day backup reminder */
 setTimeout(()=>{let seen=false;try{seen=localStorage.getItem("tracktor-p1-welcomed")==="1"}catch(e){}
   if(FRESH&&!seen){try{localStorage.setItem("tracktor-p1-welcomed","1")}catch(e){}openWelcome();return}

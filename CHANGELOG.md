@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.53a] — 2026-11-14
+
+### 新增 / Added
+- 🧭 **设定 › 进阶**：饮食表格链接、给记账 AI 的格式（可一键复制）、Spotify（自己粘贴 Client ID，一键复制回调地址）都放在这里；每连好一项奖励 1000 G
+- 🧭 **Settings › Advanced**: the food table link, the format to give your food-logging AI (one tap to copy) and Spotify (paste your own Client ID, copy the redirect URI) live here; each one you connect earns 1000 G
+
+### 改进 / Improved
+- 设定里关掉一个面板会回到上一级菜单，不再直接回首页；语言改回一排三个按钮；G 积分商场换成调色盘图标
+- Closing a panel in Settings returns to the menu above instead of the home page; language is a row of three buttons again; the G shop row has a palette icon
+
 ## [v1.52a] — 2026-11-14
 
 ### 新增 / Added
