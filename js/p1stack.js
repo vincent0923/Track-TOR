@@ -29,6 +29,7 @@ function fsBind(id,o){FS[id]=o;const host=fsHost(id);if(!host)return;const top=h
 function fsFly(id,dir,top,under){const o=FS[id];if(typeof SFX!=="undefined")SFX.tap();if(typeof buzz==="function")buzz(10);
   top.classList.add("fs-fly");top.style.transform="translateX("+dir*120+"%) rotate("+dir*14+"deg)";
   requestAnimationFrame(()=>under.classList.add("clear"));
+  dispatchEvent(new Event("fs-swipe"));
   setTimeout(()=>{o.commit(dir);fsRender(id)},320)}
 /* the same move without a finger (tapping the edges below, or a button) */
 function fsGo(id,dir){const o=FS[id],host=fsHost(id);if(!o||!host)return false;const h=o.get(dir);if(!h)return false;

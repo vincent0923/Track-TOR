@@ -6,7 +6,7 @@ const WX_K="tracktor-wx",WX_TTL=20*60e3;
 const wxSet=()=>state.settings.weather||null;
 function wxCache(){try{return JSON.parse(localStorage.getItem(WX_K)||"null")}catch(e){return null}}
 /* Open-Meteo weather code → effect and words. Only rain, snow and fog show on screen; clear and cloudy show nothing */
-function wxInfo(code,day){const c=+code;
+function wxInfo(code,day,pm){const c=+code;
   if(c===0)return {fx:"none",zh:"晴",en:"Clear"};
   if(c<=2)return {fx:"none",zh:"少云",en:"Partly cloudy"};
   if(c===3)return {fx:"none",zh:"阴",en:"Overcast"};
@@ -18,14 +18,17 @@ function wxInfo(code,day){const c=+code;
   if((c>=71&&c<=77)||c===85||c===86)return {fx:"snow",lv:c===75||c===86?3:c===73?2:1,zh:"雪",en:"Snow"};
   if(c>=95)return {fx:"rain",lv:3,zh:"雷雨",en:"Thunderstorm"};
   return {fx:"none",zh:"",en:""}}
+/* haze has no weather code: PM2.5 from the air-quality service; fog and haze share one effect */
+function wxNow(c){const i=wxInfo(c.code,c.day);if(i.fx==="none"&&c.pm!=null&&c.pm>=75)return {fx:"fog",lv:1,zh:"雾霾",en:"Haze"};return i}
 async function wxFetch(force){const w=wxSet();if(!w||w.lat==null)return null;const c=wxCache();
   if(!force&&c&&c.lat===w.lat&&c.lon===w.lon&&Date.now()-c.at<WX_TTL)return c;
   try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude="+w.lat+"&longitude="+w.lon+"&current=weather_code,temperature_2m,is_day&timezone=auto");
     if(!r.ok)return c;const j=await r.json(),cur=j.current||{};
-    const v={at:Date.now(),lat:w.lat,lon:w.lon,code:cur.weather_code,temp:cur.temperature_2m,day:cur.is_day!==0};
+    let pm=null;try{const a=await fetch("https://air-quality-api.open-meteo.com/v1/air-quality?latitude="+w.lat+"&longitude="+w.lon+"&current=pm2_5");if(a.ok){const q=await a.json();pm=q.current&&q.current.pm2_5}}catch(e){}
+    const v={at:Date.now(),lat:w.lat,lon:w.lon,code:cur.weather_code,temp:cur.temperature_2m,day:cur.is_day!==0,pm};
     try{localStorage.setItem(WX_K,JSON.stringify(v))}catch(e){}return v}catch(e){return c}}
 function wxLine(c){const w=wxSet();if(!w)return T("还没选城市","No city yet");if(!c||c.code==null)return w.name;
-  const i=wxInfo(c.code,c.day);return w.name+" · "+T(i.zh,i.en)+(c.temp!=null?" · "+Math.round(c.temp)+"°":"")}
+  const i=wxNow(c);return w.name+" · "+T(i.zh,i.en)+(c.temp!=null?" · "+Math.round(c.temp)+"°":"")}
 
 /* ---------- the effect layer ----------
    Rain is water on the glass: beads of uneven shape sit still and slowly dry; when one grows heavy enough it runs
@@ -59,13 +62,25 @@ function wxShape(r){const n=14,small=r<2.2,irr=small?.05:.12+Math.random()*.14,a
 function wxDrop(r,x,y){const big=Math.random()<.22;r=r||(big?4+Math.random()*3:1.4+Math.random()*2.2);
   return {x:x??Math.random()*WX.W,y:y??Math.random()*WX.H,r,k:wxShape(r),v:0,slide:false,life:0,max:25+Math.random()*30,trail:[],melt:0,rot:(Math.random()-.5)*1.6,asp:r<2.2?1:.78+Math.random()*.5}}
 const WX_CAP=[27,39,51],WX_SLIDERS=[3,4,6],WX_RATE=[1.5,3,4.8];
-function wxRain(dt){const lv=WX.lv-1,D=WX.drops,m=Math.hypot(WX.gx,WX.gy),ux=m>.05?WX.gx/m:0,uy=m>.05?WX.gy/m:1;WX.acc+=dt*WX_RATE[lv];
+/* heavy rain: now and then a gust sweeps across from one side and blows the beads off, big ones bursting into small */
+function wxGust(dt,D){if(WX.lv<3){WX.gust=null;return}const now=performance.now();if(!WX.nextGust)WX.nextGust=now+8e3+Math.random()*10e3;
+  if(!WX.gust&&now>WX.nextGust){WX.gust={dir:Math.random()<.5?-1:1,x:0,v:WX.W*1.6};WX.gust.x=WX.gust.dir>0?-40:WX.W+40;WX.nextGust=now+9e3+Math.random()*12e3}
+  const G=WX.gust;if(!G)return;G.x+=G.dir*G.v*dt;
+  for(let i=D.length-1;i>=0;i--){const d=D[i];if(d.melt||d.blow)continue;if(G.dir>0?d.x>G.x:d.x<G.x)continue;
+    if(Math.random()<.18)continue;                       // a few cling on
+    const sp=G.dir*(420+Math.random()*520);d.slide=false;d.blow=sp;d.trail=[];
+    if(d.r>3.4){const k=2+(Math.random()*2|0);for(let j=0;j<k;j++){const b=wxDrop(1+Math.random()*1.6,d.x+(Math.random()-.5)*d.r*2,d.y+(Math.random()-.5)*d.r*2);b.blow=sp*(.6+Math.random()*.7);b.lift=(Math.random()-.5)*160;D.push(b)}d.r*=.7;d.k=wxShape(d.r)}
+    d.lift=(Math.random()-.5)*120}
+  if(G.x<-80||G.x>WX.W+80)WX.gust=null}
+function wxRain(dt){const lv=WX.lv-1,D=WX.drops,m=Math.hypot(WX.gx,WX.gy),ux=m>.05?WX.gx/m:0,uy=m>.05?WX.gy/m:1;WX.acc+=dt*WX_RATE[lv];wxGust(dt,D);
   while(WX.acc>=1){WX.acc-=1;const still=D.filter(d=>!d.slide&&!d.melt);
     if(still.length>=WX_CAP[lv]){const d=still[Math.random()*still.length|0];d.r=Math.min(9,Math.hypot(d.r,2.4));d.k=wxShape(d.r)}
     else{const n=wxDrop();const hit=still.find(d=>Math.hypot(d.x-n.x,d.y-n.y)<d.r+n.r);if(hit){hit.r=Math.min(9,Math.hypot(hit.r,n.r));hit.k=wxShape(hit.r);hit.life=0}else D.push(n)}}
   let sliders=D.filter(d=>d.slide).length;
   for(let i=D.length-1;i>=0;i--){const d=D[i];
     if(d.melt){d.melt+=dt*4;if(d.melt>=1)D.splice(i,1);continue}
+    if(d.blow){d.x+=d.blow*dt;d.y+=(d.lift||0)*dt+uy*30*dt;d.blow*=Math.pow(.12,dt);d.lift*=Math.pow(.2,dt);d.trail.push({x:d.x,y:d.y});if(d.trail.length>14)d.trail.shift();
+      if(Math.abs(d.blow)<30){d.blow=0;d.trail=[];d.life=0}if(d.x<-30||d.x>WX.W+30||d.y<-30||d.y>WX.H+30)D.splice(i,1);continue}
     if(!d.slide){d.life+=dt;if(d.r>4.6&&m>.3&&sliders<WX_SLIDERS[lv]&&Math.random()<dt*.9*m){d.slide=true;sliders++}
       if(d.life>d.max){d.r-=dt*.25;if(d.r<.8)D.splice(i,1)}continue}
     if(m<.2){d.v*=.8;if(d.v<2){d.slide=false;d.life=0}continue}
@@ -80,10 +95,10 @@ function wxRain(dt){const lv=WX.lv-1,D=WX.drops,m=Math.hypot(WX.gx,WX.gy),ux=m>.
 function wxPath(g,d,run){const n=d.k.length;const pts=d.k.map((k,i)=>{const a=i/n*Math.PI*2;let x=Math.cos(a)*d.r*k,y=Math.sin(a)*d.r*k;
     if(y>0)y*=1.1;else y*=run?1.7:.92;if(run&&y<0)x*=1+y/(d.r*3.2);return [x,y]});
   g.beginPath();for(let i=0;i<=n;i++){const p=pts[i%n],q=pts[(i+1)%n],mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2;if(i===0)g.moveTo(mx,my);else g.quadraticCurveTo(p[0],p[1],mx,my)}g.closePath()}
-function wxDrawDrop(g,d,dark){const life=d.melt?1-d.melt:1;if(life<=0)return;const run=d.slide;
+function wxDrawDrop(g,d,dark){const life=d.melt?1-d.melt:1;if(life<=0)return;const run=d.slide||!!d.blow;
   if(run&&d.trail.length>2){g.save();g.lineCap="round";g.lineJoin="round";g.lineWidth=d.r*.75;g.strokeStyle=dark?"rgba(200,220,255,.07)":"rgba(80,100,130,.09)";
     g.beginPath();d.trail.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.stroke();g.restore()}
-  const ang=run?Math.atan2(WX.gy,WX.gx)-Math.PI/2:Math.atan2(WX.gy||1,WX.gx)-Math.PI/2+(d.rot||0),r=d.r*(d.melt?1-d.melt*.6:1);
+  const ang=d.blow?Math.atan2((d.lift||0)*.3+20,d.blow)-Math.PI/2:run?Math.atan2(WX.gy,WX.gx)-Math.PI/2:Math.atan2(WX.gy||1,WX.gx)-Math.PI/2+(d.rot||0),r=d.r*(d.melt?1-d.melt*.6:1);
   g.save();g.globalAlpha=life;g.translate(d.x,d.y);g.rotate(ang);if(!run&&d.asp)g.scale(d.asp,1/Math.sqrt(d.asp));const dd={r,k:d.k};
   /* the shadow it casts, a little downhill */
   g.save();g.translate(0,r*.3);wxPath(g,dd,run);g.fillStyle=dark?"rgba(0,0,0,.32)":"rgba(30,50,80,.14)";g.fill();g.restore();
@@ -117,29 +132,36 @@ function wxTick(now){if(now-WX.last<30){WX.raf=requestAnimationFrame(wxTick);ret
       if(!dark){g.beginPath();g.arc(f.x,f.y+.6,r+.7,0,7);g.fillStyle="rgba(90,110,140,"+(.22*a)+")";g.fill()}
       const rg=g.createRadialGradient(f.x,f.y,0,f.x,f.y,r);rg.addColorStop(0,"rgba(255,255,255,"+(.95*a)+")");rg.addColorStop(1,"rgba(255,255,255,"+(.25*a)+")");
       g.beginPath();g.arc(f.x,f.y,r,0,7);g.fillStyle=rg;g.fill()})}
-  else if(WX.fx==="fog"){const t=now/1000;
-    for(let i=0;i<5;i++){const x=((t*(6+i*3)+i*WX.W*.4)%(WX.W*1.6))-WX.W*.3,y=WX.H*(.12+i*.19),R=WX.W*.75;
-      const rg=g.createRadialGradient(x,y,0,x,y,R);rg.addColorStop(0,dark?"rgba(170,185,205,.15)":"rgba(140,155,175,.21)");rg.addColorStop(1,"rgba(150,160,180,0)");g.fillStyle=rg;g.fillRect(0,0,WX.W,WX.H)}}
+  else if(WX.fx==="fog"){const t=now/1000;WX.fogA=Math.min(1,(WX.fogA??1)+dt*.22);const A=WX.fogA,c0=dark?"170,185,205":"140,155,175";
+    /* the veil: a few slow, wide patches */
+    for(let i=0;i<3;i++){const x=((t*(4+i*2)+i*WX.W*.5)%(WX.W*1.6))-WX.W*.3,y=WX.H*(.2+i*.3),R=WX.W*.8;
+      const rg=g.createRadialGradient(x,y,0,x,y,R);rg.addColorStop(0,"rgba("+c0+","+((dark?.12:.17)*A)+")");rg.addColorStop(1,"rgba("+c0+",0)");g.fillStyle=rg;g.fillRect(0,0,WX.W,WX.H)}
+    /* now and then a thin wisp of mist drifts across */
+    if(!WX.wisp&&!reduce&&Math.random()<dt/7)WX.wisp={x:-WX.W*.6,y:WX.H*(.15+Math.random()*.7),v:WX.W*(.09+Math.random()*.06),h:60+Math.random()*80};
+    const w=WX.wisp;if(w){w.x+=w.v*dt;g.save();g.translate(w.x,w.y);g.scale(1,w.h/(WX.W*.5));const rg=g.createRadialGradient(0,0,0,0,0,WX.W*.5);
+      rg.addColorStop(0,"rgba("+(dark?"200,212,230":"250,252,255")+","+((dark?.22:.5)*A)+")");rg.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=rg;g.fillRect(-WX.W*.5,-WX.W*.5,WX.W,WX.W);g.restore();if(w.x>WX.W*1.6)WX.wisp=null}}
   /* no motion wanted: draw once and stop */
   if(reduce&&!WX.drops.some(d=>d.melt>0&&d.melt<1)){WX.raf=0;return}
   WX.raf=requestAnimationFrame(wxTick)}
 document.addEventListener("visibilitychange",()=>{if(document.hidden){cancelAnimationFrame(WX.raf);WX.raf=0}else{wxRefresh(false)}});
 
+/* swiping a card stirs the air: the fog clears, then slowly comes back */
+addEventListener("fs-swipe",()=>{if(WX.fx==="fog"){WX.fogA=0;WX.wisp=null}});
 /* the real weather, unless a preview is on */
-async function wxRefresh(force){if(WX.preview)return;const w=wxSet();if(!w||w.off||w.lat==null){wxApply("none");return}
-  const c=wxCache();if(c&&c.lat===w.lat&&c.lon===w.lon){const i=wxInfo(c.code,c.day);wxApply(i.fx,i.lv)}
-  const n=await wxFetch(force);if(n&&!WX.preview&&!(wxSet()||{}).off){const i=wxInfo(n.code,n.day);wxApply(i.fx,i.lv)}return n}
+async function wxRefresh(force){if(WX.preview)return;const w=wxSet();if(!w||w.lat==null){wxApply("none");return}
+  const c=wxCache();if(c&&c.lat===w.lat&&c.lon===w.lon){const i=wxNow(c);wxApply(i.fx,i.lv)}
+  const n=await wxFetch(force);if(n&&!WX.preview&&wxSet()){const i=wxNow(n);wxApply(i.fx,i.lv)}return n}
 setInterval(()=>{if(!document.hidden)wxRefresh(false)},5*60e3);
 
 /* ---------- settings: city and effects ---------- */
-function wxPick(name,lat,lon){const old=wxSet()||{};state.settings.weather={name,lat:+(+lat).toFixed(3),lon:+(+lon).toFixed(3),off:!!old.off};lsSave()}
-function openWeather(){const w=wxSet(),on=!(w&&w.off);
-  const prev=[["rain",1,"小雨","Light rain"],["rain",3,"大雨","Heavy rain"],["snow",2,"雪","Snow"],["fog",1,"雾","Fog"]];
+function wxPick(name,lat,lon){state.settings.weather={name,lat:+(+lat).toFixed(3),lon:+(+lon).toFixed(3)};lsSave();const S=document.querySelectorAll("[data-wo]");S.forEach(x=>x.classList.toggle("active",x.dataset.wo==="1"))}
+function openWeather(){const w=wxSet(),on=!!(w&&w.lat!=null);
+  const prev=[["rain",1,"小雨","Light rain"],["rain",3,"大雨","Heavy rain"],["snow",2,"雪","Snow"],["fog",1,"雾 · 霾","Fog · haze"]];
   const S=p1Sheet(T("天气","Weather"),'<p class="wxnow" id="wxn">'+ICON.rain+'<span>'+esc(wxLine(wxCache()))+'</span></p>'
     +'<button type="button" class="btn ghost wxhere" data-here>'+T("用我现在的位置","Use where I am")+'</button>'
     +'<label class="flabel">'+T("或者搜一个城市","Or search any city")+'<input id="wxq" type="search" autocomplete="off" placeholder="'+T("例如 上海、Tokyo、London","e.g. Shanghai, Tokyo, London")+'"></label><div class="wxres" id="wxr"></div>'
     +'<p class="eyebrow" style="margin-top:6px">'+T("屏幕效果","Screen effect")+'</p><div class="mode-tabs" role="group"><button type="button" data-wo="1" class="'+(on?"active":"")+'">'+T("开","On")+'</button><button type="button" data-wo="0" class="'+(on?"":"active")+'">'+T("关","Off")+'</button></div>'
-    +'<p class="eyebrow" style="margin-top:6px">'+T("试看 15 秒","Preview for 15 s")+'</p><div class="chips">'+prev.map(([f,l,z,e])=>'<button type="button" class="chip" data-pv="'+f+'" data-lv="'+l+'">'+T(z,e)+'</button>').join("")+'</div>',
+    +'<p class="eyebrow" style="margin-top:6px">'+T("试看","Preview")+'</p><div class="chips">'+prev.map(([f,l,z,e])=>'<button type="button" class="chip" data-pv="'+f+'" data-lv="'+l+'">'+T(z,e)+'</button>').join("")+'</div>',
     '<span></span>');
   const line=async(force)=>{S.q("#wxn span").textContent=T("读取天气…","Getting the weather…");const c=await wxRefresh(force);S.q("#wxn span").textContent=wxLine(c||wxCache())};
   S.q("[data-here]").addEventListener("click",()=>{if(!navigator.geolocation){toast(T("这台设备不能定位","This device can't locate"));return}
@@ -152,10 +174,16 @@ function openWeather(){const w=wxSet(),on=!(w&&w.off);
       box.innerHTML=(j.results||[]).map(x=>'<button type="button" class="opt" data-lat="'+x.latitude+'" data-lon="'+x.longitude+'" data-n="'+esc(x.name)+'"><span class="sp"><b>'+esc(x.name)+'</b> <span class="muted">'+esc([x.admin1,x.country].filter(Boolean).join(", "))+'</span></span></button>').join("")||'<p class="muted" style="font-size:13px">'+T("没找到","Nothing found")+'</p>'}
       catch(err){if(my===seq)box.innerHTML='<p class="muted" style="font-size:13px">'+T("连不上，稍后再试","Can't connect; try later")+'</p>'}},300)});
   S.q("#wxr").addEventListener("click",e=>{const b=e.target.closest("[data-lat]");if(!b)return;wxPick(b.dataset.n,b.dataset.lat,b.dataset.lon);S.q("#wxq").value="";S.q("#wxr").innerHTML="";line(true)});
-  S.m.addEventListener("click",e=>{const o=e.target.closest("[data-wo]");if(o){const v=o.dataset.wo==="1";const cur=wxSet();
-      if(cur)cur.off=!v;else if(!v)state.settings.weather={name:"",lat:null,lon:null,off:true};lsSave();S.m.querySelectorAll("[data-wo]").forEach(x=>x.classList.toggle("active",x===o));
-      if(!v&&!WX.preview)wxApply("none");else wxRefresh(false);return}
+  S.m.addEventListener("click",e=>{const o=e.target.closest("[data-wo]");if(o){const v=o.dataset.wo==="1";
+      /* off forgets the city; on needs one, so it points to the search */
+      if(!v){delete state.settings.weather;try{localStorage.removeItem(WX_K)}catch(err){}lsSave();S.q("#wxn span").textContent=wxLine(null);if(!WX.preview)wxApply("none")}
+      else if(!wxSet()){S.q("#wxq").focus();toast(T("选一个城市就打开了","Pick a city to turn it on"));return}
+      S.m.querySelectorAll("[data-wo]").forEach(x=>x.classList.toggle("active",x===o));return}
     const p=e.target.closest("[data-pv]");if(p){clearTimeout(WX.preview);const f=p.dataset.pv;WX.preview=0;wxApply("none");
-      WX.preview=setTimeout(()=>{WX.preview=0;wxApply("none");wxRefresh(false)},15e3);wxApply(f,+p.dataset.lv);wxTiltOn()}})}
+      /* a 10-second look: the chip fills up as it runs, and the real weather comes back after */
+      S.m.querySelectorAll("[data-pv]").forEach(x=>x.classList.remove("run"));void p.offsetWidth;p.classList.add("run");
+      WX.preview=setTimeout(()=>{WX.preview=0;p.classList.remove("run");wxApply("none");wxRefresh(false)},10e3);wxApply(f,+p.dataset.lv);wxTiltOn()}})}
 p1Reg("weather",openWeather);
+/* an effect switched off used to keep the city with off:true; off now means no city */
+if(state.settings.weather&&(state.settings.weather.off||state.settings.weather.lat==null)){delete state.settings.weather;lsSave()}
 wxRefresh(false);

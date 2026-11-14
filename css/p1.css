@@ -1470,3 +1470,8 @@ body.mini-big:not(:has(.focus.on)) .mini-pl .mp-b{display:grid;justify-self:cent
 body.mini-big:not(:has(.focus.on)) .mini-pl .mp-b svg{width:24px;height:24px}
 body.mini-big:not(:has(.focus.on)) .mini-pl .mp-bar{left:18px;right:18px;bottom:7px;height:3px}
 body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bottom))}
+/* weather preview: the chip fills up over its 10 seconds */
+.mask .chip[data-pv]{position:relative;overflow:hidden;isolation:isolate}
+.mask .chip[data-pv].run{color:var(--ac-text);border-color:var(--ac)}
+.mask .chip[data-pv].run::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--ac-soft);transform-origin:left;animation:pvRun 10s linear forwards}
+@keyframes pvRun{from{transform:scaleX(0)}to{transform:scaleX(1)}}
