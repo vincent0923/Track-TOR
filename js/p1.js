@@ -540,9 +540,13 @@ function openSheet(html){$("#sheetBody").innerHTML=html;$("#sheet").classList.ad
 function closeSheet(hard){if(!hard&&SHEET_UP&&$("#sheet").classList.contains("on")){const f=SHEET_UP;SHEET_UP=null;f();return}SHEET_UP=null;$("#sheet").classList.remove("on");if(!run)document.body.style.overflow=""}
 $("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
 (function(){const pnl=$("#sheet .panel");let y0=null,dy=0;
-  pnl.addEventListener("touchstart",e=>{if(pnl.scrollTop>0)return;y0=e.touches[0].clientY;dy=0},{passive:true});
-  pnl.addEventListener("touchmove",e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);pnl.style.transition="none";pnl.style.transform="translateY("+dy+"px)"},{passive:true});
-  pnl.addEventListener("touchend",()=>{if(y0==null)return;pnl.style.transition="";pnl.style.transform="";if(dy>90)closeSheet();y0=null})})();
+  /* a drag that starts inside a list that scrolls on its own (the playlist grid) only scrolls it and never pulls the
+     panel down; on the panel itself the pull starts only once it is scrolled to the top */
+  const inner=t=>{for(let n=t;n&&n!==pnl;n=n.parentElement){if(n.scrollHeight>n.clientHeight+2&&/(auto|scroll)/.test(getComputedStyle(n).overflowY))return true}return false};
+  pnl.addEventListener("touchstart",e=>{y0=null;dy=0;if(inner(e.target))return;y0=pnl.scrollTop>0?-1:e.touches[0].clientY},{passive:true});
+  pnl.addEventListener("touchmove",e=>{if(y0==null)return;const y=e.touches[0].clientY;if(pnl.scrollTop>0||y0<0){y0=pnl.scrollTop>0?-1:y;return}
+    dy=Math.max(0,y-y0);pnl.style.transition="none";pnl.style.transform="translateY("+dy+"px)"},{passive:true});
+  pnl.addEventListener("touchend",()=>{if(y0==null)return;if(y0<0){y0=null;return}pnl.style.transition="";pnl.style.transform="";if(dy>90)closeSheet();y0=null})})();
 /* going back: a settings panel closes to the menu it was opened from (SHEET_UP for sheets in the main panel,
    P1_BACK for the separate panels from js/p1settings.js); CUR_SHEET is the menu showing now */
 let SHEET_UP=null,CUR_SHEET=null,P1_BACK=null;
