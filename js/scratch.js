@@ -17,7 +17,14 @@ const SCR=(function(){
   function sparkle(g,x,y,r){g.beginPath();g.moveTo(x,y-r);g.quadraticCurveTo(x,y,x+r,y);g.quadraticCurveTo(x,y,x,y+r);g.quadraticCurveTo(x,y,x-r,y);g.quadraticCurveTo(x,y,x,y-r);g.fill()}
   const SPRINKLES=["#f4b52a","#ffffff","#ef4f2b","#9fe8ff"],NOISE=["#06260f","#0d4a22","#2fa650"];
   /* the worlds' coatings and brushes, as Ovio paints them */
+  /* the app's own world: the coating is the skin you're in, its card and well colours with the accent glinting through */
+  const cssVar=(el,v)=>{const i=document.createElement("i");i.style.cssText="display:none;color:var("+v+")";el.appendChild(i);const c=getComputedStyle(i).color;i.remove();return c};
   const FEEL={
+    skin:{brush:18,cell:6,paint(g,w,h,el){const a=cssVar(el,"--card"),b=cssVar(el,"--sub"),ac=cssVar(el,"--ac"),ink=cssVar(el,"--ink");
+      const f=g.createLinearGradient(0,0,w,h);f.addColorStop(0,b);f.addColorStop(.45,a);f.addColorStop(.55,a);f.addColorStop(1,b);g.fillStyle=f;g.fillRect(0,0,w,h);
+      g.save();g.globalAlpha=.16;g.strokeStyle=ac;g.lineWidth=1;for(let x=-h;x<w;x+=9){g.beginPath();g.moveTo(x,h);g.lineTo(x+h,0);g.stroke()}g.restore();
+      const rnd=seeded(3);g.fillStyle=ink;for(let i=0;i<w*h/14;i++){g.globalAlpha=rnd()*.09;g.fillRect(rnd()*w,rnd()*h,1,1)}g.globalAlpha=1;
+      g.fillStyle=ac;for(let i=0;i<w*h/900;i++){g.globalAlpha=.25+rnd()*.35;sparkle(g,rnd()*w,rnd()*h,1.5+rnd()*2.5)}g.globalAlpha=1}},
     minimal:{brush:18,cell:6,paint(g,w,h){const f=g.createLinearGradient(0,0,w,h);f.addColorStop(0,"#dcdad4");f.addColorStop(.5,"#eae9e4");f.addColorStop(1,"#d3d1ca");g.fillStyle=f;g.fillRect(0,0,w,h);
       const rnd=seeded(3);for(let i=0;i<w*h/10;i++){g.fillStyle=rnd()<.5?"rgba(0,0,0,"+rnd()*.08+")":"rgba(255,255,255,"+rnd()*.12+")";g.fillRect(rnd()*w,rnd()*h,1,1)}}},
     retro:{brush:14,cell:10,blocky:true,paint(g,w,h){const grid=gridFor(w,h,10),rnd=seeded(5);for(let i=0;i<grid.cols*grid.rows;i++){const v=rnd(),b=cellBox(i,grid,w,h);g.fillStyle=NOISE[v>.72?2:v>.38?1:0];g.fillRect(b.x,b.y,b.w,b.h)}}},
@@ -30,6 +37,7 @@ const SCR=(function(){
     const pad='<div class="ovs-pad" role="button" tabindex="0" aria-label="'+hint+': '+o.label+'"><div class="ovs-content" inert aria-hidden="true">'+o.content+'</div><canvas aria-hidden="true"></canvas><div class="ovs-hint" aria-hidden="true"><span>'+hint+'</span></div>'+(world==="retro"?'<div class="ovs-scan" aria-hidden="true"></div>':'')+'</div>';
     const pct='<span class="ovs-pct">0%</span>';
     host.innerHTML={
+      skin:'<div class="ovs ovs-skin" data-ovio-world="skin">'+pad+'<div class="ovs-track"><i></i></div></div>',
       minimal:'<div class="ovs ovs-minimal" data-ovio-world="minimal"><div class="ovs-head"><span>'+o.label+'</span>'+pct+'</div>'+pad+'<div class="ovs-track"><i></i></div></div>',
       retro:'<div class="ovs ovs-retro" data-ovio-world="retro"><div class="ovs-head"><span>'+o.label+'</span><span class="ovs-state"><i></i><b>SEALED</b></span></div>'+pad+'<div class="ovs-foot"><span>DECODE <b class="ovs-meter">'+shareMeter(0)+'</b></span>'+pct.replace("0%","000%")+'</div></div>',
       toy:'<div class="ovs ovs-toy" data-ovio-world="toy"><span class="ovs-title">'+o.label+'</span>'+pad+'<div class="ovs-bar"><i></i></div></div>',
@@ -38,7 +46,7 @@ const SCR=(function(){
     let coating=null,last=null,done=false;
     const show=s=>{const p=percentOf(s);root.style.setProperty("--ovs-p",s);root.querySelectorAll(".ovs-pct").forEach(x=>x.textContent=world==="retro"?String(p).padStart(3,"0")+"%":p+"%");const m=root.querySelector(".ovs-meter");if(m)m.textContent=shareMeter(s)};
     const draw=()=>{const w=el.clientWidth,h=el.clientHeight,g=cv.getContext("2d");if(!w||!h||!g||done)return;const dpr=Math.min(2,devicePixelRatio||1);
-      cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);g.setTransform(dpr,0,0,dpr,0,0);feel.paint(g,w,h);
+      cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);g.setTransform(dpr,0,0,dpr,0,0);feel.paint(g,w,h,root);
       if(coating){coating.w=w;coating.h=h;coating.cleared.forEach((on,i)=>{if(!on)return;const b=cellBox(i,coating.grid,w,h);g.clearRect(b.x,b.y,b.w,b.h)})}
       else{const grid=gridFor(w,h,feel.cell);coating={grid,cleared:new Uint8Array(grid.cols*grid.rows),count:0,w,h}}};
     draw();const ro=new ResizeObserver(draw);ro.observe(el);

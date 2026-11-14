@@ -625,10 +625,29 @@ const COIN='<span class="coin circ" aria-hidden="true"><b>G</b></span>';
 const BADGE_IC={dumbbell:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',flame:'<path d="M12 3c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.5-2-1-3 3 1 5 4 5 7a7 7 0 0 1-14 0c0-6 6-8 7-13z"/>',
   pullup:'<path d="M3 4h18M7 4v3M17 4v3"/><circle cx="12" cy="10" r="2.2"/><path d="M7 7l3 5h4l3-5M12 12.5V17M10 21l2-4 2 4"/>',drop:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
   tape:'<rect x="3" y="8" width="18" height="8" rx="2"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'};
-/* a chip per look (light and dark, or the one look), striped in its colours and shaped like the skin's own keys */
-function themeChips(th){const kind=th.id==="aurora"||th.id==="ember"?"flat":th.id==="toy"?"toy":"hard",
-    chip=cs=>'<span class="tsw '+kind+(cs.length>2?' wide':'')+'" style="background-image:linear-gradient(90deg,'+cs.map((c,i)=>c+' '+(i*100/cs.length)+'% '+((i+1)*100/cs.length)+'%').join(",")+')"></span>';
-  return th.fix?chip(th.sw):chip(th.sw.slice(0,2))+chip(th.sw.slice(2,4))}
+/* a theme shown by its own pages: img/th/<id>-<light|dark>.webp holds training, food and progress side by side
+   (made by tools/thumbs.js). A small stack of them stands for the theme; two-look themes carry a sun-and-moon mark */
+const SUNMOON='<svg class="sunmoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-label="'+T('亮暗两版','Light and dark')+'"><circle cx="8" cy="9" r="3.2"/><path d="M8 2.5v1.3M8 14.2v1.3M1.5 9h1.3M13.2 9h1.3M3.4 4.4l.9.9M11.7 12.7l.9.9M3.4 13.6l.9-.9M11.7 5.3l.9-.9"/><path d="M20.5 15.2A5.6 5.6 0 0 1 14 9.6a5.6 5.6 0 1 0 6.5 5.6z" fill="currentColor" stroke="none"/></svg>';
+const thModes=th=>th.fix?[th.fix]:["light","dark"];
+function thPages(th,mode){return [].concat(...(mode?[mode]:thModes(th)).map(m=>[0,1,2].map(i=>({m,i}))))}
+/* TH_V: bump when tools/thumbs.js remakes the pictures (the service worker keeps images until their address changes) */
+const TH_V=1;
+const thPage=(th,p)=>'background-image:url(img/th/'+th.id+'-'+p.m+'.webp?v='+TH_V+');background-position:'+["0%","50%","100%"][p.i]+' 0';
+/* the stack: the first page on top, the rest stepped right and down behind it */
+function thStack(th,big,mode){const ps=thPages(th,mode);
+  return '<span class="thstk'+(big?' big':'')+'" style="--n:'+ps.length+'"'+(big?' role="button" tabindex="0" data-thv="'+th.id+'" aria-label="'+T('看看这个主题','Look at this theme')+'"':' aria-hidden="true"')+'>'
+    +ps.map((p,k)=>'<i style="--k:'+k+';'+thPage(th,p)+'"></i>').reverse().join("")+'</span>'}
+/* looking through a theme's pages: a panel no taller than half the screen, a stack you swipe or tap through */
+function thView(id){const th=THEMES.find(t=>t.id===id);if(!th)return;const ps=thPages(th);let k=0;
+  const m=document.createElement("div");m.className="thv";m.innerHTML='<div class="thv-p" role="dialog" aria-label="'+T(th.zh,th.en)+'"><div class="thv-s"></div><div class="thv-d">'+ps.map(()=>'<i></i>').join("")+'</div></div>';
+  document.body.appendChild(m);requestAnimationFrame(()=>m.classList.add("on"));const box=m.querySelector(".thv-s");
+  const paint=()=>{box.innerHTML=ps.map((p,j)=>{const d=(j-k+ps.length)%ps.length;return d>3?'':'<i style="--d:'+d+';'+thPage(th,p)+'"></i>'}).join("");
+    m.querySelectorAll(".thv-d i").forEach((x,j)=>x.classList.toggle("on",j===k));const sm=ps[k].m;m.querySelector(".thv-p").dataset.m=sm};
+  const go=dir=>{const top=box.querySelector('i[style*="--d:0"]');if(top){top.classList.add("fly");top.style.setProperty("--fx",dir)}SFX.tap();buzz(6);setTimeout(()=>{k=(k+(dir<0?1:-1)+ps.length)%ps.length;paint()},180)};
+  let x0=null;box.addEventListener("pointerdown",e=>{x0=e.clientX;box.setPointerCapture(e.pointerId)});
+  box.addEventListener("pointerup",e=>{if(x0==null)return;const dx=e.clientX-x0;x0=null;go(Math.abs(dx)>30?(dx<0?-1:1):-1)});
+  const close=()=>{m.classList.remove("on");setTimeout(()=>m.remove(),300)};m.addEventListener("click",e=>{if(e.target===m)close()});paint()}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-thv]");if(b){e.stopPropagation();thView(b.dataset.thv)}},true);
 /* the theme blind box: 100 G for a theme you don't have yet, picked at random, shown on a scratch card */
 const BOX_G=100;
 function boxLeft(){return THEMES.filter(t=>!themeOwned(t.id))}
@@ -648,18 +667,21 @@ function openBox(btn){btn=btn||$(".boxbtn");const left=boxLeft();
   /* the flap lifts, the app icon comes out, and the scratch card opens */
   SFX.tap();buzz(15);if(btn)btn.classList.add("open");setTimeout(boxReveal,btn&&!matchMedia("(prefers-reduced-motion: reduce)").matches?900:0)}
 function boxReveal(){const now=boxLeft();if(!now.length||coinTotal()<BOX_G)return;
+  /* nothing is spent until the card is scratched past half: close it before that and the box stays shut */
   const th=now[Math.random()*now.length|0];
-  state.settings.buys=(state.settings.buys||[]).concat([{id:th.id,g:BOX_G,d:today(),box:1}]);lsSave();
-  const S=p1Sheet(T("主题盲盒","Theme blind box"),'<div class="scrhost"></div>','<button class="btn ghost wide" type="button" data-boxok hidden>'+T('好','OK')+'</button><button class="btn wide" type="button" data-boxuse hidden>'+T('换上','Use it')+'</button>');
+  setTimeout(()=>{const eb=$(".boxbtn");if(eb)eb.classList.remove("open")},400);
+  const S=p1Sheet(T("主题盲盒","Theme blind box"),'<div class="scrhost"></div>','<button class="btn ghost wide" type="button" data-boxok hidden>'+T('收下','Keep it')+'</button><button class="btn wide" type="button" data-boxuse hidden>'+T('使用','Use')+'</button>');
   /* the scratch card is Ovio's, in the world that suits the skin */
-  const cur=state.settings.theme||"aurora",world={toy:"toy",clay:"toy",tm4:"retro",md:"retro",pocket:"retro",skeuo:"craft",braun:"craft",nikon:"craft"}[cur]||"minimal";
+  /* the card wears the skin you are in: its colours and grain (Ovio's scratch card underneath) */
+  const world="skin";
   const host=S.q(".scrhost"),act=S.q("[data-boxok]").parentNode;
   act.querySelector("[data-boxok]").addEventListener("click",()=>{const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;S.close();coinSheet(false);if(pn)pn.scrollTop=y});
   act.querySelector("[data-boxuse]").addEventListener("click",()=>{const pn=$("#sheet .panel"),y=pn?pn.scrollTop:0;SFX.tap();S.close();themeFade(()=>{state.settings.theme=th.id;lsSave();applyMode();coinSheet(false);if(pn)pn.scrollTop=y});setTimeout(()=>celebrate(1,0),300)});
   let snd=0;SCR.mount(host,{world,label:T("主题盲盒","Theme blind box"),hint:T("刮开","Scratch to reveal"),coin:T("用硬币刮","scratch with a coin"),there:T("就是它 ✿","there it is ✿"),
-    content:'<span class="tsws">'+themeChips(th)+'</span><b>'+T(th.zh,th.en)+'</b>',
+    content:thStack(th,1)+'<b>'+T(th.zh,th.en)+(th.fix?'':SUNMOON)+'</b>',
     onProgress(){const t=performance.now();if(t-snd>70){snd=t;if(typeof fxHit==="function")fxHit(0,.06,2600,.5,.025,"highpass");buzz(3)}},
-    onReveal(){celebrate(8,1);buzz([20,40,30]);act.querySelectorAll("[hidden]").forEach(x=>x.hidden=false)}})}
+    onReveal(){if(themeOwned(th.id)||coinTotal()<BOX_G){S.close();return}
+      state.settings.buys=(state.settings.buys||[]).concat([{id:th.id,g:BOX_G,d:today(),box:1}]);lsSave();celebrate(8,1);buzz([20,40,30]);act.querySelectorAll("[hidden]").forEach(x=>x.hidden=false)}})}
 /* a new skin fades in over the old one, so the eye has a moment (the browser's view transition; a plain swap where
    there is none, or when motion is turned down) */
 function themeFade(fn){if(!document.startViewTransition||matchMedia("(prefers-reduced-motion: reduce)").matches){fn();return}try{document.startViewTransition(fn)}catch(e){fn()}}
@@ -690,8 +712,8 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
     +'<div class="row" style="margin-bottom:16px;align-items:center"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+gShow(tot)+'</div></div>'
     +boxBtnHtml()+'</div>'
     +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+THEMES.filter(th=>themeOwned(th.id)).map(th=>{const own=themeOwned(th.id),on=(themeOwned(state.settings.theme)?state.settings.theme:"aurora")===th.id;
-      const chips=themeChips(th);
-      return '<button class="thc'+(on?' on':'')+'" data-act="theme" data-id="'+th.id+'" aria-pressed="'+on+'"><span class="tsws">'+chips+'</span><b class="sp">'+T(th.zh,th.en)+'</b>'
+      const look=th.fix||document.documentElement.dataset.mode||"light";
+      return '<button class="thc'+(on?' on':'')+'" data-act="theme" data-id="'+th.id+'" aria-pressed="'+on+'">'+thStack(th,0,look)+'<b class="sp">'+T(th.zh,th.en)+'</b>'+(th.fix?'':SUNMOON)
         +(on?'<span class="thok on" aria-label="'+T('使用中','In use')+'">'+ICON.check+'</span>':own?'<span class="thok" aria-hidden="true"></span>':'<span class="pill'+(tot>=th.price?' ac':'')+'">'+COIN+' '+th.price+'</span>')+'</button>'}).join("")+'</div><div style="height:18px"></div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('训练计划','Training plans')+'</p><div class="setlist" style="margin-bottom:18px">'+plans+'</div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('怎么拿','How to earn')+'</p><div class="setlist">'+rows+'</div>');

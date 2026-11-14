@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.63a] — 2026-11-14
+
+### 新增 / Added
+- 🖼 **主题缩略图**：主题列表和盲盒里，每个主题用它自己的训练、饮食、进展三页缩略图叠成一小摞来认，亮暗两版的有日月图标、六张；盲盒开出来点那摞可以在半屏面板里一张张看。
+  **Theme thumbnails**: each theme shows as a little stack of its own training, food and progress pages (six, with a sun-and-moon mark, for two-look themes); from the blind box, tap the stack to flip through them in a half-screen panel.
+- 🎟 **刮过一半才算开盒**：刮刮卡穿当前主题的颜色和质感，不到一半只是一团模糊，关掉不扣 G；过一半才扣 100 G，奖品慢慢清楚。按钮改成「收下」「使用」。
+  **Opened only past halfway**: the scratch card wears the current skin; below half it's only a blur and closing costs nothing; past half the 100 G is spent and the prize comes into focus. Buttons read "Keep it" and "Use".
+
+---
+
 ## [v1.62a] — 2026-11-14
 
 ### 新增 / Added

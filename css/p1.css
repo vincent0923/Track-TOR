@@ -535,15 +535,6 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 .thc{display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;background:var(--sub);width:100%;text-align:left;border:1.5px solid transparent}
 .thc.on{border-color:var(--ac)}
 /* theme chips: one per look (light, dark), dressed like that skin's keys — flat, toy or tactile */
-.thc .tsws{display:flex;gap:6px;flex:none;width:86px}
-.tsw{position:relative;width:40px;height:40px;border-radius:12px;flex:none;overflow:hidden}
-.tsw.wide{width:86px}
-.tsw::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
-.tsw.flat{box-shadow:inset 0 0 0 1px rgba(0,0,0,.08),0 3px 8px -3px rgba(0,0,0,.3)}
-.tsw.toy{overflow:visible;box-shadow:0 4px 0 rgba(0,0,0,.28),inset 0 0 0 1.5px rgba(0,0,0,.08)}
-.tsw.toy::after{box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.12)}
-.tsw.hard{box-shadow:0 0 0 1px rgba(0,0,0,.25),0 3px 0 rgba(0,0,0,.22),0 6px 10px -4px rgba(0,0,0,.45)}
-.tsw.hard::after{background:linear-gradient(170deg,rgba(255,255,255,.42) 0%,rgba(255,255,255,.08) 42%,rgba(0,0,0,0) 55%,rgba(0,0,0,.2) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 3px rgba(0,0,0,.3)}
 .thok{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--muted) 55%,transparent)}
 .thok.on{background:var(--ac);color:var(--on-ac);box-shadow:0 3px 8px -3px var(--ac)}
 .thok svg{width:16px;height:16px}
@@ -1524,8 +1515,6 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 @keyframes boxWiggle{0%,86%,100%{transform:none}89%{transform:rotate(-6deg)}92%{transform:rotate(5deg)}95%{transform:rotate(-3deg)}}
 @media (prefers-reduced-motion: reduce){.boxbtn{animation:none!important}}
 /* ---------- scratch to reveal (js/scratch.js), the four worlds as Ovio draws them, in each skin's colours ---------- */
-.tsws{display:flex;gap:6px}
-.tsw{display:block}
 .ovs{position:relative;display:flex;flex-direction:column;width:100%;max-width:340px;margin:0 auto;color:var(--ink)}
 .ovs-pad{position:relative;width:100%;aspect-ratio:3/2;overflow:hidden;user-select:none;-webkit-user-select:none;cursor:grab;touch-action:none}
 .ovs.open .ovs-pad{cursor:default;touch-action:auto}
@@ -1601,3 +1590,40 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 /* the close key sits bottom right, under the thumb, and stays there while the panel scrolls */
 .sh-foot{position:sticky;bottom:0;display:flex;justify-content:flex-end;padding-top:14px;margin-top:6px;pointer-events:none}
 .sh-foot .mini{pointer-events:auto}
+/* the blind box's scratch card in the skin you're in: its card, grain, well and accent */
+.ovs-skin{gap:10px;padding:12px;border-radius:24px;background:var(--grain,none),var(--card);background-size:160px 160px,auto;background-blend-mode:soft-light,normal;box-shadow:var(--shadow)}
+/* under half scratched the prize is only a blur; past half it comes into focus */
+.ovs-skin .ovs-content{filter:blur(18px) saturate(.6);opacity:.5}
+.ovs-skin.open .ovs-content{filter:none;opacity:1;transition:filter 1.4s var(--ease),opacity 1.4s var(--ease),transform .45s cubic-bezier(.2,0,0,1)}
+.ovs-skin .ovs-pad{aspect-ratio:auto;height:168px;border-radius:16px;background:var(--sub);box-shadow:var(--well-sh,inset 0 2px 6px rgba(0,0,0,.15))}
+.ovs-skin .ovs-hint span{border-radius:999px;background:var(--ac);color:var(--on-ac);padding:8px 16px;font-size:13px;font-weight:800;box-shadow:0 6px 16px -6px var(--ac)}
+.ovs-skin .ovs-track{height:4px;overflow:hidden;border-radius:4px;background:color-mix(in srgb,var(--ink) 12%,transparent)}
+.ovs-skin .ovs-track i{display:block;height:100%;background:var(--ac);transform-origin:left;transform:scaleX(var(--ovs-p,0));transition:transform .3s var(--ease)}
+.ovs-skin .ovs-content{gap:10px}
+.ovs-skin .ovs-content b{display:flex;align-items:center;gap:6px;font-size:17px}
+.sunmoon{width:18px;height:18px;flex:none;color:var(--muted)}
+/* a theme as a stack of its own pages */
+.thstk{position:relative;flex:none;display:block;width:calc(var(--w,34px) + 2 * var(--st,4px));height:calc(var(--w,34px) * 2.164 + 2 * var(--st,4px))}
+.thstk i{position:absolute;left:0;top:0;width:var(--w,34px);aspect-ratio:330/714;border-radius:calc(var(--w,34px) * .12);background-size:300% 100%;box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 3px 8px -3px rgba(0,0,0,.4);
+  transform:translate(calc(min(var(--k),2) * var(--st,4px)),calc(min(var(--k),2) * var(--st,4px)));filter:brightness(calc(1 - min(var(--k),2) * .08))}
+.thstk i:nth-last-child(n+4){opacity:0}
+.thc .thstk{--w:30px;--st:3px}
+.thc .sunmoon{margin-right:6px}
+.thstk.big{--w:50px;--st:6px;cursor:pointer;transition:transform .3s var(--spring)}
+.thstk.big:active{transform:scale(.94)}
+.thstk.big i{transition:transform .35s var(--spring)}
+.thstk.big[style*="--n:6"] i{transform:translate(calc(min(var(--k),5) * 3px),calc(min(var(--k),5) * 3px))}
+.thstk.big[style*="--n:6"] i:nth-last-child(n+4){opacity:1}
+.thstk.big[style*="--n:6"]{width:calc(var(--w) + 15px);height:calc(var(--w) * 2.164 + 15px)}
+/* the viewer: at most half the screen */
+.thv{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:rgba(0,0,0,0);transition:background .3s var(--ease)}
+.thv.on{background:rgba(0,0,0,.45)}
+.thv-p{display:grid;justify-items:center;gap:12px;padding:16px 16px 12px;border-radius:28px;background:var(--card);box-shadow:var(--shadow);max-height:50dvh;transform:translateY(30px) scale(.94);opacity:0;transition:transform .45s var(--spring),opacity .25s}
+.thv.on .thv-p{transform:none;opacity:1}
+.thv-s{position:relative;height:calc(50dvh - 70px);aspect-ratio:330/714;margin-right:18px;margin-bottom:6px;touch-action:none;cursor:pointer}
+.thv-s i{position:absolute;inset:0;border-radius:16px;background-size:300% 100%;box-shadow:0 0 0 .5px rgba(0,0,0,.2),0 10px 24px -10px rgba(0,0,0,.5);
+  transform:translate(calc(var(--d) * 6px),calc(var(--d) * 6px));filter:brightness(calc(1 - var(--d) * .1));z-index:calc(10 - var(--d));transition:transform .35s var(--spring),filter .3s}
+.thv-s i.fly{transform:translateX(calc(var(--fx,-1) * 120%)) rotate(calc(var(--fx,-1) * 12deg));opacity:0;transition:transform .25s ease-in,opacity .25s}
+.thv-d{display:flex;gap:6px}
+.thv-d i{width:6px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--ink) 25%,transparent);transition:background .2s,transform .2s}
+.thv-d i.on{background:var(--ac);transform:scale(1.3)}

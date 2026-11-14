@@ -17,7 +17,7 @@
 - 只写以后一直有效的约定和找东西的线索，保持简短。做过什么看 `git log` 和 `CHANGELOG.md`，产品现在什么样看 `docs/PRODUCT.md`，打算做什么看私人文档「推拉机：私人规划与施工清单」。
 
 ## 每次发版
-- 现在的版本号是 v1.62a。
+- 现在的版本号是 v1.63a。
 - 只有加了新功能才升版本号。只改视觉或音效、没有新功能的改动，不升版本号、不写 CHANGELOG，测试通过后直接提交推送，不用问。
 - 版本号三处同步：`index.html` 里的 `#ver`，`README.md` 中英文各一处。
 - `CHANGELOG.md` 加一条，中英双语。
@@ -29,7 +29,7 @@
 - 不加不必要的标签和辅助说明，让布局、按钮和界面本身把意思讲清楚。要解释的放进「i」里，不常驻在页面上。
 - 极简、做减法。一个强调色，字重三档，大圆角卡片，所有详情和编辑都用底部弹出面板，动效用同一条回弹曲线（详见 `docs/PRODUCT.md`「界面」）。
 - 一组同类的卡片一律用毛玻璃 swipe stack（训练日、日历、饮食记录都是）：后面的牌是整张卡、整齐地一张比一张往右下错开一小步、颜色略深（照 codefronts 的 classic deck；手指按上去时整摞再拉开一点），最多露三张，只要还有别的牌就露出来；划动时下面一张是毛玻璃，划走后 0.3 秒变清晰；手指往右是往前的时间。不另做翻页按钮；离开最新一张时出现半透明的复位按钮（`.fsreset`，加号、完成等小按钮也用这个样子）。
-- 爽感是核心：打勾放烟花、练完礼炮（`js/p1fx.js`）；每套主题的庆祝效果都写在 `THEME_FX`（新主题要加一套），音效在 `SFX_TH`（玩具在 `js/p1data.js` 的 `SFX_TOY`）。设定 › 外观 › 特效里放光追强弱（`tracktor-p1-rt`）、天气、音乐律动（`tracktor-p1-groove`，彩蛋：放歌时积木、练过的日子、开练键按节拍动；BPM 和能量从 ReccoBeats 按 Spotify 歌曲编号查，`js/p1music.js` 的 `spTempo`/`spBeat`）、落灰（`tracktor-p1-dust`；三档做旧图 `img/grunge-*.webp` 从噪声生成，不用网上的图）、庆祝效果。数字的千位逗号只在英文界面出现（`fmt`）。
+- 爽感是核心：打勾放烟花、练完礼炮（`js/p1fx.js`）；每套主题的庆祝效果都写在 `THEME_FX`（新主题要加一套，还要截缩略图），音效在 `SFX_TH`（玩具在 `js/p1data.js` 的 `SFX_TOY`）。设定 › 外观 › 特效里放光追强弱（`tracktor-p1-rt`）、天气、音乐律动（`tracktor-p1-groove`，彩蛋：放歌时积木、练过的日子、开练键按节拍动；BPM 和能量从 ReccoBeats 按 Spotify 歌曲编号查，`js/p1music.js` 的 `spTempo`/`spBeat`）、落灰（`tracktor-p1-dust`；三档做旧图 `img/grunge-*.webp` 从噪声生成，不用网上的图）、庆祝效果。数字的千位逗号只在英文界面出现（`fmt`）。
 - 设定的层级：从设定菜单打开的面板关掉回到上一级（`js/p1.js` 的 `SHEET_UP`/`CUR_SHEET`，`js/p1settings.js` 的面板用 `P1_BACK`）。凡是要填外部链接或密钥的都放在 设定 › 进阶（饮食表格、记账 AI 的格式、Spotify）；每连好一项第一次给 1000 G（`settings.adv`，`advDone`）。
 - 组件目录 `docs/catalog/`（`index.html` 外壳、`board.html` 组件板，直接用 `../../css/p1.css`，开本地服务器从仓库根目录打开）：每个组件按用途分七类（确认、开关、调节、选择、导航、展示、音乐），可以单个主题看或一个组件看全部主题；加了新主题记得在 `index.html` 的 `THEMES` 和 `FIXED` 里登记，加了新组件在 `board.html` 加一个 `.spec`。在线版是私人 artifact https://claude.ai/artifact/A1wrTkWRYeDqJwcRpEnQEY ：发布时把 `board.html` 里的 `../../` 路径换成同目录（`window.BASE=""`），一起带上 `css/p1.css`、`js/scratch.js`、`fonts/`、`img/tex-*`、`icon-192.png`；改了组件就同步更新它。
 - 通用组件（`js/p1.js`）：积木柱状图 `bricksHtml`（每列可带 `t`，手指划过时显示在卡片的 `.bkread`；在卡堆里积木区域不翻牌）、旋钮 `knobHtml`（标签是普通按钮，带自己的 `data-act`）、专注页的动作窗口 `.f-win` 和滚花拨轮 `dialBind`（每个主题在 `css/p1.css` 末尾用 `--w-*`/`--d-*` 换样子，咔哒声是 `SFX.detent`/`SFX.land`）。
@@ -41,6 +41,7 @@
 - 主项（目标里的那个运动，`js/p1data.js` 的 `mainEx`/`mainSeries`）：默认标准引体；从计划动作选的打勾自动记、训练引擎不换它（`isMain`），自己写的只能手动记。
 - G 币图标 `COIN`（`js/p1.js`）是当下主题的 `.circ` 圆钮加金色 G、呼吸发光；商店叫「G 分商店 / barGain store」。
 - G（积分，Grind）从记录现算（`js/p1data.js` 的 `coinBadges`），不另存；余额 = 赚的 − `settings.buys` 里花掉的。训练计划除了推拉二分（`cyclist`）、自由练、自定义，其他预设要 200 G 解锁（`js/p1settings.js` 的 `planOwned`，买的记 `plan:<id>`）。主题盲盒（`js/p1.js` 的 `openBox`，100 G）随机给一个还没有的主题，记在 `settings.buys`（带 `box:1`），都集齐了就不能开。
+- 主题缩略图：`img/th/<id>-<light|dark>.webp`，训练、饮食、进展三页并排，开本地服务器后 `node tools/thumbs.js` 用假数据重截。新主题或主页面样子明显变了就重截，并把 `js/p1.js` 的 `TH_V` 加一（图片不在 `sw.js` 预缓存列表里，用到时才缓存，换地址才会更新）。
 - 主题（`js/p1.js` 的 `THEMES`，`css/p1.css` 里 `:root[data-theme=…]`，亮暗两版靠 `data-mode`）：一般要有亮、暗两版；只有一种样子的主题在 `THEMES` 里写 `fix:"light"|"dark"`，这时 `html[data-fixed]` 藏掉明暗开关和设定里的明暗选项（顶栏换成调色盘 `#themeBtn`，进主题列表），手机倾斜写进 `--lx`/`--ly`/`--rot`（`js/p1.js`），触感主题和奶油塑料（`THEMES` 里 `lit`）的高光和金属反光用它们；玩具主题不接光追。主题字体放 `fonts/`（许可见 `fonts/THEMES-OFL.txt`），材质颗粒（拉丝、细颗粒、黏土粉、压纹皮、喷砂）是 `img/tex-*.webp`（从 SVG 噪声预先渲染，比现场算快；新材质也这样做），标题和大数字用 `--disp`，小数字用 `--num`。草木 · 极光免费，其他用 G 换。顶栏的明暗开关点一下切换，长按进主题页。
 - 训练计划：`settings.plan`（`js/engine.js` 的 `PRESETS`/`setPlan`）选 1–3 种训练日，内部类型固定是 `push`、`pull`、`third`（名字由计划定，`js/core.js` 的 `dayName`/`LAB`）；进度文件里训练的键前缀是 u、l、t。预设只是数据，以后用户写的计划也照这个格式。自由练 `id:"free"`（`js/engine.js` 的 `freeBase`/`freeLog`/`freePattern`）：没选过计划、也没练过正式训练的新用户默认是它；建议从最近 3 周的训练和加练里长出来（散步骑行这类不排），按部位多久没练排，每次至少 2 个动作 5 组；练法稳定后提示存成自定义计划。自定义计划 `id:"custom"`（`setCustomPlan`，面板 `openCustom`）：只用练过的动作（`engMoves`），每个动作从自己的上次记录接着练；自定义计划和自由练下引擎不换动作（`engCustom`）；一种训练日里找不到某动作的历史时，到所有训练和加练里找（`engMoveHist`）。
 - 训练引擎排的训练存在训练记录本身：`sessions[sid].ex` 是这次的动作、`feel` 是每个动作的感觉、`edited` 表示用户手改过。`js/core.js` 的 `registerPlanned` 把它们挂进 `PROGRAM`/`BYID`（可以超过第 20 天，`third-NN` 只靠它注册）。进度文件里对应追加的字段是 `pe`。
