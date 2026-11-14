@@ -155,7 +155,7 @@ async function spRank(list){if(SP.demo||SP.ranked||!SP.rec||!SP.rec.length)retur
   list.sort((a,b)=>b.hit-a.hit||b.at-a.at||a.k-b.k);SP.ranked=true;return true}
 /* playlists as a grid of big covers (easy to hit mid-workout): "open Spotify" and shuffle on top, a round × below */
 async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";spLoad();
-  const head='<div class="sp-plh"><a class="sp-pill" href="spotify:" data-spapp>'+BRAND.sp+'<span>'+T('打开 Spotify','Open Spotify')+'</span></a>'
+  const head='<div class="sp-plh"><a class="sp-pill" href="spotify:" data-spapp aria-label="'+T('打开 Spotify','Open Spotify')+'">'+BRAND.sp+'</a>'
 +'</div>';
   const foot='<button class="sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button>';
   const bind=()=>{f.querySelector("[data-spback]").addEventListener("click",()=>{buzz(6);spPaintSheet()});

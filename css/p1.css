@@ -1385,5 +1385,6 @@ button.f-x svg{width:18px;height:18px}
 :root[data-theme="ipod"] .f-dots i{height:4px}
 /* the services' own app icons keep their own colours in every skin */
 img.brand{width:22px;height:22px;flex:none;border-radius:6px;filter:none!important;opacity:1!important;mix-blend-mode:normal!important;box-shadow:none!important;background:none!important}
-.sp-pill img.brand{width:32px;height:32px;border-radius:50%}
+.sp-pill:has(img.brand){padding:0;width:56px;height:56px;justify-content:center;background:none;box-shadow:none}
+.sp-pill img.brand{width:48px;height:48px;border-radius:50%;box-shadow:0 4px 12px -4px rgba(0,0,0,.4)!important}
 .eyebrow img.brand{width:18px;height:18px;border-radius:5px}
