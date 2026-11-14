@@ -14,7 +14,8 @@ const bridge=to=>{
 function renderAll(){if(typeof show==="function"&&typeof cur!=="undefined")show(cur,false,true)}
 const WD_ZH=["日","一","二","三","四","五","六"],WD_EN=["Su","Mo","Tu","We","Th","Fr","Sa"],WD=LANG==="en"?WD_EN.slice():WD_ZH.slice();
 const MON_EN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const fmt=v=>v==null?"–":Math.round(v).toLocaleString("en-US");
+/* thousands separators only in English (1,000); Chinese writes 1000 */
+const fmt=v=>v==null?"–":LANG==="en"?Math.round(v).toLocaleString("en-US"):String(Math.round(v));
 const ICON={palette:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10.5" cy="7.5" r="1.2" fill="currentColor"/><circle cx="15" cy="8" r="1.2" fill="currentColor"/></svg>',music:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>',dust:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 3l-8 8"/><path d="M8.5 10.5l5 5"/><path d="M8.5 10.5C6.5 10.5 4 12 3 20c3-.3 6.5-1.3 10.5-4.5"/><path d="M6.5 17.5l2-3M9.8 17.6l1.3-2.3"/></svg>',
   chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
   left:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>',
@@ -95,7 +96,7 @@ rtApply();
 function dustOn(){try{return localStorage.getItem(PK+"dust")!=="0"}catch(e){return true}}
 function dustDays(){let last="";Object.values(state.sessions).forEach(x=>{if(x&&(x.done||Object.values(x.sets||{}).some(a=>(a||[]).some(z=>z.d)))){const d=x.date||today();if(d>last)last=d}});
   Object.keys(state.dayx||{}).forEach(d=>{const x=state.dayx[d];if(x&&x.xs&&x.xs.length&&d>last)last=d});return last?dnum(today())-dnum(last):0}
-function dustApply(){const de=document.documentElement,d=dustOn()?dustDays():0,lv=d<2?0:d<3?1:d<5?2:3,was=+(de.dataset.dust||0);
+function dustApply(){const de=document.documentElement,d=dustOn()?dustDays():0,lv=d<2?0:d<5?1:d<8?2:3,was=+(de.dataset.dust||0);
   let el=document.getElementById("dust");if(!el&&lv){el=document.createElement("div");el.id="dust";el.setAttribute("aria-hidden","true");document.body.appendChild(el)}
   if(!el)return;if(lv){el.classList.remove("wipe");de.dataset.dust=lv}else if(was){el.classList.add("wipe");delete de.dataset.dust}}
 /* the header switch: tap flips light and dark; hold it for the themes */

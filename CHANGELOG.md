@@ -6,6 +6,26 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.57a] — 2026-11-14
+
+### 新增 / Added
+- 🖼️ **分享图片面板**：先看预览，可以选带不带消耗和缺口，能存到相册；图片用当前主题的颜色和字体。
+  **Share panel**: preview first, choose whether burn and deficit go in, save to photos; the picture uses the current skin's colours and fonts.
+- 🧱 **做旧**：两天没练开始变旧，分三档（2–4、5–7、8 天起），边缘斑驳一档比一档往里蔓延，裂纹和划痕更多。
+  **Wear and tear**: after two days off the screen ages in three steps (2–4, 5–7, 8+ days), with grime creeping in from the edges, more cracks and scratches.
+- 🧸 **玩具主题的 3D 按键**：开着光追时，按键露出的侧面跟着手机倾斜变化。
+  **Toy keys in 3D**: with light tracing on, the keys show their sides as the phone tilts.
+
+### 改进 / Changed
+- 动作拨轮每个主题有自己的纹路，上下边缘有倒角，拟物主题的反光和按钮同一个光源；拨动声改成不尖的机械咔哒；进度移到拨轮下面，退出键在左下角。
+  The move dial has a texture per skin, chamfered edges and the buttons' light; softer mechanical clicks; progress sits under the dial and the exit is bottom left.
+- 底部面板变窄、四周留边；Spotify 和高驰用它们自己的图标；歌单封面更清晰，长按 Spotify 图标清空缓存重新排序。
+  Bottom panels float with margins; Spotify and COROS show their own icons; sharper playlist covers, long-press the Spotify icon to re-rank.
+- 中文界面的数字不再加千位逗号。
+  Chinese no longer puts thousands separators in numbers.
+
+---
+
 ## [v1.56a] — 2026-11-14
 
 ### 新增 / Added
