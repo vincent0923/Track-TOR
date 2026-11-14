@@ -1259,19 +1259,26 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 .langseg{display:flex;width:100%;padding:4px}
 .langseg button{flex:1;height:40px;font-size:14px}
 .mask .btn.wide{height:46px;padding:0 22px;font-size:15px}
-/* playlists inside the full player */
-.sp-plrow{width:100%}
-.sp-plh{display:flex;align-items:center;gap:10px;width:100%}
-.sp-plh b{font-size:17px;font-weight:800}
-.sp-shuf{width:auto;padding:8px 10px;gap:8px}
-.sp-pls{display:grid;gap:8px;width:100%;max-height:56dvh;overflow:auto}
-.sp-pl{gap:12px;padding:8px 12px 8px 8px}
-.sp-pl .sp{display:grid;line-height:1.3;min-width:0}
-.sp-pl b,.sp-pl small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sp-pl b{font-size:14px}.sp-pl small{font-size:12px}
-.sp-plart{width:48px;height:48px;border-radius:10px;flex:none;display:grid;place-items:center;background:var(--sub) center/cover;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18)}
-.sp-plart svg{width:20px;height:20px}
-.sp-pl.on b{color:var(--ac-text)}
+/* playlists inside the full player: a big pill under the controls opens a grid of covers */
+.sp-plbtn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px 0 16px;border-radius:999px;background:var(--sub);color:var(--ink);font-size:15px;font-weight:700;box-shadow:inset 0 0 0 1px var(--line);transition:transform .2s var(--spring)}
+.sp-plbtn:active{transform:scale(.95)}
+.sp-plbtn svg{width:20px;height:20px}.sp-plbtn svg:last-child{width:16px;height:16px;color:var(--muted)}
+.sp-plh{display:flex;justify-content:center;gap:10px;width:100%;flex-wrap:wrap}
+.sp-pill{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px 0 8px;border-radius:999px;background:var(--card);color:var(--ink);font-size:15px;font-weight:700;text-decoration:none;box-shadow:inset 0 0 0 1px var(--line),0 2px 8px -4px rgba(0,0,0,.2)}
+.sp-pill svg{width:32px;height:32px}
+.sp-shufpill{padding:0 18px 0 14px}.sp-shufpill svg{width:20px;height:20px;color:var(--muted)}
+.sp-shufpill.on{background:var(--ac-soft);color:var(--ac-text)}.sp-shufpill.on svg{color:var(--ac-text)}
+.sp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 12px;width:100%;max-height:58dvh;overflow:auto;padding:4px 2px}
+.sp-cell{display:grid;gap:8px;justify-items:center;min-width:0;transition:transform .2s var(--spring)}
+.sp-cell:active{transform:scale(.94)}
+.sp-cover{position:relative;width:100%;aspect-ratio:1;border-radius:10px;display:grid;place-items:center;background:var(--sub) center/cover;color:#fff;box-shadow:0 6px 14px -8px rgba(0,0,0,.4)}
+.sp-cover svg{width:30px;height:30px}
+.sp-cell.on .sp-cover{box-shadow:0 0 0 3px var(--ac),0 6px 14px -8px rgba(0,0,0,.4)}
+.sp-cover .sp-eq{position:absolute;right:6px;bottom:6px;padding:4px;border-radius:6px;background:rgba(0,0,0,.45)}
+.sp-name{max-width:100%;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp-cell.on .sp-name{color:var(--ac-text)}
+.sp-x{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;color:var(--ink);background:var(--card);box-shadow:inset 0 0 0 1px var(--line),0 4px 12px -6px rgba(0,0,0,.3)}
+.sp-x svg{width:24px;height:24px}
 .sp-eq{display:flex;align-items:flex-end;gap:2px;height:14px;flex:none}
 .sp-eq i{width:3px;border-radius:2px;background:var(--ac);animation:spEq .9s ease-in-out infinite alternate}
 .sp-eq i:nth-child(2){animation-delay:-.3s}.sp-eq i:nth-child(3){animation-delay:-.6s}
