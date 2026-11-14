@@ -90,14 +90,14 @@ const THEMES=[
  ["nikon","黑皮压纹","只有暗","压纹皮革、镁合金","Inter Tight","红色饰条、滚花拨盘、快门键",["#141517","#E8302A"]],
  ["dyson","粉瓷 · 铜蓝","亮暗两版","亮：奶白陶瓷、玫瑰金属；暗：普鲁士蓝哑光、金铜","系统几何字","金属色按键和大卡片、凸起的旋纹圆钮、穿孔滤网",["#EDDBD3","#C46F6C"]]];
 const FIXED={tm4:"dark",skeuo:"light",braun:"light",clay:"light",md:"light",nikon:"dark"};
-const GROUPS=[["确认 · 打勾 · 执行","按下去就做成一件事：打勾完成一组、开练、保存。全 app 最显眼的那一类，每个主题都要最好按、反馈最足。",["tick","hgo","btn"]],
+const GROUPS=[["确认 · 打勾 · 执行","按下去就做成一件事：打勾完成一组、开练、保存、开盲盒刮奖。全 app 最显眼的那一类，每个主题都要最好按、反馈最足。",["tick","hgo","btn","box"]],
  ["开关 · 二选一 · 多选一","只改一个状态，不跳走：特效开关、明暗、语言、单选行、随机和循环。",["switch","modesw","seg","optpick","mode"]],
- ["调节 · 数值 · 范围","在一个范围里取值：时间范围旋钮、次数加减、组别、音量。",["knob","stepper","sets","vol"]],
+ ["调节 · 数值 · 范围","在一个范围里取值：换动作的拨轮、时间范围旋钮、次数加减、组别、音量。",["dial","knob","stepper","sets","vol"]],
  ["选择 · 挑一个","从一组东西里挑：主题、计划、日历里的一天、歌单。",["thc","preset","cal","plgrid"]],
- ["导航 · 打开 · 关闭 · 复位","去别处或回来：底栏、顶栏圆钮、关闭、复位、菜单行、大胶囊。",["dock","headbtn","small","row","pills"]],
+ ["导航 · 打开 · 关闭 · 复位","去别处或回来：底栏、顶栏圆钮、服务图标和主题键、关闭、复位、菜单行、歌单按钮。",["dock","headbtn","brand","small","row","pills"]],
  ["展示 · 数据 · 状态","只看不按（或点开看详情）：训练卡、目标板、数据卡、积木图、标签、G 币、提示条。",["hero","goals","tile","bricks","pill","toast"]],
  ["音乐","迷你播放器和完整播放器的控制。",["mini","transport"]]];
-const NAMES={tick:"打勾按钮",hgo:"开练",btn:"主 / 次按钮",switch:"开关",modesw:"明暗开关",seg:"分段按钮",optpick:"单选行",mode:"随机 / 循环",knob:"旋钮",stepper:"加减",sets:"组别",vol:"音量",thc:"主题卡",preset:"计划卡",cal:"日历日子",plgrid:"歌单格子",dock:"底栏",headbtn:"顶栏圆钮",small:"小圆钮",row:"菜单行",pills:"大胶囊 / 大关闭",hero:"训练卡",goals:"目标板",tile:"数据卡",bricks:"积木柱状图",pill:"标签 · G 币",toast:"提示条",mini:"迷你播放器",transport:"播放控制"};
+const NAMES={box:"主题盲盒 · 刮刮卡",dial:"动作窗口 · 拨轮",brand:"服务图标 · 主题键",tick:"打勾按钮",hgo:"开练",btn:"主 / 次按钮",switch:"开关",modesw:"明暗开关",seg:"分段按钮",optpick:"单选行",mode:"随机 / 循环",knob:"旋钮",stepper:"加减",sets:"组别",vol:"音量",thc:"主题行",preset:"计划卡",cal:"日历日子",plgrid:"歌单格子",dock:"底栏",headbtn:"顶栏圆钮",small:"小圆钮",row:"菜单行",pills:"歌单按钮 · 底排",hero:"训练卡",goals:"目标板",tile:"数据卡",bricks:"积木柱状图",pill:"标签 · G 币",toast:"提示条",mini:"迷你播放器",transport:"播放控制"};
 let st={v:"one",t:"aurora",m:"light",c:"tick"};
 try{Object.assign(st,JSON.parse(localStorage.getItem("cat-state")||"{}"))}catch(e){}
 const $=s=>document.querySelector(s);
