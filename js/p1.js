@@ -60,7 +60,7 @@ const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,s
   {id:"braun",zh:"米白 · 柿橙",en:"Cream · Persimmon",price:90,fix:"light",sw:["#D8D5CA","#F6F5EF","#1C1B18","#F26422"],dz:"方键、凹碟、滚花拨盘",de:"Square keys, concave dishes, a fluted dial"},
   {id:"md",zh:"迷你碟",en:"Mini Disc",price:120,fix:"light",sw:["#BFC6D0","#D3DAE3","#AEB9A2","#FF6A13"],dz:"冰蓝拉丝铝、段码液晶、橡胶小键",de:"Ice-blue brushed aluminium, a segment LCD, rubber keys"},
   {id:"nikon",zh:"相机机身",en:"Camera Body",price:120,fix:"dark",sw:["#141517","#26272A","#9EA3AA","#E8302A"],dz:"压纹蒙皮、滚花拨盘、快门键",de:"Pebbled leatherette, knurled dials, a shutter button"},
-  {id:"dyson",zh:"磨砂工业",en:"Matte Machine",price:120,fix:"light",sw:["#B9BCC0","#CACDD0","#BF5F2B","#2E7CC7"],dz:"镍灰喷砂机身、铜色哑光、抛光钢旋纹按钮、红蓝小点",de:"Bead-blasted nickel, matte copper, spun-steel buttons, red and blue dots"},
+  {id:"dyson",zh:"瓷粉 · 普鲁士蓝",en:"Ceramic Pink · Prussian Blue",price:120,lit:1,sw:["#EDDBD3","#C46F6C","#141936","#D49A5E"],dz:"亮：奶白陶瓷机身配玫瑰金属；暗：普鲁士蓝哑光配金铜；旋纹按钮、滤网纹样",de:"Light: cream ceramic with rose metal; dark: Prussian blue matte with rich copper; spun-ring buttons, filter grille"},
   {id:"clay",zh:"黏土 · 薄荷",en:"Clay · Mint",price:90,fix:"light",sw:["#E3E1DA","#FFFFFF","#C7C5BD","#7CE8C4"],dz:"斜投影积木、网格纸、发光圆环",de:"Blocks with slanted shadows, grid paper, a glowing ring"}];
 function themeOwned(id){const t=THEMES.find(x=>x.id===id);return !!t&&(!t.price||(state.settings.buys||[]).some(b=>b.id===id))}
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}

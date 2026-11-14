@@ -1113,38 +1113,68 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="nikon"] .bricks{background:#0E0F10;box-shadow:inset 0 2px 6px rgba(0,0,0,.8)}
 :root[data-theme="nikon"] .opt[aria-checked="true"] .sw{background:#E8302A}
 :root[data-theme="nikon"] #syncBtn .syncdot.ok{background:#7BD389}
-:root[data-theme="dyson"] .dock button[aria-selected="true"]{color:#fff}
-/* Dyson Supersonic, nickel/copper: bead-blasted nickel body, a burnt-copper nozzle, polished spun-steel buttons with a
-   black rim, red and blue indicator dots, and the perforated filter grille */
-:root[data-theme="dyson"]{--fine:url(../img/tex-0.webp);--bg:#B9BCC0;--glow:none;--card:#CACDD0;--line:rgba(0,0,0,.07);--lit:inset 0 1px 0 rgba(255,255,255,.5);--sub:#B6B9BD;--seg:#B6B9BD;--dark:#B65A28;--dark-solid:#B65A28;--dark-line:#7A3412;--track:rgba(255,255,255,.25);--ink:#1D1E21;--muted:#5C5F65;--ac:#BF5F2B;--on-ac:#fff;--ac-soft:rgba(191,95,43,.15);--ac-text:#93421A;--st1:rgba(191,95,43,.24);--st2:rgba(191,95,43,.6);--push:#BF5F2B;--pull:#2E7CC7;--third:#6A6D73;--kpush:var(--push);--kpull:var(--pull);--kthird:var(--third);--good:#2E7CC7;--bad:#D9453A;--sleep:#5E6BB5;--red:#E2463B;--blue:#2E7CC7;
-  --copper:radial-gradient(130% 90% at 30% 0%,rgba(255,214,170,.45),rgba(255,214,170,0) 55%),linear-gradient(170deg,#D27A42 0%,#BF5F2B 45%,#9A4317 100%);
-  --steel:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.28) 0 .6px,rgba(0,0,0,.07) .6px 1.4px),radial-gradient(circle at 38% 28%,#FBFBFC 0%,#C9CBCF 45%,#8C8F94 100%);
-  --steelsh:0 0 0 1.5px #121214,0 2px 0 1.5px #121214,0 3px 0 1.5px #3A3B3F,0 6px 9px -2px rgba(0,0,0,.45),inset 0 1px 1px rgba(255,255,255,.85),inset 0 -2px 3px rgba(0,0,0,.18);
-  --mat:linear-gradient(178deg,#D3D5D8 0%,#C3C6CA 100%);--diff:radial-gradient(150% 100% at var(--lx) var(--ly),rgba(255,255,255,calc(.32*var(--rt))),rgba(255,255,255,0) 60%);--shadow:0 0 0 1px rgba(0,0,0,.05),0 1px 1px rgba(30,30,40,.12),0 8px 16px -6px rgba(30,30,40,.2),0 26px 40px -20px rgba(30,30,40,.28),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -12px 22px -14px rgba(0,0,0,.1);--disp:"Futura","Avenir Next","Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--num:"Futura","Avenir Next","Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
-:root[data-theme="dyson"] body{background-color:#3B3D41;background-image:radial-gradient(110% 60% at 50% -10%,rgba(255,255,255,.12),rgba(255,255,255,0) 60%),var(--fine);background-size:100% 100%,200px 200px;background-blend-mode:normal,soft-light;background-attachment:scroll}
-:root[data-theme="dyson"] .card,:root[data-theme="dyson"] .tile,:root[data-theme="dyson"] .sheet .panel,:root[data-theme="dyson"] .mask .sheet,:root[data-theme="dyson"] .dock{background:var(--diff),var(--fine),var(--mat);background-size:100% 100%,200px 200px,100% 100%;background-blend-mode:normal,soft-light,normal;border:0;border-radius:24px;box-shadow:var(--shadow);color:var(--ink)}
-:root[data-theme="dyson"] .dark:not(.hero){--muted:rgba(255,235,220,.72);--sub:rgba(0,0,0,.14);background:var(--fine),var(--copper);background-size:200px 200px,100% 100%;background-blend-mode:soft-light,normal;color:#fff;border:0;border-radius:24px;box-shadow:inset 0 1px 0 rgba(255,230,200,.5),inset 0 -20px 30px -20px rgba(70,20,0,.45),0 12px 24px -8px rgba(120,50,15,.45)}
+/* Two-in-one hair-dryer skin. Light: ceramic pink with strawberry bronze (cream ceramic body, a rose-metal head, mauve
+   anodised buttons, the lavender filter grille). Dark: Prussian blue with rich copper (deep blue matte body, a
+   golden-copper head and grille, copper buttons). Shared: anodised metal with a fine grain, spun-ring buttons sitting
+   proud of the body with a visible edge, the perforated grille, the nozzle seen end-on for the tick. */
+:root[data-theme="dyson"]{--fine:url(../img/tex-0.webp);--glow:none;
+  --bg:#EFDDD5;--page:radial-gradient(120% 70% at 20% -10%,#F8EAE4 0%,rgba(248,234,228,0) 60%),radial-gradient(90% 60% at 100% 100%,#E7CFC8 0%,rgba(231,207,200,0) 70%),#EDDBD3;
+  --card:#F6EEE9;--mat:linear-gradient(176deg,#FBF5F1 0%,#F1E6E0 100%);--line:rgba(80,40,40,.07);--lit:inset 0 1px 0 rgba(255,255,255,.8);--sub:#EADDD7;--seg:#EADDD7;
+  --ink:#3A2828;--muted:#8F7671;--ac:#C46F6C;--on-ac:#fff;--ac-soft:rgba(196,111,108,.16);--ac-text:#A04E4C;--st1:rgba(196,111,108,.24);--st2:rgba(196,111,108,.6);
+  --push:#C46F6C;--pull:#7F7AAE;--third:#A08C86;--kpush:var(--push);--kpull:var(--pull);--kthird:var(--third);--good:#5E8F78;--bad:#C9524C;--sleep:#8C84C0;--dot:#E0584E;--dot2:#4C8FD6;
+  --dark:#C46F6C;--dark-solid:#C46F6C;--dark-line:#8E4645;--track:rgba(255,255,255,.3);
+  /* the head: a rose metal, darker at the rim, a soft sheen that follows the light */
+  --metal:radial-gradient(120% 80% at var(--lx,30%) 0%,rgba(255,228,222,.55),rgba(255,228,222,0) 55%),linear-gradient(168deg,#EBB2AB 0%,#D58783 38%,#C06A67 70%,#9E4F4E 100%);
+  --metal-ink:#fff;--metal-sh:rgba(150,70,65,.42);--metal-edge:#8E4645;
+  /* the buttons: mauve anodised discs, spun rings, a dark rim, raised */
+  --disc:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.22) 0 .6px,rgba(60,30,50,.06) .6px 1.4px),radial-gradient(circle at 38% 28%,#E7DCE6 0%,#B3A3B6 50%,#7F6F86 100%);
+  --disc-ink:#3A2840;--rim:#2E2228;--disc-edge:#6A5A70;
+  --grille-bg:#A79DB0;--grille-hole:#4A4252;--grille-lip:#D4CCDA;--throat:#2C2426;
+  --shadow:0 0 0 1px rgba(120,60,50,.05),0 1px 1px rgba(90,40,40,.08),0 8px 16px -6px rgba(110,50,45,.16),0 26px 40px -20px rgba(110,50,45,.22),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -12px 22px -14px rgba(120,60,50,.08);
+  --disp:"Futura","Avenir Next","Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--num:"Futura","Avenir Next","Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
+:root[data-theme="dyson"][data-mode="dark"]{
+  --bg:#141936;--page:radial-gradient(120% 70% at 15% -10%,#2A3266 0%,rgba(42,50,102,0) 60%),radial-gradient(90% 60% at 100% 100%,#1C2246 0%,rgba(28,34,70,0) 70%),#141936;
+  --card:#262E5E;--mat:linear-gradient(176deg,#2E3770 0%,#232A57 100%);--line:rgba(255,255,255,.06);--lit:inset 0 1px 0 rgba(255,255,255,.12);--sub:#1D2449;--seg:#1D2449;
+  --ink:#EEF0FA;--muted:#A3A9CF;--ac:#D49A5E;--on-ac:#fff;--ac-soft:rgba(212,154,94,.18);--ac-text:#E9B57D;--st1:rgba(212,154,94,.26);--st2:rgba(212,154,94,.62);
+  --push:#D49A5E;--pull:#7EA6F0;--third:#9AA0C4;--good:#7FC7A0;--bad:#F07A6A;--sleep:#A7A0F0;
+  --dark:#D49A5E;--dark-solid:#D49A5E;--dark-line:#8A5826;
+  --metal:radial-gradient(120% 80% at var(--lx,30%) 0%,rgba(255,226,186,.5),rgba(255,226,186,0) 55%),linear-gradient(168deg,#DFA569 0%,#C4864A 36%,#A86A33 68%,#774319 100%);
+  --metal-ink:#fff;--metal-sh:rgba(0,0,0,.5);--metal-edge:#7A4A1E;
+  --disc:repeating-radial-gradient(circle at 50% 50%,rgba(255,240,220,.25) 0 .6px,rgba(80,40,10,.08) .6px 1.4px),radial-gradient(circle at 38% 28%,#F7DDBA 0%,#D29C62 50%,#8F5A2A 100%);
+  --disc-ink:#2A1A0C;--rim:#0A0D1E;--disc-edge:#6A4220;
+  --grille-bg:#C2864A;--grille-hole:#3A2410;--grille-lip:#F1C894;--throat:#0C1022;
+  --shadow:0 0 0 1px rgba(0,0,0,.25),0 1px 1px rgba(0,0,0,.3),0 8px 16px -6px rgba(0,0,0,.45),0 26px 40px -20px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -12px 22px -14px rgba(0,0,0,.25);color-scheme:dark}
+:root[data-theme="dyson"] body{background:var(--fine),var(--page);background-size:200px 200px,100% 100%;background-blend-mode:soft-light,normal;background-attachment:scroll}
+:root[data-theme="dyson"] .card,:root[data-theme="dyson"] .tile,:root[data-theme="dyson"] .hero.dark,:root[data-theme="dyson"] .sheet .panel,:root[data-theme="dyson"] .mask .sheet,:root[data-theme="dyson"] .dock,:root[data-theme="dyson"] .mini-pl{background:radial-gradient(150% 100% at var(--lx,30%) var(--ly,10%),rgba(255,255,255,calc(.22*var(--rt,.5))),rgba(255,255,255,0) 60%),var(--fine),var(--mat);background-size:100% 100%,200px 200px,100% 100%;background-blend-mode:normal,soft-light,normal;border:0;border-radius:24px;box-shadow:var(--shadow);color:var(--ink)}
+/* the big card is the head of the dryer: the metal, with the fine grain */
+:root[data-theme="dyson"] .dark:not(.hero){--muted:color-mix(in srgb,var(--metal-ink) 70%,transparent);--sub:rgba(0,0,0,.12);--track:rgba(255,255,255,.28);background:var(--fine),var(--metal);background-size:200px 200px,100% 100%;background-blend-mode:soft-light,normal;color:var(--metal-ink);border:0;border-radius:24px;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 1px rgba(255,255,255,.12),inset 0 -20px 30px -20px rgba(60,20,0,.35),0 12px 24px -8px var(--metal-sh)}
+:root[data-theme="dyson"] .hero.dark{--muted:inherit;--sub:inherit}
 :root[data-theme="dyson"] .glowring{display:none}
 :root[data-theme="dyson"] h1,:root[data-theme="dyson"] .hero h2,:root[data-theme="dyson"] .big,:root[data-theme="dyson"] .tile .tv,:root[data-theme="dyson"] .f-num b,:root[data-theme="dyson"] .stats b{font-weight:600;letter-spacing:-.01em}
-:root[data-theme="dyson"] .btn,:root[data-theme="dyson"] .hgo,:root[data-theme="dyson"] .dock .pc,:root[data-theme="dyson"] .opt[aria-pressed="true"],:root[data-theme="dyson"] .preset.on,:root[data-theme="dyson"] .thc.on,:root[data-theme="dyson"] .seg button[aria-pressed="true"],:root[data-theme="dyson"] .mask .mode-tabs button.active,:root[data-theme="dyson"] .pill.ac{background:var(--fine),var(--copper);background-size:200px 200px,100% 100%;background-blend-mode:soft-light,normal;color:#fff;border-color:transparent;box-shadow:inset 0 1px 0 rgba(255,225,190,.5),inset 0 -2px 3px rgba(80,25,0,.25),0 4px 10px -3px rgba(150,60,20,.45)}
-:root[data-theme="dyson"] .btn.ghost{background:var(--fine),linear-gradient(180deg,#D9DBDE,#B3B6BA);background-size:200px 200px,100% 100%;background-blend-mode:soft-light,normal;color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.75),inset 0 -1px 2px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.12),0 3px 8px -3px rgba(0,0,0,.28)}
-:root[data-theme="dyson"] .btn:active,:root[data-theme="dyson"] .hgo:active{transform:scale(.98)}
-:root[data-theme="dyson"] .circ,:root[data-theme="dyson"] .fsreset,:root[data-theme="dyson"] .mini{background:var(--steel);border:0;color:#1D1E21;box-shadow:var(--steelsh)}
-:root[data-theme="dyson"] .opt,:root[data-theme="dyson"] .seg,:root[data-theme="dyson"] .calpill,:root[data-theme="dyson"] .thc,:root[data-theme="dyson"] .preset,:root[data-theme="dyson"] .mask .mode-tabs,:root[data-theme="dyson"] .mask input,:root[data-theme="dyson"] .mask select,:root[data-theme="dyson"] .mask textarea{background:#BFC2C6;border-color:transparent;box-shadow:inset 0 1px 3px rgba(0,0,0,.16),0 1px 0 rgba(255,255,255,.6)}
+:root[data-theme="dyson"] .btn,:root[data-theme="dyson"] .hgo,:root[data-theme="dyson"] .dock .pc,:root[data-theme="dyson"] .opt[aria-pressed="true"],:root[data-theme="dyson"] .preset.on,:root[data-theme="dyson"] .thc.on,:root[data-theme="dyson"] .seg button[aria-pressed="true"],:root[data-theme="dyson"] .mask .mode-tabs button.active,:root[data-theme="dyson"] .pill.ac{background:var(--fine),var(--metal);background-size:200px 200px,100% 100%;background-blend-mode:soft-light,normal;color:var(--metal-ink);border-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 3px rgba(60,20,0,.22),0 2px 0 var(--metal-edge),0 6px 12px -4px var(--metal-sh)}
+:root[data-theme="dyson"] .dock button[aria-selected="true"]{color:var(--metal-ink)}
+:root[data-theme="dyson"] .btn.ghost{background:var(--fine),var(--mat);background-size:200px 200px,100% 100%;background-blend-mode:soft-light,normal;color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 0 0 1px var(--line),0 2px 0 color-mix(in srgb,var(--ink) 14%,transparent),0 5px 10px -4px rgba(0,0,0,.25)}
+:root[data-theme="dyson"] .btn:active,:root[data-theme="dyson"] .hgo:active{transform:translateY(1.5px);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 2px 4px rgba(0,0,0,.2),0 .5px 0 var(--metal-edge)}
+/* small round keys: anodised discs with spun rings, a dark rim, raised on a short edge */
+:root[data-theme="dyson"] .circ,:root[data-theme="dyson"] .fsreset,:root[data-theme="dyson"] .mini{background:var(--disc);border:0;color:var(--disc-ink);box-shadow:0 0 0 1.5px var(--rim),0 2px 0 1.5px var(--rim),0 3px 0 1.5px var(--disc-edge),0 6px 9px -2px rgba(0,0,0,.4),inset 0 1px 1px rgba(255,255,255,.75),inset 0 -2px 3px rgba(0,0,0,.18)}
+:root[data-theme="dyson"] .circ:active,:root[data-theme="dyson"] .fsreset:active,:root[data-theme="dyson"] .mini:active{transform:translateY(2px);box-shadow:0 0 0 1.5px var(--rim),0 1px 0 1.5px var(--disc-edge),inset 0 1px 3px rgba(0,0,0,.3)}
+:root[data-theme="dyson"] .opt,:root[data-theme="dyson"] .seg,:root[data-theme="dyson"] .calpill,:root[data-theme="dyson"] .thc,:root[data-theme="dyson"] .preset,:root[data-theme="dyson"] .mask .mode-tabs,:root[data-theme="dyson"] .mask input,:root[data-theme="dyson"] .mask select,:root[data-theme="dyson"] .mask textarea{background:var(--sub);border-color:transparent;box-shadow:inset 0 1px 3px rgba(0,0,0,.14),0 1px 0 rgba(255,255,255,.35)}
 :root[data-theme="dyson"] .dock button{color:var(--muted)}
-/* the tick: the copper nozzle seen end-on, a dark throat in the middle */
-:root[data-theme="dyson"] .tickb{background:radial-gradient(circle,#2A2B2E 0 34%,#16171A 36% 40%,rgba(0,0,0,0) 41%),var(--copper);color:#fff;box-shadow:0 0 0 6px #B9BCC0,0 0 0 7px rgba(0,0,0,.18),0 16px 26px -8px rgba(110,45,10,.5),inset 0 2px 4px rgba(255,220,180,.5),inset 0 -6px 12px rgba(80,25,0,.35)}
-:root[data-theme="dyson"] .tickb.done{background:var(--steel);color:#5C5F65;box-shadow:var(--steelsh)}
-:root[data-theme="dyson"] .tickb .tr circle{stroke:var(--red)}
-:root[data-theme="dyson"] .cal .dd.trn b{background:color-mix(in srgb,var(--kc) 22%,#D3D5D8);color:color-mix(in srgb,var(--kc) 80%,#000);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 2px rgba(0,0,0,.15)}
-:root[data-theme="dyson"] .cal .dd.today b{background:var(--copper);color:#fff}
-:root[data-theme="dyson"] .fs-peek i,:root[data-theme="dyson"] .fstack[data-fs="hero"] .fs-peek i{background:#BDC0C4;border:0}
+/* the tick: the head seen end-on, a dark throat and the clear ring around it */
+:root[data-theme="dyson"] .tickb{background:radial-gradient(circle,var(--throat) 0 33%,rgba(0,0,0,.6) 34.5%,rgba(255,255,255,.35) 36%,rgba(255,255,255,.08) 38% 41%,rgba(0,0,0,.25) 42%,rgba(0,0,0,0) 44%),var(--fine),var(--metal);background-size:100% 100%,200px 200px,100% 100%;background-blend-mode:normal,soft-light,normal;color:#fff;box-shadow:0 0 0 1.5px var(--metal-edge),0 0 0 7px color-mix(in srgb,var(--bg) 80%,transparent),0 0 0 8px var(--line),0 18px 28px -8px var(--metal-sh),inset 0 2px 4px rgba(255,255,255,.55),inset 0 -6px 12px rgba(60,20,0,.3)}
+:root[data-theme="dyson"] .tickb.done{background:var(--disc);color:var(--disc-ink);box-shadow:0 0 0 1.5px var(--rim),0 3px 0 1.5px var(--disc-edge)}
+:root[data-theme="dyson"] .tickb .tr circle{stroke:var(--dot)}
+:root[data-theme="dyson"] .cal .dd.trn b{background:color-mix(in srgb,var(--kc) 26%,var(--card));color:color-mix(in srgb,var(--kc) 78%,var(--ink));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 2px rgba(0,0,0,.15)}
+:root[data-theme="dyson"] .cal .dd.today b{background:var(--metal);color:var(--metal-ink);box-shadow:0 1.5px 0 var(--metal-edge)}
+:root[data-theme="dyson"] .fs-peek i,:root[data-theme="dyson"] .fstack[data-fs="hero"] .fs-peek i{background:var(--sub);border:0}
 :root[data-theme="dyson"] .fstack>.fs-top,:root[data-theme="dyson"] .fstack[data-fs="hero"]>.fs-top{box-shadow:var(--shadow)}
-:root[data-theme="dyson"] .knobw .knob{background:var(--steel);box-shadow:var(--steelsh),0 8px 14px -4px rgba(20,20,30,.4)}
-:root[data-theme="dyson"] .knobw .knob i{background:var(--red);width:6px;height:6px;border-radius:50%;margin-left:-3px}
-/* the brick chart sits in the perforated grille */
-:root[data-theme="dyson"] .bricks{background:radial-gradient(circle,rgba(0,0,0,.28) 0 2px,rgba(255,255,255,.35) 2.6px,rgba(0,0,0,0) 3.2px) 0 0/9px 9px,#B3B6BA;box-shadow:inset 0 1px 3px rgba(0,0,0,.18)}
-:root[data-theme="dyson"] .opt[aria-checked="true"] .sw{background:var(--blue)}
+:root[data-theme="dyson"] .knobw .knob{background:var(--disc);box-shadow:0 0 0 1.5px var(--rim),0 3px 0 1.5px var(--disc-edge),0 8px 14px -4px rgba(0,0,0,.4)}
+:root[data-theme="dyson"] .knobw .knob i{background:var(--dot);width:6px;height:6px;border-radius:50%;margin-left:-3px}
+/* charts sit in the filter grille */
+:root[data-theme="dyson"] .bricks{background:radial-gradient(circle,var(--grille-hole) 0 2px,var(--grille-lip) 2.6px,rgba(0,0,0,0) 3.2px) 0 0/9px 9px,var(--grille-bg);box-shadow:inset 0 1px 3px rgba(0,0,0,.25),0 1px 0 rgba(255,255,255,.25)}
+:root[data-theme="dyson"] .opt[aria-checked="true"] .sw{background:var(--dot2)}
+:root[data-theme="dyson"] .f-dial{--d-p:10;--d-body:var(--grille-bg);--d-slot:color-mix(in srgb,var(--grille-bg) 60%,#000);--d-tex:radial-gradient(circle,var(--grille-hole) 0 2.2px,color-mix(in srgb,var(--grille-hole) 40%,var(--grille-bg)) 2.6px 3.1px,var(--grille-lip) 3.6px);--d-size:10px 10px}
+:root[data-theme="dyson"] .f-win{--w-bg:color-mix(in srgb,var(--sub) 70%,var(--bg))}
 :root[data-theme="mac"]{--bead:url(../img/tex-6.webp);--bg:#D6D7DA;--glow:none;--card:#E3E4E6;--line:rgba(0,0,0,.08);--lit:inset 0 1px 0 rgba(255,255,255,.9);--sub:#CDCED1;--seg:#CDCED1;--dark:#1C1C1E;--dark-solid:#1C1C1E;--dark-line:#000;--track:rgba(255,255,255,.18);--ink:#1D1D1F;--muted:#6E6E73;--ac:#0A84FF;--on-ac:#fff;--ac-soft:rgba(10,132,255,.13);--ac-text:#0066CC;--st1:rgba(10,132,255,.22);--st2:rgba(10,132,255,.58);--push:#0A84FF;--pull:#FF9F0A;--third:#8E8E93;--kpush:var(--push);--kpull:var(--pull);--kthird:var(--third);--good:#1F9D55;--bad:#E5484D;--sleep:#7D6BD6;--mat:linear-gradient(180deg,#E8E9EB 0%,#DCDDE0 100%);--spec:radial-gradient(140% 90% at var(--lx) var(--ly),rgba(255,255,255,calc(.45*var(--rt))),rgba(255,255,255,0) 55%);--chamfer:inset 0 0 0 1px rgba(255,255,255,.75),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(0,0,0,.1);--shadow:var(--chamfer),0 0 0 .5px rgba(0,0,0,.18),0 2px 3px rgba(0,0,0,.08),0 12px 24px -10px rgba(0,0,0,.22),0 30px 50px -26px rgba(0,0,0,.3);--key:linear-gradient(180deg,#2B2B2E 0%,#1A1A1C 100%);--keysh:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 .5px #000,0 1px 1px rgba(0,0,0,.4);--disp:-apple-system,BlinkMacSystemFont,"Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--num:-apple-system,BlinkMacSystemFont,"Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
 :root[data-theme="mac"][data-mode="dark"]{--bg:#1B1B1D;--card:#3A3B3F;--line:rgba(255,255,255,.07);--sub:#2A2B2E;--seg:#2A2B2E;--dark:#0E0E10;--dark-solid:#0E0E10;--track:#3A3B3F;--ink:#F5F5F7;--muted:#98989D;--ac-text:#4CA3FF;--mat:linear-gradient(180deg,#46474B 0%,#38393D 100%);--spec:radial-gradient(140% 90% at var(--lx) var(--ly),rgba(255,255,255,calc(.12*var(--rt))),rgba(255,255,255,0) 55%);--chamfer:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(0,0,0,.4);--shadow:var(--chamfer),0 0 0 .5px #000,0 2px 3px rgba(0,0,0,.3),0 12px 24px -10px rgba(0,0,0,.55),0 30px 50px -26px rgba(0,0,0,.7);--key:linear-gradient(180deg,#141416 0%,#0B0B0C 100%);color-scheme:dark}
 :root[data-theme="mac"] .dock button[aria-selected="true"]{color:#F5F5F7}
@@ -1383,7 +1413,6 @@ button.f-x svg{width:18px;height:18px}
 :root[data-theme="braun"] .dl-mark{background:#F26422}
 :root[data-theme="md"] .f-dial{--d-p:6;--d-body:#8E98A6;--d-hi:#E3E8EF;--d-lo:#4A5260;--d-tex:conic-gradient(from -45deg,var(--d-hi) 0 90deg,var(--d-body) 90deg 180deg,var(--d-lo) 180deg 270deg,#6E7786 270deg 360deg);--d-size:6px 6px}
 :root[data-theme="nikon"] .f-dial{--d-p:12;--d-slot:#060607;--d-body:#2C2E31;--d-hi:#5A5D62;--d-lo:#0B0B0C;--d-tex:conic-gradient(from -45deg,var(--d-hi) 0 90deg,var(--d-body) 90deg 180deg,var(--d-lo) 180deg 270deg,#1C1D1F 270deg 360deg);--d-size:12px 11px}
-:root[data-theme="dyson"] .f-dial{--d-p:10;--d-body:#C3C6CA;--d-slot:#9EA1A6;--d-tex:radial-gradient(circle,#2B2C2F 0 2.2px,#7E8187 2.6px 3.1px,#D6D8DB 3.6px);--d-size:10px 10px}
 :root[data-theme="clay"] .f-dial{--d-p:16;--d-slot:var(--bg);--d-body:var(--ac);--d-tex:radial-gradient(circle at 50% 50%,#D8FBEF 0,#9FEED4 30%,var(--ac) 52%,#4FAF8F 100%);--d-size:16px 100%;box-shadow:inset 3px 5px 8px rgba(30,60,48,.2),inset -3px -4px 8px rgba(255,255,255,.9);border-radius:22px}
 :root[data-theme="clay"] .dl-wheel{border-radius:16px}
 :root[data-theme="clay"] .dl-wheel::after{background:linear-gradient(180deg,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 20%,rgba(0,0,0,0) 80%,rgba(30,60,48,.2) 100%)}
@@ -1421,6 +1450,3 @@ html.groove .cal .dd.trn b,html.groove .cal .dd.xo b,html.groove .cal .dd.today 
 html.groove .cal .dd:is(.trn,.xo,.today):nth-child(3n+1) b{animation-delay:-.17s}
 html.groove .cal .dd:is(.trn,.xo,.today):nth-child(3n+2) b{animation-delay:-.34s}
 @keyframes grooveDay{from{transform:none}to{transform:translateY(-1.5px) scale(1.05)}}
-/* Dyson: the page is the dark grey of the cord, so what sits straight on it is light */
-:root[data-theme="dyson"] .top h1{color:#ECEDEF}
-:root[data-theme="dyson"] .top #today{color:#A9ACB1}
