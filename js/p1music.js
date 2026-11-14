@@ -1,8 +1,8 @@
 /* 推拉机 · mini player: a remote for Spotify through the Web API (Spotify Connect). The app on the phone plays; this
    page shows what's on and sends play / pause / next / previous / volume. Sign-in is PKCE with no server; the tokens
    live in tracktor-sp, which backups don't carry. Control needs Premium.
-   The client id is the user's own (Settings › Advanced › Spotify, tracktor-sp-cid); until there is one, the panel offers a
-   preview with a sample track so the look can be tried.
+   The client id is the user's own (Settings › Advanced › Spotify, tracktor-sp-cid). A preview with a sample track
+   (tracktor-p1-music = demo) has no switch in the panel; it is there for tests.
    tracktor-p1-music: "on" (connected player shown), "demo" (preview), anything else: hidden. */
 const SPC_K="tracktor-sp-cid";
 function spCid(){try{return (localStorage.getItem(SPC_K)||"").trim()}catch(e){return ""}}
@@ -196,15 +196,13 @@ function openMusic(){const mode=spMode(),con=!!(SP.tok&&mode==="on"),cid=spCid()
   const body='<label class="flabel">Client ID<span class="pastef"><input id="spcid" autocomplete="off" spellcheck="false" placeholder="'+T("粘贴 Spotify 开发者后台里的 Client ID","Paste the Client ID from the Spotify developer dashboard")+'" value="'+esc(cid)+'"><button type="button" class="pastebtn" data-sppaste aria-label="'+T("粘贴","Paste")+'">'+SP_PASTE+'</button></span></label>'
     +'<p class="calc-msg">'+T("控制播放需要 Spotify Premium。","Controlling playback needs Spotify Premium.")+'</p>'
     +(con?'<p class="wxnow">'+SPI.note+T('已连接 Spotify','Spotify connected')+'</p>':'')
-    +'<div class="mode-tabs"><button type="button" data-spd="1" class="'+(mode==="demo"?"active":"")+'"'+(con?' hidden':'')+'>'+T('预览','Preview')+'</button><button type="button" data-spd="0" class="'+(mode!=="demo"&&!con?"active":"")+'"'+(con?' hidden':'')+'>'+T('不显示','Hidden')+'</button></div>';
   const S=p1Sheet("Spotify",body,con?'<button class="btn ghost wide" type="button" data-spx>'+T('断开','Disconnect')+'</button>':'<button class="btn wide" type="button" data-spc>'+T('连接 Spotify','Connect Spotify')+'</button>');
   const inp=S.q("#spcid"),save=()=>{const v=inp.value.replace(/[^A-Za-z0-9]/g,"").slice(0,64);inp.value=v;try{v?localStorage.setItem(SPC_K,v):localStorage.removeItem(SPC_K)}catch(e){}};
   inp.addEventListener("change",save);inp.addEventListener("focus",()=>setTimeout(()=>inp.select(),0));
   S.q("[data-sppaste]").addEventListener("click",async()=>{try{inp.value=await navigator.clipboard.readText();save();buzz(10)}catch(e){inp.focus();toast(T("读不到剪贴板，请长按输入框粘贴","Can't read the clipboard; long-press the box to paste"))}});
   const c=S.q("[data-spc]");if(c)c.addEventListener("click",()=>{save();if(!spCid()){toast(T("先填 Client ID","Fill in the Client ID first"));inp.focus();return}if(spMode()==="demo"){spSetMode("");spStop()}spConnect()});
   const x=S.q("[data-spx]");if(x)x.addEventListener("click",()=>{SP.tok=null;spSave();spSetMode("");spStop();S.close()});
-  S.m.querySelectorAll("[data-spd]").forEach(b=>b.addEventListener("click",()=>{const on=b.dataset.spd==="1";spSetMode(on?"demo":"");
-    S.m.querySelectorAll("[data-spd]").forEach(o=>o.classList.toggle("active",o===b));on?spStart():spStop()}))}
+}
 p1Reg("music",openMusic);
 
 /* ---------- run ---------- */
