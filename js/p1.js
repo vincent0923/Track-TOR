@@ -603,6 +603,15 @@ function openBox(){const left=boxLeft();if(!left.length){toast(T("所有主题�
       content:'<span class="tsws">'+themeChips(th)+'</span><b>'+T(th.zh,th.en)+'</b>',
       onProgress(){const t=performance.now();if(t-snd>70){snd=t;if(typeof fxHit==="function")fxHit(0,.06,2600,.5,.025,"highpass");buzz(3)}},
       onReveal(){celebrate(8,1);buzz([20,40,30]);act.querySelectorAll("[hidden]").forEach(x=>x.hidden=false)}})})}
+/* a balance past what fits on screen shows as ∞, until it is spent back down to 999,999 */
+const gShow=n=>n>999999?"∞":fmt(n);
+/* hold the big G coin for a six-digit code; only its SHA-256 fingerprint lives here */
+const G_CODE="c7b82c9175b5a8710a4e34474035a9a40b0b584e264eec68ef6df9237f0c87cd";
+async function gCodeOk(v){try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("bG:"+v));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("")===G_CODE}catch(e){return false}}
+function openCheat(){const S=p1Sheet("G",'<input id="gcode" class="gcode" type="tel" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••••">','<span></span>');const inp=S.q("#gcode");setTimeout(()=>inp.focus(),80);
+  inp.addEventListener("input",async()=>{inp.value=inp.value.replace(/\D/g,"").slice(0,6);if(inp.value.length<6)return;
+    if(await gCodeOk(inp.value)){state.settings.buys=(state.settings.buys||[]).concat([{id:"code:"+Date.now(),g:-50000,d:today()}]);lsSave();S.close();toast("+50,000 G");celebrate(10,1);SFX.done();coinSheet(false)}
+    else{inp.classList.remove("no");void inp.offsetWidth;inp.classList.add("no");buzz([30,40,30]);setTimeout(()=>{inp.value=""},350)}})}
 function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
   const nextOf=b=>{if(b.tiers){const n=b.tiers.find(t=>t>b.have);return n==null?null:n}const n=(Math.floor(b.have/b.step+1e-9)+1)*b.step;return +n.toFixed(2)};
   const rows=bs.map(b=>{const n=nextOf(b),prev=b.tiers?([0].concat(b.tiers).filter(t=>t<=b.have).pop()):Math.floor(b.have/b.step+1e-9)*b.step,pct=n==null?1:Math.max(0,Math.min(1,(b.have-prev)/(n-prev)));
@@ -613,7 +622,7 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
   const plans='<div class="shopc"><div class="shopart" style="background:linear-gradient(135deg,#22C55E,#0EA5E9)"></div><div class="sp"><b>'+T('大家写的训练计划','Plans by other users')+'</b><p class="muted">'+T('用户写的训练计划，审核后上架','Training plans written by users, reviewed before they go up')+'</p></div><span class="pill">'+T('即将上线','Coming soon')+'</span></div>';
   const shop=[[T("像素 RPG","Pixel RPG"),T("打勾就挥剑，练完打怪升级","Every tick swings a sword; level up as you train")],[T("Low poly 小镇","Low-poly town"),T("每个训练日在小镇里盖一栋楼","Every training day builds a house in town")]].map(([n,d])=>'<div class="shopc"><div class="shopart"></div><div class="sp"><b>'+n+'</b><p class="muted">'+d+'</p></div><div style="text-align:right"><span class="coinchip">'+COIN+'<b class="n">2,000</b></span><br><span class="pill" style="margin-top:6px">'+T('即将上线','Coming soon')+'</span></div></div>').join("");
   openSheet('<div class="sh-h"><h3>G</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
-    +'<div class="row" style="margin-bottom:16px;align-items:center"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+fmt(tot)+'</div></div>'
+    +'<div class="row" style="margin-bottom:16px;align-items:center"><span class="coinbig">'+COIN+'</span><div class="sp"><div class="big">'+gShow(tot)+'</div></div>'
     +'<button class="boxbtn'+(boxLeft().length?'':' done')+'" type="button" data-act="box" aria-label="'+T('主题盲盒','Theme blind box')+'"><img src="icon-192.png?v=4" alt=""></button></div>'
     +'<p class="eyebrow" id="shop" style="margin-bottom:8px">'+T('主题','Themes')+'</p><div class="setlist">'+THEMES.map(th=>{const own=themeOwned(th.id),on=(themeOwned(state.settings.theme)?state.settings.theme:"aurora")===th.id;
       const chips=themeChips(th);
@@ -621,6 +630,7 @@ function coinSheet(shopFirst){const bs=coinBadges(),tot=coinTotal();
         +(on?'<span class="thok on" aria-label="'+T('使用中','In use')+'">'+ICON.check+'</span>':own?'<span class="thok" aria-hidden="true"></span>':'<span class="pill'+(tot>=th.price?' ac':'')+'">'+COIN+' '+th.price+'</span>')+'</button>'}).join("")+shop+'</div><div style="height:18px"></div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('训练计划','Training plans')+'</p><div class="setlist" style="margin-bottom:18px">'+plans+'</div>'
     +'<p class="eyebrow" style="margin-bottom:8px">'+T('怎么拿','How to earn')+'</p><div class="setlist">'+rows+'</div>');
+  holdOpen($("#sheet .coinbig"),openCheat);
   if(shopFirst)setTimeout(()=>{const el=document.getElementById("shop");if(el)el.scrollIntoView({block:"start"})},50)}
 /* ---------- sheet ---------- */
 function openSheet(html){$("#sheetBody").innerHTML=html;$("#sheet").classList.add("on");document.body.style.overflow="hidden";CUR_SHEET=null}
@@ -656,7 +666,7 @@ function meSheet(){SHEET_UP=null;let m="auto";try{m=localStorage.getItem(PK+"mod
   openSheet('<div class="sh-h"><h3>'+T('设定','Settings')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">'+T('外观','Appearance')+'</p>'
     +'<div class="setlist">'+("fixed" in document.documentElement.dataset?[]:[["auto",T("跟随手机","Match the phone")],["light",T("亮","Light")],["dark",T("暗","Dark")]]).map(([k,l])=>'<button class="opt" data-act="mode" data-m="'+k+'" aria-pressed="'+(m===k)+'">'+l+'</button>').join("")
     +'<button class="opt" data-act="fxmenu">'+ICON.spark+'<span class="sp">'+T('特效','Effects')+'</span>'+ICON.right+'</button>'
-    +'<button class="opt" data-act="shop">'+ICON.palette+'<span class="sp">'+T('G 分商店','barGain store')+'</span><b class="n" style="font-size:14px">'+fmt(coinTotal())+' G</b>'+ICON.right+'</button></div>'
+    +'<button class="opt" data-act="shop">'+ICON.palette+'<span class="sp">'+T('G 分商店','barGain store')+'</span><b class="n" style="font-size:14px">'+gShow(coinTotal())+' G</b>'+ICON.right+'</button></div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('语言','Language')+'</p><div class="seg langseg" translate="no">'+[["zh","简中"],["zht","繁中"],["en","Eng"]].map(([k,l])=>'<button data-act="lang" data-l="'+k+'" aria-pressed="'+((HANT?"zht":LANG)===k)+'">'+l+'</button>').join("")+'</div>'
     +'<p class="eyebrow" style="margin:18px 0 8px">'+T('更多','More')+'</p><div class="setlist">'
     +row("p1:plan",ICON.spark,T("训练计划","Training plan"))+row("p1:profile",ICON.user,T("个人资料","Profile"))+row("p1:goals",ICON.target,T("目标","Goals"))+row("p1:backup",ICON.cloud,T("备份进度与高驰","Backup & COROS"))+row("p1:charts",BRAND.co,T("图表、同步和手表热量","Charts, sync & watch calories"))+'<button class="opt" data-act="advmenu">'+ICON.sliders+'<span class="sp">'+T("进阶","Advanced")+'</span>'+ICON.right+'</button>'+'</div>'

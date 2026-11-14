@@ -1562,3 +1562,6 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 @media (prefers-reduced-motion: reduce){.ovs *{transition:none!important;animation:none!important}}
 .ovs{-webkit-user-select:none;user-select:none}
 .mask .row:has([data-boxuse]) .btn{flex:1;height:48px;font-size:15px}
+.mask .gcode{width:100%;height:64px;text-align:center;font:700 32px/1 var(--num);letter-spacing:.4em;border-radius:18px}
+.gcode.no{animation:gNo .35s}
+@keyframes gNo{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
