@@ -200,28 +200,35 @@ h1,h2,h3,p{margin:0}
 .f-note{font-size:13px;color:var(--muted);font-weight:500;min-height:19px}
 .f-sets{display:flex;gap:8px;margin:18px 0 6px;flex-wrap:wrap;justify-content:center}
 .f-sets i{min-width:44px;height:30px;padding:0 8px;border-radius:999px;display:grid;place-items:center;font:700 13px/1 var(--num);background:var(--sub);color:var(--muted);font-style:normal;transition:all .3s var(--ease)}
-.f-sets i.dn{background:var(--ac-soft);color:var(--ac-text)}
+.f-sets i.dn{background:var(--ac-soft);color:var(--ac-text);display:flex;gap:3px}
+.f-sets i.dn svg{width:13px;height:13px;color:var(--ac);flex:none}
+.f-sets i.add{min-width:30px;width:30px;padding:0;background:none;color:var(--muted);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--muted) 45%,transparent);cursor:pointer}
+.f-sets i.add svg{width:14px;height:14px}
+.f-sets i.add:active{transform:scale(.88)}
 .f-sets i.cur{background:var(--ink);color:var(--bg)}
 .f-num{display:flex;align-items:center;gap:22px;margin-top:6px}
-.f-num b{font-family:var(--num);font-size:104px;font-weight:800;letter-spacing:-.06em;line-height:1;min-width:150px;font-variant-numeric:tabular-nums}
-.f-num b.pop{animation:pop .4s var(--spring)}
+.f-num b{font-family:var(--num);font-size:84px;font-weight:800;letter-spacing:-.06em;line-height:1;min-width:150px;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;justify-content:center}
+.f-num b>span{display:inline-block}
+.f-num b>span.pop{animation:pop .4s var(--spring)}
+.f-num b small{font-size:.33em;letter-spacing:0;margin-left:.12em}
 @keyframes pop{40%{transform:scale(1.12)}}
 .f-num .mini{width:46px;height:46px;font-size:24px;font-weight:600;color:var(--ink);background:var(--card);box-shadow:var(--shadow),0 0 0 1px var(--line)}
-.f-unit{font-size:14px;font-weight:600;color:var(--muted)}
 .f-bottom{display:grid;justify-items:center;gap:12px;max-width:480px;width:100%;margin:0 auto;min-height:150px;align-content:end}
 .tickb{position:relative;width:96px;height:96px;border-radius:50%;background:var(--ac);color:var(--on-ac);display:grid;place-items:center;box-shadow:0 0 0 8px var(--ac-soft),0 16px 30px -12px var(--ac);transition:transform .3s var(--spring),box-shadow .3s}
 .tickb:active{transform:scale(.92)}
 .tickb svg{width:40px;height:40px}
-.tickb .tr{position:absolute;inset:-8px;width:112px;height:112px;transform:rotate(-90deg)}
-.tickb .tr circle{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round}
 .tickb.done{background:var(--sub);color:var(--muted);box-shadow:none}
 .f-hint{font-size:12px;color:var(--muted);font-weight:600}
-.rest{width:100%;display:grid;gap:12px;justify-items:center}
-.rest .big{font-size:56px}
-.rest .bar{width:100%;height:12px}
-.rest .row{gap:10px}
-.rest .row button{padding:10px 18px;border-radius:999px;background:var(--sub);font-weight:700;font-size:14px}
-.rest .row button.ac{background:var(--ink);color:var(--bg)}
+.feelbar{display:grid;grid-template-columns:4.6em auto;align-items:center;gap:12px;padding:8px 4px;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer}
+.fl-lab{font-size:15px;font-weight:700;text-align:right;color:var(--ink)}
+.feelbar:not([data-lv]) .fl-lab{color:var(--muted)}
+.fl-bks{display:flex;gap:3px;padding:8px;border-radius:14px;background:var(--sub);box-shadow:inset 0 2px 5px rgba(0,0,0,.08)}
+.fl-bks i{width:40px;height:22px;border-radius:3px;background:color-mix(in srgb,var(--muted) 22%,transparent);transition:background .2s,transform .3s var(--spring)}
+.fl-bks i:nth-child(1){--c:color-mix(in srgb,var(--ac) 50%,#fff)}
+.fl-bks i:nth-child(2){--c:var(--ac)}
+.fl-bks i:nth-child(3){--c:color-mix(in srgb,var(--ac) 70%,#000)}
+.fl-bks i:nth-child(4){--c:color-mix(in srgb,var(--ac) 45%,#000)}
+.fl-bks i.on{background:var(--c);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 0 rgba(0,0,0,.28),0 1px 1px rgba(0,0,0,.12);animation:bkHop .4s var(--spring) both}
 .fin{display:grid;justify-items:center;text-align:center;gap:6px}
 .fin .medal{width:84px;height:84px;border-radius:50%;background:var(--ac);color:var(--on-ac);display:grid;place-items:center;box-shadow:0 0 0 10px var(--ac-soft);margin-bottom:14px;animation:pop .6s var(--spring)}
 .fin .medal svg{width:42px;height:42px}
@@ -324,10 +331,6 @@ h1,h2,h3,p{margin:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* engine plan sheet, feel picker */
-.feel{display:flex;gap:8px}
-.feel button{height:46px;padding:0 20px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);font-size:15px;font-weight:700;transition:transform .2s var(--spring)}
-.feel button:active{transform:scale(.92)}
-.feel button[data-f="easy"]{background:var(--ac-soft);color:var(--ac-text)}
 /* a fixed card: the bars scale inside a fixed area so changing the period never resizes it */
 .gapcard .bl{min-height:16px}
 .exl .slow{font-style:normal;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,.12);margin-left:6px;vertical-align:2px}
@@ -698,7 +701,6 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="tm4"] .tickb:active{transform:translate(1px,4px);box-shadow:1px 2px 4px rgba(4,15,32,.75),0 1px 0 #0F3460,inset 1px 1px 3px rgba(0,0,0,.5)}
 :root[data-theme="tm4"] .tickb.done{background:var(--sub);color:#fff;box-shadow:var(--well-sh),0 0 18px rgba(153,209,255,.45)}
 :root[data-theme="tm4"] .tickb.done svg{filter:drop-shadow(0 0 6px #99D1FF)}
-:root[data-theme="tm4"] .tickb .tr circle{stroke:#BFE3FF;filter:drop-shadow(0 0 4px #99D1FF)}
 :root[data-theme="tm4"] .cal .dd.trn b{background:var(--cap);color:#fff;box-shadow:0 2px 0 #113A6B,inset 1px 1.5px 1px rgba(255,255,255,.45);text-shadow:0 0 6px var(--kc)}
 :root[data-theme="tm4"] .cal .dd.today b{background:#fff;color:#0B2D57;box-shadow:0 0 6px 2px #fff,0 0 16px 4px #6BB8FF}
 :root[data-theme="tm4"] .calpill .ci{box-shadow:0 0 8px var(--kc)}
@@ -740,7 +742,6 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="skeuo"] .tickb:active{transform:scale(.95) rotate(20deg)}
 :root[data-theme="skeuo"] .tickb.done{background:#18191B;color:#24FCE2;box-shadow:0 0 0 9px #2B2D30,0 0 22px rgba(31,245,220,.55),inset 0 4px 8px rgba(0,0,0,.8)}
 :root[data-theme="skeuo"] .tickb.done svg{filter:drop-shadow(0 0 6px #1FF5DC)}
-:root[data-theme="skeuo"] .tickb .tr circle{stroke:#1FF5DC;filter:drop-shadow(0 0 4px #1FF5DC)}
 :root[data-theme="skeuo"] .cal .dd.trn b{background:var(--metal);color:#1D1F22;box-shadow:0 3px 5px rgba(0,0,0,.4),inset 0 1px 1px #fff}
 :root[data-theme="skeuo"] .cal .dd.today b{background:#18191B;color:#24FCE2;text-shadow:var(--neon);box-shadow:inset 0 2px 4px rgba(0,0,0,.8),0 0 0 2px rgba(31,245,220,.6),0 0 10px rgba(31,245,220,.6)}
 :root[data-theme="skeuo"] .sheet .panel,:root[data-theme="skeuo"] .mask .sheet{background:var(--alu);box-shadow:0 -6px 0 #5E6064,inset 0 2px 1.5px rgba(255,255,255,.75)}
@@ -782,7 +783,6 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="braun"] .tickb{background:radial-gradient(circle closest-side,#F4F2EA 0%,#D5D2C6 66%,#B8B5A8 74%,rgba(0,0,0,0) 76%),repeating-conic-gradient(#6E6C66 0deg 3deg,#C8C5BA 3deg 6deg,#484642 6deg 9deg);color:#282622;box-shadow:0 16px 24px rgba(0,0,0,.32),0 4px 6px rgba(0,0,0,.25),inset 0 2px 3px rgba(255,255,255,.7);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
 :root[data-theme="braun"] .tickb:active{transform:rotate(30deg) scale(.96)}
 :root[data-theme="braun"] .tickb.done{background:radial-gradient(circle closest-side,#FF7838 0%,#D94E14 66%,#A83608 74%,rgba(0,0,0,0) 76%),repeating-conic-gradient(#6E6C66 0deg 3deg,#C8C5BA 3deg 6deg,#484642 6deg 9deg);color:#fff}
-:root[data-theme="braun"] .tickb .tr circle{stroke:#F26422}
 :root[data-theme="braun"] .cal .dd b{border-radius:8px}
 :root[data-theme="braun"] .cal .dd.trn b{background:linear-gradient(180deg,#F7F5EE 0%,#E2DFD2 100%);color:var(--kc);box-shadow:0 2px 3px rgba(0,0,0,.28),inset 0 1px 1px #fff,inset 0 -2px 0 var(--kc)}
 :root[data-theme="braun"] .cal .dd.today b{background:var(--dot);color:#fff;border-radius:50%;box-shadow:0 2px 4px rgba(180,60,10,.45),inset 0 1px 1px rgba(255,255,255,.45)}
@@ -819,7 +819,6 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="clay"] .tickb{background:var(--mint3d);color:var(--on-ac);box-shadow:-6px 9px 0 #7ABFA8,-12px 20px 24px rgba(30,50,42,.24),inset 3px 4px 6px rgba(255,255,255,.9),inset -3px -4px 6px rgba(0,0,0,.1)}
 :root[data-theme="clay"] .tickb:active{transform:translate(-4px,7px);box-shadow:-1px 1px 0 #7ABFA8,inset 3px 4px 6px rgba(255,255,255,.9)}
 :root[data-theme="clay"] .tickb.done{background:transparent;color:#1E8A66;box-shadow:inset 0 0 0 11px #B0F7E0,-4px 8px 16px rgba(40,60,50,.22),0 0 22px 4px rgba(120,248,205,.72),inset 0 0 22px rgba(120,248,205,.55)}
-:root[data-theme="clay"] .tickb .tr circle{stroke:#1E8A66}
 :root[data-theme="clay"] .cal .dd.trn b{background:color-mix(in srgb,var(--kc) 32%,#fff);color:color-mix(in srgb,var(--kc) 55%,#000);box-shadow:-2px 3px 0 color-mix(in srgb,var(--kc) 55%,#999)}
 :root[data-theme="clay"] .cal .dd.today b{background:var(--ink);color:#fff;box-shadow:-2px 3px 0 #000}
 :root[data-theme="clay"] .sheet .panel,:root[data-theme="clay"] .mask .sheet{background:#F3F1EC;box-shadow:inset 0 0 0 5px #FBFAF7,0 -10px 30px rgba(0,0,0,.18)}
@@ -904,7 +903,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="skeuo"] h1,:root[data-theme="skeuo"] .hero h2,:root[data-theme="skeuo"] .big,:root[data-theme="skeuo"] .tile .tv,:root[data-theme="skeuo"] .f-num b,:root[data-theme="skeuo"] .stats b,:root[data-theme="skeuo"] .sh-h h3{letter-spacing:.01em;font-weight:400}
 :root[data-theme="skeuo"] .tile .tv,:root[data-theme="skeuo"] .big{font-size:22px}
 :root[data-theme="skeuo"] .tile.wide .tv{font-size:28px}
-:root[data-theme="skeuo"] .f-num b{font-size:86px;color:#1D1F22;text-shadow:0 1.5px 0 rgba(255,255,255,.7),0 -1px 0 rgba(0,0,0,.25)}
+:root[data-theme="skeuo"] .f-num b{font-size:70px;color:#1D1F22;text-shadow:0 1.5px 0 rgba(255,255,255,.7),0 -1px 0 rgba(0,0,0,.25)}
 :root[data-theme="skeuo"] h1{text-transform:uppercase}
 :root[data-theme="skeuo"] .opt .sw{width:58px;height:30px;border-radius:999px;background:linear-gradient(180deg,#383A3E 0%,#52555A 100%);box-shadow:inset 0 4px 7px rgba(0,0,0,.85),0 1.5px 0 rgba(255,255,255,.65)}
 :root[data-theme="skeuo"] .opt .sw::after{top:3px;left:3px;width:24px;height:24px;background:radial-gradient(circle at calc(var(--lx) + 2%) 28%,#FFFFFF 0%,#D8DADC 45%,#8E9196 90%);box-shadow:0 4px 8px rgba(0,0,0,.75),inset 0 1.5px 2px #fff,inset 0 -2px 3px rgba(0,0,0,.35)}
@@ -917,7 +916,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="tm4"]{--disp:"Doto",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif}
 :root[data-theme="tm4"] h1,:root[data-theme="tm4"] .hero h2,:root[data-theme="tm4"] .big,:root[data-theme="tm4"] .tile .tv,:root[data-theme="tm4"] .f-num b,:root[data-theme="tm4"] .stats b,:root[data-theme="tm4"] .sh-h h3{font-weight:900;letter-spacing:.02em}
 :root[data-theme="tm4"] .big,:root[data-theme="tm4"] .tile .tv,:root[data-theme="tm4"] .f-num b,:root[data-theme="tm4"] .stats b{color:#fff;text-shadow:0 0 6px rgba(153,209,255,.85),0 0 16px rgba(130,200,255,.5)}
-:root[data-theme="tm4"] .f-num b{font-size:120px}
+:root[data-theme="tm4"] .f-num b{font-size:96px}
 :root[data-theme="tm4"] .opt .sw{width:56px;height:30px;border-radius:6px;background:linear-gradient(#0000 12px,#061529 12px,#061529 18px,#0000 18px);box-shadow:none}
 :root[data-theme="tm4"] .opt .sw::after{top:0;left:4px;width:16px;height:30px;border-radius:999px;background:linear-gradient(165deg,#4B97E8 0%,#2665AD 58%,#17447A 100%);box-shadow:-3px 6px 8px rgba(4,14,30,.8),0 2px 0 #0F3460,inset 1px 1.5px 1px rgba(255,255,255,.58)}
 :root[data-theme="tm4"] .opt[aria-checked="true"] .sw{background:linear-gradient(#0000 12px,#BFE3FF 12px,#BFE3FF 18px,#0000 18px);filter:drop-shadow(0 0 4px #99D1FF)}
@@ -974,7 +973,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="pocket"] .hero h2,:root[data-theme="pocket"] .hero .big{font-family:"Doto",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;font-weight:900;letter-spacing:.02em;text-shadow:0 0 6px rgba(255,255,255,.35)}
 :root[data-theme="pocket"] .hero .exl li b,:root[data-theme="pocket"] .hero .exl li{color:rgba(237,237,232,.85)}
 :root[data-theme="pocket"] .hero .kd{background:#E2513A!important;box-shadow:0 0 6px #E2513A}
-:root[data-theme="pocket"] .f-num b{font-family:"Doto",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;font-weight:900;font-size:118px;letter-spacing:.01em}
+:root[data-theme="pocket"] .f-num b{font-family:"Doto",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;font-weight:900;font-size:94px;letter-spacing:.01em}
 :root[data-theme="pocket"] .glowring{display:none}
 :root[data-theme="pocket"] .btn,:root[data-theme="pocket"] .opt[aria-pressed="true"],:root[data-theme="pocket"] .preset.on,:root[data-theme="pocket"] .thc.on,:root[data-theme="pocket"] .dock .pc,:root[data-theme="pocket"] .pill.ac,:root[data-theme="pocket"] .hgo{background:radial-gradient(150% 100% at var(--lx) var(--ly),rgba(255,255,255,.42),rgba(255,255,255,0) 52%),var(--grain),var(--key);background-size:100% 100%,200px 200px,100% 100%;background-blend-mode:normal,soft-light,normal;color:#2A2118;border:0;border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 4px rgba(0,0,0,.22),0 0 0 1.5px var(--groove),0 3px 4px rgba(0,0,0,.22),0 10px 16px -8px rgba(0,0,0,.35);transition:transform .1s cubic-bezier(.34,1.56,.64,1),box-shadow .1s}
 :root[data-theme="pocket"] .btn:active,:root[data-theme="pocket"] .hgo:active,:root[data-theme="pocket"] .dock .pc:active{transform:translateY(2px);box-shadow:inset 0 2px 4px rgba(0,0,0,.3),0 0 0 1.5px var(--groove)}
@@ -1080,7 +1079,6 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="md"] .dock button[aria-selected="true"]{color:#F2F4F7}
 :root[data-theme="md"] .tickb{background:radial-gradient(circle,#F3F5F8 0 34%,rgba(0,0,0,.25) 35%,rgba(0,0,0,0) 37%),conic-gradient(from var(--rot),#C9D0DA,#F4F6F9 40deg,#9AA4B2 100deg,#E3E7EC 160deg,#F7F9FB 220deg,#8D97A6 280deg,#D7DCE3 330deg,#C9D0DA);color:#FF6A13;box-shadow:0 0 0 4px #FF6A13,0 0 0 5px rgba(0,0,0,.2),0 14px 22px -6px rgba(20,30,50,.45),inset 0 1px 2px #fff}
 :root[data-theme="md"] .tickb.done{background:#C3CBD6;color:var(--muted);box-shadow:inset 0 3px 6px rgba(20,30,50,.3)}
-:root[data-theme="md"] .tickb .tr circle{stroke:#FF6A13}
 :root[data-theme="md"] .cal .dd.trn b{background:var(--key);color:#F2F4F7;border-radius:9px;box-shadow:var(--keysh);text-shadow:0 0 0 var(--kc)}
 :root[data-theme="md"] .cal .dd.today b{background:#FF6A13;color:#fff;box-shadow:0 0 0 1px rgba(140,40,0,.4),0 3px 6px rgba(200,70,0,.4)}
 :root[data-theme="md"] .fs-peek i,:root[data-theme="md"] .fstack[data-fs="hero"] .fs-peek i{background:#B9C3D0;border:0;box-shadow:0 0 0 1px rgba(60,72,92,.18)}
@@ -1117,7 +1115,6 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="nikon"] .tickb{background:radial-gradient(circle at 50% 42%,#3B3D41 0%,#1C1D20 60%,#0D0E0F 100%);color:#fff;box-shadow:0 0 0 5px #9EA3AA,0 0 0 6px #4A4D52,0 0 0 9px #1A1B1D,0 14px 22px -6px rgba(0,0,0,.8),inset 0 -3px 6px rgba(255,255,255,.08),inset 0 3px 6px rgba(0,0,0,.6)}
 :root[data-theme="nikon"] .tickb:active{transform:translateY(2px) scale(.97)}
 :root[data-theme="nikon"] .tickb.done{color:#E8302A;box-shadow:0 0 0 5px #E8302A,0 0 0 6px #4A4D52,0 0 0 9px #1A1B1D,0 0 18px rgba(232,48,42,.45)}
-:root[data-theme="nikon"] .tickb .tr circle{stroke:#E8302A}
 :root[data-theme="nikon"] .cal .dd.trn b{background:var(--mag);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 0 1px #000,inset 0 -2px 0 var(--kc)}
 :root[data-theme="nikon"] .cal .dd.today b{background:#E8302A;color:#fff;box-shadow:0 0 10px rgba(232,48,42,.5)}
 :root[data-theme="nikon"] .fs-peek i,:root[data-theme="nikon"] .fstack[data-fs="hero"] .fs-peek i{background:#1E1F22;border:0;box-shadow:0 0 0 1px #000}
@@ -1176,7 +1173,6 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 /* the tick: the head seen end-on, a dark throat and the clear ring around it */
 :root[data-theme="dyson"] .tickb{background:radial-gradient(circle,var(--throat) 0 33%,rgba(0,0,0,.6) 34.5%,rgba(255,255,255,.35) 36%,rgba(255,255,255,.08) 38% 41%,rgba(0,0,0,.25) 42%,rgba(0,0,0,0) 44%),var(--fine),var(--metal);background-size:100% 100%,200px 200px,100% 100%;background-blend-mode:normal,soft-light,normal;color:#fff;box-shadow:0 0 0 1.5px var(--metal-edge),0 0 0 7px color-mix(in srgb,var(--bg) 80%,transparent),0 0 0 8px var(--line),0 18px 28px -8px var(--metal-sh),inset 0 2px 4px rgba(255,255,255,.55),inset 0 -6px 12px rgba(60,20,0,.3)}
 :root[data-theme="dyson"] .tickb.done{background:var(--disc);color:var(--disc-ink);box-shadow:0 0 0 1.5px var(--rim),0 3px 0 1.5px var(--disc-edge)}
-:root[data-theme="dyson"] .tickb .tr circle{stroke:var(--dot)}
 :root[data-theme="dyson"] .cal .dd.trn b{background:color-mix(in srgb,var(--kc) 26%,var(--card));color:color-mix(in srgb,var(--kc) 78%,var(--ink));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 2px rgba(0,0,0,.15)}
 :root[data-theme="dyson"] .cal .dd.today b{background:var(--metal);color:var(--metal-ink);box-shadow:0 1.5px 0 var(--metal-edge)}
 :root[data-theme="dyson"] .fs-peek i,:root[data-theme="dyson"] .fstack[data-fs="hero"] .fs-peek i{background:var(--sub);border:0}
@@ -1207,7 +1203,6 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="mac"] .dock button{color:var(--muted)}
 :root[data-theme="mac"] .tickb{border-radius:24px;background:radial-gradient(circle,#1A1A1C 0 46%,#5A5B5F 47%,#C7C8CC 52%,#5A5B5F 56%,#1A1A1C 57%),#1A1A1C;color:#F5F5F7;box-shadow:var(--keysh),0 10px 18px -6px rgba(0,0,0,.4)}
 :root[data-theme="mac"] .tickb.done{color:#0A84FF;background:radial-gradient(circle,#1A1A1C 0 46%,#0A84FF 47%,#7CC0FF 52%,#0A84FF 56%,#1A1A1C 57%),#1A1A1C}
-:root[data-theme="mac"] .tickb .tr circle{stroke:#0A84FF}
 :root[data-theme="mac"] .cal .dd.trn b{background:var(--key);color:#F5F5F7;border-radius:8px;box-shadow:var(--keysh),inset 0 -2px 0 var(--kc)}
 :root[data-theme="mac"] .cal .dd.today b{background:#0A84FF;color:#fff;border-radius:8px}
 :root[data-theme="mac"] .fs-peek i{background:var(--card);border:0;box-shadow:0 0 0 .5px rgba(0,0,0,.18)}
@@ -1241,8 +1236,6 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="ipod"] .tickb:active{background:radial-gradient(circle,var(--center) 0 31%,rgba(0,0,0,.2) 32%,rgba(0,0,0,0) 34%),var(--wheel);filter:brightness(.97)}
 :root[data-theme="ipod"] .tickb.done{background:radial-gradient(circle,#2F7BEA 0 31%,rgba(0,0,0,.14) 32%,rgba(0,0,0,0) 34%),var(--wheel)}
 :root[data-theme="ipod"] .tickb.done svg{color:#fff}
-:root[data-theme="ipod"] .tickb .tr{inset:-6px;width:124px;height:124px}
-:root[data-theme="ipod"] .tickb .tr circle{stroke:#2F7BEA}
 :root[data-theme="ipod"] .cal .dd.trn b{background:color-mix(in srgb,var(--kc) 16%,var(--card));color:color-mix(in srgb,var(--kc) 85%,var(--ink));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--kc) 30%,transparent)}
 :root[data-theme="ipod"] .cal .dd.today b{background:var(--sel);color:#fff}
 :root[data-theme="ipod"] .fs-peek i,:root[data-theme="ipod"] .fstack[data-fs="hero"] .fs-peek i{background:var(--porc);border:0;box-shadow:var(--rim)}

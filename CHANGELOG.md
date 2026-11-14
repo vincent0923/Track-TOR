@@ -6,6 +6,20 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.60a] — 2026-11-14
+
+### 新增 / Added
+- ➕ **加一组**：专注页组的小胶囊最后有个「+」，想多做就加一组。
+  **One more set**: a "+" after the set pills in focus mode adds a set.
+- 🧱 **四档感觉**：做完一个动作，点或拖 1–4 块积木：轻松、还行、有点难、难；引擎跟着调——有点难先保持，难而且没达标就减。
+  **Four-step feel**: after a move, tap or drag 1–4 bricks (easy, OK, tough, hard); the engine follows: tough holds, hard with a miss steps back.
+
+### 改进 / Changed
+- 去掉组间休息倒计时和按秒动作的计时，做多久歇多久自己定；做完的组带强调色小勾；单位紧贴在数字右边；换动作的拨轮灵敏度减半。
+  No more rest countdown or set timer: you decide; done sets carry an accent tick; the unit sits right of the number; the move dial is half as sensitive.
+
+---
+
 ## [v1.59a] — 2026-11-14
 
 ### 新增 / Added

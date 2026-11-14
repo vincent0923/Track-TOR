@@ -187,22 +187,23 @@ function planSheet(){
     [T('次数范围','Rep range'),T('每组练到接近做不动时，从低次数到高次数的增肌效果差不多（Schoenfeld 等 2017 年的荟萃分析）；5–10 次同时顾到力量。','Taken close to failure, low and high reps build similar muscle (Schoenfeld et al., 2017 meta-analysis); 5–10 reps also builds strength.')],
     [T('训练量','Volume'),T('增肌跟每周的有效组数成正比，每个肌群每周 10 组以上更好（Schoenfeld、Ogborn、Krieger 2017）。所以每次 5–12 组，一周练几次就够。','Muscle growth tracks weekly hard sets, with 10 or more per muscle a week doing better (Schoenfeld, Ogborn & Krieger, 2017). Hence 5–12 sets a session, a few sessions a week.')],
     [T('看前 3 次','The last 3 sessions'),T('一次的状态受睡眠和吃饭影响大，3 次里有 2 次才算数，不会因为一次好坏就大起大落。','One session swings with sleep and food; it takes 2 of the last 3 to count, so one good or bad day doesn\'t swing the plan.')],
-    [T('按感觉调','Feel'),T('「轻松 / 刚好 / 很难」就是自评用力程度（RPE，Helms 等 2016）：轻松多加，很难先不加。','Easy / right / hard is a self-rated effort score (RPE, Helms et al., 2016): easy adds more, hard holds.')],
+    [T('按感觉调','Feel'),T('练完一个动作选 1–4 块：轻松 / 还行 / 有点难 / 难，就是自评用力程度（RPE，Helms 等 2016）：轻松多加，还行照常加，有点难先保持，难而且没达标就减。','After each move pick 1–4 bricks: easy / OK / tough / hard, a self-rated effort score (RPE, Helms et al., 2016): easy adds more, OK adds the usual step, tough holds, hard with a miss steps back.')],
     [T('减量','Deload'),T('连着两次没达标说明疲劳在累积，下一次组数降到六成先恢复。','Missing targets twice in a row means fatigue is piling up, so the next session drops to about 60% of the sets to recover.')]];
   openSheet('<div class="sh-h"><h3>'+T('建议练（可手动调整）','Suggested (adjust as you like)')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="planlead"><p class="muted">'+T('根据你前 3 次训练的表现建议，每练完一次重新算。','Suggested from how your last 3 sessions went; it updates after every session.')+'</p><button class="mini info" data-act="theory" aria-expanded="false" aria-label="'+T('依据','The reasoning')+'">i</button></div>'
     +'<div class="theory" hidden>'+th.map(([a,b])=>'<p><b>'+a+'</b>'+b+'</p>').join("")+'</div>')}
 /* ---------- focus mode ---------- */
-let run=null,restT=0,timerT=0,clockT=0;
-const restOf=e=>e.id==="pullup"?150:(e.id==="hang"||e.id==="ecc")?90:e.unit==="分钟"?0:60;
+let run=null,clockT=0;
+/* how a move felt, four bricks: 1 easy … 4 hard (the engine reads the key) */
+const FEEL4=[["easy","轻松","Easy"],["ok","还行","OK"],["tough","有点难","Tough"],["hard","难","Hard"]];
 /* the sets are the session's own arrays (sessionDoc), so every tick, change and finish is saved as it happens */
 function startRun(sid){const p=BYID[sid],doc=sessionDoc(sid),pb=pullSeries();
-  run={sid,p,doc,sets:p.ex.map(e=>doc.sets[e.id]),ex:0,t0:Date.now(),rest:0,timing:0,best0:pb.length?Math.max(...pb.map(x=>x.y)):0,coins0:coinTotal()};
+  run={sid,p,doc,sets:p.ex.map(e=>doc.sets[e.id]),ex:0,t0:Date.now(),best0:pb.length?Math.max(...pb.map(x=>x.y)):0,coins0:coinTotal()};
   run.ex=Math.max(0,run.sets.findIndex(a=>a.some(x=>!x.d)));
   const f=$("#focus");f.classList.add("on");f.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
   clearInterval(clockT);clockT=setInterval(()=>{const el=$("#fTime");if(el){const s=Math.floor((Date.now()-run.t0)/1000);el.textContent=Math.floor(s/60)+":"+pad(s%60)}},1000);
   renderFocus()}
-function closeRun(){clearInterval(clockT);clearInterval(restT);clearInterval(timerT);const f=$("#focus");f.classList.remove("on");f.setAttribute("aria-hidden","true");document.body.style.overflow="";run=null;renderTrainView()}
+function closeRun(){clearInterval(clockT);const f=$("#focus");f.classList.remove("on");f.setAttribute("aria-hidden","true");document.body.style.overflow="";run=null;renderTrainView()}
 function curSet(){return run.sets[run.ex].findIndex(x=>!x.d)}
 function renderFocus(anim){
   const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=run.sets[run.ex],ci=curSet(),allDone=run.sets.every(x=>x.every(y=>y.d));
@@ -210,26 +211,24 @@ function renderFocus(anim){
   const dots=p.ex.map((x,i)=>'<i class="'+(run.sets[i].every(y=>y.d)?"dn":i===run.ex?"cur":"")+'"></i>').join("");
   const val=ci<0?a[a.length-1].v:a[ci].v;
   let bottom;
-  if(run.askFeel!=null)bottom='<p class="f-hint">'+T('这个动作感觉？','How did that feel?')+'</p><div class="feel">'+[["easy","轻松","Easy"],["ok","刚好","Right"],["hard","很难","Hard"]].map(([k,z,en])=>'<button data-act="feel" data-f="'+k+'">'+T(z,en)+'</button>').join("")+'</div><button class="f-hint" data-act="feel" data-f="">'+T('跳过','Skip')+'</button>';
-  else if(run.rest>0)bottom=restHtml();
+  if(run.askFeel!=null)bottom='<div class="feelbar" role="slider" tabindex="0" aria-label="'+T('这个动作感觉？','How did that feel?')+'" aria-valuemin="1" aria-valuemax="4"><span class="fl-lab">'+T('感觉？','Feel?')+'</span><div class="fl-bks">'+FEEL4.map((x,i)=>'<i style="--i:'+i+'"></i>').join("")+'</div></div><button class="f-hint" data-act="feel" data-f="">'+T('跳过','Skip')+'</button>';
   else if(ci<0)bottom='<button class="tickb done" disabled>'+ICON.check+'</button><button class="f-hint" data-act="fnext">'+T('这个动作完成了 · 下一个 →','Done with this one · next →')+'</button>';
-  else if(e.unit==="秒")bottom='<button class="tickb" data-act="timer" aria-label="'+T('开始计时','Start the timer')+'">'+(run.timing?'<svg class="tr" viewBox="0 0 112 112"><circle cx="56" cy="56" r="52" id="tRing" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg>'+ICON.check:ICON.play)+'</button><p class="f-hint">'+(run.timing?T("做完了就点，提前结束也算","Tap when done; stopping early counts"):T("点一下开始计时","Tap to start the timer"))+'</p>';
   else bottom='<button class="tickb" data-act="tick" aria-label="'+T('完成这一组','Set done')+'">'+ICON.check+'</button>';
   f.innerHTML='<div class="f-top"><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
     +'<div class="f-body" id="fBody"><div class="f-win">'+winHtml(run.ex)+'</div>'
-    +'<div class="f-sets">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")+'</div>'
-    +'<div class="f-num">'+(ci<0||run.timing?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n'+(anim?" pop":"")+'" id="fVal">'+(run.timing?run.timeLeft:val)+'</b>'
-    +(ci<0||run.timing?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div>'
-    +'<p class="f-unit">'+U(e.unit)+(ci<0?T(' · 全部 '+a.length+' 组完成',' · all '+a.length+' sets done'):T(' · 第 '+(ci+1)+' 组 / 共 '+a.length+' 组',' · set '+(ci+1)+' of '+a.length))+'</p>'
-    +(p.ex.length>1&&!run.timing&&run.askFeel==null?'<div class="f-dial" role="slider" tabindex="0" aria-label="'+T('转动换动作','Turn to change move')+'" aria-valuemin="1" aria-valuemax="'+p.ex.length+'" aria-valuenow="'+(run.ex+1)+'"><div class="dl-wheel"><i class="dl-knurl"></i></div><b class="dl-mark"></b></div>':'')+'<div class="f-dots">'+dots+'</div></div>'
+    +'<div class="f-sets">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
+    +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div>'
+    +'<div class="f-num">'+(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n"><span id="fVal"'+(anim?' class="pop"':'')+'>'+val+'</span><small>'+U(e.unit)+'</small></b>'
+    +(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div>'
+    +(p.ex.length>1&&run.askFeel==null?'<div class="f-dial" role="slider" tabindex="0" aria-label="'+T('转动换动作','Turn to change move')+'" aria-valuemin="1" aria-valuemax="'+p.ex.length+'" aria-valuenow="'+(run.ex+1)+'"><div class="dl-wheel"><i class="dl-knurl"></i></div><b class="dl-mark"></b></div>':'')+'<div class="f-dots">'+dots+'</div></div>'
     +'<div class="f-bottom" id="fBottom"><button class="mini f-x" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-bc">'+bottom+'</div><span class="f-x"></span></div>';
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
-  swipe($("#fBody"));dialBind($(".f-dial"))}
+  swipe($("#fBody"));dialBind($(".f-dial"));feelBind($(".feelbar"))}
 function winHtml(i){const p=run.p,e=p.ex[i];return '<p class="eyebrow">'+LAB(p)+T(' · 动作 ',' · move ')+(i+1)+' / '+p.ex.length+'</p><h2>'+N(e)+'</h2><p class="f-note">'+(e.note?NOTE(e):"")+'</p>'}
 /* the move dial: a knurled thumb wheel like a camera's. Each notch (DL_STEP px of travel) is one move with a click;
    it keeps spinning after a flick and slows with a slightly different friction each time, so a hard spin lands
    on a move by chance; it wraps around, settles on the nearest notch, and the window shows the move as it passes */
-const DL_STEP=26;
+const DL_STEP=52;
 function dialBind(el){if(!el)return;const DL_KN=parseFloat(getComputedStyle(el).getPropertyValue("--d-p"))||12,kn=el.querySelector(".dl-knurl"),win=$(".f-win"),n=run.p.ex.length,start=run.ex;
   let off=0,last=0,raf=0,drag=null,shown=start,lastSnd=0,lastBz=0;
   const idx=o=>((start-Math.round(o/DL_STEP))%n+n)%n;
@@ -237,7 +236,7 @@ function dialBind(el){if(!el)return;const DL_KN=parseFloat(getComputedStyle(el).
     if(i!==shown){shown=i;const t=performance.now();if(t-lastSnd>22){lastSnd=t;SFX.detent()}if(t-lastBz>45){lastBz=t;buzz(4)}
       if(win){win.innerHTML=winHtml(i);win.classList.remove("flick");void win.offsetWidth;win.classList.add("flick")}el.setAttribute("aria-valuenow",i+1)}};
   const commit=()=>{cancelAnimationFrame(raf);raf=0;el.classList.remove("spin");const i=idx(off);SFX.land();buzz(12);
-    if(!run||i===run.ex){return}run.ex=i;run.rest=0;clearInterval(restT);setTimeout(()=>{if(run)renderFocus(true)},120)};
+    if(!run||i===run.ex){return}run.ex=i;setTimeout(()=>{if(run)renderFocus(true)},120)};
   const snap=()=>{const to=Math.round(off/DL_STEP)*DL_STEP,from=off,t0=performance.now();
     const go=t=>{const k=Math.min(1,(t-t0)/180),e=1-Math.pow(1-k,3);off=from+(to-from)*e;paint();if(k<1)raf=requestAnimationFrame(go);else commit()};raf=requestAnimationFrame(go)};
   const coast=v=>{const fr=.955+Math.random()*.02;let t1=performance.now();
@@ -250,8 +249,18 @@ function dialBind(el){if(!el)return;const DL_KN=parseFloat(getComputedStyle(el).
   el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
   el.addEventListener("keydown",e=>{if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;e.preventDefault();cancelAnimationFrame(raf);off+=e.key==="ArrowRight"?-DL_STEP:DL_STEP;off=Math.round(off/DL_STEP)*DL_STEP;paint();commit()});
   paint()}
-function restHtml(){return '<div class="rest"><p class="eyebrow">'+T('组间休息','Rest')+'</p><div class="big" id="rLeft">'+Math.floor(run.rest/60)+':'+pad(run.rest%60)+'</div>'
-  +'<div class="bar"><i id="rBar" style="width:'+(run.rest/run.restMax*100)+'%"></i></div><div class="row"><button data-act="rplus">'+T('+30 秒','+30 s')+'</button><button class="ac" data-act="rskip">'+T('跳过','Skip')+'</button></div></div>'}
+/* the feel bar: tap or drag across four bricks; let go and it's kept (touch again within a moment to change it) */
+function feelBind(el){if(!el)return;const bks=[...el.querySelectorAll(".fl-bks i")],lab=el.querySelector(".fl-lab");let lv=0,drag=0,tm=0;
+  const show=n=>{if(n===lv)return;lv=n;bks.forEach((b,i)=>b.classList.toggle("on",i<n));const f=FEEL4[n-1];lab.textContent=T(f[1],f[2]);el.setAttribute("aria-valuenow",n);el.dataset.lv=n;SFX.detent();buzz(6)};
+  const at=x=>{const r=el.querySelector(".fl-bks").getBoundingClientRect();return Math.max(1,Math.min(4,Math.ceil((x-r.left)/r.width*4)))};
+  const commit=()=>{if(!run||run.askFeel==null||!lv)return;const id=run.p.ex[run.askFeel].id;run.doc.feel=run.doc.feel||{};run.doc.feel[id]=FEEL4[lv-1][0];lsSave();
+    run.askFeel=null;SFX.land();buzz(12);const nx=run.sets.findIndex(x=>x.some(y=>!y.d));if(nx>=0)run.ex=nx;renderFocus(true)};
+  ["touchstart","touchmove","touchend"].forEach(k=>el.addEventListener(k,e=>e.stopPropagation(),{passive:true}));
+  el.addEventListener("pointerdown",e=>{clearTimeout(tm);drag=1;el.setPointerCapture(e.pointerId);show(at(e.clientX))});
+  el.addEventListener("pointermove",e=>{if(drag)show(at(e.clientX))});
+  const up=()=>{if(!drag)return;drag=0;clearTimeout(tm);tm=setTimeout(commit,650)};
+  el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
+  el.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();show(Math.max(1,Math.min(4,(lv||0)+(e.key==="ArrowRight"?1:-1))))}else if(e.key==="Enter")commit()})}
 function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].o=maxOrdOf(run.doc)+1;a[ci].d=true;if(v!=null)a[ci].v=v;lsSave();
   SFX.tick();buzz(18);
   const e=run.p.ex[run.ex];
@@ -259,20 +268,10 @@ function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].o=
   if(a.every(x=>x.d)){SFX.ex();buzz([20,40,30]);popper();celebrate(3,a.some((x,i)=>+x.v>+(run.p.ex[run.ex].target||0))?1:0);
     if(e.unit!=="分钟"){run.askFeel=run.ex;renderFocus();return}
     {const nx=run.sets.findIndex(x=>x.some(y=>!y.d));if(nx>=0)run.ex=nx;renderFocus(true);return}}
-  const r=restOf(e);if(r){run.rest=r;run.restMax=r;renderFocus();clearInterval(restT);restT=setInterval(()=>{if(!run){clearInterval(restT);return}run.rest--;
-    if(run.rest<=0){clearInterval(restT);run.rest=0;SFX.rest();buzz([60,60,60]);renderFocus(true);return}
-    const l=$("#rLeft"),b=$("#rBar");if(l)l.textContent=Math.floor(run.rest/60)+":"+pad(run.rest%60);if(b)b.style.width=(run.rest/run.restMax*100)+"%"},1000)}
-  else renderFocus(true)}
-function startTimer(){const e=run.p.ex[run.ex],a=run.sets[run.ex],ci=curSet();const total=+a[ci].v||e.target;
-  run.timing=1;run.timeLeft=total;run.timeTotal=total;renderFocus();
-  clearInterval(timerT);timerT=setInterval(()=>{if(!run){clearInterval(timerT);return}run.timeLeft--;const v=$("#fVal"),r=$("#tRing");
-    if(v)v.textContent=Math.max(0,run.timeLeft);if(r)r.style.strokeDashoffset=326.7*(1-run.timeLeft/run.timeTotal);
-    if(run.timeLeft<=3&&run.timeLeft>0)tone(660,0,.08,"sine",.12);
-    if(run.timeLeft<=0)stopTimer()},1000)}
-function stopTimer(){clearInterval(timerT);const done=run.timeTotal-Math.max(0,run.timeLeft);run.timing=0;tickSet(done)}
+  renderFocus(true)}
 function untick(i){const x=run.sets[run.ex][i];if(!x||!x.d)return;x.d=false;
   if(x.o){const o=x.o;delete x.o;Object.values(run.doc.sets).forEach(arr=>arr.forEach(y=>{if(y.o>o)y.o--}))}
-  lsSave();run.rest=0;clearInterval(restT);SFX.tap();renderFocus(true)}
+  lsSave();SFX.tap();renderFocus(true)}
 function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Math.floor((Date.now()-run.t0)/1000);
   run.doc.done=true;run.doc.date=today();lsSave();heroSid=null;engPlanAll();
   let reps=0,sets=0,pu=0;run.sets.forEach((a,i)=>a.forEach(x=>{if(!x.d)return;sets++;if(p.ex[i].unit==="个")reps+=x.v;if(isMain(p.ex[i]))pu=Math.max(pu,x.v)}));
@@ -286,9 +285,9 @@ function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Mat
     +'<div class="stats"><div><b>'+sets+'</b><span>'+T('组','sets')+'</span></div><div><b>'+reps+'</b><span>'+T('次','reps')+'</span></div><div><b>'+Math.max(1,Math.round(secs/60))+'</b><span>'+T('分钟','min')+'</span></div></div></div></div>'
     +'<div class="f-bottom"><button class="btn ghost" data-act="cal" data-d="today" style="height:46px;font-size:15px">'+ICON.plus+T('加练','Extra practice')+'</button><button class="btn" data-act="fclose">'+T('好','OK')+'</button><p class="f-hint">'+(firstOpen()?T('下一次：','Next: ')+LAB(firstOpen()):T('计划全部完成','Plan complete'))+'</p></div>'}
 function swipe(el){let x0=null,y0=0;el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
-  el.addEventListener("touchend",e=>{if(x0==null||!run||run.timing)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
+  el.addEventListener("touchend",e=>{if(x0==null||!run||run.askFeel!=null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
     if(Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx))return;const n=run.ex+(dx<0?1:-1);if(n<0||n>=run.p.ex.length)return;
-    run.ex=n;run.rest=0;clearInterval(restT);SFX.tap();renderFocus(true)})}
+    run.ex=n;SFX.tap();renderFocus(true)})}
 
 /* ---------- diet view ---------- */
 /* food records, seven days to a card, older ones stacked underneath (finger right goes back) */
@@ -764,12 +763,10 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
     else if(a==="feel"){const id=run.p.ex[run.askFeel].id;if(b.dataset.f){run.doc.feel=run.doc.feel||{};run.doc.feel[id]=b.dataset.f;lsSave()}
       run.askFeel=null;SFX.tap();const nx=run.sets.findIndex(x=>x.some(y=>!y.d));if(nx>=0)run.ex=nx;renderFocus(true)}
     else if(a==="tick")tickSet();
-    else if(a==="timer"){if(run.timing)stopTimer();else startTimer()}
+    else if(a==="addset"){const arr=run.sets[run.ex],l=arr[arr.length-1];arr.push({v:l?l.v:run.p.ex[run.ex].target,d:false});run.doc.edited=true;lsSave();run.askFeel=null;SFX.tap();buzz(8);renderFocus(true)}
     else if(a==="inc"||a==="dec"){const ci=curSet();if(ci<0)return;run.doc.edited=true;const s=run.sets[run.ex][ci],st=run.p.ex[run.ex].unit==="秒"?5:1;s.v=Math.max(0,(+s.v||0)+(a==="inc"?st:-st));
       run.sets[run.ex].forEach((x,i)=>{if(i>ci&&!x.d)x.v=s.v});lsSave();SFX.tap();const el=$("#fVal");el.textContent=s.v;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");
-      document.querySelectorAll(".f-sets i").forEach((x,i)=>{if(i>ci&&!run.sets[run.ex][i].d)x.textContent=i+1})}
-    else if(a==="rplus"){run.rest+=30;run.restMax=Math.max(run.restMax,run.rest)}
-    else if(a==="rskip"){run.rest=0;clearInterval(restT);renderFocus(true)}
+      document.querySelectorAll(".f-sets i:not(.add)").forEach((x,i)=>{if(i>ci&&!run.sets[run.ex][i].d)x.textContent=i+1})}
     else if(a==="fnext"){const n=run.sets.findIndex(x=>x.some(y=>!y.d));if(n>=0){run.ex=n;renderFocus(true)}}
   }});
 

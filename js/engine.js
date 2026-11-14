@@ -82,7 +82,8 @@ const engMin=a=>a.length?Math.min(...a):0;
 function engVerdict(h,lo,hi){const full=h.got.length>=h.planned&&h.got.length>0,mn=engMin(h.got);
   return {top:full&&mn>=hi,ok:full&&mn>=h.target,miss:!full||h.got.filter(v=>v<=h.target-2).length>=Math.ceil(h.planned/2),
     drop:h.got.length>=2&&h.got[0]>=5&&h.got[h.got.length-1]<h.got[0]*0.7}}
-const ENG_FEEL={easy:"轻松",ok:"刚好",hard:"很难"};
+/* four levels: easy pushes harder, ok adds the usual step, tough holds, hard steps back sooner */
+const ENG_FEEL={easy:"轻松",ok:"还行",tough:"有点难",hard:"难"};
 function engHist(h){return h.got.length?h.got.join("·"):"没做"}
 /* plan one exercise from its history (oldest first); returns the new definition and why */
 function engPlanEx(e,H,inSession){
@@ -106,8 +107,9 @@ function engPlanEx(e,H,inSession){
     if(e.sets>ENG_SETS_MIN){n.sets=e.sets-1;n.target=lo;return say("最近几次没达标，少一组","Missed recently: one set fewer")}
     n.target=lo;return say("最近几次没达标，回到 "+lo,"Missed recently: back to "+lo)};
   const step=e.unit==="秒"?5:1;
-  if(tops>=2||(lv.top&&last.feel==="easy"))return levelUp();
-  if(lv.ok&&last.feel!=="hard"&&!lv.drop){
+  const heavy=last.feel==="hard"||last.feel==="tough";
+  if((tops>=2&&!heavy)||(lv.top&&last.feel==="easy"))return levelUp();
+  if(lv.ok&&!heavy&&!lv.drop){
     /* fast progress: start from the fewest reps actually done, not the old target */
     const t=Math.max(e.target,engMin(last.got))+step*(last.feel==="easy"?2:1);
     if(t>hi)return levelUp();
@@ -115,7 +117,7 @@ function engPlanEx(e,H,inSession){
   if(misses>=2||(lv.miss&&last.feel==="hard")){const t=e.target-step;if(t<lo)return levelDown();n.target=t;return say("最近几次没达标（"+hist+"），下次每组 "+t+(e.unit==="秒"?" 秒":" 个"),"Missed recently ("+hist+"): "+t+" per set next")}
   const keep=()=>{if(lv.ok)n.target=Math.min(hi,Math.max(e.target,engMin(last.got)))};
   if(lv.drop){keep();return say("上次后面几组掉得多（"+hist+"），先保持","Reps fell off last time ("+hist+"); kept")}
-  keep();return say("上次 "+hist+(last.feel==="hard"?"（很难）":"")+"，保持","Last time "+hist+"; kept")}
+  keep();return say("上次 "+hist+(heavy?"（"+ENG_FEEL[last.feel]+"）":"")+"，保持","Last time "+hist+"; kept")}
 /* the session cap: 5–12 working sets (stretching doesn't count) */
 const ENG_CORE=new Set(["situp","kneeraise","legraise","bridge","slbridge"]);
 function engTrimRank(e){return isMain(e)?4:e.unit==="秒"?0:ENG_CORE.has(e.id)?1:e.id==="pullup"?3:2}
