@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.65a] — 2026-11-17
+
+### 新增 / Added
+- ✏️ **改记录更顺手**：修改时一组一行，右边「×」删掉，动作名右边「+」加一组。
+  **Easier corrections**: one set to a row while editing, × on the right deletes it, + beside the move adds one.
+- ↩️ **删空了就不算练完**：一次训练的记录全删掉后，它回到「可练」，后面那次重新锁上。
+  **Empty means not done**: a session with every record deleted goes back to ready, and the one after it locks again.
+
+---
+
 ## [v1.64a] — 2026-11-14
 
 ### 改进 / Changed
