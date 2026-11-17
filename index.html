@@ -4,10 +4,13 @@
 <meta name="theme-color" content="#F1F1EC">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.json?v=4">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
-<link rel="icon" href="icon.svg?v=4" type="image/svg+xml">
-<link rel="stylesheet" href="css/p1.css?v=ba892fd9"></head><body>
+<link rel="manifest" href="manifest.json?v=5">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=5">
+<link rel="icon" href="icon-192.png?v=5" type="image/png">
+<script>/* the app icon chosen in the app (theme colour + symbol), set before anything else so an install picks it up */
+try{var n=localStorage.getItem("tracktor-icon");if(n&&/^[a-z0-9-]+$/.test(n)){var q=function(r){return document.querySelector('link[rel="'+r+'"]')};
+q("manifest").href="icons/"+n+".json?v=1";q("apple-touch-icon").href="icons/"+n+"-a.png?v=1";var f=q("icon");f.href="icons/"+n+".webp?v=1";f.type="image/webp"}}catch(e){}</script>
+<link rel="stylesheet" href="css/p1.css?v=380a1de2"></head><body>
 <div class="wrap">
   <header class="top">
     <div><p class="eyebrow" id="today"></p><h1 id="title">训练</h1></div>
@@ -33,23 +36,23 @@
 <div class="focus" id="focus" aria-hidden="true"></div>
 <div class="sheet" id="sheet"><div class="panel" role="dialog" aria-modal="true"><div class="grab"></div><div id="sheetBody"></div></div></div>
 <div class="toast" id="toast" role="status"></div>
-<span id="ver" hidden>v1.65a</span>
+<span id="ver" hidden>v1.66a</span>
 
-<script src="js/hant.js?v=ba892fd9"></script>
-<script src="js/core.js?v=ba892fd9"></script>
-<script src="js/diet.js?v=ba892fd9"></script>
-<script src="js/confetti.js?v=ba892fd9"></script>
-<script src="js/sheetcore.js?v=ba892fd9"></script>
-<script src="js/backupcore.js?v=ba892fd9"></script>
-<script src="js/p1data.js?v=ba892fd9"></script>
-<script src="js/p1fx.js?v=ba892fd9"></script>
-<script src="js/p1stack.js?v=ba892fd9"></script>
-<script src="js/coros.js?v=ba892fd9"></script>
-<script src="js/engine.js?v=ba892fd9"></script>
-<script src="js/scratch.js?v=ba892fd9"></script>
-<script src="js/p1.js?v=ba892fd9"></script>
-<script src="js/p1settings.js?v=ba892fd9"></script>
-<script src="js/p1day.js?v=ba892fd9"></script>
-<script src="js/p1weather.js?v=ba892fd9"></script>
-<script src="js/p1music.js?v=ba892fd9"></script>
+<script src="js/hant.js?v=380a1de2"></script>
+<script src="js/core.js?v=380a1de2"></script>
+<script src="js/diet.js?v=380a1de2"></script>
+<script src="js/confetti.js?v=380a1de2"></script>
+<script src="js/sheetcore.js?v=380a1de2"></script>
+<script src="js/backupcore.js?v=380a1de2"></script>
+<script src="js/p1data.js?v=380a1de2"></script>
+<script src="js/p1fx.js?v=380a1de2"></script>
+<script src="js/p1stack.js?v=380a1de2"></script>
+<script src="js/coros.js?v=380a1de2"></script>
+<script src="js/engine.js?v=380a1de2"></script>
+<script src="js/scratch.js?v=380a1de2"></script>
+<script src="js/p1.js?v=380a1de2"></script>
+<script src="js/p1settings.js?v=380a1de2"></script>
+<script src="js/p1day.js?v=380a1de2"></script>
+<script src="js/p1weather.js?v=380a1de2"></script>
+<script src="js/p1music.js?v=380a1de2"></script>
 </body></html>

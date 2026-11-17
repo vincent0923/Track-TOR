@@ -6,6 +6,20 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.66a] — 2026-11-17
+
+### 新增 / Added
+- ✉️ **新 App 图标，跟着主题换色**：一只纸信封里插着刮刮卡；每个主题、每个明暗版本都有自己纸色的一套。
+  **A new app icon in every theme's colour**: a paper envelope holding a scratch card, dyed for each theme and each look.
+- 🐦 **图案自己选**：设定 › 外观 › App 图标 里选心、星、十字、鸟、猫、狗、兔。
+  **Pick the symbol**: heart, star, cross, bird, cat, dog or rabbit, under Settings › Appearance › App icon.
+
+### 改进 / Changed
+- 主题盲盒换成新图标：刮刮卡先藏在信封里，能开时升出来。
+  The blind box is the new icon: the card sits tucked in the envelope and rises out when it opens.
+
+---
+
 ## [v1.65a] — 2026-11-17
 
 ### 新增 / Added

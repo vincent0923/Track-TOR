@@ -1,5 +1,5 @@
 // Service Worker for 博G (bG) PWA
-const CACHE_NAME = "tracktor-pwa-v16";
+const CACHE_NAME = "tracktor-pwa-v17";
 const ASSETS = [
   "./",
   "./index.html",
@@ -21,12 +21,11 @@ const ASSETS = [
   "./js/p1day.js",
   "./js/p1weather.js",
   "./js/p1music.js",
-  "./manifest.json?v=4",
-  "./icon-192.png?v=4",
-  "./icon-512.png?v=4",
-  "./icon.svg?v=4",
-  "./icon-maskable-512.png?v=4",
-  "./apple-touch-icon.png?v=4",
+  "./manifest.json?v=5",
+  "./icon-192.png?v=5",
+  "./icon-512.png?v=5",
+  "./icon-maskable-512.png?v=5",
+  "./apple-touch-icon.png?v=5",
   "./fonts/geist-wght.woff2",
   "./img/tex-0.webp",
   "./img/tex-1.webp",
