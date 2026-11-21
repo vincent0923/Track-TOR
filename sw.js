@@ -1,9 +1,10 @@
 // Service Worker for 博G (bG) PWA
-const CACHE_NAME = "tracktor-pwa-v17";
+const CACHE_NAME = "tracktor-pwa-v18";
 const ASSETS = [
   "./",
   "./index.html",
   "./css/p1.css",
+  "./js/early.js",
   "./js/hant.js",
   "./js/core.js",
   "./js/diet.js",
@@ -26,7 +27,14 @@ const ASSETS = [
   "./icon-512.png?v=5",
   "./icon-maskable-512.png?v=5",
   "./apple-touch-icon.png?v=5",
+  "./fonts/bg-pixel-sc.woff2",
+  "./fonts/doto-wght.woff2",
+  "./fonts/fraunces-wght.woff2",
   "./fonts/geist-wght.woff2",
+  "./fonts/inter-tight-wght.woff2",
+  "./fonts/michroma.woff2",
+  "./fonts/nunito-wght.woff2",
+  "./fonts/share-tech-mono.woff2",
   "./img/tex-0.webp",
   "./img/tex-1.webp",
   "./img/tex-2.webp",

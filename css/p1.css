@@ -80,8 +80,8 @@ h1,h2,h3,p{margin:0}
 .dw{font-size:11px;font-weight:600;color:var(--muted);padding-bottom:4px}
 .dd{display:grid;justify-items:center;gap:3px;padding:2px 0}
 .dd b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:500 14px/1 var(--num);color:color-mix(in srgb,var(--ink) 85%,transparent);font-variant-numeric:tabular-nums}
-.dd.out b{opacity:.28}
-.dd.fut b{opacity:.4}
+.dd.out b{color:var(--muted);font-weight:400}
+.dd.fut b{color:var(--muted);font-weight:400}
 .dd.today b{background:var(--ac);color:var(--on-ac);font-weight:800}
 .dd .mk{display:flex;gap:3px;height:6px}
 .dd .mk i{width:6px;height:6px;border-radius:50%}
@@ -970,6 +970,8 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 /* aurora */
 :root[data-theme="aurora"]{--disp:"Geist",-apple-system,BlinkMacSystemFont,sans-serif;--shadow:0 0 0 .5px rgba(20,30,24,.06),0 1px 2px rgba(20,30,24,.03),0 10px 30px -14px rgba(20,30,24,.14);--lit:inset 0 1px 0 rgba(255,255,255,.9)}
 /* aurora:dark */
+/* readable on the default light look: muted text and text on the green accent reach 4.5:1 */
+:root[data-theme="aurora"]:not([data-mode="dark"]){--muted:#6B6C71;--on-ac:#0E2A17}
 :root[data-theme="aurora"][data-mode="dark"]{--shadow:0 0 0 .5px rgba(148,163,184,.09),0 1px 0 rgba(0,0,0,.4),0 18px 40px -18px rgba(0,0,0,.8);--lit:inset 0 1px 0 rgba(255,255,255,.05)}
 /* aurora */
 :root[data-theme="aurora"] h1,:root[data-theme="aurora"] .hero h2{font-weight:600;letter-spacing:-.045em}
@@ -1649,3 +1651,6 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 .thv-d{display:flex;gap:6px}
 .thv-d i{width:6px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--ink) 25%,transparent);transition:background .2s,transform .2s}
 .thv-d i.on{background:var(--ac);transform:scale(1.3)}
+/* small round keys keep their look but get a 44 px touch area (WCAG target size) */
+:where(.mini,.fsreset,.f-sets i,.icopt){position:relative}
+:where(.mini,.fsreset,.f-sets i)::after{content:"";position:absolute;inset:min(0px,calc((100% - 44px) / 2));border-radius:inherit}

@@ -1,16 +1,18 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https:; media-src 'self' data: blob:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>博G</title>
 <meta name="theme-color" content="#F1F1EC">
+<meta name="description" content="博G：记录引体向上、俯卧撑等自重训练，自动排下一次练什么，顺手记饮食热量和身体数据。">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json?v=5">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=5">
 <link rel="icon" href="icon-192.png?v=5" type="image/png">
-<script>/* the app icon chosen in the app (theme colour + symbol), set before anything else so an install picks it up */
-try{var n=localStorage.getItem("tracktor-icon");if(n&&/^[a-z0-9-]+$/.test(n)){var q=function(r){return document.querySelector('link[rel="'+r+'"]')};
-q("manifest").href="icons/"+n+".json?v=1";q("apple-touch-icon").href="icons/"+n+"-a.png?v=1";var f=q("icon");f.href="icons/"+n+".webp?v=1";f.type="image/webp"}}catch(e){}</script>
-<link rel="stylesheet" href="css/p1.css?v=380a1de2"></head><body>
+<script src="js/early.js?v=98c77756"></script>
+<link rel="preload" href="fonts/geist-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/p1.css?v=98c77756"></head><body>
 <div class="wrap">
   <header class="top">
     <div><p class="eyebrow" id="today"></p><h1 id="title">训练</h1></div>
@@ -38,21 +40,21 @@ q("manifest").href="icons/"+n+".json?v=1";q("apple-touch-icon").href="icons/"+n+
 <div class="toast" id="toast" role="status"></div>
 <span id="ver" hidden>v1.66a</span>
 
-<script src="js/hant.js?v=380a1de2"></script>
-<script src="js/core.js?v=380a1de2"></script>
-<script src="js/diet.js?v=380a1de2"></script>
-<script src="js/confetti.js?v=380a1de2"></script>
-<script src="js/sheetcore.js?v=380a1de2"></script>
-<script src="js/backupcore.js?v=380a1de2"></script>
-<script src="js/p1data.js?v=380a1de2"></script>
-<script src="js/p1fx.js?v=380a1de2"></script>
-<script src="js/p1stack.js?v=380a1de2"></script>
-<script src="js/coros.js?v=380a1de2"></script>
-<script src="js/engine.js?v=380a1de2"></script>
-<script src="js/scratch.js?v=380a1de2"></script>
-<script src="js/p1.js?v=380a1de2"></script>
-<script src="js/p1settings.js?v=380a1de2"></script>
-<script src="js/p1day.js?v=380a1de2"></script>
-<script src="js/p1weather.js?v=380a1de2"></script>
-<script src="js/p1music.js?v=380a1de2"></script>
+<script defer src="js/hant.js?v=98c77756"></script>
+<script defer src="js/core.js?v=98c77756"></script>
+<script defer src="js/diet.js?v=98c77756"></script>
+<script defer src="js/confetti.js?v=98c77756"></script>
+<script defer src="js/sheetcore.js?v=98c77756"></script>
+<script defer src="js/backupcore.js?v=98c77756"></script>
+<script defer src="js/p1data.js?v=98c77756"></script>
+<script defer src="js/p1fx.js?v=98c77756"></script>
+<script defer src="js/p1stack.js?v=98c77756"></script>
+<script defer src="js/coros.js?v=98c77756"></script>
+<script defer src="js/engine.js?v=98c77756"></script>
+<script defer src="js/scratch.js?v=98c77756"></script>
+<script defer src="js/p1.js?v=98c77756"></script>
+<script defer src="js/p1settings.js?v=98c77756"></script>
+<script defer src="js/p1day.js?v=98c77756"></script>
+<script defer src="js/p1weather.js?v=98c77756"></script>
+<script defer src="js/p1music.js?v=98c77756"></script>
 </body></html>

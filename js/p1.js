@@ -131,7 +131,7 @@ const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 function dayCell(s,marks,out){const t=today(),mk=marks[s],kinds=mk?[...mk].filter(k=>k!=="x").sort():[];
   const cls=(s===t?" today":"")+(s>t?" fut":"")+(out?" out":"")+(kinds.length?" trn":mk?" xo":"")+(s===calSel?" sel":"");
   const st=kinds.length?' style="--kc:var(--'+kinds[0]+')"':'',inner='<b>'+dateObj(s).getDate()+'</b>';
-  return s>t?'<div class="dd'+cls+'">'+inner+'</div>':'<button class="dd'+cls+'"'+st+' data-act="calsel" data-d="'+s+'" aria-label="'+s+'">'+inner+'</button>'}
+  return s>t?'<div class="dd'+cls+'">'+inner+'</div>':'<button class="dd'+cls+'"'+st+' data-act="calsel" data-d="'+s+'" aria-label="'+(LANG==="en"?MON_EN[dateObj(s).getMonth()]+" "+dateObj(s).getDate():(dateObj(s).getMonth()+1)+"月"+dateObj(s).getDate()+"日")+'">'+inner+'</button>'}
 /* the line under the calendar appears only for a tapped day: what was trained (in that day's colour), the extra
    practice, or a rest day; the pen opens the day to change it or add practice */
 let calSel=null;

@@ -25,6 +25,8 @@ LOOKS = {
     "tm4-dark": "#2D76C6", "skeuo-light": "#8E9197", "braun-light": "#EC6A2C", "md-light": "#AFC3DA",
     "nikon-dark": "#2E2F33", "dyson-light": "#D8A49B", "dyson-dark": "#33457F", "clay-light": "#8FDCC0",
 }
+# each look's page background (the --bg it paints), for the splash screen and title bar of that choice
+LOOK_BG = {"aurora-light": "#F1F1EC", "aurora-dark": "#070A10", "ember-light": "#F4EFE9", "ember-dark": "#0B0908", "toy-light": "#F4F1EA", "toy-dark": "#130C21", "pocket-light": "#C6C9CB", "pocket-dark": "#4C535B", "mac-light": "#D6D7DA", "mac-dark": "#1B1B1D", "ipod-light": "#E9EAEC", "ipod-dark": "#0D0D0E", "tm4-dark": "#123A6B", "skeuo-light": "#86888D", "braun-light": "#D8D5CA", "md-light": "#BFC6D0", "nikon-dark": "#141517", "dyson-light": "#EFDDD5", "dyson-dark": "#141936", "clay-light": "#E3E1DA"}
 DEFAULT = "aurora-light-heart"
 REF = .6            # the paper's mid tone in the masters
 GREEN = "#8FA98F"   # the masters' paper colour, for the maskable ground
@@ -66,7 +68,9 @@ def art(sym, hexc):
 def manifest(name):
     """the same app as manifest.json (same id, start and scope, seen from icons/), with this choice's pictures"""
     base = json.load(open(os.path.join(ROOT, "manifest.json"), encoding="utf8"))
+    look = name.rsplit("-", 1)[0]
     base.update({"start_url": "../index.html", "scope": "../", "id": "index.html",
+                 "background_color": LOOK_BG.get(look, base["background_color"]), "theme_color": LOOK_BG.get(look, base["theme_color"]),
                  "icons": [{"src": name + ".webp", "sizes": "512x512", "type": "image/webp", "purpose": "any"},
                            {"src": name + "-m.webp", "sizes": "512x512", "type": "image/webp", "purpose": "maskable"}]})
     return base
