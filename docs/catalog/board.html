@@ -8,7 +8,7 @@
 /* ?t=theme&m=light|dark&only=component-id ; CSS path differs between the repo (../../css) and the published page (css) */
 (function(){var q=new URLSearchParams(location.search),de=document.documentElement,t=q.get("t")||"aurora",m=q.get("m")||"light";
   var FIX={tm4:"dark",skeuo:"light",braun:"light",clay:"light",md:"light",nikon:"dark"};
-  de.dataset.theme=t;de.dataset.mode=FIX[t]||m;if(FIX[t])de.dataset.fixed="";
+  de.dataset.theme=t;de.dataset.mode=FIX[t]||m;if(FIX[t])de.dataset.fixed="";if(["ember","toy","pocket","tm4","braun","dyson","clay"].includes(t))de.dataset.gloss="";
   de.style.setProperty("--lx","30%");de.style.setProperty("--ly","10%");de.style.setProperty("--rot","0deg");de.style.setProperty("--rt",".5");
   document.write('<link rel="stylesheet" href="../../css/p1.css">');window.BASE="../../";
   if(q.get("only"))document.write('<style>.grp,.spec{display:none!important}.spec[data-c="'+q.get("only").replace(/[^\w-]/g,"")+'"]{display:grid!important;margin:0!important}.grp:has(.spec[data-c="'+q.get("only").replace(/[^\w-]/g,"")+'"]){display:block!important;margin:0!important}.grp>h2,.spec>.lab{display:none!important}body{padding:14px!important}</style>');})();

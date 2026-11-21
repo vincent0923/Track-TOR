@@ -49,19 +49,19 @@ function animateRings(root){requestAnimationFrame(()=>requestAnimationFrame(()=>
 /* ---------- theme: follow the phone, or fixed light / dark ---------- */
 /* themes: each has a light and a dark version. aurora is free; others are bought with G (settings.buys, settings.theme) */
 const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,sw:["#F1F1EC","#4FAF6A","#070A10","#00F5D4"]},
-  {id:"ember",zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]},
-  {id:"toy",zh:"糖果塑料",en:"Candy Plastic",price:90,sw:["#F4F1EA","#EB3B24","#130C21","#9DF03A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"},
-  {id:"pocket",zh:"奶油塑料",en:"Buttery Plastic",price:120,lit:1,sw:["#C6C9CB","#E7D4B4","#1B1C1E","#E39A2E"],dz:"油润塑料、凹碟方键、点阵屏、喇叭网孔",de:"Oily plastic, dished square keys, a dot-matrix screen, speaker holes"},
+  {id:"ember",gloss:1,zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]},
+  {id:"toy",gloss:1,zh:"糖果塑料",en:"Candy Plastic",price:90,sw:["#F4F1EA","#EB3B24","#130C21","#9DF03A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"},
+  {id:"pocket",gloss:1,zh:"奶油塑料",en:"Buttery Plastic",price:120,lit:1,sw:["#C6C9CB","#E7D4B4","#1B1C1E","#E39A2E"],dz:"油润塑料、凹碟方键、点阵屏、喇叭网孔",de:"Oily plastic, dished square keys, a dot-matrix screen, speaker holes"},
   {id:"mac",zh:"喷砂铝",en:"Bead-Blasted Aluminium",price:120,lit:1,sw:["#D6D7DA","#1C1C1E","#38393D","#0A84FF"],dz:"喷砂铝、钻石切边、黑色键帽",de:"Bead-blasted aluminium, diamond-cut edges, black keycaps"},
   {id:"ipod",zh:"白瓷",en:"Porcelain",price:120,lit:1,sw:["#FBFBFA","#2F7BEA","#151516","#2F7BEA"],dz:"高光白瓷面板、镀铬边、点按转盘",de:"Glossy porcelain face, chrome rim, a click wheel"},
   /* single-look themes: fix is the one mode they come in; the header switch hides */
-  {id:"tm4",zh:"钴蓝磨砂",en:"Frosted Cobalt",price:120,fix:"dark",sw:["#123A6B","#2D76C6","#FFFFFF","#FF6E30"],dz:"圆柱按键、点阵屏、发光指示灯",de:"Cylinder keys, a dot-matrix screen, glowing LEDs"},
+  {id:"tm4",gloss:1,zh:"钴蓝磨砂",en:"Frosted Cobalt",price:120,fix:"dark",sw:["#123A6B","#2D76C6","#FFFFFF","#FF6E30"],dz:"圆柱按键、点阵屏、发光指示灯",de:"Cylinder keys, a dot-matrix screen, glowing LEDs"},
   {id:"skeuo",zh:"拉丝铝 · 霓虹",en:"Brushed Alloy",price:120,fix:"light",sw:["#86888D","#C4C6CA","#18191B","#1FF5DC"],dz:"金属旋钮、黑色表圈、青色霓虹",de:"Metal knobs, a black bezel, cyan neon"},
-  {id:"braun",zh:"米白烤漆",en:"Cream Enamel",price:90,fix:"light",sw:["#D8D5CA","#F6F5EF","#1C1B18","#F26422"],dz:"方键、凹碟、滚花拨盘",de:"Square keys, concave dishes, a fluted dial"},
+  {id:"braun",gloss:1,zh:"米白烤漆",en:"Cream Enamel",price:90,fix:"light",sw:["#D8D5CA","#F6F5EF","#1C1B18","#F26422"],dz:"方键、凹碟、滚花拨盘",de:"Square keys, concave dishes, a fluted dial"},
   {id:"md",zh:"冰蓝拉丝",en:"Ice-Blue Brushed",price:120,fix:"light",sw:["#BFC6D0","#D3DAE3","#AEB9A2","#FF6A13"],dz:"冰蓝拉丝铝、段码液晶、橡胶小键",de:"Ice-blue brushed aluminium, a segment LCD, rubber keys"},
   {id:"nikon",zh:"黑皮压纹",en:"Pebbled Leather",price:120,fix:"dark",sw:["#141517","#26272A","#9EA3AA","#E8302A"],dz:"压纹蒙皮、滚花拨盘、快门键",de:"Pebbled leatherette, knurled dials, a shutter button"},
-  {id:"dyson",zh:"粉瓷 · 铜蓝",en:"Rose Ceramic · Copper Blue",price:120,lit:1,sw:["#EDDBD3","#C46F6C","#141936","#D49A5E"],dz:"亮：奶白陶瓷机身配玫瑰金属；暗：普鲁士蓝哑光配金铜；旋纹按钮、滤网纹样",de:"Light: cream ceramic with rose metal; dark: Prussian blue matte with rich copper; spun-ring buttons, filter grille"},
-  {id:"clay",zh:"黏土 · 薄荷",en:"Clay · Mint",price:90,fix:"light",sw:["#E3E1DA","#FFFFFF","#C7C5BD","#7CE8C4"],dz:"斜投影积木、网格纸、发光圆环",de:"Blocks with slanted shadows, grid paper, a glowing ring"}];
+  {id:"dyson",gloss:1,zh:"粉瓷 · 铜蓝",en:"Rose Ceramic · Copper Blue",price:120,lit:1,sw:["#EDDBD3","#C46F6C","#141936","#D49A5E"],dz:"亮：奶白陶瓷机身配玫瑰金属；暗：普鲁士蓝哑光配金铜；旋纹按钮、滤网纹样",de:"Light: cream ceramic with rose metal; dark: Prussian blue matte with rich copper; spun-ring buttons, filter grille"},
+  {id:"clay",gloss:1,zh:"黏土 · 薄荷",en:"Clay · Mint",price:90,fix:"light",sw:["#E3E1DA","#FFFFFF","#C7C5BD","#7CE8C4"],dz:"斜投影积木、网格纸、发光圆环",de:"Blocks with slanted shadows, grid paper, a glowing ring"}];
 /* ---------- the app icon: a paper envelope with a scratch card, dyed in the look's own colour (tools/icons.py),
    with a symbol the user picks. icons/<theme>-<light|dark>-<symbol>.webp is the tile, -m.webp maskable, -a.png for
    iPhone, .json its manifest. ICON_V: bump when the pictures are remade ---------- */
@@ -79,7 +79,7 @@ function themeOwned(id){const t=THEMES.find(x=>x.id===id);return !!t&&(!t.price|
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const th=themeOwned(state.settings.theme)?state.settings.theme:"aurora",fix=(THEMES.find(x=>x.id===th)||{}).fix,
     dark=fix?fix==="dark":m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),de=document.documentElement;
-  de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;if(fix||(THEMES.find(x=>x.id===th)||{}).lit)de.dataset.lit="";else delete de.dataset.lit;
+  de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if((THEMES.find(x=>x.id===th)||{}).gloss)de.dataset.gloss="";else delete de.dataset.gloss;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;if(fix||(THEMES.find(x=>x.id===th)||{}).lit)de.dataset.lit="";else delete de.dataset.lit;
   iconApply();requestAnimationFrame(()=>fitTitle());document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
 /* tactile themes: the light on the materials follows the phone. Tilt moves the highlight (--lx/--ly) and turns the
@@ -653,7 +653,7 @@ const SUNMOON='<svg class="sunmoon" viewBox="0 0 34 18" aria-label="'+T('亮暗�
 const thModes=th=>th.fix?[th.fix]:["light","dark"];
 function thPages(th,mode){return [].concat(...(mode?[mode]:thModes(th)).map(m=>[0,1,2].map(i=>({m,i}))))}
 /* TH_V: bump when tools/thumbs.js remakes the pictures (the service worker keeps images until their address changes) */
-const TH_V=2;
+const TH_V=3;
 const thPage=(th,p)=>'background-image:url(img/th/'+th.id+'-'+p.m+'.webp?v='+TH_V+');background-position:'+["0%","50%","100%"][p.i]+' 0';
 /* the stack: the first page on top, the rest stepped right and down behind it */
 function thStack(th,big,mode){const ps=thPages(th,mode);

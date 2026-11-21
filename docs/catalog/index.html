@@ -71,6 +71,7 @@ ol li{margin:4px 0}
     <li>在 <code>css/p1.css</code> 写 <code>:root[data-theme="新id"]</code> 的变量：<code>--bg --card --line --lit --sub --seg --dark --dark-solid --dark-line --track --ink --muted --ac --on-ac --ac-soft --ac-text --st1 --st2 --push --pull --third --good --bad --sleep --shadow</code>，需要的话加 <code>--disp --num --body</code> 字体。两版的再写一份 <code>[data-mode="dark"]</code>。</li>
     <li>照下面七类逐个覆盖：卡片和面板（<code>.card .tile .hero.dark .dark .sheet .panel .dock</code>）、确认类、开关类、调节类、选择类、导航类、音乐，最后是 <code>.bricks .bks i</code> 和 <code>.knobw .knob</code>。在这页切到新主题，一类一类看。</li>
     <li>材质颗粒用 <code>img/tex-*.webp</code>（新材质先用 SVG 噪声画好，再渲染成图片放进 <code>img/</code>）；不要用 <code>backdrop-filter</code>，面板一律不透明。</li>
+    <li>想要 iOS 6 的玻璃反光质感，在 <code>THEMES</code> 里加 <code>gloss:1</code>（并在 <code>board.html</code> 的列表里登记）：按键上半截亮、中间一道硬分界，卡片顶边一线白色高光，颜色仍是主题自己的。</li>
     <li>要有自己的庆祝和音效，写进 <code>js/p1fx.js</code> 的 <code>THEME_FX</code> 和 <code>SFX_TH</code>。</li>
   </ol>
 </div>

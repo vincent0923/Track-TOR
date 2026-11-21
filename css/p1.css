@@ -1654,3 +1654,46 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 /* small round keys keep their look but get a 44 px touch area (WCAG target size) */
 :where(.mini,.fsreset,.f-sets i,.icopt){position:relative}
 :where(.mini,.fsreset,.f-sets i)::after{content:"";position:absolute;inset:min(0px,calc((100% - 44px) / 2));border-radius:inherit}
+/* ---------- iOS 6 gloss: the glassy, lit-from-above look shared by the themes marked gloss:1 in THEMES
+   (warm sand, candy plastic, buttery plastic, frosted cobalt, cream enamel, rose ceramic, clay). Every key and
+   surface keeps its theme's colours but gets the classic sheen: a bright top half cut by a hard line at the
+   middle, a white hairline along the top edge, a darker rim and embossed text. Doubled attribute so it wins
+   over each theme's own material rules ---------- */
+:root[data-gloss]{--g-top:rgba(255,255,255,.62);--g-mid:rgba(255,255,255,.16);--g-edge:rgba(0,0,0,.16);--g-inset:rgba(255,255,255,.92);--g-emb:0 1px 0 rgba(255,255,255,.55);--g-btn:var(--ac);
+  --g-sheen:linear-gradient(180deg,var(--g-top) 0%,var(--g-mid) 49%,rgba(255,255,255,0) 50.5%,rgba(0,0,0,.05) 100%);
+  --g-soft:linear-gradient(180deg,var(--g-top) 0%,rgba(255,255,255,.12) 42%,rgba(255,255,255,0) 100%);
+  --g-key:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.2) 49%,rgba(255,255,255,0) 50.5%,rgba(0,0,0,.12) 100%)}
+:root[data-gloss][data-mode="dark"]{--g-top:rgba(255,255,255,.18);--g-mid:rgba(255,255,255,.05);--g-edge:rgba(0,0,0,.65);--g-inset:rgba(255,255,255,.16);--g-emb:0 -1px 0 rgba(0,0,0,.6)}
+:root[data-gloss][data-theme="toy"]{--g-btn:var(--red,var(--ac))}
+:root[data-gloss][data-gloss] body{text-shadow:var(--g-emb)}
+/* surfaces: each theme keeps its own card; the sheen lies on top of it as a layer under the content */
+:root[data-gloss][data-gloss] :is(.card,.tile,.dark,.sheet .panel,.mask .sheet,.mini-pl){isolation:isolate}
+:root[data-gloss][data-gloss] :is(.card,.tile,.dark,.sheet .panel,.mask .sheet,.mini-pl)::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+  background:linear-gradient(180deg,var(--g-top) 0,var(--g-mid) 46px,rgba(255,255,255,0) 120px);box-shadow:inset 0 1px 0 var(--g-inset),inset 0 0 0 1px var(--g-edge)}
+:root[data-gloss][data-gloss] .dark:not(.hero)::before,:root[data-gloss][data-mode="dark"][data-gloss] .hero::before{background:linear-gradient(180deg,rgba(255,255,255,.2) 0,rgba(255,255,255,.06) 46px,rgba(255,255,255,0) 120px);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),inset 0 0 0 1px rgba(0,0,0,.45)}
+:root[data-gloss][data-gloss] :is(.opt,.thc,.preset,.xitem,.shopc,.badge){background:var(--g-soft),var(--sub);border:1px solid var(--g-edge);box-shadow:inset 0 1px 0 var(--g-inset),0 1px 1px rgba(0,0,0,.08)}
+:root[data-gloss][data-gloss] :is(.opt[aria-pressed="true"],.thc.on,.preset.on){border-color:color-mix(in srgb,var(--g-btn) 70%,#000);box-shadow:inset 0 1px 0 var(--g-inset),0 0 0 2px color-mix(in srgb,var(--g-btn) 45%,transparent)}
+/* accent keys: the classic two-tone glossy button */
+:root[data-gloss][data-gloss] :is(.btn:not(.ghost),.hgo,.pill.ac,.cal .dd.today b,.dd.today b){background:var(--g-key),var(--g-btn);color:var(--on-ac);border:1px solid color-mix(in srgb,var(--g-btn) 62%,#000);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 2px rgba(0,0,0,.35),0 6px 12px -6px color-mix(in srgb,var(--g-btn) 70%,#000);text-shadow:0 -1px 0 rgba(0,0,0,.28)}
+:root[data-gloss][data-gloss] .dock .pc{background:var(--g-key),var(--g-btn);border:1px solid color-mix(in srgb,var(--g-btn) 62%,#000);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 1px 3px rgba(0,0,0,.45)}
+/* neutral keys: glassy orbs and capsules */
+:root[data-gloss][data-gloss] :is(.circ,.mini,.fsreset,.btn.ghost,.modesw,.f-sets i:not(.cur):not(.dn):not(.add)){background:var(--g-key),var(--card);color:var(--ink);border:1px solid var(--g-edge);
+  box-shadow:inset 0 1px 0 var(--g-inset),0 1px 2px rgba(0,0,0,.3)}
+:root[data-gloss][data-gloss] .modesw .kn{background:var(--g-key),var(--g-btn);border:1px solid color-mix(in srgb,var(--g-btn) 62%,#000);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 2px rgba(0,0,0,.4)}
+:root[data-gloss][data-gloss] .f-sets i.cur{background:var(--g-key),var(--g-btn);color:var(--on-ac);border:1px solid color-mix(in srgb,var(--g-btn) 62%,#000);text-shadow:0 -1px 0 rgba(0,0,0,.25)}
+/* the big tick: a domed glass button with a bright crescent on top */
+:root[data-gloss][data-gloss] .tickb:not(.done){background:radial-gradient(ellipse 72% 42% at 50% 20%,rgba(255,255,255,.8),rgba(255,255,255,.12) 70%,rgba(255,255,255,0) 72%),radial-gradient(circle at 50% 80%,color-mix(in srgb,var(--g-btn) 75%,#fff) 0%,var(--g-btn) 55%,color-mix(in srgb,var(--g-btn) 70%,#000) 100%);
+  color:var(--on-ac);border:1px solid color-mix(in srgb,var(--g-btn) 55%,#000);box-shadow:inset 0 -3px 6px rgba(0,0,0,.25),0 2px 3px rgba(0,0,0,.35),0 16px 28px -12px color-mix(in srgb,var(--g-btn) 70%,#000)}
+/* the dock: a glossy tab bar */
+:root[data-gloss][data-gloss] .dock{background:linear-gradient(180deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.07) 49%,rgba(255,255,255,0) 50.5%,rgba(0,0,0,.25) 100%),var(--dark-solid);border:1px solid rgba(0,0,0,.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 4px rgba(0,0,0,.35),0 16px 30px -12px rgba(0,0,0,.55)}
+:root[data-gloss][data-gloss] .dock button{text-shadow:0 -1px 0 rgba(0,0,0,.6)}
+/* switches and segmented controls, iOS 6 style: a sunken track, a white glass knob */
+:root[data-gloss][data-gloss] .opt .sw{width:52px;height:30px;border-radius:999px;background:linear-gradient(180deg,#C9C9C9,#F4F4F4);box-shadow:inset 0 2px 3px rgba(0,0,0,.35),0 1px 0 var(--g-inset);border:1px solid rgba(0,0,0,.25);padding:0}
+:root[data-gloss][data-gloss] .opt .sw::before{content:none}
+:root[data-gloss][data-gloss] .opt[aria-checked="true"] .sw{background:var(--g-key),var(--g-btn);box-shadow:inset 0 2px 3px rgba(0,0,0,.3),0 1px 0 var(--g-inset)}
+:root[data-gloss][data-gloss] .opt[aria-checked="true"] .sw::after{transform:translateX(22px)}
+:root[data-gloss][data-gloss] .opt .sw::after{top:1px;left:1px;width:26px;height:26px;border-radius:50%;background:linear-gradient(180deg,#FFFFFF 0%,#F2F2F2 50%,#DADADA 51%,#F6F6F6 100%);border:1px solid rgba(0,0,0,.25);box-shadow:0 1px 2px rgba(0,0,0,.35)}
+:root[data-gloss][data-gloss] .seg{background:var(--g-key),var(--sub);border:1px solid var(--g-edge);box-shadow:inset 0 1px 0 var(--g-inset),0 1px 1px rgba(0,0,0,.1)}
+:root[data-gloss][data-gloss] .seg button[aria-pressed="true"]{background:var(--g-key),var(--g-btn);color:var(--on-ac);box-shadow:inset 0 1px 2px rgba(0,0,0,.35);text-shadow:0 -1px 0 rgba(0,0,0,.28)}
