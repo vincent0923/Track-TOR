@@ -1666,11 +1666,25 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 :root[data-gloss][data-mode="dark"]{--g-top:rgba(255,255,255,.18);--g-mid:rgba(255,255,255,.05);--g-edge:rgba(0,0,0,.65);--g-inset:rgba(255,255,255,.16);--g-emb:0 -1px 0 rgba(0,0,0,.6)}
 :root[data-gloss][data-theme="toy"]{--g-btn:var(--red,var(--ac))}
 :root[data-gloss][data-gloss] body{text-shadow:var(--g-emb)}
-/* surfaces: each theme keeps its own card; the sheen lies on top of it as a layer under the content */
-:root[data-gloss][data-gloss] :is(.card,.tile,.dark,.sheet .panel,.mask .sheet,.mini-pl){isolation:isolate}
-:root[data-gloss][data-gloss] :is(.card,.tile,.dark,.sheet .panel,.mask .sheet,.mini-pl)::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
-  background:linear-gradient(180deg,var(--g-top) 0,var(--g-mid) 46px,rgba(255,255,255,0) 120px);box-shadow:inset 0 1px 0 var(--g-inset),inset 0 0 0 1px var(--g-edge)}
-:root[data-gloss][data-gloss] .dark:not(.hero)::before,:root[data-gloss][data-mode="dark"][data-gloss] .hero::before{background:linear-gradient(180deg,rgba(255,255,255,.2) 0,rgba(255,255,255,.06) 46px,rgba(255,255,255,0) 120px);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),inset 0 0 0 1px rgba(0,0,0,.45)}
+/* surfaces: cards, tiles, panels and boards become glass slabs in the theme's own colour (--gb): a lighter top,
+   a bright band across the top cut by a hard line, a darker foot, a white hairline on top and a dark rim */
+:root[data-gloss]{--g-slab:linear-gradient(180deg,rgba(255,255,255,.55) 0,rgba(255,255,255,.14) 58px,rgba(255,255,255,0) 59px);--g-rim:rgba(0,0,0,.18)}
+:root[data-gloss][data-mode="dark"],:root[data-gloss][data-theme="tm4"]{--g-slab:linear-gradient(180deg,rgba(255,255,255,.2) 0,rgba(255,255,255,.05) 58px,rgba(255,255,255,0) 59px);--g-rim:rgba(0,0,0,.6)}
+:root[data-gloss][data-theme="pocket"]{--g-hero:#2A2E32}
+:root[data-gloss][data-theme="pocket"][data-mode="dark"]{--g-hero:#0B0C0D}
+:root[data-gloss][data-theme="toy"]{--g-dk:#2244FF}
+:root[data-gloss][data-theme="toy"][data-mode="dark"]{--g-dk:#6B3FB8}
+:root[data-gloss][data-theme="clay"]{--g-dk:#A4E2CD}
+:root[data-gloss][data-theme="tm4"]{--g-dk:var(--card)}
+:root[data-gloss][data-gloss] :is(.card,.tile,.sheet .panel,.mask .sheet,.mini-pl){--gb:var(--card)}
+:root[data-gloss][data-gloss] .hero.hero.hero{--gb:var(--g-hero,var(--card))}
+:root[data-gloss][data-gloss] .dark:not(.hero){--gb:var(--g-dk,var(--dark-solid))}
+:root[data-gloss][data-gloss] :is(.card,.tile,.dark,.sheet .panel,.mask .sheet,.mini-pl){
+  background:var(--g-slab),linear-gradient(180deg,color-mix(in srgb,var(--gb) 80%,#fff) 0%,var(--gb) 42%,color-mix(in srgb,var(--gb) 86%,#000) 100%);
+  border:1px solid var(--g-rim);box-shadow:inset 0 1px 0 var(--g-inset),inset 0 -1px 0 rgba(0,0,0,.14),0 2px 3px rgba(0,0,0,.22),0 12px 24px -12px rgba(0,0,0,.5)}
+/* boards with light text (and the pocket screen) take the darker glass */
+:root[data-gloss][data-gloss] .dark:not(.hero),:root[data-gloss][data-theme="pocket"][data-gloss] .hero{--g-slab:linear-gradient(180deg,rgba(255,255,255,.24) 0,rgba(255,255,255,.06) 58px,rgba(255,255,255,0) 59px);--g-inset:rgba(255,255,255,.3);--g-rim:rgba(0,0,0,.6)}
+:root[data-gloss][data-theme="clay"][data-gloss] .dark:not(.hero){--g-slab:linear-gradient(180deg,rgba(255,255,255,.55) 0,rgba(255,255,255,.14) 58px,rgba(255,255,255,0) 59px);--g-inset:rgba(255,255,255,.9);--g-rim:rgba(0,0,0,.18)}
 :root[data-gloss][data-gloss] :is(.opt,.thc,.preset,.xitem,.shopc,.badge){background:var(--g-soft),var(--sub);border:1px solid var(--g-edge);box-shadow:inset 0 1px 0 var(--g-inset),0 1px 1px rgba(0,0,0,.08)}
 :root[data-gloss][data-gloss] :is(.opt[aria-pressed="true"],.thc.on,.preset.on){border-color:color-mix(in srgb,var(--g-btn) 70%,#000);box-shadow:inset 0 1px 0 var(--g-inset),0 0 0 2px color-mix(in srgb,var(--g-btn) 45%,transparent)}
 /* accent keys: the classic two-tone glossy button */
