@@ -17,7 +17,7 @@
 - 只写以后一直有效的约定和找东西的线索，保持简短。做过什么看 `git log` 和 `CHANGELOG.md`，产品现在什么样看 `docs/PRODUCT.md`，打算做什么看私人文档「推拉机：私人规划与施工清单」。
 
 ## 每次发版
-- 现在的版本号是 v1.66a。
+- 现在的版本号是 v1.67a。
 - 只有加了新功能才升版本号。只改视觉或音效、没有新功能的改动，不升版本号、不写 CHANGELOG，测试通过后直接提交推送，不用问。
 - 版本号三处同步：`index.html` 里的 `#ver`，`README.md` 中英文各一处。
 - `CHANGELOG.md` 加一条，中英双语。
@@ -48,7 +48,7 @@
 - 训练计划：`settings.plan`（`js/engine.js` 的 `PRESETS`/`setPlan`）选 1–3 种训练日，内部类型固定是 `push`、`pull`、`third`（名字由计划定，`js/core.js` 的 `dayName`/`LAB`）；进度文件里训练的键前缀是 u、l、t。预设只是数据，以后用户写的计划也照这个格式。自由练 `id:"free"`（`js/engine.js` 的 `freeBase`/`freeLog`/`freePattern`）：没选过计划、也没练过正式训练的新用户默认是它；建议从最近 3 周的训练和加练里长出来（散步骑行这类不排），按部位多久没练排，每次至少 2 个动作 5 组；练法稳定后提示存成自定义计划。自定义计划 `id:"custom"`（`setCustomPlan`，面板 `openCustom`）：只用练过的动作（`engMoves`），每个动作从自己的上次记录接着练；自定义计划和自由练下引擎不换动作（`engCustom`）；一种训练日里找不到某动作的历史时，到所有训练和加练里找（`engMoveHist`）。
 - 训练引擎排的训练存在训练记录本身：`sessions[sid].ex` 是这次的动作、`feel` 是每个动作的感觉、`edited` 表示用户手改过。`js/core.js` 的 `registerPlanned` 把它们挂进 `PROGRAM`/`BYID`（可以超过第 20 天，`third-NN` 只靠它注册）。进度文件里对应追加的字段是 `pe`。
 - 新增文件要加进 `sw.js` 的缓存列表，资源列表变了就把 `CACHE_NAME` 的版本号加一。换默认 App 图标时，把 `manifest.json`、`index.html`、`sw.js` 里图标和 manifest 网址的 `?v=` 一起加一（现在是 v=5），手机才会认出新图标。
-- 性能：会被拖动或移动的东西（卡堆顶牌、底栏高亮、底部面板、播放器）有 `will-change:transform`；不要再用 `backdrop-filter`（手机上最贵），面板一律不透明；面板打开时背后的页面用一次 `filter:blur` 虚焦（`css/p1.css` 末尾，`body:has(#sheet.on)`/`body:has(>.mask)`）；页面背景不用 `background-attachment:fixed`。
+- 性能：会被拖动或移动的东西（卡堆顶牌、底栏高亮、底部面板、播放器）有 `will-change:transform`；不要再用 `backdrop-filter`（手机上最贵），面板一律不透明；唯一的例外是特效里的「半透明玻璃」开关（`html.glass`，`tracktor-p1-glass`，默认关），只给底栏和音乐播放器用；面板打开时背后的页面用一次 `filter:blur` 虚焦（`css/p1.css` 末尾，`body:has(#sheet.on)`/`body:has(>.mask)`）；页面背景不用 `background-attachment:fixed`。
 - `index.html` 有内容安全策略（CSP 的 `<meta>`）：脚本只能来自本站、不许写内联脚本或 `onclick=` 这类属性（要加启动时的小脚本就放进 `js/` 的文件里）；样式可以内联；图片和网络请求允许任何 https（饮食表格可以放在任何网站）。新功能要用别的协议或嵌别的页面时记得改这条。
 - 无障碍：默认主题（草木亮色）的灰字 `--muted` 和强调色上的字 `--on-ac` 都调到对比度 4.5 以上；小圆钮（`.mini`、`.fsreset`、组胶囊）样子不变，但用透明的 `::after` 把点按区域撑到 44px；不要再用 `opacity` 调淡文字（会掉对比度），用 `--muted`。
 - 改了 `css/` 或 `js/` 下的任何文件，提交前先运行 `python3 tools/stamp.py`。它给 `index.html` 里的脚本和样式网址加上内容指纹（`?v=…`），这样手机上缓存的旧文件不会和新网页配在一起。不运行的话，更新后可能出现新网页配旧脚本、功能错乱。

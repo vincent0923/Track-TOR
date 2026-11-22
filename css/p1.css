@@ -1711,3 +1711,17 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 :root[data-gloss][data-gloss] .opt .sw::after{top:1px;left:1px;width:26px;height:26px;border-radius:50%;background:linear-gradient(180deg,#FFFFFF 0%,#F2F2F2 50%,#DADADA 51%,#F6F6F6 100%);border:1px solid rgba(0,0,0,.25);box-shadow:0 1px 2px rgba(0,0,0,.35)}
 :root[data-gloss][data-gloss] .seg{background:var(--g-key),var(--sub);border:1px solid var(--g-edge);box-shadow:inset 0 1px 0 var(--g-inset),0 1px 1px rgba(0,0,0,.1)}
 :root[data-gloss][data-gloss] .seg button[aria-pressed="true"]{background:var(--g-key),var(--g-btn);color:var(--on-ac);box-shadow:inset 0 1px 2px rgba(0,0,0,.35);text-shadow:0 -1px 0 rgba(0,0,0,.28)}
+/* ---------- translucent glass (Effects › Translucent glass, html.glass): the dock and the music player become flat,
+   see-through frosted bars over the page, whatever the theme; the chosen tab is a soft tinted pill with the accent
+   colour on its icon and label. Costs some GPU (backdrop-filter), so it is a switch and off by default ---------- */
+:root.glass{--gl-bg:rgba(250,250,252,.58);--gl-line:rgba(255,255,255,.75);--gl-edge:rgba(0,0,0,.08);--gl-ink:#1C1D1F;--gl-dim:rgba(28,29,31,.62);--gl-pc:rgba(0,0,0,.07);--gl-on:var(--ac-text)}
+:root.glass[data-mode="dark"]{--gl-bg:rgba(44,44,48,.55);--gl-line:rgba(255,255,255,.16);--gl-edge:rgba(0,0,0,.35);--gl-ink:#fff;--gl-dim:rgba(255,255,255,.78);--gl-pc:rgba(255,255,255,.13);--gl-on:var(--ac)}
+html:root.glass.glass.glass :is(.dock,.mini-pl){background:var(--gl-bg);-webkit-backdrop-filter:blur(22px) saturate(1.8);backdrop-filter:blur(22px) saturate(1.8);
+  border:1px solid var(--gl-line);box-shadow:0 0 0 .5px var(--gl-edge),inset 0 1px 0 rgba(255,255,255,.28),0 12px 32px -12px rgba(0,0,0,.35);color:var(--gl-ink);text-shadow:none;isolation:auto}
+html:root.glass.glass.glass :is(.dock,.mini-pl)::before,html:root.glass.glass.glass :is(.dock,.mini-pl)::after{display:none}
+html:root.glass.glass.glass .dock button{color:var(--gl-dim);text-shadow:none}
+html:root.glass.glass.glass .dock button[aria-selected="true"]{color:var(--gl-on)}
+html:root.glass.glass.glass .dock .pc{background:var(--gl-pc);border:0;box-shadow:none}
+html:root.glass.glass.glass .mini-pl :is(.mp-t b,.mp-b){color:var(--gl-ink)}
+html:root.glass.glass.glass .mini-pl .mp-t small{color:var(--gl-dim)}
+@media (prefers-reduced-transparency: reduce){:root.glass{--gl-bg:rgba(250,250,252,.96)}:root.glass[data-mode="dark"]{--gl-bg:rgba(44,44,48,.96)}}

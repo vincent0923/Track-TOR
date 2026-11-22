@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.67a] — 2026-11-22
+
+### 新增 / Added
+- 🫧 **半透明玻璃**：设定 › 外观 › 特效里新开关，底栏和音乐播放器变成扁平的半透明毛玻璃，透出底下的内容；默认关。
+  **Translucent glass**: a new switch in Settings › Appearance › Effects turns the dock and the music player into flat, see-through frosted bars; off by default.
+
+### 改进 / Changed
+- 暖砂、糖果塑料、奶油塑料、钴蓝磨砂、米白烤漆、粉瓷、黏土七套主题换成 iOS 6 的玻璃反光质感：按键、开关、卡片都是同色玻璃。
+  Seven themes (warm sand, candy plastic, buttery plastic, frosted cobalt, cream enamel, rose ceramic, clay) take the iOS 6 glossy look: keys, switches and cards become glass in each theme's colours.
+
+---
+
 ## [v1.66a] — 2026-11-17
 
 ### 新增 / Added

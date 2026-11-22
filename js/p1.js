@@ -106,6 +106,10 @@ rtApply();
 /* dust: two days without training or extras and the screen gathers dust, more each day (levels 1–3); training wipes it */
 /* music easter egg (js/p1music.js spGroove): bricks, trained days and the start key move with what plays */
 function grooveOn(){try{return localStorage.getItem(PK+"groove")!=="0"}catch(e){return true}}
+/* translucent glass: the dock and the player float as frosted, see-through bars (Settings › Appearance › Effects; off by default) */
+function glassOn(){try{return localStorage.getItem(PK+"glass")==="1"}catch(e){return false}}
+function glassApply(){document.documentElement.classList.toggle("glass",glassOn())}
+glassApply();
 function dustOn(){try{return localStorage.getItem(PK+"dust")!=="0"}catch(e){return true}}
 function dustDays(){let last="";Object.values(state.sessions).forEach(x=>{if(x&&(x.done||Object.values(x.sets||{}).some(a=>(a||[]).some(z=>z.d)))){const d=x.date||today();if(d>last)last=d}});
   Object.keys(state.dayx||{}).forEach(d=>{const x=state.dayx[d];if(x&&x.xs&&x.xs.length&&d>last)last=d});return last?dnum(today())-dnum(last):0}
@@ -768,7 +772,7 @@ function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+
   openSheet('<div class="sh-h"><h3>'+T('特效','Effects')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="setlist">'+sw("rt",rtLevel()>0,ICON.spark,T('光追','Ray-traced light'))
     +'<button class="opt" data-act="go" data-to="p1:weather">'+ICON.rain+'<span class="sp">'+T('天气','Weather')+'</span>'+ICON.right+'</button>'
-    +sw("dust",dustOn(),ICON.dust,T('两天没练就落灰','Dust after two days off'))
+    +sw("glass",glassOn(),ICON.spark,T('半透明玻璃','Translucent glass'))+sw("dust",dustOn(),ICON.dust,T('两天没练就落灰','Dust after two days off'))
     +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+sw("groove",grooveOn(),ICON.music,T('音乐律动（需 Spotify）','Move with the music (needs Spotify)'))+'</div>');CUR_SHEET=fxSheet}
 function meSheet(){SHEET_UP=null;let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
@@ -862,6 +866,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="iconpick"){try{localStorage.setItem(PK+"icon",b.dataset.k)}catch(err){}iconApply();SFX.tap();buzz(10);const up=SHEET_UP;iconSheet();SHEET_UP=up}
   else if(a==="rt"){const on=rtLevel()===0;try{localStorage.setItem(PK+"rt",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);rtApply();buzz(8)}
   else if(a==="groove"){const on=!grooveOn();try{localStorage.setItem(PK+"groove",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);buzz(8);if(typeof spGroove==="function")spGroove()}
+  else if(a==="glass"){const on=!glassOn();try{localStorage.setItem(PK+"glass",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);glassApply();buzz(8)}
   else if(a==="dust"){const on=!dustOn();try{localStorage.setItem(PK+"dust",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);dustApply()}
   else if(a==="fx"){const on=!fxOn();try{localStorage.setItem("tracktor-p1-fx",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);if(on){SFX.tap();celebrate(2,0)}}
   else if(a==="mode"){try{localStorage.setItem(PK+"mode",b.dataset.m)}catch(err){}applyMode();meSheet()}
