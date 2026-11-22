@@ -1711,18 +1711,33 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 :root[data-gloss][data-gloss] .opt .sw::after{top:1px;left:1px;width:26px;height:26px;border-radius:50%;background:linear-gradient(180deg,#FFFFFF 0%,#F2F2F2 50%,#DADADA 51%,#F6F6F6 100%);border:1px solid rgba(0,0,0,.25);box-shadow:0 1px 2px rgba(0,0,0,.35)}
 :root[data-gloss][data-gloss] .seg{background:var(--g-key),var(--sub);border:1px solid var(--g-edge);box-shadow:inset 0 1px 0 var(--g-inset),0 1px 1px rgba(0,0,0,.1)}
 :root[data-gloss][data-gloss] .seg button[aria-pressed="true"]{background:var(--g-key),var(--g-btn);color:var(--on-ac);box-shadow:inset 0 1px 2px rgba(0,0,0,.35);text-shadow:0 -1px 0 rgba(0,0,0,.28)}
-/* ---------- translucent glass (Effects › Translucent glass, html.glass): the dock and the music player become flat,
-   see-through frosted bars over the page, whatever the theme; the chosen tab is a soft tinted pill with the accent
-   colour on its icon and label. Costs some GPU (backdrop-filter), so it is a switch and off by default ---------- */
-:root.glass{--gl-bg:rgba(250,250,252,.58);--gl-line:rgba(255,255,255,.75);--gl-edge:rgba(0,0,0,.08);--gl-ink:#1C1D1F;--gl-dim:rgba(28,29,31,.62);--gl-pc:rgba(0,0,0,.07);--gl-on:var(--ac-text)}
-:root.glass[data-mode="dark"]{--gl-bg:rgba(44,44,48,.55);--gl-line:rgba(255,255,255,.16);--gl-edge:rgba(0,0,0,.35);--gl-ink:#fff;--gl-dim:rgba(255,255,255,.78);--gl-pc:rgba(255,255,255,.13);--gl-on:var(--ac)}
-html:root.glass.glass.glass :is(.dock,.mini-pl){background:var(--gl-bg);-webkit-backdrop-filter:blur(22px) saturate(1.8);backdrop-filter:blur(22px) saturate(1.8);
-  border:1px solid var(--gl-line);box-shadow:0 0 0 .5px var(--gl-edge),inset 0 1px 0 rgba(255,255,255,.28),0 12px 32px -12px rgba(0,0,0,.35);color:var(--gl-ink);text-shadow:none;isolation:auto}
-html:root.glass.glass.glass :is(.dock,.mini-pl)::before,html:root.glass.glass.glass :is(.dock,.mini-pl)::after{display:none}
-html:root.glass.glass.glass .dock button{color:var(--gl-dim);text-shadow:none}
-html:root.glass.glass.glass .dock button[aria-selected="true"]{color:var(--gl-on)}
-html:root.glass.glass.glass .dock .pc{background:var(--gl-pc);border:0;box-shadow:none;border-radius:999px}
-html:root.glass.glass.glass .dock{border-radius:999px}
-html:root.glass.glass.glass .mini-pl :is(.mp-t b,.mp-b){color:var(--gl-ink)}
-html:root.glass.glass.glass .mini-pl .mp-t small{color:var(--gl-dim)}
-@media (prefers-reduced-transparency: reduce){:root.glass{--gl-bg:rgba(250,250,252,.96)}:root.glass[data-mode="dark"]{--gl-bg:rgba(44,44,48,.96)}}
+/* the dock's selected tab follows the dock's own curve in every theme */
+html:root .dock .pc.pc.pc{border-radius:inherit}
+/* ---------- translucent glass (Effects › Translucent glass, html.glass): the dock and the music player keep their
+   theme's rim, shadows, sheen and selected tab, but their fill turns see-through (the theme's own colour, sampled
+   per look below, at about 60%) over a blur of the page. Costs some GPU (backdrop-filter): a switch, off by default ---------- */
+:root.glass[data-theme="aurora"][data-mode="light"]{--gl-dock:#16161A;--gl-mp:#FFFFFF}
+:root.glass[data-theme="aurora"][data-mode="dark"]{--gl-dock:#101B29;--gl-mp:#101520}
+:root.glass[data-theme="ember"][data-mode="light"]{--gl-dock:#1C222F;--gl-mp:#F4F2F0}
+:root.glass[data-theme="ember"][data-mode="dark"]{--gl-dock:#261D18;--gl-mp:#322E2C}
+:root.glass[data-theme="toy"][data-mode="light"]{--gl-dock:#2242EC;--gl-mp:#F0F0EB}
+:root.glass[data-theme="toy"][data-mode="dark"]{--gl-dock:#653DAC;--gl-mp:#43365A}
+:root.glass[data-theme="pocket"][data-mode="light"]{--gl-dock:#2A2E32;--gl-mp:#C7C4BE}
+:root.glass[data-theme="pocket"][data-mode="dark"]{--gl-dock:#0E1010;--gl-mp:#363638}
+:root.glass[data-theme="mac"][data-mode="light"]{--gl-dock:#CFD0D3;--gl-mp:#E3E4E6}
+:root.glass[data-theme="mac"][data-mode="dark"]{--gl-dock:#333437;--gl-mp:#3A3B3F}
+:root.glass[data-theme="ipod"][data-mode="light"]{--gl-dock:#F2F4FA;--gl-mp:#F2F6FA}
+:root.glass[data-theme="ipod"][data-mode="dark"]{--gl-dock:#1C1E24;--gl-mp:#1F2126}
+:root.glass[data-theme="tm4"][data-mode="dark"]{--gl-dock:#1E58A0;--gl-mp:#3E73AF}
+:root.glass[data-theme="skeuo"][data-mode="light"]{--gl-dock:#343639;--gl-mp:#AAACAE}
+:root.glass[data-theme="braun"][data-mode="light"]{--gl-dock:#1D1C1A;--gl-mp:#E8E8E2}
+:root.glass[data-theme="md"][data-mode="light"]{--gl-dock:#D2D8E2;--gl-mp:#D3DAE3}
+:root.glass[data-theme="nikon"][data-mode="dark"]{--gl-dock:#24252A;--gl-mp:#1C1D20}
+:root.glass[data-theme="dyson"][data-mode="light"]{--gl-dock:#B66966;--gl-mp:#EEE8E5}
+:root.glass[data-theme="dyson"][data-mode="dark"]{--gl-dock:#C6905A;--gl-mp:#3E456D}
+:root.glass[data-theme="clay"][data-mode="light"]{--gl-dock:#9AD2BF;--gl-mp:#F2F0EE}
+html:root.glass.glass.glass .dock{background:var(--g-key,linear-gradient(transparent,transparent)),color-mix(in srgb,var(--gl-dock,#202024) 60%,transparent);
+  -webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7)}
+html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(transparent,transparent)),color-mix(in srgb,var(--gl-mp,#fff) 62%,transparent);
+  -webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7)}
+@media (prefers-reduced-transparency: reduce){html:root.glass.glass.glass .dock{background:var(--g-key,linear-gradient(transparent,transparent)),var(--gl-dock,#202024)}html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(transparent,transparent)),var(--gl-mp,#fff)}}
