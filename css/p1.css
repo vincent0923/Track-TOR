@@ -1721,7 +1721,8 @@ html:root.glass.glass.glass :is(.dock,.mini-pl){background:var(--gl-bg);-webkit-
 html:root.glass.glass.glass :is(.dock,.mini-pl)::before,html:root.glass.glass.glass :is(.dock,.mini-pl)::after{display:none}
 html:root.glass.glass.glass .dock button{color:var(--gl-dim);text-shadow:none}
 html:root.glass.glass.glass .dock button[aria-selected="true"]{color:var(--gl-on)}
-html:root.glass.glass.glass .dock .pc{background:var(--gl-pc);border:0;box-shadow:none}
+html:root.glass.glass.glass .dock .pc{background:var(--gl-pc);border:0;box-shadow:none;border-radius:999px}
+html:root.glass.glass.glass .dock{border-radius:999px}
 html:root.glass.glass.glass .mini-pl :is(.mp-t b,.mp-b){color:var(--gl-ink)}
 html:root.glass.glass.glass .mini-pl .mp-t small{color:var(--gl-dim)}
 @media (prefers-reduced-transparency: reduce){:root.glass{--gl-bg:rgba(250,250,252,.96)}:root.glass[data-mode="dark"]{--gl-bg:rgba(44,44,48,.96)}}
