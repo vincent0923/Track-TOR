@@ -1743,3 +1743,8 @@ html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(tra
 @media (prefers-reduced-transparency: reduce){html:root.glass.glass.glass .dock{background:var(--g-key,linear-gradient(transparent,transparent)),var(--gl-dock,#202024)}html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(transparent,transparent)),var(--gl-mp,#fff)}}
 /* over a light page the see-through dock is light too: its idle icons turn dark so they stay readable */
 html:root.glass.glass.glass:not([data-mode="dark"]) .dock button:not([aria-selected="true"]){color:color-mix(in srgb,var(--ink) 66%,transparent);text-shadow:none}
+/* calendar: a day with two or three trainings gets a ring split into one arc per training, each in its kind's colour */
+.cal .dd.multi b{position:relative}
+.cal .dd.multi b::after{content:"";position:absolute;inset:-4px;border-radius:inherit;padding:3px;pointer-events:none;
+  background:conic-gradient(from -90deg,var(--s1) 0 calc(var(--p1) - 2%),transparent 0 var(--p1),var(--s2) 0 calc(var(--p2) - 2%),transparent 0 var(--p2),var(--s3) 0 98%,transparent 0);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}

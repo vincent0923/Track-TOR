@@ -133,8 +133,11 @@ const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 /* a day: tinted in the colour of the training done that day (only extra practice: a thin ring); tap a trained day to
    see it under the calendar, any other day (today included) opens it for extra practice */
 function dayCell(s,marks,out){const t=today(),mk=marks[s],kinds=mk?[...mk].filter(k=>k!=="x").sort():[];
-  const cls=(s===t?" today":"")+(s>t?" fut":"")+(out?" out":"")+(kinds.length?" trn":mk?" xo":"")+(s===calSel?" sel":"");
-  const st=kinds.length?' style="--kc:var(--'+kinds[0]+')"':'',inner='<b>'+dateObj(s).getDate()+'</b>';
+  const cls=(s===t?" today":"")+(s>t?" fut":"")+(out?" out":"")+(kinds.length?" trn":mk?" xo":"")+(kinds.length&&(kinds.length>1||mk.has("x"))?" multi":"")+(s===calSel?" sel":"");
+  /* more than one training that day (two or three kinds, or a session plus extra practice): a ring cut into one arc
+     per training, each in its own colour */
+  const segs=kinds.length&&mk.has("x")?kinds.concat("ac"):kinds,multi=segs.length>1;
+  const st=kinds.length?' style="--kc:var(--'+kinds[0]+')'+(multi?';--s1:var(--'+segs[0]+');--s2:var(--'+segs[1]+');--s3:var(--'+(segs[2]||segs[1])+');--p1:'+(segs.length>2?'33.4%':'50%')+';--p2:'+(segs.length>2?'66.7%':'100%'):'')+'"':'',inner='<b>'+dateObj(s).getDate()+'</b>';
   return s>t?'<div class="dd'+cls+'">'+inner+'</div>':'<button class="dd'+cls+'"'+st+' data-act="calsel" data-d="'+s+'" aria-label="'+(LANG==="en"?MON_EN[dateObj(s).getMonth()]+" "+dateObj(s).getDate():(dateObj(s).getMonth()+1)+"月"+dateObj(s).getDate()+"日")+'">'+inner+'</button>'}
 /* the line under the calendar appears only for a tapped day: what was trained (in that day's colour), the extra
    practice, or a rest day; the pen opens the day to change it or add practice */
