@@ -1736,6 +1736,8 @@ html:root .dock .pc.pc.pc{border-radius:inherit}
 :root.glass[data-theme="dyson"][data-mode="light"]{--gl-dock:#B66966;--gl-mp:#EEE8E5}
 :root.glass[data-theme="dyson"][data-mode="dark"]{--gl-dock:#C6905A;--gl-mp:#3E456D}
 :root.glass[data-theme="clay"][data-mode="light"]{--gl-dock:#9AD2BF;--gl-mp:#F2F0EE}
+:root.glass[data-theme="eink"][data-mode="light"]{--gl-dock:#F4F3EF;--gl-mp:#F4F3EF}
+:root.glass[data-theme="eink"][data-mode="dark"]{--gl-dock:#161616;--gl-mp:#161616}
 html:root.glass.glass.glass .dock{background:var(--g-key,linear-gradient(transparent,transparent)),color-mix(in srgb,var(--gl-dock,#202024) 30%,transparent);
   -webkit-backdrop-filter:blur(16px) saturate(1.8);backdrop-filter:blur(16px) saturate(1.8)}
 html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(transparent,transparent)),color-mix(in srgb,var(--gl-mp,#fff) 34%,transparent);
@@ -1748,3 +1750,61 @@ html:root.glass.glass.glass:not([data-mode="dark"]) .dock button:not([aria-selec
 html:root .cal .dd.multi.multi b{--m1:color-mix(in srgb,var(--s1) 48%,var(--card));--m2:color-mix(in srgb,var(--s2) 48%,var(--card));--m3:color-mix(in srgb,var(--s3) 48%,var(--card));
   background:linear-gradient(to bottom right,var(--m1) calc(var(--p1) - .6px),var(--m2) calc(var(--p1) + .6px),var(--m2) calc(var(--p2) - .6px),var(--m3) calc(var(--p2) + .6px));
   color:var(--ink);text-shadow:0 0 3px color-mix(in srgb,var(--card) 70%,transparent);font-weight:800}
+/* ---------- E-ink (墨水屏): an e-reader screen after KOReader. Paper white and ink black, nothing in between but a few
+   greys; every card, key and panel is a flat box drawn with a black rule, no shadows, no gradients, no glow; book
+   serif type; changes happen at once (an e-paper screen has no tweening) and turning a page flashes it black
+   (.einkflash). Night mode is the same screen inverted ---------- */
+:root[data-theme="eink"]{--serif:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong",Georgia,"Times New Roman",serif;
+  --bg:#ECEBE6;--glow:none;--card:#F4F3EF;--line:#1A1A1A;--lit:none;--sub:#E4E3DD;--seg:#E4E3DD;--dark:#161616;--dark-solid:#161616;--dark-line:#161616;--track:#C9C8C2;
+  --ink:#111111;--muted:#545454;--ac:#111111;--on-ac:#F4F3EF;--ac-soft:rgba(17,17,17,.1);--ac-text:#111111;--st1:rgba(17,17,17,.16);--st2:rgba(17,17,17,.5);
+  --push:#1A1A1A;--pull:#6B6B6B;--third:#A3A3A3;--kpush:var(--push);--kpull:var(--pull);--kthird:var(--third);--good:#1A1A1A;--bad:#1A1A1A;--sleep:#555;
+  --shadow:none;--ek-rule:1.5px solid var(--line);--num:var(--serif);--disp:var(--serif);--body:var(--serif);color-scheme:light}
+:root[data-theme="eink"][data-mode="dark"]{--bg:#121212;--card:#161616;--line:#E6E5E0;--sub:#1F1F1F;--seg:#1F1F1F;--dark:#E6E5E0;--dark-solid:#E6E5E0;--dark-line:#E6E5E0;--track:#3A3A3A;
+  --ink:#E6E5E0;--muted:#A8A8A4;--ac:#E6E5E0;--on-ac:#121212;--ac-soft:rgba(230,229,224,.12);--ac-text:#E6E5E0;--st1:rgba(230,229,224,.18);--st2:rgba(230,229,224,.5);
+  --push:#E6E5E0;--pull:#9A9A96;--third:#5E5E5B;--good:#E6E5E0;--bad:#E6E5E0;--sleep:#A8A8A4;color-scheme:dark}
+:root[data-theme="eink"] body{font-family:var(--serif);background:var(--bg);text-shadow:none}
+:root[data-theme="eink"] :is(h1,h2,h3,.big,.tile .tv,.f-num b,.stats b,b,.n){font-family:var(--serif);letter-spacing:0}
+/* no tweening: everything changes in one refresh */
+:root[data-theme="eink"] *,:root[data-theme="eink"] *::before,:root[data-theme="eink"] *::after{transition-duration:0s!important;animation-duration:0s!important;animation-delay:0s!important}
+/* boxes: flat paper with a black rule */
+:root[data-theme="eink"] :is(.card,.tile,.hero.dark,.sheet .panel,.mask .sheet,.mini-pl,.f-win){background:var(--card);border:var(--ek-rule);box-shadow:none;border-radius:12px;color:var(--ink)}
+:root[data-theme="eink"] .dark:not(.hero){background:var(--dark);color:var(--card);border:var(--ek-rule);box-shadow:none;border-radius:12px;--muted:color-mix(in srgb,var(--card) 70%,var(--dark))}
+:root[data-theme="eink"] :is(.opt,.thc,.preset,.xitem,.shopc,.badge){background:var(--card);border:1px solid var(--line);box-shadow:none;border-radius:10px}
+:root[data-theme="eink"] :is(.opt[aria-pressed="true"],.thc.on,.preset.on){outline:2px solid var(--line);outline-offset:-3px}
+:root[data-theme="eink"] .fs-peek i{background:var(--card);border:var(--ek-rule);box-shadow:none}
+/* keys: solid ink with paper letters, or paper with an ink rule */
+:root[data-theme="eink"] :is(.btn:not(.ghost),.hgo,.pill.ac,.dock .pc,.tickb:not(.done),.f-sets i.cur){background:var(--ac);color:var(--on-ac);border:var(--ek-rule);box-shadow:none;border-radius:10px;text-shadow:none;filter:none}
+:root[data-theme="eink"] .tickb{border-radius:50%;width:92px;height:92px}
+:root[data-theme="eink"] .tickb.done{background:var(--card);color:var(--ink);border:var(--ek-rule);box-shadow:none}
+:root[data-theme="eink"] :is(.circ,.mini,.fsreset,.btn.ghost,.modesw,.pill,.f-sets i:not(.cur),.seg,.coinchip){background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:none;text-shadow:none}
+:root[data-theme="eink"] .f-sets i.dn{background:var(--sub)}
+:root[data-theme="eink"] .modesw .kn{background:var(--ac);box-shadow:none}
+:root[data-theme="eink"] .seg button[aria-pressed="true"]{background:var(--ac);color:var(--on-ac);box-shadow:none}
+/* the dock: a toolbar with a ruled box; the current tab is inverted */
+:root[data-theme="eink"] .dock{background:var(--card);border:var(--ek-rule);box-shadow:none;border-radius:14px}
+:root[data-theme="eink"] .dock button{color:var(--ink)}
+:root[data-theme="eink"] .dock button[aria-selected="true"]{color:var(--on-ac)}
+/* switches as KOReader draws them: a ruled box with a solid square that moves across */
+:root[data-theme="eink"] .opt .sw{width:46px;height:26px;border-radius:6px;background:var(--card);border:1.5px solid var(--line);box-shadow:none}
+:root[data-theme="eink"] .opt .sw::after{top:2px;left:2px;width:19px;height:19px;border-radius:3px;background:var(--muted);box-shadow:none}
+:root[data-theme="eink"] .opt[aria-checked="true"] .sw{background:var(--card)}
+:root[data-theme="eink"] .opt[aria-checked="true"] .sw::after{background:var(--ac);transform:translateX(20px)}
+/* calendar: trained days in grey tones, today inverted */
+:root[data-theme="eink"] .cal .dd.trn b{background:color-mix(in srgb,var(--kc) 30%,var(--card));color:var(--ink);box-shadow:none;border:1px solid var(--line)}
+:root[data-theme="eink"] .cal .dd.today b,:root[data-theme="eink"] .dd.today b{background:var(--ac);color:var(--on-ac);box-shadow:none}
+/* charts: ink bricks, flat */
+:root[data-theme="eink"] .bricks{background:var(--card);box-shadow:none;border:1px solid var(--line)}
+:root[data-theme="eink"] .bks i{border-radius:1px;box-shadow:none;filter:none}
+/* the move dial and window: a ruled strip with plain hatching */
+:root[data-theme="eink"] .f-dial{--d-p:6;--d-slot:var(--card);--d-body:var(--card);--d-tex:repeating-linear-gradient(90deg,var(--line) 0 1.5px,transparent 1.5px 6px);--d-size:auto;box-shadow:none;border:var(--ek-rule)}
+:root[data-theme="eink"] .f-win{--w-ink:var(--ink)}
+:root[data-theme="eink"] .f-win h2{color:var(--ink);text-shadow:none}
+/* an e-ink screen has no colour at all: the whole page (pictures, chart colours, celebrations) shows in greys.
+   On the root element, so fixed bars still sit on the screen */
+html[data-theme="eink"]{filter:grayscale(1)}
+:root[data-theme="eink"] .hero::before,:root[data-theme="eink"] .hero::after{display:none}
+:root[data-theme="eink"] .hero{background-image:none}
+/* the page-turn refresh */
+.einkflash{position:fixed;inset:0;z-index:200;background:#111;pointer-events:none}
+.einkflash.w{background:#F4F3EF}
+:root[data-theme="eink"] .glowring{display:none}

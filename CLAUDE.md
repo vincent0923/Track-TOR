@@ -17,7 +17,7 @@
 - 只写以后一直有效的约定和找东西的线索，保持简短。做过什么看 `git log` 和 `CHANGELOG.md`，产品现在什么样看 `docs/PRODUCT.md`，打算做什么看私人文档「推拉机：私人规划与施工清单」。
 
 ## 每次发版
-- 现在的版本号是 v1.67a。
+- 现在的版本号是 v1.68a。
 - 只有加了新功能才升版本号。只改视觉或音效、没有新功能的改动，不升版本号、不写 CHANGELOG，测试通过后直接提交推送，不用问。
 - 版本号三处同步：`index.html` 里的 `#ver`，`README.md` 中英文各一处。
 - `CHANGELOG.md` 加一条，中英双语。
@@ -41,7 +41,8 @@
 - 主项（目标里的那个运动，`js/p1data.js` 的 `mainEx`/`mainSeries`）：默认标准引体；从计划动作选的打勾自动记、训练引擎不换它（`isMain`），自己写的只能手动记。
 - G 币图标 `COIN`（`js/p1.js`）是当下主题的 `.circ` 圆钮加金色 G、呼吸发光；商店叫「G 分商店 / barGain store」。
 - G（积分，Grind）从记录现算（`js/p1data.js` 的 `coinBadges`），不另存；余额 = 赚的 − `settings.buys` 里花掉的。训练计划除了推拉二分（`cyclist`）、自由练、自定义，其他预设要 200 G 解锁（`js/p1settings.js` 的 `planOwned`，买的记 `plan:<id>`）。主题盲盒（`js/p1.js` 的 `openBox`，100 G）随机给一个还没有的主题，记在 `settings.buys`（带 `box:1`），都集齐了就不能开。
-- App 图标：纸信封加刮刮卡，每个主题的每个明暗版本一种纸色、七种图案任选（`tracktor-p1-icon`），文件在 `icons/`（`<主题>-<light|dark>-<图案>.webp`、`-m.webp`、`-a.png`、`.json`），由 `python3 tools/icons.py` 从 `tools/icon-src/` 的原稿染色生成（要 Pillow 和 numpy，跑十几分钟）；加新主题要在脚本的 `LOOKS` 里加它的纸色再跑一遍，图片重做后把 `js/p1.js` 的 `ICON_V` 和 `index.html` 开头小脚本里的 `?v=` 一起加一。`js/p1.js` 的 `iconApply` 负责把网页图标和 manifest 指到当前那一套。
+- App 图标：纸信封加刮刮卡，每个主题的每个明暗版本一种纸色、七种图案任选（`tracktor-p1-icon`），文件在 `icons/`（`<主题>-<light|dark>-<图案>.webp`、`-m.webp`、`-a.png`、`.json`），由 `python3 tools/icons.py` 从 `tools/icon-src/` 的原稿染色生成（要 Pillow 和 numpy，全部跑十几分钟；`--only=<主题>` 只做一套，`--manifests` 只重写 manifest）；加新主题要在脚本的 `LOOKS` 里加它的纸色再跑一遍，图片重做后把 `js/p1.js` 的 `ICON_V` 和 `index.html` 开头小脚本里的 `?v=` 一起加一。`js/p1.js` 的 `iconApply` 负责把网页图标和 manifest 指到当前那一套。
+- 墨水屏主题 `eink`：`html[data-theme="eink"]` 上整页 `filter:grayscale(1)`（放在根元素上，固定的底栏不受影响），所有过渡和动画时长归零，`show()` 换页时 `einkFlash` 闪一下屏。新组件不用为它配颜色，但别用阴影和渐变表达层次，墨水屏靠黑色细框。
 - iOS 6 玻璃反光：`THEMES` 里带 `gloss:1` 的主题（现在是 ember、toy、pocket、tm4、braun、dyson、clay）由 `applyMode` 加上 `html[data-gloss]`，`css/p1.css` 末尾那一段统一给按键、卡片、开关、底栏加反光，用双写的属性选择器压过各主题自己的材质规则；卡片、数据卡、目标板、面板都换成同色玻璃板，底色是 `--gb`（一般 `--card`；浅字的 `.dark` 板用 `--g-dk`，奶油塑料的训练卡用 `--g-hero`），加新主题时看它原来哪些板子是深底浅字，在这里补上。组件目录 `board.html` 里也要登记这份名单。
 - 主题缩略图：`img/th/<id>-<light|dark>.webp`，训练、饮食、进展三页并排，开本地服务器后 `node tools/thumbs.js` 用假数据重截（英文界面，三种语言共用）。新主题或主页面样子明显变了就重截，并把 `js/p1.js` 的 `TH_V` 加一（图片不在 `sw.js` 预缓存列表里，用到时才缓存，换地址才会更新）。
 - 主题（`js/p1.js` 的 `THEMES`，`css/p1.css` 里 `:root[data-theme=…]`，亮暗两版靠 `data-mode`）：一般要有亮、暗两版；只有一种样子的主题在 `THEMES` 里写 `fix:"light"|"dark"`，这时 `html[data-fixed]` 藏掉明暗开关和设定里的明暗选项（顶栏换成调色盘 `#themeBtn`，进主题列表），手机倾斜写进 `--lx`/`--ly`/`--rot`（`js/p1.js`），触感主题和奶油塑料（`THEMES` 里 `lit`）的高光和金属反光用它们；玩具主题不接光追。主题字体放 `fonts/`（许可见 `fonts/THEMES-OFL.txt`；拉丁字体没有中文，点阵主题的中文用 `fonts/bg-pixel-sc.woff2`（Fusion Pixel 的子集，按许可改名，`unicode-range` 只管中文），界面里加了新汉字要重新切子集），材质颗粒（拉丝、细颗粒、黏土粉、压纹皮、喷砂）是 `img/tex-*.webp`（从 SVG 噪声预先渲染，比现场算快；新材质也这样做），标题和大数字用 `--disp`，小数字用 `--num`。草木 · 极光免费，其他用 G 换。顶栏的明暗开关点一下切换，长按进主题页。

@@ -52,6 +52,7 @@ const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,s
   {id:"ember",gloss:1,zh:"暖砂 · 流金",en:"Sand · Amber",price:60,sw:["#F4EFE9","#D9714E","#0B0908","#FFB020"]},
   {id:"toy",gloss:1,zh:"糖果塑料",en:"Candy Plastic",price:90,sw:["#F4F1EA","#EB3B24","#130C21","#9DF03A"],dz:"塑料按键、积木柱子、点阵底板",de:"Plastic keys, brick bars, a dotted board"},
   {id:"pocket",gloss:1,zh:"奶油塑料",en:"Buttery Plastic",price:120,lit:1,sw:["#C6C9CB","#E7D4B4","#1B1C1E","#E39A2E"],dz:"油润塑料、凹碟方键、点阵屏、喇叭网孔",de:"Oily plastic, dished square keys, a dot-matrix screen, speaker holes"},
+  {id:"eink",zh:"墨水屏",en:"E-Ink",price:120,sw:["#ECEBE6","#111111","#161616","#E6E5E0"],dz:"电子书屏：纸白底、墨黑字、细黑框、翻页时闪一下",de:"An e-reader screen: paper white, ink black, thin black rules, a flash as the page turns"},
   {id:"mac",zh:"喷砂铝",en:"Bead-Blasted Aluminium",price:120,lit:1,sw:["#D6D7DA","#1C1C1E","#38393D","#0A84FF"],dz:"喷砂铝、钻石切边、黑色键帽",de:"Bead-blasted aluminium, diamond-cut edges, black keycaps"},
   {id:"ipod",zh:"白瓷",en:"Porcelain",price:120,lit:1,sw:["#FBFBFA","#2F7BEA","#151516","#2F7BEA"],dz:"高光白瓷面板、镀铬边、点按转盘",de:"Glossy porcelain face, chrome rim, a click wheel"},
   /* single-look themes: fix is the one mode they come in; the header switch hides */
@@ -110,6 +111,9 @@ function grooveOn(){try{return localStorage.getItem(PK+"groove")!=="0"}catch(e){
 function glassOn(){try{return localStorage.getItem(PK+"glass")==="1"}catch(e){return false}}
 function glassApply(){document.documentElement.classList.toggle("glass",glassOn())}
 glassApply();
+/* the e-ink skin: a full refresh flashes the screen black for an instant when the page turns, like an e-reader */
+function einkFlash(){if(document.documentElement.dataset.theme!=="eink"||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const f=document.createElement("div");f.className="einkflash";document.body.appendChild(f);setTimeout(()=>f.classList.add("w"),70);setTimeout(()=>f.remove(),150)}
 function dustOn(){try{return localStorage.getItem(PK+"dust")!=="0"}catch(e){return true}}
 function dustDays(){let last="";Object.values(state.sessions).forEach(x=>{if(x&&(x.done||Object.values(x.sets||{}).some(a=>(a||[]).some(z=>z.d)))){const d=x.date||today();if(d>last)last=d}});
   Object.keys(state.dayx||{}).forEach(d=>{const x=state.dayx[d];if(x&&x.xs&&x.xs.length&&d>last)last=d});return last?dnum(today())-dnum(last):0}
@@ -660,7 +664,7 @@ const SUNMOON='<svg class="sunmoon" viewBox="0 0 34 18" aria-label="'+T('亮暗�
 const thModes=th=>th.fix?[th.fix]:["light","dark"];
 function thPages(th,mode){return [].concat(...(mode?[mode]:thModes(th)).map(m=>[0,1,2].map(i=>({m,i}))))}
 /* TH_V: bump when tools/thumbs.js remakes the pictures (the service worker keeps images until their address changes) */
-const TH_V=4;
+const TH_V=5;
 const thPage=(th,p)=>'background-image:url(img/th/'+th.id+'-'+p.m+'.webp?v='+TH_V+');background-position:'+["0%","50%","100%"][p.i]+' 0';
 /* the stack: the first page on top, the rest stepped right and down behind it */
 function thStack(th,big,mode){const ps=thPages(th,mode);
@@ -802,7 +806,7 @@ function placePc(anim){const b=document.querySelector('.dock [aria-selected="tru
 let cur="train";
 /* with the calendar folded on the training page there is room: the mini player grows into a big card */
 function miniSize(){document.body.classList.toggle("mini-big",cur==="train"&&!monthOpen)}
-function show(v,anim,keep){cur=v;dustApply();miniSize();document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
+function show(v,anim,keep){if(anim)einkFlash();cur=v;dustApply();miniSize();document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
   document.querySelectorAll(".dock button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
   ({train:renderTrainView,diet:renderDietView,prog:renderProgView})[v]();if(v==="diet"&&!keep)dietPull(false);paintHeader(v);requestAnimationFrame(()=>placePc(anim));
   try{localStorage.setItem(PK+"tab",v)}catch(e){}if(!keep)scrollTo({top:0})}

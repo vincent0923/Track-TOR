@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.68a] — 2026-11-23
+
+### 新增 / Added
+- 📖 **墨水屏主题**：像电子书阅读器（参考 KOReader）的一套主题，纸白墨黑、整页灰阶、细黑框、衬线字，没有动画，翻页时整屏闪一下；有反色的夜间版。
+  **E-Ink theme**: an e-reader look after KOReader: paper white and ink black, greyscale throughout, thin black rules, book serif, no animation, a full-screen flash on page turns, and an inverted night version.
+
+### 改进 / Changed
+- 日历上一天练了两三次的日子，日期斜切成两色或三色。
+  Calendar days with two or three trainings split the date diagonally into two or three colours.
+
+---
+
 ## [v1.67a] — 2026-11-22
 
 ### 新增 / Added

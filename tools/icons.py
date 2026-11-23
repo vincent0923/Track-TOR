@@ -24,9 +24,10 @@ LOOKS = {
     "mac-light": "#C9CCD1", "mac-dark": "#4A4C52", "ipod-light": "#E9EBEE", "ipod-dark": "#2F7BEA",
     "tm4-dark": "#2D76C6", "skeuo-light": "#8E9197", "braun-light": "#EC6A2C", "md-light": "#AFC3DA",
     "nikon-dark": "#2E2F33", "dyson-light": "#D8A49B", "dyson-dark": "#33457F", "clay-light": "#8FDCC0",
+    "eink-light": "#CFCEC8", "eink-dark": "#3A3A3A",
 }
 # each look's page background (the --bg it paints), for the splash screen and title bar of that choice
-LOOK_BG = {"aurora-light": "#F1F1EC", "aurora-dark": "#070A10", "ember-light": "#F4EFE9", "ember-dark": "#0B0908", "toy-light": "#F4F1EA", "toy-dark": "#130C21", "pocket-light": "#C6C9CB", "pocket-dark": "#4C535B", "mac-light": "#D6D7DA", "mac-dark": "#1B1B1D", "ipod-light": "#E9EAEC", "ipod-dark": "#0D0D0E", "tm4-dark": "#123A6B", "skeuo-light": "#86888D", "braun-light": "#D8D5CA", "md-light": "#BFC6D0", "nikon-dark": "#141517", "dyson-light": "#EFDDD5", "dyson-dark": "#141936", "clay-light": "#E3E1DA"}
+LOOK_BG = {"eink-light": "#ECEBE6", "eink-dark": "#121212", "aurora-light": "#F1F1EC", "aurora-dark": "#070A10", "ember-light": "#F4EFE9", "ember-dark": "#0B0908", "toy-light": "#F4F1EA", "toy-dark": "#130C21", "pocket-light": "#C6C9CB", "pocket-dark": "#4C535B", "mac-light": "#D6D7DA", "mac-dark": "#1B1B1D", "ipod-light": "#E9EAEC", "ipod-dark": "#0D0D0E", "tm4-dark": "#123A6B", "skeuo-light": "#86888D", "braun-light": "#D8D5CA", "md-light": "#BFC6D0", "nikon-dark": "#141517", "dyson-light": "#EFDDD5", "dyson-dark": "#141936", "clay-light": "#E3E1DA"}
 DEFAULT = "aurora-light-heart"
 REF = .6            # the paper's mid tone in the masters
 GREEN = "#8FA98F"   # the masters' paper colour, for the maskable ground
@@ -81,9 +82,10 @@ def manifests():
             name = look + "-" + sym
             json.dump(manifest(name), open(os.path.join(ROOT, "icons", name + ".json"), "w", encoding="utf8"), ensure_ascii=False, separators=(",", ":"))
 
-def build():
+def build(only=None):
     out = os.path.join(ROOT, "icons"); os.makedirs(out, exist_ok=True); mask = rounded(512, 112); total = 0
     for look, hexc in LOOKS.items():
+        if only and not look.startswith(only): continue
         t = rgbf(hexc or GREEN); ground = tuple(int(v * 255 * .5) for v in (t * .8 + t.mean() * .2))
         for sym in SYMBOLS:
             sq = art(sym, hexc); name = look + "-" + sym
@@ -103,4 +105,5 @@ def build():
 
 if __name__ == "__main__":
     import sys
-    manifests() if "--manifests" in sys.argv else build()   # --manifests: only rewrite the .json files (after manifest.json changes)
+    only = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--only=")), None)   # --only=<theme>: just that theme's looks
+    manifests() if "--manifests" in sys.argv else build(only)   # --manifests: only rewrite the .json files (after manifest.json changes)
