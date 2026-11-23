@@ -1743,8 +1743,8 @@ html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(tra
 @media (prefers-reduced-transparency: reduce){html:root.glass.glass.glass .dock{background:var(--g-key,linear-gradient(transparent,transparent)),var(--gl-dock,#202024)}html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(transparent,transparent)),var(--gl-mp,#fff)}}
 /* over a light page the see-through dock is light too: its idle icons turn dark so they stay readable */
 html:root.glass.glass.glass:not([data-mode="dark"]) .dock button:not([aria-selected="true"]){color:color-mix(in srgb,var(--ink) 66%,transparent);text-shadow:none}
-/* calendar: a day with two or three trainings gets a ring split into one arc per training, each in its kind's colour */
-.cal .dd.multi b{position:relative}
-.cal .dd.multi b::after{content:"";position:absolute;inset:-4px;border-radius:inherit;padding:3px;pointer-events:none;
-  background:conic-gradient(from -90deg,var(--s1) 0 calc(var(--p1) - 2%),transparent 0 var(--p1),var(--s2) 0 calc(var(--p2) - 2%),transparent 0 var(--p2),var(--s3) 0 98%,transparent 0);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+/* calendar: a day with two or three trainings has its date cut on the diagonal, one colour per training (upper left
+   the first); every theme, over its own key style */
+html:root .cal .dd.multi.multi b{--m1:color-mix(in srgb,var(--s1) 48%,var(--card));--m2:color-mix(in srgb,var(--s2) 48%,var(--card));--m3:color-mix(in srgb,var(--s3) 48%,var(--card));
+  background:linear-gradient(to bottom right,var(--m1) calc(var(--p1) - .6px),var(--m2) calc(var(--p1) + .6px),var(--m2) calc(var(--p2) - .6px),var(--m3) calc(var(--p2) + .6px));
+  color:var(--ink);text-shadow:0 0 3px color-mix(in srgb,var(--card) 70%,transparent);font-weight:800}
