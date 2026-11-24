@@ -1744,10 +1744,10 @@ html:root .dock .pc.pc.pc{border-radius:inherit}
 :root.glass[data-theme="clay"][data-mode="light"]{--gl-dock:#9AD2BF;--gl-mp:#F2F0EE}
 :root.glass[data-theme="eink"][data-mode="light"]{--gl-dock:#F4F3EF;--gl-mp:#F4F3EF}
 :root.glass[data-theme="eink"][data-mode="dark"]{--gl-dock:#161616;--gl-mp:#161616}
-html:root.glass.glass.glass .dock{background:var(--g-key,linear-gradient(transparent,transparent)),color-mix(in srgb,var(--gl-dock,#202024) 30%,transparent);
-  -webkit-backdrop-filter:blur(16px) saturate(1.8);backdrop-filter:blur(16px) saturate(1.8)}
-html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(transparent,transparent)),color-mix(in srgb,var(--gl-mp,#fff) 34%,transparent);
-  -webkit-backdrop-filter:blur(16px) saturate(1.8);backdrop-filter:blur(16px) saturate(1.8)}
+html:root.glass.glass.glass .dock{background:var(--g-key,linear-gradient(transparent,transparent)),color-mix(in srgb,var(--gl-dock,#202024) 14%,transparent);
+  -webkit-backdrop-filter:blur(14px) saturate(1.9);backdrop-filter:blur(14px) saturate(1.9)}
+html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(transparent,transparent)),color-mix(in srgb,var(--gl-mp,#fff) 18%,transparent);
+  -webkit-backdrop-filter:blur(14px) saturate(1.9);backdrop-filter:blur(14px) saturate(1.9)}
 @media (prefers-reduced-transparency: reduce){html:root.glass.glass.glass .dock{background:var(--g-key,linear-gradient(transparent,transparent)),var(--gl-dock,#202024)}html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(transparent,transparent)),var(--gl-mp,#fff)}}
 /* over a light page the see-through dock is light too: its idle icons turn dark so they stay readable */
 html:root.glass.glass.glass:not([data-mode="dark"]) .dock button:not([aria-selected="true"]){color:color-mix(in srgb,var(--ink) 66%,transparent);text-shadow:none}
