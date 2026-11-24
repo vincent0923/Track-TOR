@@ -1888,3 +1888,36 @@ html.touching.groove :is(.bricks .bks,.cal .dd b,.hero .hgo){animation-play-stat
 :root[data-theme="aqua"] .f-dots i.cur{background:var(--aqua-accent)}
 :root[data-theme="aqua"] #syncBtn .syncdot.ok{background:radial-gradient(circle at 50% 30%,#B9F6A5,#56C93F 70%);box-shadow:0 0 0 1px #43A12F}
 :root.glass[data-theme="aqua"][data-mode="light"]{--gl-dock:#F2F4F7;--gl-mp:#F7F8FA}
+/* Aqua dark: slate graphite rather than black (Mac OS X's Graphite appearance on a dark brushed-metal desk, like the
+   Linux "Midnight OS X" / brushed themes); same gel recipe, the accent gel stays blue, capsules turn graphite */
+:root[data-theme="aqua"][data-mode="dark"]{--bg:#3B4048;--card:#4B515A;--line:rgba(255,255,255,.1);--lit:inset 0 1px 0 rgba(255,255,255,.12);--sub:#424750;--seg:#424750;--dark:#4B515A;--dark-solid:#424750;--dark-line:#2A2E34;--track:#353A41;--ink:#EEF0F3;--muted:#B7BDC6;--ac:#3A8AF0;--ac-soft:rgba(90,162,245,.18);--ac-text:#8CC0FA;--st1:rgba(90,162,245,.25);--st2:rgba(90,162,245,.6);--push:#5AA2F5;--pull:#6BCB55;--third:#F5B731;--good:#6BCB55;--bad:#F2604D;--sleep:#A99BF0;
+  --aqua-accent:#3A8AF0;
+  --capsule:linear-gradient(180deg,#8A9099 0%,#5E646D 48%,#4C525B 52%,#6A7079 100%);--capsule-sh:inset 0 1px 1px rgba(255,255,255,.35),0 1px 2px rgba(0,0,0,.4),0 0 0 1px #23272C;
+  --pin:repeating-linear-gradient(180deg,#3E434B 0 2px,#383D45 2px 4px);
+  --metal:repeating-linear-gradient(180deg,rgba(255,255,255,.05) 0 1px,rgba(0,0,0,.05) 1px 2px),linear-gradient(180deg,#6A6F76 0%,#4E5259 100%);
+  --win-sh:inset 0 1px 0 rgba(255,255,255,.12),0 0 0 1px rgba(0,0,0,.45),0 14px 30px -10px rgba(0,0,0,.5),0 3px 8px rgba(0,0,0,.3);color-scheme:dark}
+:root[data-theme="aqua"][data-mode="dark"] .hero.dark,:root[data-theme="aqua"][data-mode="dark"] .dark:not(.hero){color:#F4F5F7;--muted:#CDD1D7;--track:rgba(0,0,0,.25);text-shadow:0 -1px 0 rgba(0,0,0,.45)}
+:root[data-theme="aqua"][data-mode="dark"] .btn.ghost,:root[data-theme="aqua"][data-mode="dark"] .circ,:root[data-theme="aqua"][data-mode="dark"] .fsreset,:root[data-theme="aqua"][data-mode="dark"] .mini,:root[data-theme="aqua"][data-mode="dark"] .tickb,:root[data-theme="aqua"][data-mode="dark"] .f-sets i{color:#F2F4F7;text-shadow:0 -1px 1px rgba(0,0,0,.5)}
+:root[data-theme="aqua"][data-mode="dark"] .btn.ghost::before{opacity:.35}
+:root[data-theme="aqua"][data-mode="dark"] .tickb::before{opacity:.4}
+:root[data-theme="aqua"][data-mode="dark"] .tickb{box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 0 0 1px #23272C,0 10px 20px -8px rgba(0,0,0,.6)}
+:root[data-theme="aqua"][data-mode="dark"] .opt,:root[data-theme="aqua"][data-mode="dark"] .calpill,:root[data-theme="aqua"][data-mode="dark"] .thc,:root[data-theme="aqua"][data-mode="dark"] .preset,:root[data-theme="aqua"][data-mode="dark"] .mask input,:root[data-theme="aqua"][data-mode="dark"] .mask select,:root[data-theme="aqua"][data-mode="dark"] .mask textarea{background:#3F444C;box-shadow:inset 0 1px 2px rgba(0,0,0,.4),0 0 0 1px #2A2E34}
+:root[data-theme="aqua"][data-mode="dark"] .opt[aria-pressed="true"],:root[data-theme="aqua"][data-mode="dark"] .preset.on,:root[data-theme="aqua"][data-mode="dark"] .thc.on,:root[data-theme="aqua"][data-mode="dark"] .f-sets i.dn{background:linear-gradient(180deg,#405C80,#334A68);color:#D5E8FD;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 0 1px #1C3A66,0 0 0 4px rgba(90,162,245,.3)}
+:root[data-theme="aqua"][data-mode="dark"] .f-sets i.dn{box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 0 1px #1C3A66}
+:root[data-theme="aqua"][data-mode="dark"] .seg,:root[data-theme="aqua"][data-mode="dark"] .mask .mode-tabs{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1px #23272C,0 1px 3px rgba(0,0,0,.4)}
+:root[data-theme="aqua"][data-mode="dark"] .seg button:not([aria-pressed="true"]),:root[data-theme="aqua"][data-mode="dark"] .mask .mode-tabs button:not(.active){color:#F2F4F7;text-shadow:0 -1px 1px rgba(0,0,0,.5);box-shadow:-1px 0 0 #23272C}
+:root[data-theme="aqua"][data-mode="dark"] .seg button:first-child,:root[data-theme="aqua"][data-mode="dark"] .mask .mode-tabs button:first-child{box-shadow:none}
+:root[data-theme="aqua"][data-mode="dark"] .opt:not([aria-checked="true"]) .sw{background:linear-gradient(180deg,#2C3036 0%,#383D44 60%,#434850 100%);box-shadow:inset 0 2px 3px rgba(0,0,0,.5),0 0 0 1px #23272C}
+:root[data-theme="aqua"][data-mode="dark"] .opt .sw::after{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 3px rgba(0,0,0,.5),0 0 0 1px #23272C}
+:root[data-theme="aqua"][data-mode="dark"] .dock{background:linear-gradient(180deg,rgba(96,102,111,.9) 0%,rgba(62,67,74,.96) 100%);border-color:rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 0 1px rgba(0,0,0,.4),0 16px 38px rgba(0,0,0,.45)}
+:root[data-theme="aqua"][data-mode="dark"] .dock button{color:#C3C8CF}
+:root[data-theme="aqua"][data-mode="dark"] .dock button[aria-selected="true"]{color:#fff}
+:root[data-theme="aqua"][data-mode="dark"] .cal .dd.trn b{background:color-mix(in srgb,var(--kc) 26%,var(--card));color:color-mix(in srgb,var(--kc) 55%,#fff);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--kc) 45%,transparent)}
+:root[data-theme="aqua"][data-mode="dark"] .fs-peek i{background:#41464E;box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+:root[data-theme="aqua"][data-mode="dark"] .fstack[data-fs="hero"] .fs-peek i{background:#43474D}
+:root[data-theme="aqua"][data-mode="dark"] .knobw .knob{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px #23272C,0 6px 12px -6px rgba(0,0,0,.6)}
+:root[data-theme="aqua"][data-mode="dark"] .bricks{background:#353A41;box-shadow:inset 0 1px 3px rgba(0,0,0,.45)}
+:root[data-theme="aqua"][data-mode="dark"] .f-win{--w-ink:#EEF0F3;--w-sh:inset 0 1px 4px rgba(0,0,0,.4),0 0 0 1px #2A2E34,0 1px 0 rgba(255,255,255,.08)}
+:root[data-theme="aqua"][data-mode="dark"] .f-dial{--d-slot:#2E3238;--d-body:#5A6068;--d-hi:#8A9099;--d-lo:#2A2E34}
+:root[data-theme="aqua"][data-mode="dark"] .f-sets i.add{box-shadow:inset 0 0 0 1px #6A7079}
+:root.glass[data-theme="aqua"][data-mode="dark"]{--gl-dock:#50555D;--gl-mp:#4B515A}
