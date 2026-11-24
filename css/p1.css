@@ -1469,16 +1469,22 @@ img.brand{width:22px;height:22px;flex:none;border-radius:6px;filter:none!importa
 html.groove .bricks .bks{animation:grooveBeat var(--beat,.52s) cubic-bezier(.2,.7,.3,1) infinite;animation-delay:calc(var(--bd,0s) - var(--i,0) * 30ms);transform-origin:bottom;will-change:transform}
 html.groove .bricks .bks i{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 0 rgba(0,0,0,.28),0 0 7px color-mix(in srgb,var(--alb,var(--ac)) 45%,transparent);background:color-mix(in srgb,var(--c) 84%,var(--alb,var(--ac)))}
 /* one bounce per beat: up on the beat, settling before the next; louder songs bounce a little higher */
-@keyframes grooveBeat{0%{transform:translateY(calc(-1px - 2.4px * var(--amp,.6))) scaleY(calc(1 + .04 * var(--amp,.6)))}55%,100%{transform:none}}
+/* plain numbers in the keyframes (a var() there keeps the animation off the GPU and restyles the page every frame);
+   the song's energy picks one of three strengths (html[data-amp]) */
+@keyframes grooveBeat{0%{transform:translateY(-2.4px) scaleY(1.024)}55%,100%{transform:none}}
+@keyframes grooveBeatLo{0%{transform:translateY(-1.7px) scaleY(1.012)}55%,100%{transform:none}}
+@keyframes grooveBeatHi{0%{transform:translateY(-3.4px) scaleY(1.04)}55%,100%{transform:none}}
+html.groove[data-amp="lo"] .bricks .bks{animation-name:grooveBeatLo}
+html.groove[data-amp="hi"] .bricks .bks{animation-name:grooveBeatHi}
 /* the playlist button and the round × take the skin's ghost button and round key; only their shape is fixed */
 .sp-plbtn.btn{width:auto!important;height:48px!important;padding:0 18px 0 16px!important;border-radius:999px!important;font-size:15px}
 .sp-x.circ{width:48px!important;height:48px!important;border-radius:50%!important}
 .sp-x.circ svg{width:20px;height:20px}
 /* the same easter egg on the calendar: only the days trained and today keep the beat; rest days stay still */
-html.groove .cal .dd.trn b,html.groove .cal .dd.xo b,html.groove .cal .dd.today b{animation:grooveDay var(--beat,.52s) cubic-bezier(.2,.7,.3,1) infinite;animation-delay:var(--bd,0s);filter:drop-shadow(0 0 5px color-mix(in srgb,var(--alb,var(--ac)) 55%,transparent))}
+html.groove .cal .dd.trn b,html.groove .cal .dd.xo b,html.groove .cal .dd.today b{animation:grooveDay var(--beat,.52s) cubic-bezier(.2,.7,.3,1) infinite;animation-delay:var(--bd,0s);will-change:transform}
 html.groove .cal .dd:is(.trn,.xo,.today):nth-child(3n+1) b{animation-delay:calc(var(--bd,0s) - 40ms)}
 html.groove .cal .dd:is(.trn,.xo,.today):nth-child(3n+2) b{animation-delay:calc(var(--bd,0s) - 80ms)}
-@keyframes grooveDay{0%{transform:translateY(calc(-.5px - 1.6px * var(--amp,.6))) scale(calc(1 + .06 * var(--amp,.6)))}55%,100%{transform:none}}
+@keyframes grooveDay{0%{transform:translateY(-1.5px) scale(1.036)}55%,100%{transform:none}}
 /* an open panel puts what's behind it out of focus: one blur on the page layers (no backdrop-filter, which phones
    redo on every frame) */
 .top,main,.dock,.mini-pl,.focus{transition:filter .28s var(--ease)}
@@ -1488,8 +1494,8 @@ body:has(#sheet.on) :is(.top,main,.dock,.mini-pl,.focus.on),body:has(>.mask) :is
 body:has(>.mask) #sheet.on .panel,.mask:has(~ .mask)>.sheet{filter:blur(5px) saturate(.9)}
 @media (prefers-reduced-motion: reduce){.top,main,.dock,.mini-pl,.focus{transition:none}}
 /* …and the start key: a soft swell and a glow in the cover's colour (scale/filter, so the skins' own transforms stay) */
-html.groove .hero .hgo{animation:grooveKey calc(var(--beat,.52s) * 2) ease-in-out infinite;animation-delay:var(--bd,0s);filter:drop-shadow(0 0 8px color-mix(in srgb,var(--alb,var(--ac)) 55%,transparent))}
-@keyframes grooveKey{0%,50%{scale:calc(1 + .04 * var(--amp,.6))}25%,75%,100%{scale:1}}
+html.groove .hero .hgo{animation:grooveKey calc(var(--beat,.52s) * 2) ease-in-out infinite;animation-delay:var(--bd,0s);will-change:transform}
+@keyframes grooveKey{0%,50%{transform:scale(1.024)}25%,75%,100%{transform:none}}
 /* the big player card (training page, calendar folded): cover on the left, title over previous / play / next */
 .mp-p{display:none}
 .mini-pl{transition:transform .4s var(--spring),height .45s var(--spring),border-radius .45s var(--spring),padding .45s var(--spring)}
@@ -1808,3 +1814,6 @@ html[data-theme="eink"]{filter:grayscale(1)}
 .einkflash{position:fixed;inset:0;z-index:200;background:#111;pointer-events:none}
 .einkflash.w{background:#F4F3EF}
 :root[data-theme="eink"] .glowring{display:none}
+
+/* while a finger is on the screen (scrolling, swiping) the rhythm holds still, so the frame goes to the finger */
+html.touching.groove :is(.bricks .bks,.cal .dd b,.hero .hgo){animation-play-state:paused}

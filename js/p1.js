@@ -94,7 +94,7 @@ rtApply();
 /* every change repaints every lit surface, so the light moves in coarse steps at most about 12 times a second */
 (function(){const de=document.documentElement,on=()=>"lit" in de.dataset&&rtLevel()>0&&!matchMedia("(prefers-reduced-motion: reduce)").matches;let last="",lastAt=0;
   let bg=null,bb=null,x=0,y=0,raf=0;
-  const put=()=>{raf=0;const now=performance.now();if(now-lastAt<80){raf=requestAnimationFrame(put);return}
+  const put=()=>{raf=0;const now=performance.now();if(now-lastAt<80||de.classList.contains("touching")){raf=requestAnimationFrame(put);return}
     const k=RT_K[rtLevel()],lx=Math.round(30+x*1.6*k),ly=Math.round(10+y*1.3*k),rot=Math.round(x*3*k/2)*2,key=lx+","+ly+","+rot;if(key===last)return;last=key;lastAt=now;
     de.style.setProperty("--lx",lx+"%");de.style.setProperty("--ly",ly+"%");de.style.setProperty("--rot",rot+"deg")};
   const go=(nx,ny)=>{x=Math.max(-25,Math.min(25,nx));y=Math.max(-20,Math.min(20,ny));if(!raf)raf=requestAnimationFrame(put)};
@@ -114,6 +114,11 @@ glassApply();
 /* the e-ink skin: a full refresh flashes the screen black for an instant when the page turns, like an e-reader */
 function einkFlash(){if(document.documentElement.dataset.theme!=="eink"||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
   const f=document.createElement("div");f.className="einkflash";document.body.appendChild(f);setTimeout(()=>f.classList.add("w"),70);setTimeout(()=>f.remove(),150)}
+/* a finger on the screen: html.touching, so the music rhythm pauses and the tilt light holds while scrolling or swiping */
+(function(){const de=document.documentElement;let t=0;
+  addEventListener("touchstart",()=>{clearTimeout(t);if(!de.classList.contains("touching"))de.classList.add("touching")},{passive:true,capture:true});
+  const up=()=>{clearTimeout(t);t=setTimeout(()=>de.classList.remove("touching"),350)};
+  addEventListener("touchend",up,{passive:true,capture:true});addEventListener("touchcancel",up,{passive:true,capture:true})})();
 function dustOn(){try{return localStorage.getItem(PK+"dust")!=="0"}catch(e){return true}}
 function dustDays(){let last="";Object.values(state.sessions).forEach(x=>{if(x&&(x.done||Object.values(x.sets||{}).some(a=>(a||[]).some(z=>z.d)))){const d=x.date||today();if(d>last)last=d}});
   Object.keys(state.dayx||{}).forEach(d=>{const x=state.dayx[d];if(x&&x.xs&&x.xs.length&&d>last)last=d});return last?dnum(today())-dnum(last):0}
@@ -504,8 +509,12 @@ async function dietPull(manual){let st={};try{st=JSON.parse(localStorage.getItem
   if(r.ok&&cur==="diet")renderDietView()}
 (function(){let y0=null,dy=0;const lim=70;
   document.addEventListener("touchstart",e=>{if(cur!=="diet"||run||scrollY>0||$("#sheet").classList.contains("on")||document.querySelector(".mask"))return;y0=e.touches[0].clientY;dy=0},{passive:true});
-  document.addEventListener("touchmove",e=>{if(y0==null)return;dy=Math.max(0,e.touches[0].clientY-y0);const p=$("#ptr");if(p){p.style.height=Math.min(lim,dy*.5)+"px";p.classList.toggle("ready",dy*.5>=lim-4)}},{passive:true});
-  document.addEventListener("touchend",()=>{if(y0==null)return;const p=$("#ptr"),go=dy*.5>=lim-4;y0=null;if(p){p.style.height="";p.classList.remove("ready")}if(go){buzz(12);dietPull(true)}})})();
+  /* only while actually pulling down at the top: a normal scroll must not touch styles on every move (that made
+     every frame restyle the whole page) */
+  let lastH=-1;
+  document.addEventListener("touchmove",e=>{if(y0==null)return;if(scrollY>0){y0=null;return}dy=Math.max(0,e.touches[0].clientY-y0);const h=Math.round(Math.min(lim,dy*.5));if(h===lastH)return;lastH=h;
+    const p=$("#ptr");if(p){p.style.height=h?h+"px":"";p.classList.toggle("ready",dy*.5>=lim-4)}},{passive:true});
+  document.addEventListener("touchend",()=>{lastH=-1;if(y0==null)return;const p=$("#ptr"),go=dy*.5>=lim-4;y0=null;if(p){p.style.height="";p.classList.remove("ready")}if(go){buzz(12);dietPull(true)}})})();
 function daySheet(d){const day=state.diet[d]||{},items=day.items||[],tt=dietTotals(day),a=intakeOf(d),b=burnOfDate(d),g=dietGapOf(d);
   const f1=x=>x==null||x===""?"–":(+x).toFixed(0);
   openSheet('<div class="sh-h"><h3>'+dayLabel(d)+(/^\d/.test(dayLabel(d))?"":' · '+(dateObj(d).getMonth()+1)+'.'+dateObj(d).getDate())+'</h3>'+(items.length?'<button class="mini" data-act="dshare" data-d="'+d+'" aria-label="'+T('分享成图片','Share as a picture')+'">'+ICON.share+'</button>':'')+'<button class="mini" data-act="close">'+ICON.x+'</button></div>'

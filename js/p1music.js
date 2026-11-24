@@ -99,12 +99,12 @@ const SP_BPM={};
 async function spTempo(id){if(!id||SP_BPM[id]!==undefined)return SP_BPM[id];SP_BPM[id]=null;
   try{const r=await fetch("https://api.reccobeats.com/v1/audio-features?ids="+encodeURIComponent(id));if(r.ok){const j=await r.json(),f=(j.content||[])[0];if(f&&f.tempo>30)SP_BPM[id]={t:+f.tempo,e:+f.energy||.6}}}catch(e){}
   return SP_BPM[id]}
-function spBeat(){const de=document.documentElement,s=SP.st,b=s&&SP_BPM[s.id];if(!b){["--beat","--bd","--amp"].forEach(v=>de.style.removeProperty(v));return}
+function spBeat(){const de=document.documentElement,s=SP.st,b=s&&SP_BPM[s.id];if(!b){["--beat","--bd"].forEach(v=>de.style.removeProperty(v));delete de.dataset.amp;return}
   const bpm=b.t>160?b.t/2:b.t,beat=60/bpm,pos=(spNow()||0)/1000;
   /* restyling the page costs a little, so only when the song changes or the timing has drifted (a seek) */
   const anchor=performance.now()/1000-pos,L=spBeat.last;
   const dr=L?((anchor-L.anchor)%beat+beat)%beat:0;if(L&&L.id===s.id&&(dr<.08||dr>beat-.08))return;spBeat.last={id:s.id,anchor};
-  de.style.setProperty("--beat",beat.toFixed(3)+"s");de.style.setProperty("--bd",(-(pos%beat)).toFixed(3)+"s");de.style.setProperty("--amp",Math.max(.3,Math.min(1,b.e)).toFixed(2))}
+  de.style.setProperty("--beat",beat.toFixed(3)+"s");de.style.setProperty("--bd",(-(pos%beat)).toFixed(3)+"s");de.dataset.amp=b.e<.45?"lo":b.e>.75?"hi":"mid"}
 function spGroove(){const de=document.documentElement,s=SP.st,on=!!(s&&s.playing)&&!document.hidden&&(typeof grooveOn!=="function"||grooveOn())&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
   de.classList.toggle("groove",on);if(on&&s.id){if(SP_BPM[s.id]===undefined)spTempo(s.id).then(spBeat);else spBeat()}
   if(!on||!s.art||s.art===spAlbArt)return;spAlbArt=s.art;
