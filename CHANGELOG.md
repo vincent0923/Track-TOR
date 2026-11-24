@@ -6,6 +6,14 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.69a] — 2026-11-24
+
+### 新增 / Added
+- 💧 **水晶胶主题（Aqua）**：经典 Mac OS X 的样子，颜色、渐变和阴影直接取自 Igor Duca 的开源 Aqua 组件（MIT）：蓝色水晶胶按钮、细条纹底、拉丝金属的训练卡和目标板、金属拇指开关、胶囊分段、半透明程序坞式底栏；庆祝是一阵带高光的胶珠。只有亮色，120 G。
+- 💧 **Aqua theme**: the classic Mac OS X look, with colours, gradients and shadows taken straight from Igor Duca's open-source Aqua components (MIT): blue gel buttons, pinstripes, brushed-metal training and goal cards, a metal-thumb switch, capsule segments and a translucent Dock-style tab bar; celebrations are a burst of glossy gel drops. Light only, 120 G.
+
+---
+
 ## [v1.68a] — 2026-11-23
 
 ### 新增 / Added

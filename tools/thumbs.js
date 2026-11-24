@@ -1,7 +1,7 @@
 /* Theme thumbnails for the blind box and the theme list: the three main pages (training, food, progress) of every
    theme and look, filled with made-up demo data, in English (one set for every language), shot in a headless browser and joined into one strip per look
    at img/th/<theme>-<light|dark>.webp. Run from the repo root after a theme or a main page changes visibly:
-     python3 -m http.server 8765 &   then   node tools/thumbs.js
+     python3 -m http.server 8765 &   then   node tools/thumbs.js   (or  node tools/thumbs.js aqua,eink  for just those themes)
    Needs Playwright (require('playwright')). */
 const {chromium}=require("playwright"),fs=require("fs"),path=require("path");
 const BASE="http://localhost:8765/index.html",OUT=path.join(__dirname,"..","img","th"),PW=330,PH=714;
@@ -26,7 +26,8 @@ function demo(){const ymd=d=>d.toISOString().slice(0,10),day=n=>{const d=new Dat
       doc.done=true;const d=new Date();d.setDate(d.getDate()-(28-n*2));doc.date=d.toISOString().slice(0,10);n++}
     state.settings.buys=THEMES.filter(t=>t.price).map(t=>({id:t.id,g:0,d:"2026-01-01"}));lsSave()});
   await pg.reload();await pg.waitForTimeout(600);
-  for(const t of themes)for(const mode of t.fix?[t.fix]:["light","dark"]){
+  const only=process.argv[2]?process.argv[2].split(","):null;
+  for(const t of themes.filter(t=>!only||only.includes(t.id)))for(const mode of t.fix?[t.fix]:["light","dark"]){
     await pg.evaluate(([id,m])=>{state.settings.theme=id;lsSave();localStorage.setItem("tracktor-p1-mode",m);applyMode();
       document.querySelectorAll("#sheet.on").forEach(x=>x.classList.remove("on"));document.querySelectorAll("body>.mask").forEach(x=>x.remove())},[t.id,mode]);
     const shots=[];

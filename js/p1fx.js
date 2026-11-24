@@ -125,6 +125,10 @@ function blobP(x,y,ang,sp){const r=rnd(7,13),col=pick(["#A4E2CD","#C4F7E5","#F2B
     c.fillStyle="rgba(0,0,0,.08)";c.beginPath();c.arc(r*.2,r*.3,r*.75,0,7);c.fill();c.fillStyle="rgba(255,255,255,.7)";c.beginPath();c.arc(-r*.35,-r*.35,r*.3,0,7);c.fill()}}}
 function pixelP(x,y,ang,sp){const s=pick([6,6,9]),col=pick(["#E8892B","#E2513A","#E7D4B4","#FFFFFF","#E8892B"]);return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.26,decay:.006,
   draw:(c,p)=>{const q=3,X=Math.round(p.x/q)*q,Y=Math.round(p.y/q)*q;if(p.life<.4&&(Math.floor(p.life*40)%2))return;c.fillStyle=col;c.fillRect(X,Y,s,s);c.fillStyle="rgba(0,0,0,.25)";c.fillRect(X,Y+s-2,s,2)}}}
+/* aqua: gel drops, blue, graphite and the three traffic-light colours, each with the glossy top highlight */
+function gelP(x,y,ang,sp){const r=rnd(5,10),col=pick(["#2F7DE0","#2F7DE0","#6CB0F7","#EC4C3C","#F5B731","#56C93F","#C3C8CF"]);return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.2,drag:.985,decay:.005,
+  draw:(c,p)=>{c.translate(p.x,p.y);c.fillStyle=col;c.beginPath();c.arc(0,0,r,0,7);c.fill();c.strokeStyle="rgba(0,0,0,.18)";c.lineWidth=1;c.stroke();
+    c.fillStyle="rgba(255,255,255,.35)";c.beginPath();c.arc(0,r*.35,r*.6,0,7);c.fill();c.fillStyle="rgba(255,255,255,.85)";c.beginPath();c.ellipse(0,-r*.45,r*.62,r*.36,0,0,7);c.fill()}}}
 /* e-ink: ink specks, solid black or dithered grey, that drop in steps the way an e-paper screen redraws */
 function inkP(x,y,ang,sp){const s=pick([4,6,8]),col=pick(["#111","#111","#555","#888"]),dith=Math.random()<.35;return {x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:.24,decay:.006,
   draw:(c,p)=>{const q=4,X=Math.round(p.x/q)*q,Y=Math.round(p.y/q)*q;c.fillStyle=col;if(!dith){c.fillRect(X,Y,s,s);return}for(let i=0;i<s;i+=2)for(let j=(i/2)%2*2;j<s;j+=4)c.fillRect(X+j,Y+i,2,2)}}}
@@ -201,6 +205,7 @@ const THEME_FX={
   ember:{make:(x,y,a,s)=>foilP(x,y,a,s,["#FFB020","#F7D78A","#E8A64A","#D9714E"]),snd:big=>{(big?[659,831,988,1319]:[831,1109]).forEach((f,i)=>bell(f,i*.11,.055))}},
   dyson:{make:flowerP,snd:big=>{whoosh(0,big?.07:.045);(big?[880,1109,1319]:[1109]).forEach((f,i)=>bell(f,.12+i*.1,.045))}},
   eink:{make:inkP,snd:big=>{fxHit(0,.12,3200,.5,big?.06:.04,"highpass");fxHit(.05,.18,1400,.6,big?.05:.03,"bandpass");if(big)fxHit(.22,.14,3000,.5,.05,"highpass")}},
+  aqua:{make:gelP,snd:big=>{(big?[784,1047,1319,1568]:[1047,1568]).forEach((f,i)=>bell(f,i*.08,.05));tone(2400,0,.01,"sine",.03)}},
   mac:{make:glintP,snd:big=>{bell(big?1568:1760,0,.06);if(big)bell(2349,.12,.04)}},
   ipod:{make:glintP,snd:big=>{tone(2600,0,.006,"square",.02);bell(big?1319:1568,.02,.06);if(big)bell(1976,.14,.04)}},
   md:{make:mdP,snd:big=>{fxHit(0,.02,2600,1.4,.08);fxHit(.06,.03,1500,1.2,.07);(big?[784,988,1175,1568]:[1175,1568]).forEach((f,i)=>chip(f,.1+i*.05,.06,.03))}},
@@ -239,6 +244,8 @@ const SFX_TH={
   eink:{tick:()=>{fxHit(0,.05,2800,.7,.05,"highpass");tone(900,0,.02,"sine",.03)},ex:()=>{fxHit(0,.14,3200,.5,.05,"highpass");fxHit(.06,.2,1400,.6,.04,"bandpass")},
     rest:()=>{tone(880,0,.08,"sine",.05);tone(880,.18,.08,"sine",.05)},done:()=>{[0,.12,.24].forEach(t=>{fxHit(t,.14,3200,.5,.05,"highpass");fxHit(t+.05,.2,1400,.6,.04,"bandpass")})},
     tap:()=>fxHit(0,.012,3000,1,.03),detent:()=>click(1800,1,.05),land:()=>click(1200,.9,.07)},
+  aqua:{tick:()=>{bell(1568,0,.05);tone(3200,0,.008,"sine",.03)},ex:()=>[1047,1319,1568].forEach((f,i)=>bell(f,i*.08,.05)),rest:()=>{bell(1319,0,.05);bell(1319,.22,.05)},
+    done:()=>[784,1047,1319,1568,2093].forEach((f,i)=>bell(f,i*.09,.05)),tap:()=>tone(3000,0,.008,"sine",.035)},
   braun:{tick:()=>{tone(2600,0,.008,"square",.04);ding(1319,.01,.1)},ex:()=>{ding(1319,0);ding(1047,.18)},rest:()=>{ding(1047,0);ding(1047,.3)},
     done:()=>{ding(1047,0);ding(1319,.2);ding(1568,.4);ding(2093,.65,.1)},tap:()=>tone(2600,0,.008,"square",.04)},
   clay:{tick:()=>plop(340,0,.22),ex:()=>[260,330,400,500].forEach((f,i)=>plop(f,i*.08,.17)),rest:()=>{plop(220,0);plop(220,.2)},

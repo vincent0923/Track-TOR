@@ -24,10 +24,10 @@ LOOKS = {
     "mac-light": "#C9CCD1", "mac-dark": "#4A4C52", "ipod-light": "#E9EBEE", "ipod-dark": "#2F7BEA",
     "tm4-dark": "#2D76C6", "skeuo-light": "#8E9197", "braun-light": "#EC6A2C", "md-light": "#AFC3DA",
     "nikon-dark": "#2E2F33", "dyson-light": "#D8A49B", "dyson-dark": "#33457F", "clay-light": "#8FDCC0",
-    "eink-light": "#CFCEC8", "eink-dark": "#3A3A3A",
+    "eink-light": "#CFCEC8", "eink-dark": "#3A3A3A", "aqua-light": "#5C9FEA",
 }
 # each look's page background (the --bg it paints), for the splash screen and title bar of that choice
-LOOK_BG = {"eink-light": "#ECEBE6", "eink-dark": "#121212", "aurora-light": "#F1F1EC", "aurora-dark": "#070A10", "ember-light": "#F4EFE9", "ember-dark": "#0B0908", "toy-light": "#F4F1EA", "toy-dark": "#130C21", "pocket-light": "#C6C9CB", "pocket-dark": "#4C535B", "mac-light": "#D6D7DA", "mac-dark": "#1B1B1D", "ipod-light": "#E9EAEC", "ipod-dark": "#0D0D0E", "tm4-dark": "#123A6B", "skeuo-light": "#86888D", "braun-light": "#D8D5CA", "md-light": "#BFC6D0", "nikon-dark": "#141517", "dyson-light": "#EFDDD5", "dyson-dark": "#141936", "clay-light": "#E3E1DA"}
+LOOK_BG = {"aqua-light": "#EEF0F3", "eink-light": "#ECEBE6", "eink-dark": "#121212", "aurora-light": "#F1F1EC", "aurora-dark": "#070A10", "ember-light": "#F4EFE9", "ember-dark": "#0B0908", "toy-light": "#F4F1EA", "toy-dark": "#130C21", "pocket-light": "#C6C9CB", "pocket-dark": "#4C535B", "mac-light": "#D6D7DA", "mac-dark": "#1B1B1D", "ipod-light": "#E9EAEC", "ipod-dark": "#0D0D0E", "tm4-dark": "#123A6B", "skeuo-light": "#86888D", "braun-light": "#D8D5CA", "md-light": "#BFC6D0", "nikon-dark": "#141517", "dyson-light": "#EFDDD5", "dyson-dark": "#141936", "clay-light": "#E3E1DA"}
 DEFAULT = "aurora-light-heart"
 REF = .6            # the paper's mid tone in the masters
 GREEN = "#8FA98F"   # the masters' paper colour, for the maskable ground

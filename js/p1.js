@@ -54,6 +54,7 @@ const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,s
   {id:"pocket",gloss:1,zh:"奶油塑料",en:"Buttery Plastic",price:120,lit:1,sw:["#C6C9CB","#E7D4B4","#1B1C1E","#E39A2E"],dz:"油润塑料、凹碟方键、点阵屏、喇叭网孔",de:"Oily plastic, dished square keys, a dot-matrix screen, speaker holes"},
   {id:"eink",zh:"墨水屏",en:"E-Ink",price:120,sw:["#ECEBE6","#111111","#161616","#E6E5E0"],dz:"电子书屏：纸白底、墨黑字、细黑框、翻页时闪一下",de:"An e-reader screen: paper white, ink black, thin black rules, a flash as the page turns"},
   {id:"mac",zh:"喷砂铝",en:"Bead-Blasted Aluminium",price:120,lit:1,sw:["#D6D7DA","#1C1C1E","#38393D","#0A84FF"],dz:"喷砂铝、钻石切边、黑色键帽",de:"Bead-blasted aluminium, diamond-cut edges, black keycaps"},
+  {id:"aqua",zh:"水晶胶",en:"Aqua",price:120,fix:"light",sw:["#EEF0F3","#2F7DE0","#C3C6CA","#56C93F"],dz:"蓝色水晶胶按钮、细条纹底、拉丝金属窗、半透明程序坞",de:"Blue gel buttons, pinstripes, brushed-metal windows, a translucent dock"},
   {id:"ipod",zh:"白瓷",en:"Porcelain",price:120,lit:1,sw:["#FBFBFA","#2F7BEA","#151516","#2F7BEA"],dz:"高光白瓷面板、镀铬边、点按转盘",de:"Glossy porcelain face, chrome rim, a click wheel"},
   /* single-look themes: fix is the one mode they come in; the header switch hides */
   {id:"tm4",gloss:1,zh:"钴蓝磨砂",en:"Frosted Cobalt",price:120,fix:"dark",sw:["#123A6B","#2D76C6","#FFFFFF","#FF6E30"],dz:"圆柱按键、点阵屏、发光指示灯",de:"Cylinder keys, a dot-matrix screen, glowing LEDs"},
@@ -673,7 +674,7 @@ const SUNMOON='<svg class="sunmoon" viewBox="0 0 34 18" aria-label="'+T('亮暗�
 const thModes=th=>th.fix?[th.fix]:["light","dark"];
 function thPages(th,mode){return [].concat(...(mode?[mode]:thModes(th)).map(m=>[0,1,2].map(i=>({m,i}))))}
 /* TH_V: bump when tools/thumbs.js remakes the pictures (the service worker keeps images until their address changes) */
-const TH_V=5;
+const TH_V=6;
 const thPage=(th,p)=>'background-image:url(img/th/'+th.id+'-'+p.m+'.webp?v='+TH_V+');background-position:'+["0%","50%","100%"][p.i]+' 0';
 /* the stack: the first page on top, the rest stepped right and down behind it */
 function thStack(th,big,mode){const ps=thPages(th,mode);
