@@ -248,17 +248,24 @@ function renderFocus(anim){
     mc=i=>{const u=cfArt(i);return '<i class="mc'+(u?"":" plain")+'"'+(u?' style="background-image:url('+u+')"':'')+'></i>'},
     mini=pick.length?'<button class="cf-mini'+(run.stk==="done"?"":" dn")+(pick.length>1?" two":"")+'" data-act="cfswap" aria-label="'+(run.stk==="done"?T('回到没练的动作','Back to the moves to do'):T('看练好的动作','See the finished moves'))+'">'
     +pick.slice().reverse().map(mc).join("")+'<b class="mb">'+(run.stk==="done"?ICON.dumbbell:ICON.check)+'</b></button>':'';
-  const keep=run.keepFlow&&fly==null&&run.cfKey===run.stk+list.join()?$(".cflow"):null;run.keepFlow=0;run.cfKey=run.stk+list.join();const keepX=keep?keep.querySelector(".cf-scroll").scrollLeft:0;if(keep)keep.remove();
-  f.innerHTML='<div class="f-top"><span class="f-lab">'+LAB(p)+'</span><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
+  const keep=fly==null&&!run.cfIn&&run.cfKey===run.stk+list.join()?$(".cflow"):null;run.cfKey=run.stk+list.join();
+  const H='<div class="f-top"><span class="f-lab">'+LAB(p)+'</span><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
     +'<div class="f-body" id="fBody"><div class="cflow'+(run.cfIn?" in":"")+'"><div class="cf-scroll'+(run.askFeel!=null?" lock":"")+'" tabindex="0" role="listbox" aria-label="'+T('动作','Moves')+'"><div class="cf-rail">'+list.map(i=>'<div class="cf-slot">'+cfCard(i)+'</div>').join("")+'</div></div>'+(fly!=null?cfCard(fly," cf-fly"):"")+'</div>'
     +'<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'" data-i="'+i+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
     +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+mini+'</div>'
     +'<div class="f-num">'+(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n"><span id="fVal"'+(anim?' class="pop"':'')+'>'+val+'</span>'+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</b>'
     +(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div></div>'
     +'<div class="f-bottom" id="fBottom"><button class="mini f-x" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-bc">'+bottom+'</div><span class="f-x"></span></div>';
+  /* same stack, same moves (the flow came to rest on another record, or a set was ticked): the row of records stays exactly where it is (taking it out and
+     putting it back made the phone redraw it from scratch, a visible blink); only the rest of the page is replaced */
+  if(keep){const t=document.createElement("div"),body=f.querySelector("#fBody");t.innerHTML=H;
+    f.querySelector(".f-top").replaceWith(t.querySelector(".f-top"));f.querySelector("#fBottom").replaceWith(t.querySelector("#fBottom"));
+    [...body.children].forEach(c=>{if(!c.classList.contains("cflow"))c.remove()});[...t.querySelector("#fBody").children].forEach(c=>{if(!c.classList.contains("cflow"))body.appendChild(c)});
+    /* a record whose numbers changed (a tick, an added or dropped set) gets its words and dots redone in place */
+    const fresh=[...t.querySelectorAll(".cf-slot .cf-card")];keep.querySelectorAll(".cf-slot .cf-card").forEach((c,j)=>{const n=fresh[j];if(n&&c.innerHTML!==n.innerHTML){c.innerHTML=n.innerHTML;cfFit()}});
+    keep.querySelector(".cf-scroll").classList.toggle("lock",run.askFeel!=null)}
+  else f.innerHTML=H;
   run.cfIn=0;
-  /* the flow just came to rest on another record: keep the very same row (its covers stay decoded, its scroll stays put) */
-  if(keep){const nf=$(".cflow");if(nf)nf.replaceWith(keep);keep.querySelector(".cf-scroll").scrollLeft=keepX}
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
   setsCenter();if(!keep){cfBind($(".cf-scroll"),list);cfFit();if(document.fonts)document.fonts.ready.then(cfFit)}else document.querySelectorAll(".cf-card").forEach((c,j)=>c.setAttribute("aria-selected",list[j]===run.ex));feelBind($(".feelbar"));setsHold();if(fly!=null)cfFly()}
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
@@ -277,7 +284,7 @@ function cfBind(sc,list){if(!sc)return;const slots=[...sc.querySelectorAll(".cf-
   const sw=slots[0].offsetWidth||100;
   const idx=()=>Math.max(0,Math.min(n-1,Math.round(sc.scrollLeft/sw)));
   sc.scrollLeft=Math.max(0,list.indexOf(run.ex))*sw;let shown=idx(),lx=sc.scrollLeft,lt=performance.now(),tm=0;
-  const done=()=>{clearTimeout(tm);const ex=list[idx()];if(run&&run.askFeel==null&&ex!=null&&ex!==run.ex){run.ex=ex;buzz(8);run.keepFlow=1;renderFocus(true)}};
+  const done=()=>{clearTimeout(tm);const ex=list[idx()];if(run&&run.askFeel==null&&ex!=null&&ex!==run.ex){run.ex=ex;buzz(8);renderFocus(true)}};
   sc.addEventListener("scroll",()=>{const t=performance.now(),i=idx();if(typeof WX!=="undefined")WX.hold=t+250;if(i!==shown){cfTick(i-shown,Math.abs(sc.scrollLeft-lx)/Math.max(1,t-lt)*1000);buzz(4);shown=i}lx=sc.scrollLeft;lt=t;
     clearTimeout(tm);tm=setTimeout(done,"onscrollend" in window?600:160)},{passive:true});
   if("onscrollend" in window)sc.addEventListener("scrollend",done);
@@ -357,6 +364,10 @@ function dropRunSet(i){const arr=run.sets[run.ex],x=arr[i];if(!x)return;
   if(x.o){const o=x.o;Object.values(run.doc.sets).forEach(a2=>a2.forEach(y=>{if(y.o>o)y.o--}))}
   arr.splice(i,1);run.doc.edited=true;run.setsX=null;lsSave();SFX.tap();buzz([10,30,10]);
   if(!x.d&&arr.length&&arr.every(y=>y.d)){SFX.ex();if(run.p.ex[run.ex].unit!=="分钟")run.askFeel=run.ex}
+  /* every set that had been done is gone: it was logged by mistake, so the move goes back to the ones still to do, with
+     its planned sets and without the feel it was given (dropping sets never done until none is left still skips it) */
+  if(x.d&&!arr.some(y=>y.d)){const e=run.p.ex[run.ex];if(!arr.length)for(let k=0;k<(e.sets||1);k++)arr.push({v:e.target,d:false});
+    if(run.doc.feel)delete run.doc.feel[e.id];if(run.askFeel===run.ex)run.askFeel=null;run.stk="todo";lsSave()}
   renderFocus(true)}
 function setsHold(){document.querySelectorAll(".fs-track i[data-i]").forEach(ch=>{let tm=0,x0=0,y0=0;
   const end=()=>{clearTimeout(tm);tm=0;ch.classList.remove("hold")};
