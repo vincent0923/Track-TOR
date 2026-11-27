@@ -230,10 +230,10 @@ const FEEL4=[["easy","轻松","Easy"],["ok","还行","OK"],["tough","有点难",
 function startRun(sid){const p=BYID[sid],doc=sessionDoc(sid),pb=pullSeries();
   run={sid,p,doc,sets:p.ex.map(e=>doc.sets[e.id]),ex:0,t0:Date.now(),best0:pb.length?Math.max(...pb.map(x=>x.y)):0,coins0:coinTotal()};
   run.ex=Math.max(0,run.sets.findIndex(a=>a.some(x=>!x.d)));
-  const f=$("#focus");f.classList.add("on");f.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
+  const f=$("#focus");f.classList.add("on");document.documentElement.classList.add("infocus");f.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
   clearInterval(clockT);clockT=setInterval(()=>{const el=$("#fTime");if(el){const s=Math.floor((Date.now()-run.t0)/1000);el.textContent=Math.floor(s/60)+":"+pad(s%60)}},1000);
   renderFocus()}
-function closeRun(){clearInterval(clockT);const f=$("#focus");f.classList.remove("on");f.setAttribute("aria-hidden","true");document.body.style.overflow="";run=null;renderTrainView()}
+function closeRun(){clearInterval(clockT);const f=$("#focus");f.classList.remove("on");document.documentElement.classList.remove("infocus");f.setAttribute("aria-hidden","true");document.body.style.overflow="";run=null;renderTrainView()}
 function curSet(){return run.sets[run.ex].findIndex(x=>!x.d)}
 /* the moves are two stacks: the ones still to do and the ones done. The stack in focus is a cover flow, one "record"
    per move (name, tempo, sets × reps, a pip per set); the other sits small at the right of the sets, a tick on the done
@@ -243,7 +243,7 @@ const cfLast=done=>done.slice().sort((x,y)=>Math.max(0,...run.sets[y].map(z=>z.o
 function cfCard(i,cls){const e=run.p.ex[i],a=run.sets[i],m=N(e).match(/[（(]([^）)]*)[）)]/),sub=[m&&m[1],e.note?NOTE(e):""].filter(Boolean).join(" · "),
     vs=a.map(x=>x.v),sum=!a.length?"—":vs.every(v=>v===vs[0])?a.length+" × "+vs[0]:vs.join(" · ");
   const art=cfArt(i);
-  return '<div class="cf-card card'+(art?" art":"")+(cls||"")+'"'+(art?' style="background-image:url('+art+')"':'')+' data-i="'+i+'" role="option" aria-selected="'+(i===run.ex)+'"><h2>'+esc(NS(e))+'</h2>'+(sub?'<p class="cf-sub">'+esc(sub)+'</p>':'')
+  return '<div class="cf-card'+(art?" art":"")+(cls||"")+'"'+(art?' style="background-image:url('+art+')"':'')+' data-i="'+i+'" role="option" aria-selected="'+(i===run.ex)+'"><h2>'+esc(NS(e))+'</h2>'+(sub?'<p class="cf-sub">'+esc(sub)+'</p>':'')
     +'<p class="cf-sum n">'+sum+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</p><span class="cf-pips">'+a.map(x=>'<i'+(x.d?' class="dn"':'')+'></i>').join("")+'</span></div>'}
 function renderFocus(anim){
   const f=$("#focus"),p=run.p,allDone=run.sets.every(x=>x.every(y=>y.d));
@@ -318,7 +318,7 @@ function cfHash(s){let h=2166136261;for(const ch of String(s))h=Math.imul(h^ch.c
 function cfPal(){const pr=document.createElement("i");pr.style.display="none";document.body.appendChild(pr);
   const rd=k=>{pr.style.color="";pr.style.color="var("+k+")";return getComputedStyle(pr).color};
   const cols=[...new Set(["--ac","--push","--pull","--third","--good","--sleep","--bad"].map(rd))],r={cols,ink:rd("--ink"),card:rd("--card"),bg:rd("--bg")};pr.remove();return r}
-function cfArt(i){const e=run.p.ex[i],de=document.documentElement,music=cfMusicOn()&&typeof MD_COVERS!=="undefined"?MD_COVERS.filter(m=>m.complete&&m.naturalWidth):[],
+function cfArt(i){if(document.documentElement.dataset.theme==="eink")return "";const e=run.p.ex[i],de=document.documentElement,music=cfMusicOn()&&typeof MD_COVERS!=="undefined"?MD_COVERS.filter(m=>m.complete&&m.naturalWidth):[],
     cov=music.length?music[i%music.length]:null,key=[de.dataset.theme,de.dataset.mode,e.id,cov?cov.src:cfDes(i)].join("|");
   if(CF_ART.has(key))return CF_ART.get(key);
   const S=480,cv=document.createElement("canvas");cv.width=cv.height=S;const g=cv.getContext("2d");let url="";
