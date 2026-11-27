@@ -154,6 +154,7 @@ function lsLoad(){
     if(repairMapped())lsSave();
     if(dropZeroSets())lsSave();
     registerPlanned(state.sessions);
+    if(refillEmpty())lsSave();
     if(j.extras&&moveDatedExtras(j.extras))lsSave();}
 }
 /* before v1.44a, restoring a progress file on a phone that had already planned pull D1–D2 put each number on the
@@ -164,6 +165,10 @@ function repairMapped(){let n=0;Object.entries(state.sessions).forEach(([sid,doc
   const base=baseEx(sid);if(!base)return;const keys=Object.keys(doc.sets),ids=base.map(e=>e.id);
   if(keys.length!==ids.length||keys.join()===ids.join()||ids.includes(keys[0]))return;
   const sets={};ids.forEach((id,i)=>sets[id]=doc.sets[keys[i]]);doc.sets=sets;n++});return n}
+/* a session not yet done where a move has no set at all (older versions let every set be dropped and called the move
+   skipped): the move gets its planned sets back, so it reads as still to do. Finished sessions keep theirs as they are */
+function refillEmpty(){let n=0;Object.entries(state.sessions||{}).forEach(([sid,doc])=>{if(!doc||doc.done||!doc.sets)return;const p=BYID[sid];if(!p)return;
+  p.ex.forEach(e=>{const a=doc.sets[e.id];if(Array.isArray(a)&&!a.length){for(let k=0;k<(e.sets||1);k++)a.push({v:e.target,d:false});if(doc.feel)delete doc.feel[e.id];n++}})});return n}
 /* a set done at 0 reps or 0 seconds is no set: older versions kept them, these days none is ever saved. Done sets at
    0 go from the sessions, from the extras logged in a session and from the extras of days without one. Runs on every
    load and after an import; returns how many it took out */

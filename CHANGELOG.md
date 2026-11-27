@@ -11,10 +11,12 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 ### 新增 / Added
 - ↺ **重置一次训练**：日历里点那天、点「修改」，训练旁边多一个重置键，确认后这次训练回到没练的样子（组数恢复计划、打勾和感觉清掉），里面记的加练挪到当天的加练里，训练引擎重新排后面的训练。
 - ↺ **Reset a session**: in a day from the calendar, tap Edit and a reset key appears beside the session; once confirmed it goes back to not done (planned sets, no ticks, no feel), extra practice logged in it moves to that day's extras, and the engine re-plans what follows.
+- ↺ 没练完的训练也能重置：首页训练卡打过勾后，开练键旁边多一个重置键。重置都要点两下：第一下变红提示，3 秒内再点才执行。
+- ↺ A session part done can be reset too, from the key beside Grind on the training card. Every reset takes two taps: the first turns the key red, a second within three seconds does it.
 
 ### 修复 / Fixed
-- 练过的组全删掉后，动作回到没练那摞（以前会留在练好那摞算跳过）；滑动停稳和打勾时 Cover Flow 不再闪一下；切换两摞后唱片不再变透明。
-- Holding away every done set sends the move back to the moves to do (it used to stay among the finished ones as skipped); the cover flow no longer blinks on rest or on a tick, and records no longer turn see-through after swapping stacks.
+- 一个动作只有练过的组才算练好：练过的组全删掉、或一组都不剩，它就回到没练那摞、组数恢复计划（以前删空会算跳过，首页还把它划掉）；滑动停稳和打勾时 Cover Flow 不再闪一下；切换两摞后唱片不再变透明。
+- A move counts as done only with sets actually done: with every done set held away, or no set left, it goes back to the moves to do with its planned sets (an emptied move used to count as skipped and was struck through on the training card); the cover flow no longer blinks on rest or on a tick, and records no longer turn see-through after swapping stacks.
 
 ---
 

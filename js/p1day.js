@@ -55,14 +55,14 @@ function render(){const d=curDay,dt=dateObj(d),ss=sessionsOn(d);
   if($("#sheet").classList.contains("on")&&body.dataset.day===d){body.innerHTML=html;$("#sheet .panel").scrollTop=sc}else{openSheet(html);body.dataset.day=d}}
 function openDay(d){if(d==="today")d=today();if(d>today())return;curDay=d;editSid=null;Object.keys(pending).forEach(k=>delete pending[k]);
   if(typeof run!=="undefined"&&run&&!run.finished)closeRun();$("#sheetBody").dataset.day="";render()}
-window.p1OpenDay=openDay;
+window.p1OpenDay=openDay;window.p1ResetSession=resetSession;
 function changed(){if(typeof engFree==="function"&&engFree())engPlanAll();lsSave();if(typeof renderAll==="function")renderAll();render();if(typeof finRefresh==="function")finRefresh()}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
   if(a==="cal"){openDay(b.dataset.d);return}
   if(!curDay||!$("#sheet").classList.contains("on")||$("#sheetBody").dataset.day!==curDay)return;
   if(a==="tshare"){if(typeof SFX!=="undefined")SFX.tap();finShare(curDay);return}
-  if(a==="dreset"){const sid=b.dataset.sid,p=BYID[sid];if(!p||!confirm(T('把「'+LAB(p)+'」退回没练的样子？练过的组和感觉会清掉，加练会留下。','Put '+LAB(p)+' back as not done? Its sets and feel are cleared; extra practice stays.')))return;
-    resetSession(sid);lsSave();changed();return}
+  if(a==="dreset"){const sid=b.dataset.sid,p=BYID[sid];if(!p)return;
+    armTap(b,()=>{resetSession(sid);lsSave();changed()},T('再点一次，「'+LAB(p)+'」退回没练的样子（加练会留下）','Tap again to put '+LAB(p)+' back as not done (extra practice stays)'));return}
   if(a==="dedit"){const was=editSid;editSid=was===b.dataset.sid?null:b.dataset.sid;if(was&&!editSid){engPlanAll();changed();toast(T("已保存","Saved"))}else render();return}
   if(a==="dsv"||a==="dst"||a==="ddel"||a==="dadd"){const sid=b.dataset.sid,doc=state.sessions[sid],id=b.dataset.e,arr=doc.sets[id]=doc.sets[id]||[],i=+b.dataset.i,x=arr[i],e=BYID[sid].ex.find(y=>y.id===id);
     if(a==="dadd"){const l=arr[arr.length-1];arr.push({v:l?l.v:(e?e.target:1),d:true,o:maxOrdOf(doc)+1});if(typeof SFX!=="undefined")SFX.tap()}

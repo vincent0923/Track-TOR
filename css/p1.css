@@ -1915,3 +1915,6 @@ html:root .seg.seg.seg button:active,html:root .mask .mode-tabs.mode-tabs.mode-t
 /* orange and copper fills read better with dark words */
 :root[data-theme="ember"][data-mode="light"],:root[data-theme="braun"],:root[data-theme="md"],:root[data-theme="dyson"][data-mode="dark"]{--sg-on-ink:#1E1208;--sg-on-ts:var(--emb)}
 .plan1 .row .dreset{margin-right:8px}
+/* a key armed for a second tap (reset): red, with a little shake */
+html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 30%,transparent);animation:armShake .35s}
+@keyframes armShake{25%{transform:translateX(-3px)}50%{transform:translateX(3px)}75%{transform:translateX(-2px)}}
