@@ -6,6 +6,24 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.76a] — 2026-11-28
+
+### 新增 / Added
+- ⛅ **日期旁的天气图标**：设了城市，左上角日期右边有一个彩色小图标显示那里的真实天气（晴、少云、阴、雨、雪、雾、雷），白天太阳、夜里月亮；点它打开天气设定。
+- ⛅ **A weather sign by the date**: with a city set, a small colour icon right of the date shows the real weather there (clear, partly cloudy, cloudy, rain, snow, fog, thunder), a sun by day and a moon by night; tap it for the weather settings.
+- 🌧️ **强制打开雨或雪**：屏幕效果四选一：关、自动（跟着城市的天气）、一直下雨、一直下雪；强制的不需要城市，也不影响日期旁的图标。
+- 🌧️ **Rain or snow on demand**: the screen effect is one of off, auto (the city's weather), always rain, always snow; forced ones need no city and leave the sign by the date alone.
+- ❄️ **雪化成水**：雪一打开就铺满屏幕；雪花落在玻璃上会化成小水珠，水珠攒大了像雨一样往下流。
+- ❄️ **Snow melts into water**: snow fills the screen at once; flakes settle on the glass, melt into beads, and heavy beads run down like rain.
+- 📊 「进展」改名「统计 / Stats」；页面标题改成那一页的图标。
+- 📊 Progress is now Stats; each page's title is its icon.
+
+### 移除 / Removed
+- 雾和雾霾的屏幕效果，天气效果的「试看」。
+- The fog and haze screen effect, and the weather preview.
+
+---
+
 ## [v1.75a] — 2026-11-28
 
 ### 新增 / Added

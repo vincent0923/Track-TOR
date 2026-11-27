@@ -36,6 +36,8 @@ h1,h2,h3,p{margin:0}
 /* header: the date, the page, a sync dot and the avatar */
 .top{display:flex;align-items:flex-end;justify-content:space-between;padding:6px 2px 14px}
 .top h1{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-top:2px}
+/* the title is the page's dock icon, drawn large in the ink colour */
+.top h1 svg{display:block;width:40px;height:40px;margin-top:4px;stroke-width:2.2}
 .top .tr{display:flex;gap:8px;align-items:center}
 .circ{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow),var(--lit);transition:transform .25s var(--spring)}
 .circ:active{transform:scale(.9)}
@@ -1496,11 +1498,6 @@ body.mini-big:not(:has(.focus.on)) .mini-pl .mp-b{display:grid;justify-self:cent
 body.mini-big:not(:has(.focus.on)) .mini-pl .mp-b svg{width:24px;height:24px}
 body.mini-big:not(:has(.focus.on)) .mini-pl .mp-bar{left:18px;right:18px;bottom:7px;height:3px}
 body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bottom))}
-/* weather preview: the chip fills up over its 10 seconds */
-.mask .chip[data-pv]{position:relative;overflow:hidden;isolation:isolate}
-.mask .chip[data-pv].run{color:var(--ac-text);border-color:var(--ac)}
-.mask .chip[data-pv].run::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--ac-soft);transform-origin:left;animation:pvRun 10s linear forwards}
-@keyframes pvRun{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .thc b.sp{text-align:left}
 /* the blind box: the app icon's envelope beside the balance; greyed once every theme is yours */
 .coinbig .coin{--cs:38px}
@@ -1925,3 +1922,8 @@ html:root .seg.seg.seg button:active,html:root .mask .mode-tabs.mode-tabs.mode-t
 /* a key armed for a second tap (reset): red, with a little shake */
 html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 30%,transparent);animation:armShake .35s}
 @keyframes armShake{25%{transform:translateX(-3px)}50%{transform:translateX(3px)}75%{transform:translateX(-2px)}}
+.mask .wxmode button svg{width:28px;height:28px;vertical-align:-9px;margin:-4px 0}
+/* the weather sign after the date: the colour icon of the weather where the city is */
+.wxbadge{display:inline-grid;place-items:center;width:20px;height:20px;margin-left:6px;vertical-align:-5px;padding:0;background:none;border:0}
+.wxbadge svg{width:20px;height:20px}
+.wxbadge[hidden]{display:none}

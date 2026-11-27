@@ -82,7 +82,7 @@ function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}
   const th=themeOwned(state.settings.theme)?state.settings.theme:"aurora",fix=(THEMES.find(x=>x.id===th)||{}).fix,
     dark=fix?fix==="dark":m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),de=document.documentElement;
   de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if((THEMES.find(x=>x.id===th)||{}).gloss)de.dataset.gloss="";else delete de.dataset.gloss;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;if(fix||(THEMES.find(x=>x.id===th)||{}).lit)de.dataset.lit="";else delete de.dataset.lit;
-  iconApply();requestAnimationFrame(()=>fitTitle());document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
+  iconApply();document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
 /* the light on the materials stays where it is (the tilt-following light was dropped); its old setting goes */
 try{localStorage.removeItem(PK+"rt")}catch(e){}
@@ -745,7 +745,7 @@ const SUNMOON='<svg class="sunmoon" viewBox="0 0 34 18" aria-label="'+T('亮暗�
 const thModes=th=>th.fix?[th.fix]:["light","dark"];
 function thPages(th,mode){return [].concat(...(mode?[mode]:thModes(th)).map(m=>[0,1,2].map(i=>({m,i}))))}
 /* TH_V: bump when tools/thumbs.js remakes the pictures (the service worker keeps images until their address changes) */
-const TH_V=7;
+const TH_V=8;
 const thPage=(th,p)=>'background-image:url(img/th/'+th.id+'-'+p.m+'.webp?v='+TH_V+');background-position:'+["0%","50%","100%"][p.i]+' 0';
 /* the stack: the first page on top, the rest stepped right and down behind it */
 function thStack(th,big,mode){const ps=thPages(th,mode);
@@ -859,7 +859,7 @@ function advSheet(){const row=(to,ic,t)=>'<button class="opt" data-act="go" data
 function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+'" role="switch" aria-checked="'+on+'">'+ic+'<span class="sp">'+t+'</span><span class="sw" aria-hidden="true"></span></button>';
   openSheet('<div class="sh-h"><h3>'+T('特效','Effects')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="setlist">'
-    +'<button class="opt" data-act="go" data-to="p1:weather">'+ICON.rain+'<span class="sp">'+T('天气','Weather')+'</span>'+ICON.right+'</button>'
+    +'<button class="opt" data-act="go" data-to="p1:weather">'+(typeof wxIcon==="function"?wxIcon("sunc"):ICON.rain)+'<span class="sp">'+T('天气','Weather')+'</span>'+ICON.right+'</button>'
     +sw("glass",glassOn(),ICON.spark,T('半透明玻璃','Translucent glass'))+sw("dust",dustOn(),ICON.dust,T('两天没练就落灰','Dust after two days off'))
     +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+sw("cfart",cfMusicOn(),ICON.music,T('动作唱片用常听的歌（需 Spotify）','Move records from songs you play (needs Spotify)'))+sw("groove",grooveOn(),ICON.music,T('音乐律动（需 Spotify）','Move with the music (needs Spotify)'))+'</div>');CUR_SHEET=fxSheet}
 function meSheet(){SHEET_UP=null;let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
@@ -876,11 +876,9 @@ function meSheet(){SHEET_UP=null;let m="auto";try{m=localStorage.getItem(PK+"mod
 
 /* ---------- header, dock, routing ---------- */
 /* the page title shrinks to fit beside the header buttons (wide theme fonts, long English words) */
-function fitTitle(){const h=$(".top h1"),tr=$(".top .tr");if(!h||!tr)return;h.style.fontSize="";
-  const room=()=>tr.getBoundingClientRect().left-h.getBoundingClientRect().left-14;let fs=parseFloat(getComputedStyle(h).fontSize),n=0;
-  while(h.scrollWidth>room()&&fs>16&&n++<20){fs-=1;h.style.fontSize=fs+"px"}}
 function paintHeader(v){const d=new Date();$("#today").textContent=LANG==="en"?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]+", "+MON_EN[d.getMonth()]+" "+d.getDate():(d.getMonth()+1)+"月"+d.getDate()+"日 周"+WD[d.getDay()];
-  $("#title").textContent=(LANG==="en"?{train:"Train",diet:"Diet",prog:"Progress"}:{train:"训练",diet:"饮食",prog:"进展"})[v];fitTitle();
+  /* the page's title is its icon from the dock, drawn large; the name stays for screen readers */
+  const t=$("#title"),ic=document.querySelector('.dock [data-v="'+v+'"] svg');t.innerHTML=ic?ic.outerHTML:"";t.setAttribute("aria-label",{train:T("训练","Train"),diet:T("饮食","Diet"),prog:T("统计","Stats")}[v]);
   let ls="";try{ls=localStorage.getItem("tracktor-lastsync")||""}catch(e){}$("#syncDot").classList.toggle("ok",ls.startsWith(today()))}
 function placePc(anim){const b=document.querySelector('.dock [aria-selected="true"]'),pc=document.querySelector(".dock .pc");if(!b)return;
   if(!anim)pc.style.transition="none";pc.style.width=b.offsetWidth+"px";pc.style.transform="translateX("+(b.offsetLeft-6)+"px)";pc.style.left="6px";if(!anim){void pc.offsetWidth;pc.style.transition=""}}
@@ -980,7 +978,7 @@ connectMcp().then(()=>{p1SyncUI();let ls="";try{ls=localStorage.getItem("trackto
 /* words fixed outside the views: the dock, the header buttons, the page language */
 function paintLang(){document.documentElement.lang=LANG==="en"?"en":HANT?"zh-Hant":"zh-CN";
   WD.splice(0,7,...(LANG==="en"?WD_EN:WD_ZH));
-  document.querySelectorAll(".dock [data-v]").forEach(b=>{const l={diet:T("饮食","Diet"),train:T("训练","Train"),prog:T("进展","Progress")}[b.dataset.v];b.querySelector("span").textContent=l;b.setAttribute("aria-label",l)});
+  document.querySelectorAll(".dock [data-v]").forEach(b=>{const l={diet:T("饮食","Diet"),train:T("训练","Train"),prog:T("统计","Stats")}[b.dataset.v];b.querySelector("span").textContent=l;b.setAttribute("aria-label",l)});
   $("#meBtn").setAttribute("aria-label",T("设定","Settings"));$("#syncBtn").setAttribute("aria-label",T("同步","Sync"))}
 paintLang();
 /* switching language keeps you where you are: the page and the open settings sheet redraw in the new language */
@@ -994,4 +992,4 @@ show(start,false);
 /* every save may have been a tick: re-check the dust */
 {const save0=lsSave;lsSave=function(){const r=save0.apply(this,arguments);try{dustApply()}catch(e){}return r}}
 
-if(document.fonts)document.fonts.ready.then(fitTitle);addEventListener("resize",fitTitle);
+
