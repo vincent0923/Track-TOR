@@ -242,11 +242,15 @@ function renderFocus(anim){
   else if(ci<0)bottom='<button class="tickb done" disabled>'+ICON.check+'</button>';
   else bottom=+val>0?'<button class="tickb" data-act="tick" aria-label="'+T('完成这一组','Set done')+'">'+ICON.check+'</button>'
     :'<button class="tickb skip" data-act="tick" aria-label="'+T('去掉这一组','Drop this set')+'">'+ICON.x+'</button>';
-  const nb=Math.min(3,other.length),mini=nb?'<button class="cf-mini'+(run.stk==="done"?"":" dn")+'" data-act="cfswap" aria-label="'+(run.stk==="done"?T('回到没练的动作','Back to the moves to do'):T('看练好的动作','See the finished moves'))+'">'
-    +Array.from({length:nb-1},(_,k)=>'<i style="transform:translate('+3*(nb-1-k)+'px,'+3*(nb-1-k)+'px)"></i>').join("")+'<i>'+(run.stk==="done"?ICON.dumbbell:ICON.check)+'</i></button>':'';
+  /* the other stack, small: two of its records' covers, one tucked behind the other, and a badge (a tick on the finished
+     ones, a dumbbell on the ones still to do) */
+  const pick=run.stk==="done"?other.slice(0,2):done.slice().sort((x,y)=>Math.max(0,...run.sets[y].map(z=>z.o||0))-Math.max(0,...run.sets[x].map(z=>z.o||0))).filter(i=>i!==run.askFeel).slice(0,2),
+    mc=i=>{const u=cfArt(i);return '<i class="mc'+(u?"":" plain")+'"'+(u?' style="background-image:url('+u+')"':'')+'></i>'},
+    mini=pick.length?'<button class="cf-mini'+(run.stk==="done"?"":" dn")+(pick.length>1?" two":"")+'" data-act="cfswap" aria-label="'+(run.stk==="done"?T('回到没练的动作','Back to the moves to do'):T('看练好的动作','See the finished moves'))+'">'
+    +pick.slice().reverse().map(mc).join("")+'<b class="mb">'+(run.stk==="done"?ICON.dumbbell:ICON.check)+'</b></button>':'';
   const keep=run.keepFlow&&fly==null&&run.cfKey===run.stk+list.join()?$(".cflow"):null;run.keepFlow=0;run.cfKey=run.stk+list.join();const keepX=keep?keep.querySelector(".cf-scroll").scrollLeft:0;if(keep)keep.remove();
   f.innerHTML='<div class="f-top"><span class="f-lab">'+LAB(p)+'</span><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
-    +'<div class="f-body" id="fBody"><div class="cflow"><div class="cf-scroll'+(run.askFeel!=null?" lock":"")+'" tabindex="0" role="listbox" aria-label="'+T('动作','Moves')+'"><div class="cf-rail'+(run.cfIn?" in":"")+'">'+list.map(i=>'<div class="cf-slot">'+cfCard(i)+'</div>').join("")+'</div></div>'+(fly!=null?cfCard(fly," cf-fly"):"")+'</div>'
+    +'<div class="f-body" id="fBody"><div class="cflow'+(run.cfIn?" in":"")+'"><div class="cf-scroll'+(run.askFeel!=null?" lock":"")+'" tabindex="0" role="listbox" aria-label="'+T('动作','Moves')+'"><div class="cf-rail">'+list.map(i=>'<div class="cf-slot">'+cfCard(i)+'</div>').join("")+'</div></div>'+(fly!=null?cfCard(fly," cf-fly"):"")+'</div>'
     +'<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'" data-i="'+i+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
     +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+mini+'</div>'
     +'<div class="f-num">'+(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n"><span id="fVal"'+(anim?' class="pop"':'')+'>'+val+'</span>'+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</b>'

@@ -1389,7 +1389,9 @@ body.has-mini .focus.on .f-body{padding-top:72px}
 html.infocus .wrap,html.infocus .dock{visibility:hidden;transition:visibility 0s .5s}
 .cf-scroll.lock{overflow-x:hidden}
 .cf-rail{display:flex;width:max-content;height:100%;padding-inline:calc(50% - var(--slot)/2);padding-top:22px;align-items:flex-start;transform-style:preserve-3d}
-.cf-rail.in{animation:cfIn .5s var(--spring)}
+/* swapping stacks fades the whole flow in from the side: on the flow, never on the 3D row itself (an opacity on that
+   flattens and hides the records on Android) */
+.cflow.in{animation:cfIn .45s var(--spring)}
 @keyframes cfIn{from{opacity:0;transform:translateX(48px) scale(.92)}to{opacity:1;transform:none}}
 .cf-slot{position:relative;flex:none;width:var(--slot);height:var(--cf);scroll-snap-align:center;transform-style:preserve-3d;view-timeline:--cfv inline}
 @keyframes cfTurn{0%{transform:translateX(-66.667%) rotateY(-45deg) translateZ(0) scale(.6667)}35%{transform:translateX(0) rotateY(-45deg) translateZ(0) scale(.6667)}50%{transform:translateX(0) rotateY(0deg) translateZ(16px) scale(1)}65%{transform:translateX(0) rotateY(45deg) translateZ(0) scale(.6667)}100%{transform:translateX(66.667%) rotateY(45deg) translateZ(0) scale(.6667)}}
@@ -1416,11 +1418,14 @@ html.infocus .wrap,html.infocus .dock{visibility:hidden;transition:visibility 0s
 /* the other stack: small, at the right of the sets */
 .f-setrow{position:relative;width:100%}
 .f-setrow:has(.cf-mini) .f-sets{-webkit-mask-image:linear-gradient(90deg,transparent 0,transparent 4%,#000 36%,#000 68%,transparent 82%);mask-image:linear-gradient(90deg,transparent 0,transparent 4%,#000 36%,#000 68%,transparent 82%)}
-.cf-mini{position:absolute;right:18px;top:50%;width:42px;height:42px;margin-top:-24px;transition:transform .3s var(--spring)}
+.cf-mini{position:absolute;right:14px;top:50%;width:52px;height:46px;margin-top:-26px;transition:transform .3s var(--spring)}
 .cf-mini:active{transform:scale(.9)}
-.cf-mini i{position:absolute;inset:0;border-radius:11px;background:var(--card);box-shadow:0 0 0 1px var(--line),0 4px 10px -4px rgba(0,0,0,.35);display:grid;place-items:center;color:var(--muted)}
-.cf-mini i svg{width:20px;height:20px}
-.cf-mini.dn i:last-child{color:var(--ac)}
+.cf-mini .mc{position:absolute;right:0;bottom:0;width:38px;height:38px;border-radius:7px;background:var(--card) center/cover no-repeat;box-shadow:0 4px 10px -3px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.12)}
+.cf-mini .mc.plain{box-shadow:0 0 0 1px var(--line),0 4px 10px -4px rgba(0,0,0,.35)}
+.cf-mini.two .mc:first-child{right:12px;bottom:6px;transform:perspective(120px) rotateY(28deg) scale(.86);filter:brightness(.8)}
+.cf-mini .mb{position:absolute;right:-5px;bottom:-5px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--card);color:var(--muted);box-shadow:0 1px 3px rgba(0,0,0,.35),0 0 0 1px var(--line)}
+.cf-mini.dn .mb{background:var(--ac);color:var(--on-ac)}
+.cf-mini .mb svg{width:11px;height:11px}
 .cf-mini.got{animation:cfGot .5s var(--spring)}
 @keyframes cfGot{40%{transform:scale(1.22)}to{transform:none}}
 :root[data-theme="eink"] .cflow .cf-card.cf-card{border:var(--ek-rule);-webkit-box-reflect:unset}
