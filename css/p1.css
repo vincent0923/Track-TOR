@@ -186,7 +186,7 @@ h1,h2,h3,p{margin:0}
 .opt[aria-pressed="true"]{background:var(--ac-soft);color:var(--ac-text)}
 
 /* focus mode */
-.focus{position:fixed;inset:0;z-index:30;background-color:var(--bg);background-image:var(--glow);display:grid;grid-template-rows:auto 1fr auto;padding:calc(10px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
+.focus{position:fixed;inset:0;z-index:30;overflow-x:clip;background-color:var(--bg);background-image:var(--glow);display:grid;grid-template-rows:auto 1fr auto;padding:calc(10px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
   transform:translateY(100%);transition:transform .5s var(--ease);max-width:100%}
 .focus.on{transform:none}
 .f-top{display:flex;align-items:center;gap:10px;max-width:480px;width:100%;margin:0 auto}
@@ -1383,10 +1383,15 @@ body.has-mini .focus.on .f-body{padding-top:72px}
    that on the sides (scaled down there, so the words in the middle are drawn at full size, not blown up), turned 45° and
    pulled one slot in towards the middle; 640px of perspective */
 .cflow{--cf:150px;--slot:100px;position:relative;width:100%;height:calc(var(--cf)*1.75 + 18px);margin-top:4px}
-.cf-scroll{position:absolute;top:0;bottom:0;left:calc(50% - min(50vw,260px));right:calc(50% - min(50vw,260px));overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;perspective:640px;outline:none;-webkit-user-select:none;user-select:none}
+/* the row is exactly six slots wide, as in the demo (wider than the phone; what sticks out is never seen), so each
+   neighbour lands one slot out and five records show */
+.cf-scroll{position:absolute;top:0;bottom:0;left:calc(50% - var(--slot)*3);right:calc(50% - var(--slot)*3);overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;perspective:640px;outline:none;-webkit-user-select:none;user-select:none}
 .cf-scroll::-webkit-scrollbar{display:none}
 /* while the focus page is up, the page under it is not drawn at all (hidden once the focus page has slid in) */
 html.infocus .wrap,html.infocus .dock{visibility:hidden;transition:visibility 0s .5s}
+/* and the page's own textured background, which the focus page covers anyway, becomes one flat colour: one full-screen
+   layer fewer for the GPU to paint under the records */
+html.infocus body{background:var(--bg)!important;transition:background 0s .5s}
 .cf-scroll.lock{overflow-x:hidden}
 .cf-rail{display:flex;width:max-content;height:100%;padding-inline:calc(50% - var(--slot)/2);padding-top:22px;align-items:flex-start;transform-style:preserve-3d}
 /* swapping stacks fades the whole flow in from the side: on the flow, never on the 3D row itself (an opacity on that
