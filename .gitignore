@@ -6,3 +6,8 @@ coros-token.json
 .coros-mcp-state/
 diet-data.json
 train-data.json
+
+# test screenshots never belong in the repo root (the app icons do)
+/*.png
+!/icon-*.png
+!/apple-touch-icon.png
