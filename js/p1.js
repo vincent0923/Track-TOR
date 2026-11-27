@@ -235,58 +235,78 @@ function startRun(sid){const p=BYID[sid],doc=sessionDoc(sid),pb=pullSeries();
   renderFocus()}
 function closeRun(){clearInterval(clockT);const f=$("#focus");f.classList.remove("on");f.setAttribute("aria-hidden","true");document.body.style.overflow="";run=null;renderTrainView()}
 function curSet(){return run.sets[run.ex].findIndex(x=>!x.d)}
+/* the moves are two stacks: the ones still to do and the ones done. The stack in focus is a cover flow, one "record"
+   per move (name, tempo, sets × reps, a pip per set); the other sits small at the right of the sets, a tick on the done
+   one and a dumbbell on the one still to do; tap it to swap. A finished move flies into the done stack */
+function cfLists(){const todo=[],done=[];run.sets.forEach((a,i)=>(a.every(y=>y.d)?done:todo).push(i));return {todo,done}}
+const cfLast=done=>done.slice().sort((x,y)=>Math.max(0,...run.sets[y].map(z=>z.o||0))-Math.max(0,...run.sets[x].map(z=>z.o||0)))[0];
+function cfCard(i,cls){const e=run.p.ex[i],a=run.sets[i],m=N(e).match(/[（(]([^）)]*)[）)]/),sub=[m&&m[1],e.note?NOTE(e):""].filter(Boolean).join(" · "),
+    vs=a.map(x=>x.v),sum=vs.every(v=>v===vs[0])?a.length+" × "+vs[0]:vs.join(" · ");
+  return '<div class="cf-card card'+(cls||"")+'" data-i="'+i+'" role="option" aria-selected="'+(i===run.ex)+'"><h2>'+esc(NS(e))+'</h2>'+(sub?'<p class="cf-sub">'+esc(sub)+'</p>':'')
+    +'<p class="cf-sum n">'+sum+'<small>'+U(e.unit)+'</small></p><span class="cf-pips">'+a.map(x=>'<i'+(x.d?' class="dn"':'')+'></i>').join("")+'</span><i class="cf-dim"></i></div>'}
 function renderFocus(anim){
-  const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=run.sets[run.ex],ci=curSet(),allDone=run.sets.every(x=>x.every(y=>y.d));
+  const f=$("#focus"),p=run.p,allDone=run.sets.every(x=>x.every(y=>y.d));
   if(allDone&&!run.finished&&run.askFeel==null){finishRun();return}
-  const dots=p.ex.map((x,i)=>'<i class="'+(run.sets[i].every(y=>y.d)?"dn":i===run.ex?"cur":"")+'"></i>').join("");
-  const val=ci<0?a[a.length-1].v:a[ci].v;
+  const {todo,done}=cfLists();let list;
+  if(run.askFeel!=null){run.stk="todo";run.ex=run.askFeel;list=todo.concat(run.askFeel).sort((x,y)=>x-y)}
+  else{if(run.stk==="done"&&!done.includes(run.ex)){if(todo.includes(run.ex)||!done.length)run.stk="todo";else run.ex=cfLast(done)}
+    if(run.stk==="done")list=done;else{run.stk="todo";list=todo;if(!list.includes(run.ex))run.ex=list[0]}}
+  const other=run.stk==="done"?todo:done.filter(i=>i!==run.askFeel),
+    fly=run.cfPrevStk==="todo"&&run.stk==="todo"&&run.cfPrev?run.cfPrev.find(i=>!list.includes(i)&&done.includes(i)):undefined;
+  run.cfPrev=list;run.cfPrevStk=run.stk;
+  const e=p.ex[run.ex],a=run.sets[run.ex],ci=curSet(),val=ci<0?a[a.length-1].v:a[ci].v;
   let bottom;
   if(run.askFeel!=null)bottom='<div class="feelbar" role="slider" tabindex="0" aria-label="'+T('这个动作感觉？','How did that feel?')+'" aria-valuemin="1" aria-valuemax="4"><span class="fl-lab">'+T('感觉？','Feel?')+'</span><div class="fl-bks">'+FEEL4.map((x,i)=>'<i style="--i:'+i+'"></i>').join("")+'</div></div><button class="f-hint" data-act="feel" data-f="">'+T('跳过','Skip')+'</button>';
-  else if(ci<0)bottom='<button class="tickb done" disabled>'+ICON.check+'</button><button class="f-hint" data-act="fnext">'+T('这个动作完成了 · 下一个 →','Done with this one · next →')+'</button>';
+  else if(ci<0)bottom='<button class="tickb done" disabled>'+ICON.check+'</button>';
   else bottom='<button class="tickb" data-act="tick" aria-label="'+T('完成这一组','Set done')+'">'+ICON.check+'</button>';
-  f.innerHTML='<div class="f-top"><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
-    +'<div class="f-body" id="fBody"><div class="f-win">'+winHtml(run.ex)+'</div>'
-    +'<div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
-    +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'
+  const nb=Math.min(3,other.length),mini=nb?'<button class="cf-mini'+(run.stk==="done"?"":" dn")+'" data-act="cfswap" aria-label="'+(run.stk==="done"?T('回到没练的动作','Back to the moves to do'):T('看练好的动作','See the finished moves'))+'">'
+    +Array.from({length:nb-1},(_,k)=>'<i style="transform:translate('+3*(nb-1-k)+'px,'+3*(nb-1-k)+'px)"></i>').join("")+'<i>'+(run.stk==="done"?ICON.dumbbell:ICON.check)+'</i></button>':'';
+  f.innerHTML='<div class="f-top"><span class="f-lab">'+LAB(p)+'</span><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
+    +'<div class="f-body" id="fBody"><div class="cflow" tabindex="0" role="listbox" aria-label="'+T('动作','Moves')+'"><div class="cf-rail'+(run.cfIn?" in":"")+'">'+list.map(i=>cfCard(i)).join("")+(fly!=null?cfCard(fly," cf-fly"):"")+'</div></div>'
+    +'<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
+    +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+mini+'</div>'
     +'<div class="f-num">'+(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n"><span id="fVal"'+(anim?' class="pop"':'')+'>'+val+'</span><small>'+U(e.unit)+'</small></b>'
-    +(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div>'
-    +(p.ex.length>1&&run.askFeel==null?'<div class="f-dial" role="slider" tabindex="0" aria-label="'+T('转动换动作','Turn to change move')+'" aria-valuemin="1" aria-valuemax="'+p.ex.length+'" aria-valuenow="'+(run.ex+1)+'"><div class="dl-wheel"><i class="dl-knurl"></i></div><b class="dl-mark"></b></div>':'')+'<div class="f-dots">'+dots+'</div></div>'
+    +(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div></div>'
     +'<div class="f-bottom" id="fBottom"><button class="mini f-x" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-bc">'+bottom+'</div><span class="f-x"></span></div>';
+  run.cfIn=0;
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
-  setsCenter();winFit();if(document.fonts)document.fonts.ready.then(winFit);swipe($("#fBody"));dialBind($(".f-dial"));feelBind($(".feelbar"))}
+  setsCenter();cfBind($(".cflow"),list);cfFit();if(document.fonts)document.fonts.ready.then(cfFit);feelBind($(".feelbar"));if(fly!=null)cfFly()}
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
   const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,x=v.clientWidth/2-(c.offsetLeft+c.offsetWidth/2);
   if(run.setsX!=null&&run.setsK===run.ex){t.style.transition="none";t.style.transform="translateX("+run.setsX+"px)";void t.offsetWidth;t.style.transition=""}
   t.style.transform="translateX("+x+"px)";run.setsX=x;run.setsK=run.ex}
-/* the move's name stays on one line: a long one shrinks to fit the window instead of wrapping */
-function winFit(){const h=$(".f-win h2");if(!h)return;h.style.fontSize="";const w=h.clientWidth;if(!w)return;
-  for(let k=0;k<12&&h.scrollWidth>w;k++){const f=parseFloat(getComputedStyle(h).fontSize);if(f<=14)break;h.style.fontSize=Math.max(14,f*w/h.scrollWidth*.98)+"px"}}
-function winHtml(i){const p=run.p,e=p.ex[i];return '<p class="eyebrow">'+LAB(p)+T(' · 动作 ',' · move ')+(i+1)+' / '+p.ex.length+'</p><h2>'+N(e)+'</h2><p class="f-note">'+(e.note?NOTE(e):"")+'</p>'}
-/* the move dial: a knurled thumb wheel like a camera's. Each notch (DL_STEP px of travel) is one move with a click;
-   it keeps spinning after a flick and slows with a slightly different friction each time, so a hard spin lands
-   on a move by chance; it wraps around, settles on the nearest notch, and the window shows the move as it passes */
-const DL_STEP=52;
-function dialBind(el){if(!el)return;const DL_KN=parseFloat(getComputedStyle(el).getPropertyValue("--d-p"))||12,kn=el.querySelector(".dl-knurl"),win=$(".f-win"),n=run.p.ex.length,start=run.ex;
-  let off=0,last=0,raf=0,drag=null,shown=start,lastSnd=0,lastBz=0;
-  const idx=o=>((start-Math.round(o/DL_STEP))%n+n)%n;
-  const paint=()=>{kn.style.transform="translateX("+(((off%DL_KN)+DL_KN)%DL_KN-DL_KN)+"px)";const i=idx(off);
-    if(i!==shown){shown=i;const t=performance.now();if(t-lastSnd>22){lastSnd=t;SFX.detent()}if(t-lastBz>45){lastBz=t;buzz(4)}
-      if(win){win.innerHTML=winHtml(i);winFit();win.classList.remove("flick");void win.offsetWidth;win.classList.add("flick")}el.setAttribute("aria-valuenow",i+1)}};
-  const commit=()=>{cancelAnimationFrame(raf);raf=0;el.classList.remove("spin");const i=idx(off);SFX.land();buzz(12);
-    if(!run||i===run.ex){return}run.ex=i;setTimeout(()=>{if(run)renderFocus(true)},120)};
-  const snap=()=>{const to=Math.round(off/DL_STEP)*DL_STEP,from=off,t0=performance.now();
-    const go=t=>{const k=Math.min(1,(t-t0)/180),e=1-Math.pow(1-k,3);off=from+(to-from)*e;paint();if(k<1)raf=requestAnimationFrame(go);else commit()};raf=requestAnimationFrame(go)};
-  const coast=v=>{const fr=.955+Math.random()*.02;let t1=performance.now();
-    const go=t=>{const dt=Math.min(40,t-t1);t1=t;off+=v*dt;v*=Math.pow(fr,dt/16);paint();if(Math.abs(v)>.08)raf=requestAnimationFrame(go);else snap()};raf=requestAnimationFrame(go)};
+/* a move's name may take two lines on its record; one that still doesn't fit shrinks */
+function cfFit(){document.querySelectorAll(".cf-card h2").forEach(h=>{h.style.fontSize="";
+  for(let k=0;k<14&&(h.scrollHeight>h.clientHeight+4||h.scrollWidth>h.clientWidth+1);k++){const f=parseFloat(getComputedStyle(h).fontSize);if(f<=14)break;h.style.fontSize=Math.max(14,f*.92)+"px"}})}
+/* the cover flow: the record in the middle faces you, the others turn away on either side. Drag or flick to go
+   through them (a click per record), tap a side one to bring it round; it settles with a small overshoot */
+function cfBind(el,list){if(!el)return;const cards=[...el.querySelectorAll(".cf-card:not(.cf-fly)")],n=cards.length;if(!n)return;
+  const w=cards[0].offsetWidth||200,step=w*.62;let pos=Math.max(0,list.indexOf(run.ex)),raf=0,drag=null,shown=pos,lastBz=0;
+  const paint=()=>{cards.forEach((c,j)=>{const k=j-pos,ak=Math.abs(k),sg=Math.sign(k),x=ak<1?k*step:sg*(step+(ak-1)*w*.2),r=ak<1?-k*55:-sg*55,z=-Math.min(ak,1)*150-Math.max(0,ak-1)*40;
+      c.style.transform="translate3d("+x.toFixed(1)+"px,0,"+z.toFixed(1)+"px) rotateY("+r.toFixed(1)+"deg)";c.style.zIndex=100-Math.round(ak*10);c.style.opacity=ak>2.8?0:1;
+      c.lastElementChild.style.opacity=Math.min(.55,ak*.45).toFixed(2)});
+    const i=Math.round(pos);if(i!==shown){shown=i;SFX.detent();const t=performance.now();if(t-lastBz>45){lastBz=t;buzz(4)}}};
+  const commit=i=>{const ex=list[i];if(!run||ex==null||ex===run.ex)return;run.ex=ex;SFX.land();buzz(10);renderFocus(true)};
+  const go=to=>{cancelAnimationFrame(raf);const from=pos,t0=performance.now(),ms=420;
+    const st=t=>{const k=Math.min(1,(t-t0)/ms),q=k-1,e=1+2*q*q*q+q*q;pos=from+(to-from)*e;paint();if(k<1)raf=requestAnimationFrame(st);else{pos=to;paint();commit(to)}};raf=requestAnimationFrame(st)};
   ["touchstart","touchmove","touchend"].forEach(k=>el.addEventListener(k,e=>e.stopPropagation(),{passive:true}));
-  el.addEventListener("pointerdown",e=>{cancelAnimationFrame(raf);raf=0;el.setPointerCapture(e.pointerId);el.classList.add("spin");drag={x:e.clientX,o:off,pts:[[performance.now(),e.clientX]]}});
-  el.addEventListener("pointermove",e=>{if(!drag)return;off=drag.o+(e.clientX-drag.x);const t=performance.now();drag.pts.push([t,e.clientX]);while(drag.pts.length>2&&t-drag.pts[0][0]>90)drag.pts.shift();paint()});
-  const up=e=>{if(!drag)return;const p=drag.pts,a=p[0],b=p[p.length-1],v=b[0]-a[0]>5&&performance.now()-b[0]<70?(b[1]-a[1])/(b[0]-a[0]):0;drag=null;
-    if(Math.abs(v)>.35)coast(Math.max(-6,Math.min(6,v*1.15)));else snap()};
+  el.addEventListener("pointerdown",e=>{if(run.askFeel!=null)return;cancelAnimationFrame(raf);el.setPointerCapture(e.pointerId);drag={x:e.clientX,p:pos,mv:0,tg:e.target.closest(".cf-card"),pts:[[performance.now(),e.clientX]]}});
+  el.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x;if(Math.abs(dx)>6)drag.mv=1;if(!drag.mv)return;
+    let q=drag.p-dx/step;if(q<0)q/=3;if(q>n-1)q=n-1+(q-n+1)/3;pos=q;const t=performance.now();drag.pts.push([t,e.clientX]);while(drag.pts.length>2&&t-drag.pts[0][0]>90)drag.pts.shift();paint()});
+  const up=()=>{if(!drag)return;const d=drag;drag=null;
+    if(!d.mv){const j=cards.indexOf(d.tg);if(j>=0&&j!==Math.round(pos))go(j);return}
+    const a=d.pts[0],b=d.pts[d.pts.length-1],v=b[0]-a[0]>5&&performance.now()-b[0]<70?(b[1]-a[1])/(b[0]-a[0]):0;
+    go(Math.max(0,Math.min(n-1,Math.round(pos-v*160/step))))};
   el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
-  el.addEventListener("keydown",e=>{if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;e.preventDefault();cancelAnimationFrame(raf);off+=e.key==="ArrowRight"?-DL_STEP:DL_STEP;off=Math.round(off/DL_STEP)*DL_STEP;paint();commit()});
+  el.addEventListener("keydown",e=>{if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;e.preventDefault();go(Math.max(0,Math.min(n-1,Math.round(pos)+(e.key==="ArrowRight"?1:-1))))});
   paint()}
+/* a move just finished: its record shrinks into the done stack, which gives a little bump */
+function cfFly(){const c=$(".cf-fly"),m=$(".cf-mini");if(!c)return;
+  if(!m||matchMedia("(prefers-reduced-motion: reduce)").matches){c.remove();return}
+  const r=c.getBoundingClientRect(),q=m.getBoundingClientRect();c.style.setProperty("--fx",(q.left+q.width/2-r.left-r.width/2).toFixed(0)+"px");c.style.setProperty("--fy",(q.top+q.height/2-r.top-r.height/2).toFixed(0)+"px");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.add("go")));
+  setTimeout(()=>{c.remove();m.classList.remove("got");void m.offsetWidth;m.classList.add("got")},520)}
 /* the feel bar: tap or drag across four bricks; let go and it's kept (touch again within a moment to change it) */
 function feelBind(el){if(!el)return;const bks=[...el.querySelectorAll(".fl-bks i")],lab=el.querySelector(".fl-lab");let lv=0,drag=0,tm=0;
   const show=n=>{if(n===lv)return;lv=n;bks.forEach((b,i)=>b.classList.toggle("on",i<n));const f=FEEL4[n-1];lab.textContent=T(f[1],f[2]);el.setAttribute("aria-valuenow",n);el.dataset.lv=n;SFX.detent();buzz(6)};
@@ -366,10 +386,6 @@ function finShare(t){t=t||today();const back=$("#sheet").classList.contains("on"
     +'<div class="row" style="gap:10px;margin-top:14px"><button class="btn ghost" type="button" data-shsave style="flex:1">'+T('存到相册','Save to photos')+'</button><button class="btn" type="button" data-shgo style="flex:1">'+ICON.share+T('分享','Share')+'</button></div>');
   if(back)SHEET_UP=()=>p1OpenDay(t);
   $("#sheet .shimg").src=drawTrain(t).toDataURL("image/jpeg",.85);shareImgBind(blobOf,name)}
-function swipe(el){let x0=null,y0=0;el.addEventListener("touchstart",e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
-  el.addEventListener("touchend",e=>{if(x0==null||!run||run.askFeel!=null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
-    if(Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx))return;const n=run.ex+(dx<0?1:-1);if(n<0||n>=run.p.ex.length)return;
-    run.ex=n;SFX.tap();renderFocus(true)})}
 
 /* ---------- diet view ---------- */
 /* food records, seven days to a card, older ones stacked underneath (finger right goes back) */
@@ -897,7 +913,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
     else if(a==="inc"||a==="dec"){const ci=curSet();if(ci<0)return;run.doc.edited=true;const s=run.sets[run.ex][ci],st=run.p.ex[run.ex].unit==="秒"?5:1;s.v=Math.max(0,(+s.v||0)+(a==="inc"?st:-st));
       /* only this set: the planned numbers for the rest stay put; the engine adjusts after sessions, never mid-session */lsSave();SFX.tap();const el=$("#fVal");el.textContent=s.v;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");}
     else if(a==="fshare"){SFX.tap();finShare()}
-    else if(a==="fnext"){const n=run.sets.findIndex(x=>x.some(y=>!y.d));if(n>=0){run.ex=n;renderFocus(true)}}
+    else if(a==="cfswap"){if(run.askFeel!=null)return;const L=cfLists();if(run.stk==="done"){run.stk="todo";run.ex=L.todo[0]}else{run.stk="done";run.ex=cfLast(L.done)}run.cfIn=1;SFX.tap();buzz(8);renderFocus(true)}
   }});
 
 if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));

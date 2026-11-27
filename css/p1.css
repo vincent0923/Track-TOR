@@ -190,10 +190,6 @@ h1,h2,h3,p{margin:0}
   transform:translateY(100%);transition:transform .5s var(--ease);max-width:100%}
 .focus.on{transform:none}
 .f-top{display:flex;align-items:center;gap:10px;max-width:480px;width:100%;margin:0 auto}
-.f-dots{flex:1;display:flex;gap:4px;justify-content:center}
-.f-dots i{height:5px;flex:1;max-width:36px;border-radius:999px;background:var(--seg);transition:background .3s}
-.f-dots i.dn{background:var(--ac)}
-.f-dots i.cur{background:var(--ink)}
 .f-time{font-size:13px;font-weight:700;color:var(--muted);min-width:44px;text-align:right}
 .f-body{display:grid;align-content:center;justify-items:center;text-align:center;gap:6px;max-width:480px;width:100%;margin:0 auto;touch-action:pan-y}
 .f-body h2{font-size:28px;font-weight:800;letter-spacing:-.04em;line-height:1.15;padding:0 10px}
@@ -1208,8 +1204,6 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 /* charts sit in the filter grille */
 :root[data-theme="dyson"] .bricks{background:radial-gradient(circle,var(--grille-hole) 0 2px,var(--grille-lip) 2.6px,rgba(0,0,0,0) 3.2px) 0 0/9px 9px,var(--grille-bg);box-shadow:inset 0 1px 3px rgba(0,0,0,.25),0 1px 0 rgba(255,255,255,.25)}
 :root[data-theme="dyson"] .opt[aria-checked="true"] .sw{background:var(--dot2)}
-:root[data-theme="dyson"] .f-dial{--d-p:10;--d-body:var(--grille-bg);--d-slot:color-mix(in srgb,var(--grille-bg) 60%,#000);--d-tex:radial-gradient(circle,var(--grille-hole) 0 2.2px,color-mix(in srgb,var(--grille-hole) 40%,var(--grille-bg)) 2.6px 3.1px,var(--grille-lip) 3.6px);--d-size:10px 10px}
-:root[data-theme="dyson"] .f-win{--w-bg:color-mix(in srgb,var(--sub) 70%,var(--bg))}
 :root[data-theme="mac"]{--bead:url(../img/tex-6.webp);--bg:#D6D7DA;--glow:none;--card:#E3E4E6;--line:rgba(0,0,0,.08);--lit:inset 0 1px 0 rgba(255,255,255,.9);--sub:#CDCED1;--seg:#CDCED1;--dark:#1C1C1E;--dark-solid:#1C1C1E;--dark-line:#000;--track:rgba(255,255,255,.18);--ink:#1D1D1F;--muted:#6E6E73;--ac:#0A84FF;--on-ac:#fff;--ac-soft:rgba(10,132,255,.13);--ac-text:#0066CC;--st1:rgba(10,132,255,.22);--st2:rgba(10,132,255,.58);--push:#0A84FF;--pull:#FF9F0A;--third:#8E8E93;--kpush:var(--push);--kpull:var(--pull);--kthird:var(--third);--good:#1F9D55;--bad:#E5484D;--sleep:#7D6BD6;--mat:linear-gradient(180deg,#E8E9EB 0%,#DCDDE0 100%);--spec:radial-gradient(140% 90% at var(--lx) var(--ly),rgba(255,255,255,calc(.45*var(--rt))),rgba(255,255,255,0) 55%);--chamfer:inset 0 0 0 1px rgba(255,255,255,.75),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(0,0,0,.1);--shadow:var(--chamfer),0 0 0 .5px rgba(0,0,0,.18),0 2px 3px rgba(0,0,0,.08),0 12px 24px -10px rgba(0,0,0,.22),0 30px 50px -26px rgba(0,0,0,.3);--key:linear-gradient(180deg,#2B2B2E 0%,#1A1A1C 100%);--keysh:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.6),0 0 0 .5px #000,0 1px 1px rgba(0,0,0,.4);--disp:-apple-system,BlinkMacSystemFont,"Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;--num:-apple-system,BlinkMacSystemFont,"Inter Tight",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
 :root[data-theme="mac"][data-mode="dark"]{--bg:#1B1B1D;--card:#3A3B3F;--line:rgba(255,255,255,.07);--sub:#2A2B2E;--seg:#2A2B2E;--dark:#0E0E10;--dark-solid:#0E0E10;--track:#3A3B3F;--ink:#F5F5F7;--muted:#98989D;--ac-text:#4CA3FF;--mat:linear-gradient(180deg,#46474B 0%,#38393D 100%);--spec:radial-gradient(140% 90% at var(--lx) var(--ly),rgba(255,255,255,calc(.12*var(--rt))),rgba(255,255,255,0) 55%);--chamfer:inset 0 0 0 1px rgba(255,255,255,.1),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(0,0,0,.4);--shadow:var(--chamfer),0 0 0 .5px #000,0 2px 3px rgba(0,0,0,.3),0 12px 24px -10px rgba(0,0,0,.55),0 30px 50px -26px rgba(0,0,0,.7);--key:linear-gradient(180deg,#141416 0%,#0B0B0C 100%);color-scheme:dark}
 :root[data-theme="mac"] .dock button[aria-selected="true"]{color:#F5F5F7}
@@ -1374,90 +1368,45 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 .card,.tile,.dock{contain:layout style}
 button,[role=button],a{touch-action:manipulation}
 
-/* ---------- focus: the move window and the move dial ---------- */
-.f-win{--w-bg:color-mix(in srgb,var(--ink) 5%,var(--bg));--w-sh:inset 0 2px 8px rgba(0,0,0,.12),inset 0 0 0 1px var(--line),0 1px 0 rgba(255,255,255,.7);
-  display:grid;justify-items:center;gap:4px;width:min(100%,340px);padding:16px 18px 10px;border-radius:26px;background:var(--w-bg);box-shadow:var(--w-sh);color:var(--w-ink,var(--ink));overflow:hidden;margin-bottom:6px}
-.f-win h2{font-family:var(--disp,inherit);white-space:nowrap;overflow:hidden;max-width:100%}
-.f-win.flick h2{animation:winFlick .16s var(--ease)}
-@keyframes winFlick{from{transform:translateY(-30%);opacity:.3}to{transform:none;opacity:1}}
-:root[data-mode="dark"] .f-win{--w-bg:color-mix(in srgb,#000 38%,var(--bg));--w-sh:inset 0 3px 12px rgba(0,0,0,.6),inset 0 0 0 1px rgba(255,255,255,.05),0 1px 0 rgba(255,255,255,.07)}
-.f-dial{--d-p:5;--d-slot:color-mix(in srgb,var(--ink) 9%,var(--bg));--d-body:color-mix(in srgb,var(--ink) 55%,var(--bg));--d-hi:color-mix(in srgb,#fff 50%,var(--d-body));--d-lo:color-mix(in srgb,#000 55%,var(--d-body));
-  --d-tex:repeating-linear-gradient(90deg,var(--d-hi) 0 1px,var(--d-body) 1px 4px,var(--d-lo) 4px 5px);--d-size:auto;
-  position:relative;width:min(76%,270px);height:54px;margin-top:16px;padding:7px 9px;border-radius:17px;background:var(--d-slot);
-  box-shadow:inset 0 3px 7px rgba(0,0,0,.28),inset 0 -1px 0 rgba(255,255,255,.18),0 1px 0 rgba(255,255,255,.4);touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
-.f-dial.spin{cursor:grabbing}
-/* the wheel: a cylinder seen from the side, chamfered at the top and bottom edges */
-.dl-wheel{position:relative;height:100%;border-radius:9px;overflow:hidden;background:var(--d-body);
-  box-shadow:0 1px 0 rgba(255,255,255,.25),0 3px 5px -1px rgba(0,0,0,.45)}
-.dl-knurl{position:absolute;inset:0 -24px 0 0;will-change:transform;background:var(--d-tex);background-size:var(--d-size)}
-.dl-wheel::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.55) 0,rgba(255,255,255,.18) 9%,rgba(255,255,255,0) 18%,rgba(0,0,0,0) 78%,rgba(0,0,0,.35) 90%,rgba(0,0,0,.6) 100%),
-    linear-gradient(90deg,rgba(0,0,0,.7) 0%,rgba(0,0,0,.18) 22%,rgba(255,255,255,.12) 50%,rgba(0,0,0,.18) 78%,rgba(0,0,0,.7) 100%)}
-/* lit skins: the shine on the wheel sits where the light is for the buttons, and follows the tilt */
-:root[data-lit] .dl-wheel::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;
-  background:radial-gradient(28% 70% at calc(var(--lx,30%) + 4%) 30%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%)}
-.dl-mark{position:absolute;left:50%;top:-12px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:var(--ac);box-shadow:0 0 8px var(--ac-soft)}
-:root[data-mode="dark"] .f-dial{--d-slot:color-mix(in srgb,#000 45%,var(--bg));--d-body:color-mix(in srgb,var(--ink) 30%,var(--bg));box-shadow:inset 0 3px 8px rgba(0,0,0,.7),inset 0 0 0 1px rgba(255,255,255,.04),0 1px 0 rgba(255,255,255,.07)}
-/* progress under the dial: one mark per move */
-.f-body .f-dots{flex:none;width:min(76%,270px);margin-top:14px}
+/* ---------- focus: the bottom row ---------- */
 body.has-mini .focus.on .f-body{padding-top:72px}
 .f-top{min-height:40px}
+.f-lab{font-size:13px;font-weight:700;color:var(--muted)}
+/* the move records: a cover flow (js: cfBind). layout rules are doubled so no skin's card rule can move them */
+.cflow{--cf:min(58vw,236px);position:relative;width:100%;height:calc(var(--cf) + 46px);perspective:900px;touch-action:none;-webkit-user-select:none;user-select:none;outline:none;margin-top:4px}
+.cf-rail{position:absolute;inset:0;transform-style:preserve-3d}
+.cf-rail.in{animation:cfIn .5s var(--spring)}
+@keyframes cfIn{from{opacity:0;transform:translateX(48px) scale(.92)}to{opacity:1;transform:none}}
+.cflow .cf-card.cf-card{position:absolute;left:50%;top:0;width:var(--cf);height:var(--cf);margin:0 0 0 calc(var(--cf)/-2);padding:20px 16px 16px;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;justify-items:center;align-items:center;gap:6px;text-align:center;
+  overflow:hidden;will-change:transform;backface-visibility:hidden;-webkit-box-reflect:below 6px linear-gradient(transparent 80%,rgba(255,255,255,.2));cursor:grab}
+.cflow .cf-card.cf-card h2{font-family:var(--disp,inherit);font-size:30px;line-height:1.18;max-height:2.4em;width:100%;padding:0;overflow:hidden;word-break:keep-all;overflow-wrap:normal}
+.cf-sub{font-size:13px;font-weight:600;color:var(--muted);line-height:1.3}
+.cf-sum{font-family:var(--num);font-size:22px;font-weight:700;letter-spacing:-.02em}
+.cf-sum small{font-size:.55em;margin-left:.15em;letter-spacing:0}
+.cf-pips{display:flex;gap:5px}
+.cf-pips i{width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--ink) 16%,transparent)}
+.cf-pips i.dn{background:var(--ac)}
+.cflow .cf-dim{position:absolute;inset:0;border-radius:inherit;background:var(--bg);opacity:0;pointer-events:none}
+.cflow .cf-fly.cf-fly{z-index:200!important;transform:none;transition:transform .5s cubic-bezier(.5,0,.75,0),opacity .5s ease-in}
+.cflow .cf-fly.cf-fly.go{transform:translate(var(--fx),var(--fy)) scale(.16);opacity:.2}
+/* the other stack: small, at the right of the sets */
+.f-setrow{position:relative;width:100%}
+.f-setrow:has(.cf-mini) .f-sets{-webkit-mask-image:linear-gradient(90deg,transparent 0,transparent 4%,#000 36%,#000 68%,transparent 82%);mask-image:linear-gradient(90deg,transparent 0,transparent 4%,#000 36%,#000 68%,transparent 82%)}
+.cf-mini{position:absolute;right:18px;top:50%;width:42px;height:42px;margin-top:-24px;transition:transform .3s var(--spring)}
+.cf-mini:active{transform:scale(.9)}
+.cf-mini i{position:absolute;inset:0;border-radius:11px;background:var(--card);box-shadow:0 0 0 1px var(--line),0 4px 10px -4px rgba(0,0,0,.35);display:grid;place-items:center;color:var(--muted)}
+.cf-mini i svg{width:20px;height:20px}
+.cf-mini.dn i:last-child{color:var(--ac)}
+.cf-mini.got{animation:cfGot .5s var(--spring)}
+@keyframes cfGot{40%{transform:scale(1.22)}to{transform:none}}
+:root[data-theme="eink"] .cflow .cf-card.cf-card{-webkit-box-reflect:none}
 .f-bottom{grid-template-columns:46px minmax(0,1fr) 46px;align-items:end;justify-items:stretch;max-width:520px}
 .f-bc{display:grid;justify-items:center;gap:12px}
 .f-x{align-self:end;margin-bottom:24px}
 button.f-x{width:46px;height:46px}
 button.f-x svg{width:18px;height:18px}
-.f-bottom .f-dots{display:none}
 /* skins */
-:root[data-theme="toy"] .f-win{--w-bg:var(--card);--w-sh:inset 0 0 0 4px var(--lip),inset 0 6px 0 rgba(0,0,0,.06),0 1px 0 rgba(255,255,255,.6);border-radius:30px}
-:root[data-theme="md"] .f-win{--w-bg:linear-gradient(160deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,0) 38%),repeating-linear-gradient(0deg,rgba(0,0,0,.025) 0 1px,rgba(0,0,0,0) 1px 3px),linear-gradient(180deg,#B9C4AC 0%,#A6B298 100%);--w-ink:#1E2A1A;--w-sh:0 0 0 6px #2A2E35,0 0 0 7px rgba(255,255,255,.35),inset 0 3px 8px rgba(30,42,26,.35);border-radius:12px;margin:8px 0 12px}
-:root[data-theme="md"] .f-win .eyebrow,:root[data-theme="md"] .f-win .f-note{color:rgba(30,42,26,.62)}
-:root[data-theme="nikon"] .f-win{--w-bg:linear-gradient(180deg,#0A0B0C,#050506);--w-sh:inset 0 2px 10px rgba(0,0,0,.9),0 0 0 1px #000,0 0 0 2px rgba(255,255,255,.07);border-radius:14px}
-:root[data-theme="nikon"] .f-win h2{color:#F4F1E6;text-shadow:0 0 10px rgba(255,255,255,.12)}
-:root[data-theme="tm4"] .f-win{--w-bg:linear-gradient(180deg,#071A33,#0B2546);--w-sh:inset 0 3px 12px rgba(0,0,0,.7),0 0 0 1px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.12);border-radius:16px}
-:root[data-theme="tm4"] .f-win h2{color:#FFB48A;text-shadow:0 0 12px rgba(255,110,48,.45)}
-:root[data-theme="skeuo"] .f-win{--w-bg:linear-gradient(180deg,#141517,#1E2023);--w-sh:inset 0 3px 10px rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.55);border-radius:16px}
-:root[data-theme="skeuo"] .f-win h2{color:#1FF5DC;text-shadow:0 0 14px rgba(31,245,220,.5)}
-:root[data-theme="skeuo"] .f-win .eyebrow,:root[data-theme="skeuo"] .f-win .f-note{color:#7C8188}
-:root[data-theme="braun"] .f-win{--w-bg:#E7E4DA;--w-sh:inset 0 2px 5px rgba(0,0,0,.18),inset 0 0 0 1px rgba(0,0,0,.06),0 1px 0 rgba(255,255,255,.8);border-radius:14px}
-:root[data-theme="clay"] .f-win{--w-bg:var(--bg);--w-sh:inset 4px 6px 10px rgba(30,60,48,.16),inset -4px -5px 10px rgba(255,255,255,.9);border-radius:30px}
-:root[data-theme="pocket"] .f-win{--w-bg:linear-gradient(180deg,#2A2B2E,#1C1D1F);--w-sh:inset 0 3px 10px rgba(0,0,0,.7),0 0 0 1.5px var(--groove,rgba(0,0,0,.3)),0 1px 0 rgba(255,255,255,.35);--w-ink:#F3E6CF;border-radius:18px}
-:root[data-theme="pocket"] .f-win .eyebrow,:root[data-theme="pocket"] .f-win .f-note{color:#A59B8A}
-:root[data-theme="pocket"] .f-win h2{color:#E39A2E;text-shadow:0 0 12px rgba(227,154,46,.35)}
-:root[data-theme="ipod"] .f-win{--w-bg:linear-gradient(180deg,#DCE6EF,#C8D4DF);--w-ink:#151516;--w-sh:inset 0 2px 6px rgba(0,0,0,.2),0 0 0 3px #FBFBFA,0 0 0 4px rgba(0,0,0,.08);border-radius:12px}
 /* each skin's wheel: --d-p is the pattern's repeat in px, which the drag moves by */
-:root[data-theme="ember"] .f-dial{--d-p:8;--d-tex:repeating-linear-gradient(90deg,var(--d-hi) 0 2px,var(--d-body) 2px 6px,var(--d-lo) 6px 8px)}
-:root[data-theme="toy"] .f-dial{--d-p:18;--d-slot:var(--lip);--d-body:var(--ac);--d-tex:linear-gradient(90deg,color-mix(in srgb,#000 32%,var(--ac)) 0,var(--ac) 22%,color-mix(in srgb,#fff 40%,var(--ac)) 46%,var(--ac) 68%,color-mix(in srgb,#000 32%,var(--ac)) 100%);--d-size:18px 100%;border-radius:22px}
-:root[data-theme="toy"] .dl-wheel{border-radius:14px}
-:root[data-theme="toy"] .dl-wheel::after{background:linear-gradient(180deg,rgba(255,255,255,.4) 0,rgba(255,255,255,0) 16%,rgba(0,0,0,0) 80%,rgba(0,0,0,.25) 100%)}
-:root[data-theme="toy"] .dl-mark{background:var(--ink);box-shadow:none}
-:root[data-theme="pocket"] .f-dial{--d-p:10;--d-body:#2B2C2F;--d-hi:#56585C;--d-lo:#111214;--d-tex:linear-gradient(90deg,var(--d-lo) 0,var(--d-body) 25%,var(--d-hi) 50%,var(--d-body) 75%,var(--d-lo) 100%);--d-size:10px 100%}
-:root[data-theme="mac"] .f-dial{--d-p:3;--d-body:#A9ABB0;--d-hi:#F4F5F7;--d-lo:#5D5F64;--d-tex:repeating-linear-gradient(90deg,var(--d-hi) 0 1px,var(--d-body) 1px 2px,var(--d-lo) 2px 3px)}
-:root[data-theme="ipod"] .f-dial{--d-p:16;--d-slot:#E4E4E6;--d-body:#F6F6F5;--d-hi:#FFFFFF;--d-lo:#C9CACD;--d-tex:linear-gradient(90deg,var(--d-body) 0 12px,var(--d-lo) 12px 13px,var(--d-hi) 13px 14px,var(--d-body) 14px);--d-size:16px 100%}
-:root[data-theme="tm4"] .f-dial{--d-p:9;--d-slot:#071A33;--d-body:#2A6DBC;--d-hi:#6FA8EA;--d-lo:#0F3566;--d-tex:repeating-linear-gradient(90deg,var(--d-hi) 0 2px,var(--d-body) 2px 6px,var(--d-lo) 6px 9px)}
-:root[data-theme="skeuo"] .f-dial{--d-p:7;--d-slot:#6E7075;--d-body:#B9BCC1;--d-hi:#F2F3F5;--d-lo:#6A6C71;--d-tex:conic-gradient(from -45deg,var(--d-hi) 0 90deg,var(--d-body) 90deg 180deg,var(--d-lo) 180deg 270deg,#909297 270deg 360deg);--d-size:7px 7px}
-:root[data-theme="braun"] .f-dial{--d-p:6;--d-slot:#C9C6BB;--d-body:#E9E6DC;--d-hi:#FFFFFF;--d-lo:#6E6C66;--d-tex:repeating-linear-gradient(90deg,var(--d-body) 0 4px,var(--d-lo) 4px 5px,var(--d-hi) 5px 6px)}
-:root[data-theme="braun"] .dl-mark{background:#F26422}
-:root[data-theme="md"] .f-dial{--d-p:6;--d-body:#8E98A6;--d-hi:#E3E8EF;--d-lo:#4A5260;--d-tex:conic-gradient(from -45deg,var(--d-hi) 0 90deg,var(--d-body) 90deg 180deg,var(--d-lo) 180deg 270deg,#6E7786 270deg 360deg);--d-size:6px 6px}
-:root[data-theme="nikon"] .f-dial{--d-p:12;--d-slot:#060607;--d-body:#2C2E31;--d-hi:#5A5D62;--d-lo:#0B0B0C;--d-tex:conic-gradient(from -45deg,var(--d-hi) 0 90deg,var(--d-body) 90deg 180deg,var(--d-lo) 180deg 270deg,#1C1D1F 270deg 360deg);--d-size:12px 11px}
-:root[data-theme="clay"] .f-dial{--d-p:16;--d-slot:var(--bg);--d-body:var(--ac);--d-tex:radial-gradient(circle at 50% 50%,#D8FBEF 0,#9FEED4 30%,var(--ac) 52%,#4FAF8F 100%);--d-size:16px 100%;box-shadow:inset 3px 5px 8px rgba(30,60,48,.2),inset -3px -4px 8px rgba(255,255,255,.9);border-radius:22px}
-:root[data-theme="clay"] .dl-wheel{border-radius:16px}
-:root[data-theme="clay"] .dl-wheel::after{background:linear-gradient(180deg,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 20%,rgba(0,0,0,0) 80%,rgba(30,60,48,.2) 100%)}
-/* the progress marks, dressed for each skin */
-:root[data-theme="toy"] .f-dots{gap:6px}
-:root[data-theme="toy"] .f-dots i{height:10px;border-radius:5px;box-shadow:0 3px 0 var(--lip)}
-:root[data-theme="toy"] .f-dots i.dn{background:var(--yel,var(--ac))}
-:root[data-theme="tm4"] .f-dots i,:root[data-theme="skeuo"] .f-dots i,:root[data-theme="pocket"] .f-dots i{height:6px;width:6px;max-width:6px;flex:none;border-radius:50%;background:rgba(0,0,0,.35);box-shadow:inset 0 1px 1px rgba(0,0,0,.5)}
-:root[data-theme="tm4"] .f-dots,:root[data-theme="skeuo"] .f-dots,:root[data-theme="pocket"] .f-dots{gap:10px}
-:root[data-theme="tm4"] .f-dots i.dn,:root[data-theme="skeuo"] .f-dots i.dn,:root[data-theme="pocket"] .f-dots i.dn{background:var(--ac);box-shadow:0 0 6px var(--ac)}
-:root[data-theme="tm4"] .f-dots i.cur,:root[data-theme="skeuo"] .f-dots i.cur,:root[data-theme="pocket"] .f-dots i.cur{background:#fff;box-shadow:0 0 6px rgba(255,255,255,.8)}
-:root[data-theme="md"] .f-dots i,:root[data-theme="nikon"] .f-dots i{height:4px;border-radius:0;background:color-mix(in srgb,var(--ink) 18%,transparent)}
-:root[data-theme="braun"] .f-dots i{height:7px;width:7px;max-width:7px;flex:none;border-radius:50%;background:#B8B5A8}
-:root[data-theme="braun"] .f-dots{gap:9px}
-:root[data-theme="braun"] .f-dots i.dn{background:#2A9D5A}
-:root[data-theme="braun"] .f-dots i.cur{background:#F26422}
-:root[data-theme="clay"] .f-dots i{height:10px;border-radius:5px;box-shadow:inset 1px 2px 3px rgba(30,60,48,.2),inset -1px -1px 2px rgba(255,255,255,.8)}
-:root[data-theme="ipod"] .f-dots i{height:4px}
 /* the services' own app icons keep their own colours in every skin */
 img.brand{width:22px;height:22px;flex:none;border-radius:6px;filter:none!important;opacity:1!important;mix-blend-mode:normal!important;box-shadow:none!important;background:none!important}
 .sp-pill:has(img.brand){padding:0;width:56px;height:56px;justify-content:center;background:none;box-shadow:none}
@@ -1753,7 +1702,7 @@ html:root.glass.glass.glass .mini-pl{background:var(--g-slab,linear-gradient(tra
 html:root.glass.glass.glass:not([data-mode="dark"]) .dock button:not([aria-selected="true"]){color:color-mix(in srgb,var(--ink) 66%,transparent);text-shadow:none}
 /* calendar: a day with two or three trainings has its date cut on the diagonal, one colour per training (upper left
    the first); every theme, over its own key style */
-html:root .cal .dd.multi.multi b{--m1:color-mix(in srgb,var(--s1) 48%,var(--card));--m2:color-mix(in srgb,var(--s2) 48%,var(--card));--m3:color-mix(in srgb,var(--s3) 48%,var(--card));
+html:root .cal .dd.multi.multi.multi.multi b{--m1:color-mix(in srgb,var(--s1) 48%,var(--card));--m2:color-mix(in srgb,var(--s2) 48%,var(--card));--m3:color-mix(in srgb,var(--s3) 48%,var(--card));
   background:linear-gradient(to bottom right,var(--m1) calc(var(--p1) - .6px),var(--m2) calc(var(--p1) + .6px),var(--m2) calc(var(--p2) - .6px),var(--m3) calc(var(--p2) + .6px));
   color:var(--ink);text-shadow:0 0 3px color-mix(in srgb,var(--card) 70%,transparent);font-weight:800}
 /* ---------- E-ink (墨水屏): an e-reader screen after KOReader. Paper white and ink black, nothing in between but a few
@@ -1769,11 +1718,11 @@ html:root .cal .dd.multi.multi b{--m1:color-mix(in srgb,var(--s1) 48%,var(--card
   --ink:#E6E5E0;--muted:#A8A8A4;--ac:#E6E5E0;--on-ac:#121212;--ac-soft:rgba(230,229,224,.12);--ac-text:#E6E5E0;--st1:rgba(230,229,224,.18);--st2:rgba(230,229,224,.5);
   --push:#E6E5E0;--pull:#9A9A96;--third:#5E5E5B;--good:#E6E5E0;--bad:#E6E5E0;--sleep:#A8A8A4;color-scheme:dark}
 :root[data-theme="eink"] body{font-family:var(--serif);background:var(--bg);text-shadow:none}
+:root[data-theme="eink"] :is(.card,.tile,.hero.dark,.sheet .panel,.mask .sheet,.mini-pl){background:var(--card);border:var(--ek-rule);box-shadow:none;border-radius:12px;color:var(--ink)}
 :root[data-theme="eink"] :is(h1,h2,h3,.big,.tile .tv,.f-num b,.stats b,b,.n){font-family:var(--serif);letter-spacing:0}
 /* no tweening: everything changes in one refresh */
 :root[data-theme="eink"] *,:root[data-theme="eink"] *::before,:root[data-theme="eink"] *::after{transition-duration:0s!important;animation-duration:0s!important;animation-delay:0s!important}
 /* boxes: flat paper with a black rule */
-:root[data-theme="eink"] :is(.card,.tile,.hero.dark,.sheet .panel,.mask .sheet,.mini-pl,.f-win){background:var(--card);border:var(--ek-rule);box-shadow:none;border-radius:12px;color:var(--ink)}
 :root[data-theme="eink"] .dark:not(.hero){background:var(--dark);color:var(--card);border:var(--ek-rule);box-shadow:none;border-radius:12px;--muted:color-mix(in srgb,var(--card) 70%,var(--dark))}
 :root[data-theme="eink"] :is(.opt,.thc,.preset,.xitem,.shopc,.badge){background:var(--card);border:1px solid var(--line);box-shadow:none;border-radius:10px}
 :root[data-theme="eink"] :is(.opt[aria-pressed="true"],.thc.on,.preset.on){outline:2px solid var(--line);outline-offset:-3px}
@@ -1802,9 +1751,6 @@ html:root .cal .dd.multi.multi b{--m1:color-mix(in srgb,var(--s1) 48%,var(--card
 :root[data-theme="eink"] .bricks{background:var(--card);box-shadow:none;border:1px solid var(--line)}
 :root[data-theme="eink"] .bks i{border-radius:1px;box-shadow:none;filter:none}
 /* the move dial and window: a ruled strip with plain hatching */
-:root[data-theme="eink"] .f-dial{--d-p:6;--d-slot:var(--card);--d-body:var(--card);--d-tex:repeating-linear-gradient(90deg,var(--line) 0 1.5px,transparent 1.5px 6px);--d-size:auto;box-shadow:none;border:var(--ek-rule)}
-:root[data-theme="eink"] .f-win{--w-ink:var(--ink)}
-:root[data-theme="eink"] .f-win h2{color:var(--ink);text-shadow:none}
 /* an e-ink screen has no colour at all: the whole page (pictures, chart colours, celebrations) shows in greys.
    On the root element, so fixed bars still sit on the screen */
 html[data-theme="eink"]{filter:grayscale(1)}
@@ -1877,15 +1823,10 @@ html.touching.groove :is(.bricks .bks,.cal .dd b,.hero .hgo){animation-play-stat
 /* bars: the slider groove; filled bricks are gel */
 :root[data-theme="aqua"] .bricks{background:#fff;box-shadow:inset 0 1px 3px rgba(0,0,0,.2)}
 :root[data-theme="aqua"] .bks i{box-shadow:inset 0 1px 1px rgba(255,255,255,.7),inset 0 -2px 3px rgba(255,255,255,.35)}
-:root[data-theme="aqua"] .f-win{--w-bg:var(--pin);--w-ink:#33383F;--w-sh:inset 0 1px 4px rgba(20,30,50,.18),0 0 0 1px #A9ADB5,0 1px 0 #fff;border-radius:10px}
 :root[data-theme="aqua"] .f-sets i{background:var(--capsule);color:#3A3F47;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px #AEB3BC}
 :root[data-theme="aqua"] .f-sets i.dn{background:linear-gradient(180deg,#EAF3FE,#D5E6FB);color:#1C5FB8}
 :root[data-theme="aqua"] .f-sets i.cur{background:linear-gradient(180deg,var(--gel-hi) 0%,var(--gel-mid) 50%,var(--gel-deep) 51%,var(--gel-light) 100%);color:#fff;text-shadow:0 -1px 1px rgba(10,40,90,.4)}
 :root[data-theme="aqua"] .f-sets i.add{background:none;box-shadow:inset 0 0 0 1px #AEB3BC}
-:root[data-theme="aqua"] .f-dial{--d-p:8;--d-slot:#D7DBE2;--d-body:#E4E7EC;--d-hi:#FFFFFF;--d-lo:#9DA2AB;--d-tex:linear-gradient(90deg,var(--d-body) 0 5px,var(--d-lo) 5px 6px,var(--d-hi) 6px 7px,var(--d-body) 7px);--d-size:8px 100%}
-:root[data-theme="aqua"] .dl-mark{background:var(--aqua-accent)}
-:root[data-theme="aqua"] .f-dots i.dn{background:#43A12F}
-:root[data-theme="aqua"] .f-dots i.cur{background:var(--aqua-accent)}
 :root[data-theme="aqua"] #syncBtn .syncdot.ok{background:radial-gradient(circle at 50% 30%,#B9F6A5,#56C93F 70%);box-shadow:0 0 0 1px #43A12F}
 :root.glass[data-theme="aqua"][data-mode="light"]{--gl-dock:#F2F4F7;--gl-mp:#F7F8FA}
 /* Aqua dark: slate graphite rather than black (Mac OS X's Graphite appearance on a dark brushed-metal desk, like the
@@ -1917,7 +1858,5 @@ html.touching.groove :is(.bricks .bks,.cal .dd b,.hero .hgo){animation-play-stat
 :root[data-theme="aqua"][data-mode="dark"] .fstack[data-fs="hero"] .fs-peek i{background:#43474D}
 :root[data-theme="aqua"][data-mode="dark"] .knobw .knob{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 1px #23272C,0 6px 12px -6px rgba(0,0,0,.6)}
 :root[data-theme="aqua"][data-mode="dark"] .bricks{background:#353A41;box-shadow:inset 0 1px 3px rgba(0,0,0,.45)}
-:root[data-theme="aqua"][data-mode="dark"] .f-win{--w-ink:#EEF0F3;--w-sh:inset 0 1px 4px rgba(0,0,0,.4),0 0 0 1px #2A2E34,0 1px 0 rgba(255,255,255,.08)}
-:root[data-theme="aqua"][data-mode="dark"] .f-dial{--d-slot:#2E3238;--d-body:#5A6068;--d-hi:#8A9099;--d-lo:#2A2E34}
 :root[data-theme="aqua"][data-mode="dark"] .f-sets i.add{box-shadow:inset 0 0 0 1px #6A7079}
 :root.glass[data-theme="aqua"][data-mode="dark"]{--gl-dock:#50555D;--gl-mp:#4B515A}

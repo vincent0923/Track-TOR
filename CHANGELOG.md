@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.70a] — 2026-11-27
+
+### 新增 / Added
+- 💿 **专注页的动作改成 Cover Flow**：每个动作一张方形唱片（动作名、快慢、组数 × 次数、每组一个圆点），左右拖着翻；没练完和练好的动作分成两摞，另一摞缩成小牌堆放在组胶囊右边（练好的带小勾、没练的带哑铃），点它切换；练完一个动作，它的唱片飞进练好的牌堆。原来的拨轮和进度条拿掉了。
+- 💿 **Cover Flow for the moves in focus mode**: each move is a square record (name, tempo, sets × reps, a dot per set) that you flip through by dragging. Moves still to do and moves done are two stacks; the other one sits as a small stack right of the set chips (a tick on the done one, a dumbbell on the to-do one), and a tap swaps them. A finished move's record flies into the done stack. The dial and the progress bars are gone.
+
+### 修复 / Fixed
+- 水晶胶暗色下，一天练了两三次的日子没有斜切分色。
+- In Aqua dark, days with two or three trainings lost their diagonal colour split.
+
+---
+
 ## [v1.69a] — 2026-11-24
 
 ### 新增 / Added
