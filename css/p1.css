@@ -1379,33 +1379,35 @@ body.has-mini .focus.on .f-body{padding-top:72px}
 .f-lab{font-size:13px;font-weight:700;color:var(--muted)}
 /* the move records: a cover flow (js: cfBind). A record is kept light for the GPU: no reflection, no clipping, one plain
    shadow and none of the skins' card dressing (each of those cost an extra off-screen pass per record per frame) */
-.cflow{--cf:min(58vw,236px);--slot:min(16vw,84px);position:relative;width:100%;height:calc(var(--cf) + 46px);margin-top:4px}
-.cf-scroll{position:absolute;top:0;bottom:0;left:calc(50% - min(50vw,260px));right:calc(50% - min(50vw,260px));overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;perspective:900px;outline:none;-webkit-user-select:none;user-select:none}
+/* geometry and reflection as in Bramus's CSS Cover Flow demo: a record is 1.5 slots wide in the middle and two thirds of
+   that on the sides (scaled down there, so the words in the middle are drawn at full size, not blown up), turned 45° and
+   pulled one slot in towards the middle; 640px of perspective */
+.cflow{--cf:150px;--slot:100px;position:relative;width:100%;height:calc(var(--cf)*1.75 + 18px);margin-top:4px}
+.cf-scroll{position:absolute;top:0;bottom:0;left:calc(50% - min(50vw,260px));right:calc(50% - min(50vw,260px));overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;perspective:640px;outline:none;-webkit-user-select:none;user-select:none}
 .cf-scroll::-webkit-scrollbar{display:none}
 /* while the focus page is up, the page under it is not drawn at all (hidden once the focus page has slid in) */
 html.infocus .wrap,html.infocus .dock{visibility:hidden;transition:visibility 0s .5s}
 .cf-scroll.lock{overflow-x:hidden}
-.cf-rail{display:flex;width:max-content;height:100%;padding-inline:calc(50% - var(--slot)/2);transform-style:preserve-3d}
+.cf-rail{display:flex;width:max-content;height:100%;padding-inline:calc(50% - var(--slot)/2);padding-top:22px;align-items:flex-start;transform-style:preserve-3d}
 .cf-rail.in{animation:cfIn .5s var(--spring)}
 @keyframes cfIn{from{opacity:0;transform:translateX(48px) scale(.92)}to{opacity:1;transform:none}}
 .cf-slot{position:relative;flex:none;width:var(--slot);height:var(--cf);scroll-snap-align:center;transform-style:preserve-3d;view-timeline:--cfv inline}
-/* each record turns by its slot's place in the row: facing in and pushed back on either side, flat in the middle */
-@keyframes cfTurn{0%,35%{transform:translateX(34%) translateZ(-120px) rotateY(-50deg)}50%{transform:translateX(0) translateZ(0) rotateY(0)}65%,100%{transform:translateX(-34%) translateZ(-120px) rotateY(50deg)}}
-.cflow .cf-card.cf-card{position:absolute;left:50%;top:0;width:var(--cf);height:var(--cf);margin:0 0 0 calc(var(--cf)/-2);padding:20px 16px 16px;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;justify-items:center;align-items:center;gap:6px;text-align:center;
-  border-radius:18px;background-color:var(--card);color:var(--ink);box-shadow:0 12px 24px -12px rgba(0,0,0,.5);will-change:transform;backface-visibility:hidden;cursor:pointer;animation:cfTurn linear both;animation-timeline:--cfv}
+@keyframes cfTurn{0%{transform:translateX(-66.667%) rotateY(-45deg) translateZ(0) scale(.6667)}35%{transform:translateX(0) rotateY(-45deg) translateZ(0) scale(.6667)}50%{transform:translateX(0) rotateY(0deg) translateZ(16px) scale(1)}65%{transform:translateX(0) rotateY(45deg) translateZ(0) scale(.6667)}100%{transform:translateX(66.667%) rotateY(45deg) translateZ(0) scale(.6667)}}
+.cflow .cf-card.cf-card{position:absolute;left:50%;top:0;width:var(--cf);height:var(--cf);margin:0 0 0 calc(var(--cf)/-2);padding:12px 12px 10px;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;justify-items:center;align-items:center;gap:3px;text-align:center;
+  border-radius:12px;background-color:var(--card);color:var(--ink);will-change:transform;cursor:pointer;-webkit-box-reflect:below .5em linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.25));animation:cfTurn linear both;animation-timeline:--cfv}
 @supports not (animation-timeline:view()){.cflow{--slot:var(--cf)}.cflow .cf-card.cf-card{animation:none}}
-.cflow .cf-card.cf-card h2{font-family:var(--disp,inherit);font-size:30px;line-height:1.18;max-height:2.4em;width:100%;padding:0;overflow:hidden;word-break:keep-all;overflow-wrap:normal}
-.cf-sub{font-size:13px;font-weight:600;color:var(--muted);line-height:1.3}
-.cf-sum{font-family:var(--num);font-size:22px;font-weight:700;letter-spacing:-.02em}
+.cflow .cf-card.cf-card h2{font-family:var(--disp,inherit);font-size:19px;line-height:1.18;max-height:2.4em;width:100%;padding:0;overflow:hidden;word-break:keep-all;overflow-wrap:normal}
+.cf-sub{font-size:11px;font-weight:600;color:var(--muted);line-height:1.3}
+.cf-sum{font-family:var(--num);font-size:16px;font-weight:700;letter-spacing:-.02em}
 .cf-sum small{font-size:.55em;margin-left:.15em;letter-spacing:0}
-.cf-pips{display:flex;gap:5px}
-.cf-pips i{width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--ink) 16%,transparent)}
+.cf-pips{display:flex;gap:4px}
+.cf-pips i{width:5px;height:5px;border-radius:50%;background:color-mix(in srgb,var(--ink) 16%,transparent)}
 .cf-pips i.dn{background:var(--ac)}
 /* a record with a cover (Apple Music style): the art fills it, the words sit top-left in dark ink on its pale corner */
-.cflow .cf-card.cf-card.art{background-size:cover;background-position:center;background-repeat:no-repeat;color:#141218;--muted:rgba(20,18,24,.66);grid-template-rows:auto auto auto minmax(0,1fr);justify-items:start;align-items:start;text-align:left;gap:2px;padding:14px 15px 14px;text-shadow:none}
-.cflow .cf-card.cf-card.art h2{font-size:24px;line-height:1.15;color:#141218;letter-spacing:-.01em}
-.cflow .cf-card.art .cf-sub{color:rgba(20,18,24,.66);font-size:12px}
-.cflow .cf-card.art .cf-sum{color:#141218;font-size:17px;margin-top:2px}
+.cflow .cf-card.cf-card.art{background-size:cover;background-position:center;background-repeat:no-repeat;color:#141218;--muted:rgba(20,18,24,.66);grid-template-rows:auto auto auto minmax(0,1fr);justify-items:start;align-items:start;text-align:left;gap:1px;padding:10px 10px 9px;text-shadow:none}
+.cflow .cf-card.cf-card.art h2{font-size:17px;line-height:1.15;color:#141218;letter-spacing:-.01em}
+.cflow .cf-card.art .cf-sub{color:rgba(20,18,24,.66);font-size:10.5px}
+.cflow .cf-card.art .cf-sum{color:#141218;font-size:13px;margin-top:1px}
 .cflow .cf-card.art .cf-pips{align-self:end;justify-self:end}
 .cflow .cf-card.art .cf-pips i{background:rgba(255,255,255,.4)}
 .cflow .cf-card.art .cf-pips i.dn{background:#fff}
@@ -1421,7 +1423,7 @@ html.infocus .wrap,html.infocus .dock{visibility:hidden;transition:visibility 0s
 .cf-mini.dn i:last-child{color:var(--ac)}
 .cf-mini.got{animation:cfGot .5s var(--spring)}
 @keyframes cfGot{40%{transform:scale(1.22)}to{transform:none}}
-:root[data-theme="eink"] .cflow .cf-card.cf-card{box-shadow:none;border:var(--ek-rule)}
+:root[data-theme="eink"] .cflow .cf-card.cf-card{border:var(--ek-rule);-webkit-box-reflect:unset}
 /* e-ink stops time-based motion, not the records turning with the scroll */
 :root[data-theme="eink"] .cflow .cf-card.cf-card{animation-duration:auto!important}
 .f-bottom{grid-template-columns:46px minmax(0,1fr) 46px;align-items:end;justify-items:stretch;max-width:520px}

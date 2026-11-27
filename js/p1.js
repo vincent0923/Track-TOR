@@ -283,15 +283,13 @@ function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return
   t.style.transform="translateX("+x+"px)";run.setsX=x;run.setsK=run.ex}
 /* a move's name may take two lines on its record; one that still doesn't fit shrinks */
 function cfFit(){document.querySelectorAll(".cf-card h2").forEach(h=>{h.style.fontSize="";
-  for(let k=0;k<14&&(h.scrollHeight>h.clientHeight+4||h.scrollWidth>h.clientWidth+1);k++){const f=parseFloat(getComputedStyle(h).fontSize);if(f<=14)break;h.style.fontSize=Math.max(14,f*.92)+"px"}})}
+  for(let k=0;k<14&&(h.scrollHeight>h.clientHeight+4||h.scrollWidth>h.clientWidth+1);k++){const f=parseFloat(getComputedStyle(h).fontSize);if(f<=11)break;h.style.fontSize=Math.max(11,f*.92)+"px"}})}
 /* the cover flow is the browser's own scrolling: the records sit in a row of narrow snap slots and CSS turns each one
    by where it is in the row (a scroll-driven animation, after Bramus's CSS Cover Flow demo on
-   scroll-driven-animations.style, Apache 2.0, docs/SDA-LICENSE.txt), so the turning runs off the main thread. A slot is
-   0.176 of the row, one slot is 15% of each record's path, and the CSS turns a record over exactly that 15% either side
-   of the middle. Script only clicks as a record passes the middle, brings a tapped record round, and when the
+   scroll-driven-animations.style, Apache 2.0, docs/SDA-LICENSE.txt), so the turning runs off the main thread; slot size, angles and reflection as in that demo. Script only clicks as a record passes the middle, brings a tapped record round, and when the
    scrolling stops makes the middle record's move the current one */
 function cfBind(sc,list){if(!sc)return;const slots=[...sc.querySelectorAll(".cf-slot")],n=slots.length;if(!n)return;
-  const sw=Math.max(40,Math.round(sc.clientWidth*.176));sc.parentNode.style.setProperty("--slot",sw+"px");
+  const sw=slots[0].offsetWidth||100;
   const idx=()=>Math.max(0,Math.min(n-1,Math.round(sc.scrollLeft/sw)));
   sc.scrollLeft=Math.max(0,list.indexOf(run.ex))*sw;let shown=idx(),lx=sc.scrollLeft,lt=performance.now(),tm=0;
   const done=()=>{clearTimeout(tm);const ex=list[idx()];if(run&&run.askFeel==null&&ex!=null&&ex!==run.ex){run.ex=ex;buzz(8);run.keepFlow=1;renderFocus(true)}};
