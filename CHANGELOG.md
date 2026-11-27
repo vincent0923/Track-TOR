@@ -6,6 +6,14 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.71a] — 2026-11-27
+
+### 新增 / Added
+- 🌧️ **分享图带上天气**：练的时候屏幕上在下雨，分享的训练图上也有同样的雨滴；下雪有雪花，有雾就一层薄雾。
+- 🌧️ **Weather on the shared picture**: if it was raining on screen while you trained, the shared training picture carries the same raindrops; snow brings flakes, fog a light mist.
+
+---
+
 ## [v1.70a] — 2026-11-27
 
 ### 新增 / Added

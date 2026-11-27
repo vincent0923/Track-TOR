@@ -67,7 +67,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
     if(reopenIfEmpty(sid)){changed();return}
     lsSave();render();return}
   if(a==="xv"){const id=b.dataset.id,it=(xDocFor(curDay,false).xs||[]).find(i=>i.id===id),st=it&&it.unit==="秒"?5:1;pending[id]=Math.max(0,(pending[id]||0)+(+b.dataset.dv)*st);render();return}
-  if(a==="xlog"){const doc=xDocFor(curDay,true),it=doc.xs[+b.dataset.k];it.sets.push({v:pending[it.id],d:true});if(typeof SFX!=="undefined")SFX.tick();if(typeof buzz==="function")buzz(16);if(curDay===today())celebrate(1,0);changed();return}
+  if(a==="xlog"){const doc=xDocFor(curDay,true),it=doc.xs[+b.dataset.k];it.sets.push({v:pending[it.id],d:true});if(curDay===today()&&typeof wxMark==="function")wxMark();if(typeof SFX!=="undefined")SFX.tick();if(typeof buzz==="function")buzz(16);if(curDay===today())celebrate(1,0);changed();return}
   if(a==="xun"){const doc=xDocFor(curDay,false),it=doc.xs[+b.dataset.k],done=it.sets.filter(x=>x.d),x=done[+b.dataset.i];it.sets.splice(it.sets.indexOf(x),1);
     if(!it.sets.length)doc.xs.splice(+b.dataset.k,1);if(doc.xs&&!doc.xs.length&&state.dayx[curDay]===doc&&!doc.note)delete state.dayx[curDay];changed();return}
   if(a==="xadd"){let id=b.dataset.id,name,unit="个";

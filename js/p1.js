@@ -319,7 +319,7 @@ function feelBind(el){if(!el)return;const bks=[...el.querySelectorAll(".fl-bks i
   const up=()=>{if(!drag)return;drag=0;clearTimeout(tm);tm=setTimeout(commit,650)};
   el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
   el.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();show(Math.max(1,Math.min(4,(lv||0)+(e.key==="ArrowRight"?1:-1))))}else if(e.key==="Enter")commit()})}
-function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].o=maxOrdOf(run.doc)+1;a[ci].d=true;if(v!=null)a[ci].v=v;lsSave();
+function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].o=maxOrdOf(run.doc)+1;a[ci].d=true;if(v!=null)a[ci].v=v;lsSave();if(typeof wxMark==="function")wxMark();
   SFX.tick();buzz(18);
   const e=run.p.ex[run.ex];
   if(!a.every(x=>x.d))celebrate(1,0);
@@ -379,6 +379,7 @@ function drawTrain(t){const {out,xs}=finToday(t),K=shColors(),d=dateObj(t),W=108
     tx(T("组","Sets"),W-P,y,"600 28px "+F,K.muted,"right");
     y+=12;b.rows.forEach(r=>{c.save();c.globalAlpha=.14;c.fillStyle=K.ink;c.fillRect(P,y,W-2*P,2);c.restore();y+=lh;
       tx(r.n,P,y-18,"500 36px "+F,K.ink);tx(r.v,W-P,y-18,"700 38px "+F,K.ink,"right");if(r.pr){c.font="500 36px "+F;const w=c.measureText(HANT?s2t(r.n):r.n).width;tx(T("新纪录","Best"),P+w+20,y-20,"800 26px "+F,K.ac)}});y+=30});
+  if(typeof wxPaint==="function")wxPaint(c,W,H,t);
   return cv}
 function finShare(t){t=t||today();const back=$("#sheet").classList.contains("on")&&$("#sheetBody").dataset.day===t;
   const name=T("训练","training")+"-"+t+".png",blobOf=()=>new Promise(res=>drawTrain(t).toBlob(res,"image/png"));

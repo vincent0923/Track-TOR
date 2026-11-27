@@ -153,6 +153,27 @@ async function wxRefresh(force){if(WX.preview)return;const w=wxSet();if(!w||w.la
   const n=await wxFetch(force);if(n&&!WX.preview&&wxSet()){const i=wxNow(n);wxApply(i.fx,i.lv)}return n}
 setInterval(()=>{if(!document.hidden)wxRefresh(false)},5*60e3);
 
+/* ---------- the weather while training, for the shared picture ----------
+   Each tick or extra set notes the weather on screen for that day (tracktor-wxlog, last 90 days, not in backups);
+   drawTrain then lays the same drops, flakes or mist over the picture. A seed from the date keeps the picture
+   the same every time it is drawn (preview, save, share) */
+const WXL_K="tracktor-wxlog";
+function wxLog(){try{return JSON.parse(localStorage.getItem(WXL_K)||"{}")||{}}catch(e){return {}}}
+function wxMark(t){if(WX.preview||WX.fx==="none")return;t=t||today();const L=wxLog(),c=L[t];if(c&&c.fx===WX.fx&&c.lv>=WX.lv)return;
+  L[t]={fx:WX.fx,lv:WX.lv};const ks=Object.keys(L).sort();while(ks.length>90)delete L[ks.shift()];try{localStorage.setItem(WXL_K,JSON.stringify(L))}catch(e){}}
+function wxPaint(g,W,H,t){const w=wxLog()[t];if(!w||!w.fx||w.fx==="none")return;const dark=wxDark(),lv=Math.max(1,Math.min(3,w.lv||1));
+  let sd=7;for(const ch of t)sd=(sd*31+ch.charCodeAt(0))>>>0;const rnd=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};
+  const R=Math.random,gx=WX.gx,gy=WX.gy,k=W/390,w0=390,h0=H/k,area=h0/844;Math.random=rnd;WX.gx=0;WX.gy=1;
+  try{g.save();g.scale(k,k);
+    if(w.fx==="rain"){const n=Math.max(6,Math.round([20,32,44][lv-1]*area));for(let i=0;i<n;i++)wxDrawDrop(g,wxDrop(null,rnd()*w0,rnd()*h0),dark)}
+    else if(w.fx==="snow"){const n=Math.max(8,Math.round([21,33,48][lv-1]*area));
+      for(let i=0;i<n;i++){const x=rnd()*w0,y=rnd()*h0,r=1.2+rnd()*2.8;
+        if(!dark){g.beginPath();g.arc(x,y+.6,r+.7,0,7);g.fillStyle="rgba(90,110,140,.22)";g.fill()}
+        const rg=g.createRadialGradient(x,y,0,x,y,r);rg.addColorStop(0,"rgba(255,255,255,.95)");rg.addColorStop(1,"rgba(255,255,255,.25)");g.beginPath();g.arc(x,y,r,0,7);g.fillStyle=rg;g.fill()}}
+    else if(w.fx==="fog"){const c0=dark?"170,185,205":"140,155,175";
+      for(let i=0;i<3;i++){const x=rnd()*w0,y=h0*(.2+i*.3),Rr=w0*.8,rg=g.createRadialGradient(x,y,0,x,y,Rr);rg.addColorStop(0,"rgba("+c0+","+(dark?.12:.17)+")");rg.addColorStop(1,"rgba("+c0+",0)");g.fillStyle=rg;g.fillRect(0,0,w0,h0)}}
+  }finally{g.restore();Math.random=R;WX.gx=gx;WX.gy=gy}}
+
 /* ---------- settings: city and effects ---------- */
 function wxPick(name,lat,lon){state.settings.weather={name,lat:+(+lat).toFixed(3),lon:+(+lon).toFixed(3)};lsSave();const S=document.querySelectorAll("[data-wo]");S.forEach(x=>x.classList.toggle("active",x.dataset.wo==="1"))}
 function openWeather(){const w=wxSet(),on=!!(w&&w.lat!=null);
