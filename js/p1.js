@@ -244,7 +244,7 @@ function cfCard(i,cls){const e=run.p.ex[i],a=run.sets[i],m=N(e).match(/[（(]([^
     vs=a.map(x=>x.v),sum=!a.length?"—":vs.every(v=>v===vs[0])?a.length+" × "+vs[0]:vs.join(" · ");
   const art=cfArt(i);
   return '<div class="cf-card card'+(art?" art":"")+(cls||"")+'"'+(art?' style="background-image:url('+art+')"':'')+' data-i="'+i+'" role="option" aria-selected="'+(i===run.ex)+'"><h2>'+esc(NS(e))+'</h2>'+(sub?'<p class="cf-sub">'+esc(sub)+'</p>':'')
-    +'<p class="cf-sum n">'+sum+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</p><span class="cf-pips">'+a.map(x=>'<i'+(x.d?' class="dn"':'')+'></i>').join("")+'</span><i class="cf-dim"></i></div>'}
+    +'<p class="cf-sum n">'+sum+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</p><span class="cf-pips">'+a.map(x=>'<i'+(x.d?' class="dn"':'')+'></i>').join("")+'</span></div>'}
 function renderFocus(anim){
   const f=$("#focus"),p=run.p,allDone=run.sets.every(x=>x.every(y=>y.d));
   if(allDone&&!run.finished&&run.askFeel==null){finishRun();return}

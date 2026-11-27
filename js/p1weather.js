@@ -36,10 +36,13 @@ function wxLine(c){const w=wxSet();if(!w)return T("还没选城市","No city yet
    tiny beads. Snow drifts down the same way. Tap a drop or a flake and it melts. */
 const WX={cv:null,ctx:null,raf:0,fx:"none",lv:1,drops:[],flakes:[],last:0,acc:0,W:0,H:0,dpr:1,preview:0,gx:0,gy:1,tilt:false};
 function wxDark(){return document.documentElement.dataset.mode==="dark"}
-function wxCanvas(){if(WX.cv)return;const cv=document.createElement("canvas");cv.id="wx";cv.setAttribute("aria-hidden","true");document.body.appendChild(cv);
-  WX.cv=cv;WX.ctx=cv.getContext("2d");wxResize();addEventListener("resize",wxResize)}
+/* two layers: #wxs holds the beads at rest and is redrawn only when they change (a bead lands, merges, starts to run or
+   dries a little, or the phone turns enough to swing them), #wx holds what moves (running and melting beads, snow, mist)
+   and is left alone when nothing moves. Most of the time it rains, nothing at all is drawn */
+function wxCanvas(){if(WX.cv)return;const mk=id=>{const cv=document.createElement("canvas");cv.id=id;cv.className="wxl";cv.setAttribute("aria-hidden","true");document.body.appendChild(cv);return cv};
+  WX.cs=mk("wxs");WX.cx=WX.cs.getContext("2d");WX.cv=mk("wx");WX.ctx=WX.cv.getContext("2d");wxResize();addEventListener("resize",wxResize)}
 function wxResize(){if(!WX.cv)return;WX.dpr=Math.min(2,devicePixelRatio||1);WX.W=innerWidth;WX.H=innerHeight;
-  WX.cv.width=WX.W*WX.dpr;WX.cv.height=WX.H*WX.dpr}
+  [WX.cv,WX.cs].forEach(c=>{c.width=WX.W*WX.dpr;c.height=WX.H*WX.dpr});WX.sSig=null;WX.dyn=1}
 const wxReduced=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* which way is down on the screen: from the phone's tilt (flat on a table, nothing runs) */
 function wxOrient(e){if(e.beta==null||e.gamma==null)return;const rad=Math.PI/180,b=e.beta*rad,g=e.gamma*rad;
@@ -49,8 +52,8 @@ function wxTiltOn(){if(wxTiltOn.done)return;const D=window.DeviceOrientationEven
   if(typeof D.requestPermission==="function"){wxTiltOn.done=true;D.requestPermission().then(r=>{if(r==="granted")addEventListener("deviceorientation",wxOrient)}).catch(()=>{wxTiltOn.done=false})}
   else{wxTiltOn.done=true;addEventListener("deviceorientation",wxOrient)}}
 function wxApply(fx,lv){fx=fx||"none";if(fx!==WX.fx){WX.drops=[];WX.flakes=[]}WX.fx=fx;WX.lv=lv||1;
-  if(fx==="none"){cancelAnimationFrame(WX.raf);WX.raf=0;if(WX.cv){WX.ctx.clearRect(0,0,WX.cv.width,WX.cv.height);WX.cv.hidden=true}return}
-  wxCanvas();WX.cv.hidden=false;if(!window.DeviceOrientationEvent||typeof DeviceOrientationEvent.requestPermission!=="function")wxTiltOn();
+  if(fx==="none"){cancelAnimationFrame(WX.raf);WX.raf=0;if(WX.cv){[WX.ctx,WX.cx].forEach(g=>{g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,WX.cv.width,WX.cv.height)});WX.cv.hidden=WX.cs.hidden=true;WX.sSig=null}return}
+  wxCanvas();WX.cv.hidden=WX.cs.hidden=false;WX.sSig=null;WX.dyn=1;if(!window.DeviceOrientationEvent||typeof DeviceOrientationEvent.requestPermission!=="function")wxTiltOn();
   if(fx==="rain"&&!WX.drops.length){const n=[9,15,21][WX.lv-1];for(let i=0;i<n;i++)WX.drops.push(wxDrop())}
   if(!WX.raf&&!document.hidden){WX.last=performance.now();WX.raf=requestAnimationFrame(wxTick)}}
 /* an uneven outline: 10 radii around the bead, smoothed; small beads are almost round */
@@ -126,10 +129,16 @@ document.addEventListener("pointerdown",e=>{if(WX.fx==="none")return;if(typeof D
 /* 30 frames a second is enough for drops and flakes and halves the cost of the full-screen canvas */
 /* while a finger is on the screen or something is still scrolling (WX.hold), the drops keep their last frame: the
    full-screen redraw would compete with the scrolling for the main thread */
-function wxTick(now){if(now-WX.last<30||now<(WX.hold||0)||document.documentElement.classList.contains("touching")){if(now-WX.last>=30)WX.last=now;WX.raf=requestAnimationFrame(wxTick);return}const dt=Math.min(.07,(now-WX.last)/1000);WX.last=now;const g=WX.ctx,dark=wxDark(),reduce=wxReduced();
-  g.setTransform(WX.dpr,0,0,WX.dpr,0,0);g.clearRect(0,0,WX.W,WX.H);
-  if(WX.fx==="rain"){if(!reduce)wxRain(dt);else WX.drops.forEach(d=>{if(d.melt)d.melt=Math.min(1,d.melt+dt*4)});WX.drops.forEach(d=>wxDrawDrop(g,d,dark))}
-  else if(WX.fx==="snow"){if(!reduce)wxSnow(dt);else if(!WX.flakes.length){wxSnow(0);WX.flakes.forEach(f=>f.y=Math.random()*WX.H)}
+function wxTick(now){if(now-WX.last<16||now<(WX.hold||0)||document.documentElement.classList.contains("touching")){if(now-WX.last>=16)WX.last=now;WX.raf=requestAnimationFrame(wxTick);return}const dt=Math.min(.07,(now-WX.last)/1000);WX.last=now;const g=WX.ctx,dark=wxDark(),reduce=wxReduced();
+  g.setTransform(WX.dpr,0,0,WX.dpr,0,0);
+  if(WX.fx==="rain"){if(!reduce)wxRain(dt);else WX.drops.forEach(d=>{if(d.melt)d.melt=Math.min(1,d.melt+dt*4)});
+    const mov=d=>d.slide||d.blow||d.melt,still=WX.drops.filter(d=>!mov(d)),moving=WX.drops.filter(mov);
+    /* the resting layer: redrawn when its beads change (sizes counted in quarter pixels), the light turns or the tilt swings them 4°, at most four times a second */
+    let sig=(dark?"d":"l")+still.length+":"+Math.round(Math.atan2(WX.gy||1,WX.gx)/.07);for(const d of still)sig+=","+(d.x|0)+(d.r*4|0);
+    if(sig!==WX.sSig&&(now-(WX.sAt||0)>250||WX.sSig==null)){WX.sSig=sig;WX.sAt=now;const c=WX.cx;c.setTransform(WX.dpr,0,0,WX.dpr,0,0);c.clearRect(0,0,WX.W,WX.H);still.forEach(d=>wxDrawDrop(c,d,dark))}
+    if(moving.length||WX.dyn){g.clearRect(0,0,WX.W,WX.H);moving.forEach(d=>wxDrawDrop(g,d,dark));WX.dyn=moving.length>0}}
+  else{g.clearRect(0,0,WX.W,WX.H);
+  if(WX.fx==="snow"){if(!reduce)wxSnow(dt);else if(!WX.flakes.length){wxSnow(0);WX.flakes.forEach(f=>f.y=Math.random()*WX.H)}
     WX.flakes.forEach(f=>{const a=Math.max(0,Math.min(1,(WX.H-f.y)/120))*(f.melt?1-f.melt:1),r=f.r*(f.melt?1+f.melt*.6:1);
       if(!dark){g.beginPath();g.arc(f.x,f.y+.6,r+.7,0,7);g.fillStyle="rgba(90,110,140,"+(.22*a)+")";g.fill()}
       const rg=g.createRadialGradient(f.x,f.y,0,f.x,f.y,r);rg.addColorStop(0,"rgba(255,255,255,"+(.95*a)+")");rg.addColorStop(1,"rgba(255,255,255,"+(.25*a)+")");
@@ -142,6 +151,7 @@ function wxTick(now){if(now-WX.last<30||now<(WX.hold||0)||document.documentEleme
     if(!WX.wisp&&!reduce&&Math.random()<dt/7)WX.wisp={x:-WX.W*.6,y:WX.H*(.15+Math.random()*.7),v:WX.W*(.09+Math.random()*.06),h:60+Math.random()*80};
     const w=WX.wisp;if(w){w.x+=w.v*dt;g.save();g.translate(w.x,w.y);g.scale(1,w.h/(WX.W*.5));const rg=g.createRadialGradient(0,0,0,0,0,WX.W*.5);
       rg.addColorStop(0,"rgba("+(dark?"200,212,230":"250,252,255")+","+((dark?.22:.5)*A)+")");rg.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=rg;g.fillRect(-WX.W*.5,-WX.W*.5,WX.W,WX.W);g.restore();if(w.x>WX.W*1.6)WX.wisp=null}}
+  if(WX.sSig!==""){WX.sSig="";WX.cx.setTransform(1,0,0,1,0,0);WX.cx.clearRect(0,0,WX.cs.width,WX.cs.height)}}
   /* no motion wanted: draw once and stop */
   if(reduce&&!WX.drops.some(d=>d.melt>0&&d.melt<1)){WX.raf=0;return}
   WX.raf=requestAnimationFrame(wxTick)}

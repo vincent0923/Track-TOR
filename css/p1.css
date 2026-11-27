@@ -197,8 +197,6 @@ h1,h2,h3,p{margin:0}
 .f-sets{width:100%;overflow:hidden;margin:8px 0 -4px;padding:10px 0;-webkit-mask-image:linear-gradient(90deg,transparent 0,transparent 4%,#000 36%);mask-image:linear-gradient(90deg,transparent 0,transparent 4%,#000 36%)}
 .fs-track{display:flex;gap:8px;width:max-content;transition:transform .5s var(--spring)}
 .fs-track i{flex:none}
-/* the breathing glow is a fixed halo whose opacity breathes: opacity runs on the GPU, an animated box-shadow repainted every frame */
-@keyframes setBreath{0%,100%{opacity:0}50%{opacity:1}}
 .f-sets i{min-width:44px;height:30px;padding:0 8px;border-radius:999px;display:grid;place-items:center;font:700 13px/1 var(--num);background:var(--sub);color:var(--muted);font-style:normal;transition:all .3s var(--ease)}
 .f-sets i.dn{background:var(--ac-soft);color:var(--ac-text);display:flex;gap:3px}
 .f-sets i.dn svg{width:13px;height:13px;color:var(--ac);flex:none}
@@ -210,8 +208,6 @@ h1,h2,h3,p{margin:0}
 .xlog:disabled{opacity:.4}
 .f-sets i.add:active{transform:scale(.88)}
 .f-sets i.cur{background:var(--ink);color:var(--bg)}
-.f-sets i.cur::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 14px 2px color-mix(in srgb,var(--ac) 42%,transparent);opacity:0;will-change:opacity;animation:setBreath 2.6s ease-in-out infinite}
-@media (prefers-reduced-motion: reduce){.f-sets i.cur::before{animation:none}}
 .f-num{display:flex;align-items:center;gap:22px;margin-top:6px}
 .f-num b{font-family:var(--num);font-size:84px;font-weight:800;letter-spacing:-.06em;line-height:1;min-width:150px;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;justify-content:center}
 .f-num b>span{display:inline-block}
@@ -405,7 +401,7 @@ button.dd:active b{transform:scale(.9)}
 .pdays{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;font-weight:700;margin-top:4px}
 .pdays i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
 /* weather layer: under the sheets, never takes taps */
-#wx{position:fixed;inset:0;width:100vw;height:100dvh;z-index:35;pointer-events:none}
+#wx,#wxs{position:fixed;inset:0;width:100vw;height:100dvh;z-index:35;pointer-events:none}
 .mask .wxnow{display:flex;align-items:center;gap:10px;margin:0;font-size:15px;font-weight:700}
 .mask .wxnow svg{width:22px;height:22px;color:var(--ac-text);flex:none}
 .mask .wxres{display:grid;gap:6px}
@@ -1392,7 +1388,6 @@ body.has-mini .focus.on .f-body{padding-top:72px}
 .cf-slot{position:relative;flex:none;width:var(--slot);height:var(--cf);scroll-snap-align:center;transform-style:preserve-3d;view-timeline:--cfv inline}
 /* each record turns by its slot's place in the row: facing in and pushed back on either side, flat in the middle */
 @keyframes cfTurn{0%,35%{transform:translateX(34%) translateZ(-120px) rotateY(-50deg)}50%{transform:translateX(0) translateZ(0) rotateY(0)}65%,100%{transform:translateX(-34%) translateZ(-120px) rotateY(50deg)}}
-@keyframes cfShade{0%,35%{opacity:.5}50%{opacity:0}65%,100%{opacity:.5}}
 .cflow .cf-card.cf-card{position:absolute;left:50%;top:0;width:var(--cf);height:var(--cf);margin:0 0 0 calc(var(--cf)/-2);padding:20px 16px 16px;display:grid;grid-template-rows:minmax(0,1fr) auto auto auto;justify-items:center;align-items:center;gap:6px;text-align:center;
   overflow:hidden;will-change:transform;backface-visibility:hidden;-webkit-box-reflect:below 6px linear-gradient(transparent 80%,rgba(255,255,255,.2));cursor:pointer;animation:cfTurn linear both;animation-timeline:--cfv}
 @supports not (animation-timeline:view()){.cflow{--slot:var(--cf)}.cflow .cf-card.cf-card{animation:none}}
@@ -1411,7 +1406,6 @@ body.has-mini .focus.on .f-body{padding-top:72px}
 .cflow .cf-card.art .cf-pips{align-self:end;justify-self:end}
 .cflow .cf-card.art .cf-pips i{background:rgba(255,255,255,.4)}
 .cflow .cf-card.art .cf-pips i.dn{background:#fff}
-.cflow .cf-dim{position:absolute;inset:0;border-radius:inherit;background:var(--bg);opacity:0;pointer-events:none;animation:cfShade linear both;animation-timeline:--cfv}
 .cflow .cf-fly.cf-fly{z-index:200!important;transform:none;animation:none;transition:transform .5s cubic-bezier(.5,0,.75,0),opacity .5s ease-in}
 .cflow .cf-fly.cf-fly.go{transform:translate(var(--fx),var(--fy)) scale(.16);opacity:.2}
 /* the other stack: small, at the right of the sets */
@@ -1426,7 +1420,7 @@ body.has-mini .focus.on .f-body{padding-top:72px}
 @keyframes cfGot{40%{transform:scale(1.22)}to{transform:none}}
 :root[data-theme="eink"] .cflow .cf-card.cf-card{-webkit-box-reflect:none}
 /* e-ink stops time-based motion, not the records turning with the scroll */
-:root[data-theme="eink"] .cflow .cf-card.cf-card,:root[data-theme="eink"] .cflow .cf-dim{animation-duration:auto!important}
+:root[data-theme="eink"] .cflow .cf-card.cf-card{animation-duration:auto!important}
 .f-bottom{grid-template-columns:46px minmax(0,1fr) 46px;align-items:end;justify-items:stretch;max-width:520px}
 .f-bc{display:grid;justify-items:center;gap:12px}
 .f-x{align-self:end;margin-bottom:24px}
