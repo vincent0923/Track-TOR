@@ -740,7 +740,7 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="skeuo"]{--bg:#86888D;--glow:radial-gradient(circle at 50% 0%,rgba(255,255,255,.35),transparent 55%);--card:#ADAFB2;--line:rgba(0,0,0,.18);--lit:inset 0 2px 1.5px rgba(255,255,255,.75);--sub:#9C9EA2;--seg:#9C9EA2;--dark:linear-gradient(160deg,#2B2D30 0%,#101113 100%);--dark-solid:#1B1C1F;--dark-line:#000;--track:#55585D;--ink:#1D1F22;--muted:#45484D;--ac:#1FF5DC;--on-ac:#04201C;--ac-soft:rgba(31,245,220,.2);--ac-text:#0A5F55;--st1:rgba(10,95,85,.25);--st2:rgba(10,95,85,.6);--push:#0E8C7E;--pull:#3A3C40;--third:#7A5BC4;--kpush:var(--push);--kpull:var(--pull);--kthird:var(--third);--good:#0E7C55;--bad:#B4302A;--sleep:#5A4BA8;--alu:radial-gradient(circle at 50% 18%,rgba(255,255,255,.5) 0%,rgba(255,255,255,0) 60%),repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,rgba(0,0,0,.025) 1px 2px,rgba(255,255,255,0) 2px 4px),linear-gradient(180deg,#BFC1C4 0%,#A6A8AC 55%,#96989C 100%);--metal:conic-gradient(from -35deg,#C4C6CA 0deg,#F5F7F9 40deg,#96989C 95deg,#D8DADC 145deg,#F8FAFC 215deg,#8E9094 275deg,#E4E6E9 325deg,#C4C6CA 360deg);--well-sh:inset 0 4px 8px rgba(0,0,0,.38),0 1.5px 0 rgba(255,255,255,.6);--shadow:0 6px 0 #5E6064,0 18px 32px rgba(0,0,0,.4),inset 0 2px 1.5px rgba(255,255,255,.75),inset 0 -3px 6px rgba(0,0,0,.3);--neon:0 0 8px #1FF5DC,0 0 16px rgba(31,245,220,.75);color-scheme:light}
 :root[data-theme="skeuo"] .card,:root[data-theme="skeuo"] .tile,:root[data-theme="skeuo"] .hero.dark{background:var(--alu);border:0;border-radius:22px;box-shadow:var(--shadow);color:var(--ink)}
 :root[data-theme="skeuo"] .dark:not(.hero){background:var(--dark);border:0;box-shadow:0 6px 0 #000,0 18px 30px rgba(0,0,0,.5),inset 0 2px 3px rgba(255,255,255,.2)}
-:root[data-theme="skeuo"] .top h1{text-shadow:0 1px 0 rgba(255,255,255,.45)}
+:root[data-theme="skeuo"] .top h1{text-shadow:var(--emb)}
 :root[data-theme="skeuo"] .tile:active{transform:translateY(4px);box-shadow:0 2px 0 #5E6064,inset 0 2px 1.5px rgba(255,255,255,.75)}
 :root[data-theme="skeuo"] .btn,:root[data-theme="skeuo"] .hgo,:root[data-theme="skeuo"] .dock .pc{background:linear-gradient(180deg,#3C3E42 0%,#1E1F22 100%);color:#24FCE2;text-shadow:var(--neon);box-shadow:0 4px 0 #0B0C0D,0 8px 16px rgba(0,0,0,.45),inset 0 1.5px 1px rgba(255,255,255,.28);transition:transform .1s cubic-bezier(.34,1.56,.64,1),box-shadow .1s}
 :root[data-theme="skeuo"] .btn svg,:root[data-theme="skeuo"] .hgo svg{filter:drop-shadow(0 0 4px #1FF5DC)}
@@ -925,7 +925,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="skeuo"] h1,:root[data-theme="skeuo"] .hero h2,:root[data-theme="skeuo"] .big,:root[data-theme="skeuo"] .tile .tv,:root[data-theme="skeuo"] .f-num b,:root[data-theme="skeuo"] .stats b,:root[data-theme="skeuo"] .sh-h h3{letter-spacing:.01em;font-weight:400}
 :root[data-theme="skeuo"] .tile .tv,:root[data-theme="skeuo"] .big{font-size:22px}
 :root[data-theme="skeuo"] .tile.wide .tv{font-size:28px}
-:root[data-theme="skeuo"] .f-num b{font-size:70px;color:#1D1F22;text-shadow:0 1.5px 0 rgba(255,255,255,.7),0 -1px 0 rgba(0,0,0,.25)}
+:root[data-theme="skeuo"] .f-num b{font-size:70px;color:#1D1F22;text-shadow:var(--emb)}
 :root[data-theme="skeuo"] h1{text-transform:uppercase}
 :root[data-theme="skeuo"] .opt .sw{width:58px;height:30px;border-radius:999px;background:linear-gradient(180deg,#383A3E 0%,#52555A 100%);box-shadow:inset 0 4px 7px rgba(0,0,0,.85),0 1.5px 0 rgba(255,255,255,.65)}
 :root[data-theme="skeuo"] .opt .sw::after{top:3px;left:3px;width:24px;height:24px;background:radial-gradient(circle at calc(var(--lx) + 2%) 28%,#FFFFFF 0%,#D8DADC 45%,#8E9196 90%);box-shadow:0 4px 8px rgba(0,0,0,.75),inset 0 1.5px 2px #fff,inset 0 -2px 3px rgba(0,0,0,.35)}
@@ -1247,7 +1247,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="ipod"] .dark:not(.hero){background:linear-gradient(165deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.08) 34%,rgba(255,255,255,0) 35%),linear-gradient(180deg,#D8E8FB 0%,#B7CEEA 100%);color:#10233D;--muted:rgba(16,35,61,.6);--track:rgba(16,35,61,.12);box-shadow:var(--shadow);}
 :root[data-theme="ipod"] .glowring{display:none}
 :root[data-theme="ipod"] h1,:root[data-theme="ipod"] .hero h2,:root[data-theme="ipod"] .big,:root[data-theme="ipod"] .tile .tv,:root[data-theme="ipod"] .f-num b,:root[data-theme="ipod"] .stats b{font-weight:600;letter-spacing:-.02em}
-:root[data-theme="ipod"] .btn,:root[data-theme="ipod"] .hgo,:root[data-theme="ipod"] .opt[aria-pressed="true"],:root[data-theme="ipod"] .preset.on,:root[data-theme="ipod"] .thc.on,:root[data-theme="ipod"] .seg button[aria-pressed="true"],:root[data-theme="ipod"] .mask .mode-tabs button.active,:root[data-theme="ipod"] .dock .pc,:root[data-theme="ipod"] .pill.ac{background:var(--sel);color:#fff;border-color:transparent;text-shadow:0 -1px 0 rgba(0,0,0,.25);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 0 1px rgba(20,70,160,.5),0 3px 6px -2px rgba(20,70,160,.4)}
+:root[data-theme="ipod"] .btn,:root[data-theme="ipod"] .hgo,:root[data-theme="ipod"] .opt[aria-pressed="true"],:root[data-theme="ipod"] .preset.on,:root[data-theme="ipod"] .thc.on,:root[data-theme="ipod"] .seg button[aria-pressed="true"],:root[data-theme="ipod"] .mask .mode-tabs button.active,:root[data-theme="ipod"] .dock .pc,:root[data-theme="ipod"] .pill.ac{background:var(--sel);color:#fff;border-color:transparent;text-shadow:var(--emb);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 0 1px rgba(20,70,160,.5),0 3px 6px -2px rgba(20,70,160,.4)}
 :root[data-theme="ipod"] .btn.ghost{background:var(--coat),var(--porc);color:var(--ink);text-shadow:none;box-shadow:var(--rim),0 4px 8px -4px rgba(0,0,0,.2)}
 :root[data-theme="ipod"] .btn:active,:root[data-theme="ipod"] .hgo:active{filter:brightness(.92)}
 :root[data-theme="ipod"] .circ,:root[data-theme="ipod"] .fsreset,:root[data-theme="ipod"] .mini{background:var(--coat),var(--porc);border:0;color:var(--ink);box-shadow:var(--rim),0 3px 6px -2px rgba(0,0,0,.25)}
@@ -1567,7 +1567,7 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 .ovs-craft.open canvas{transition:opacity .5s cubic-bezier(.2,0,0,1)}
 .ovs-craft .ovs-content{transition:transform .7s cubic-bezier(.2,.7,.2,1)}
 .ovs-craft .ovs-hint span,.ovs-craft .ovs-hand{font-family:"Bradley Hand","Segoe Print","Comic Sans MS",cursive;font-weight:700}
-.ovs-craft .ovs-hint span{font-size:28px;transform:rotate(-6deg);text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.ovs-craft .ovs-hint span{font-size:28px;transform:rotate(-6deg);text-shadow:var(--emb)}
 .ovs-craft .ovs-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:0 4px}
 .ovs-craft .ovs-hand{font-size:19px;color:#5A5045}
 .ovs-craft .ovs-pct{font:11px var(--num);letter-spacing:.1em;color:#8A8074}
@@ -1635,11 +1635,11 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
    surface keeps its theme's colours but gets the classic sheen: a bright top half cut by a hard line at the
    middle, a white hairline along the top edge, a darker rim and embossed text. Doubled attribute so it wins
    over each theme's own material rules ---------- */
-:root[data-gloss]{--g-top:rgba(255,255,255,.62);--g-mid:rgba(255,255,255,.16);--g-edge:rgba(0,0,0,.16);--g-inset:rgba(255,255,255,.92);--g-emb:0 1px 0 rgba(255,255,255,.55);--g-btn:var(--ac);
+:root[data-gloss]{--g-top:rgba(255,255,255,.62);--g-mid:rgba(255,255,255,.16);--g-edge:rgba(0,0,0,.16);--g-inset:rgba(255,255,255,.92);--g-emb:var(--emb);--g-btn:var(--ac);
   --g-sheen:linear-gradient(180deg,var(--g-top) 0%,var(--g-mid) 49%,rgba(255,255,255,0) 50.5%,rgba(0,0,0,.05) 100%);
   --g-soft:linear-gradient(180deg,var(--g-top) 0%,rgba(255,255,255,.12) 42%,rgba(255,255,255,0) 100%);
   --g-key:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.2) 49%,rgba(255,255,255,0) 50.5%,rgba(0,0,0,.12) 100%)}
-:root[data-gloss][data-mode="dark"]{--g-top:rgba(255,255,255,.18);--g-mid:rgba(255,255,255,.05);--g-edge:rgba(0,0,0,.65);--g-inset:rgba(255,255,255,.16);--g-emb:0 -1px 0 rgba(0,0,0,.6)}
+:root[data-gloss][data-mode="dark"]{--g-top:rgba(255,255,255,.18);--g-mid:rgba(255,255,255,.05);--g-edge:rgba(0,0,0,.65);--g-inset:rgba(255,255,255,.16);--g-emb:var(--emb)}
 :root[data-gloss][data-theme="toy"]{--g-btn:var(--red,var(--ac))}
 :root[data-gloss][data-gloss] body{text-shadow:var(--g-emb)}
 /* surfaces: cards, tiles, panels and boards become glass slabs in the theme's own colour (--gb): a lighter top,
@@ -1665,20 +1665,20 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 :root[data-gloss][data-gloss] :is(.opt[aria-pressed="true"],.thc.on,.preset.on){border-color:color-mix(in srgb,var(--g-btn) 70%,#000);box-shadow:inset 0 1px 0 var(--g-inset),0 0 0 2px color-mix(in srgb,var(--g-btn) 45%,transparent)}
 /* accent keys: the classic two-tone glossy button */
 :root[data-gloss][data-gloss] :is(.btn:not(.ghost),.hgo,.pill.ac,.cal .dd.today b,.dd.today b){background:var(--g-key),var(--g-btn);color:var(--on-ac);border:1px solid color-mix(in srgb,var(--g-btn) 62%,#000);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 2px rgba(0,0,0,.35),0 6px 12px -6px color-mix(in srgb,var(--g-btn) 70%,#000);text-shadow:0 -1px 0 rgba(0,0,0,.28)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 2px rgba(0,0,0,.35),0 6px 12px -6px color-mix(in srgb,var(--g-btn) 70%,#000);text-shadow:var(--emb)}
 :root[data-gloss][data-gloss] .dock .pc{background:var(--g-key),var(--g-btn);border:1px solid color-mix(in srgb,var(--g-btn) 62%,#000);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 1px 3px rgba(0,0,0,.45)}
 /* neutral keys: glassy orbs and capsules */
 :root[data-gloss][data-gloss] :is(.circ,.mini,.fsreset,.btn.ghost,.modesw,.f-sets i:not(.cur):not(.dn):not(.add)){background:var(--g-key),var(--card);color:var(--ink);border:1px solid var(--g-edge);
   box-shadow:inset 0 1px 0 var(--g-inset),0 1px 2px rgba(0,0,0,.3)}
 :root[data-gloss][data-gloss] .modesw .kn{background:var(--g-key),var(--g-btn);border:1px solid color-mix(in srgb,var(--g-btn) 62%,#000);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 2px rgba(0,0,0,.4)}
-:root[data-gloss][data-gloss] .f-sets i.cur{background:var(--g-key),var(--g-btn);color:var(--on-ac);border:1px solid color-mix(in srgb,var(--g-btn) 62%,#000);text-shadow:0 -1px 0 rgba(0,0,0,.25)}
+:root[data-gloss][data-gloss] .f-sets i.cur{background:var(--g-key),var(--g-btn);color:var(--on-ac);border:1px solid color-mix(in srgb,var(--g-btn) 62%,#000);text-shadow:var(--emb)}
 /* the big tick: a domed glass button with a bright crescent on top */
 :root[data-gloss][data-gloss] .tickb:not(.done){background:radial-gradient(ellipse 72% 42% at 50% 20%,rgba(255,255,255,.8),rgba(255,255,255,.12) 70%,rgba(255,255,255,0) 72%),radial-gradient(circle at 50% 80%,color-mix(in srgb,var(--g-btn) 75%,#fff) 0%,var(--g-btn) 55%,color-mix(in srgb,var(--g-btn) 70%,#000) 100%);
   color:var(--on-ac);border:1px solid color-mix(in srgb,var(--g-btn) 55%,#000);box-shadow:inset 0 -3px 6px rgba(0,0,0,.25),0 2px 3px rgba(0,0,0,.35),0 16px 28px -12px color-mix(in srgb,var(--g-btn) 70%,#000)}
 /* the dock: a glossy tab bar */
 :root[data-gloss][data-gloss] .dock{background:linear-gradient(180deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.07) 49%,rgba(255,255,255,0) 50.5%,rgba(0,0,0,.25) 100%),var(--dark-solid);border:1px solid rgba(0,0,0,.6);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 4px rgba(0,0,0,.35),0 16px 30px -12px rgba(0,0,0,.55)}
-:root[data-gloss][data-gloss] .dock button{text-shadow:0 -1px 0 rgba(0,0,0,.6)}
+:root[data-gloss][data-gloss] .dock button{text-shadow:var(--emb)}
 /* switches and segmented controls, iOS 6 style: a sunken track, a white glass knob */
 :root[data-gloss][data-gloss] .opt .sw{width:52px;height:30px;border-radius:999px;background:linear-gradient(180deg,#C9C9C9,#F4F4F4);box-shadow:inset 0 2px 3px rgba(0,0,0,.35),0 1px 0 var(--g-inset);border:1px solid rgba(0,0,0,.25);padding:0}
 :root[data-gloss][data-gloss] .opt .sw::before{content:none}
@@ -1686,7 +1686,7 @@ body.has-mini.mini-big .wrap{padding-bottom:calc(318px + env(safe-area-inset-bot
 :root[data-gloss][data-gloss] .opt[aria-checked="true"] .sw::after{transform:translateX(22px)}
 :root[data-gloss][data-gloss] .opt .sw::after{top:1px;left:1px;width:26px;height:26px;border-radius:50%;background:linear-gradient(180deg,#FFFFFF 0%,#F2F2F2 50%,#DADADA 51%,#F6F6F6 100%);border:1px solid rgba(0,0,0,.25);box-shadow:0 1px 2px rgba(0,0,0,.35)}
 :root[data-gloss][data-gloss] .seg{background:var(--g-key),var(--sub);border:1px solid var(--g-edge);box-shadow:inset 0 1px 0 var(--g-inset),0 1px 1px rgba(0,0,0,.1)}
-:root[data-gloss][data-gloss] .seg button[aria-pressed="true"]{background:var(--g-key),var(--g-btn);color:var(--on-ac);box-shadow:inset 0 1px 2px rgba(0,0,0,.35);text-shadow:0 -1px 0 rgba(0,0,0,.28)}
+:root[data-gloss][data-gloss] .seg button[aria-pressed="true"]{background:var(--g-key),var(--g-btn);color:var(--on-ac);box-shadow:inset 0 1px 2px rgba(0,0,0,.35);text-shadow:var(--emb)}
 /* the dock's selected tab follows the dock's own curve in every theme */
 html:root .dock .pc.pc.pc{border-radius:inherit}
 /* ---------- translucent glass (Effects › Translucent glass, html.glass): the dock and the music player keep their
@@ -1881,6 +1881,11 @@ html.touching.groove :is(.bricks .bks,.cal .dd b,.hero .hgo){animation-play-stat
 :root[data-theme="aqua"][data-mode="dark"] .bricks{background:#353A41;box-shadow:inset 0 1px 3px rgba(0,0,0,.45)}
 :root[data-theme="aqua"][data-mode="dark"] .f-sets i.add{box-shadow:inset 0 0 0 1px #6A7079}
 :root.glass[data-theme="aqua"][data-mode="dark"]{--gl-dock:#50555D;--gl-mp:#4B515A}
+/* embossed letters: a 1px echo, white under dark words and black under pale ones; where the line falls follows the light
+   (on a light page even mid-grey words are dark, on a dark page they are pale), worked out per element from currentcolor; a fixed black or white echo turned into a double image wherever a
+   skin put dark words on a pale key or pale words on a dark one */
+:root{--emb-t:.78;--emb:0 1px 0 oklch(from currentcolor clamp(0,(var(--emb-t) - l)*12,1) 0 0 / .4)}
+:root[data-mode="dark"]{--emb-t:.42}
 /* ---------- segmented control, after the Mac's: one bar with small corners, the segments flush with hairline dividers,
    the chosen one filled to its edges. One shape for every skin; each skin only sets the colours (--sg-*) ---------- */
 html:root .seg.seg.seg,html:root .mask .mode-tabs.mode-tabs.mode-tabs{display:flex;gap:0;padding:0;border-radius:var(--sg-r,10px);overflow:hidden;background:var(--sg-bg,var(--card));
@@ -1892,10 +1897,10 @@ html:root .seg.seg.seg button::before,html:root .seg.seg.seg button::after,html:
 html:root .seg.seg.seg button[aria-pressed="true"],html:root .mask .mode-tabs.mode-tabs.mode-tabs button.active{background:var(--sg-on,var(--ac));color:var(--sg-on-ink,var(--on-ac));box-shadow:var(--sg-on-sh,inset 0 1px 2px rgba(0,0,0,.16));text-shadow:var(--sg-on-ts,none)}
 html:root .seg.seg.seg button:active,html:root .mask .mode-tabs.mode-tabs.mode-tabs button:active{filter:brightness(.94)}
 /* skins: iOS 6 gloss, Aqua (Snow Leopard's segmented control: the pale button gradient, grey hairlines, the chosen part blue gel), e-ink */
-:root[data-gloss]{--sg-bg:var(--g-key),var(--card);--sg-line:var(--g-edge);--sg-on:var(--g-key),var(--g-btn);--sg-on-sh:inset 0 1px 2px rgba(0,0,0,.3);--sg-on-ts:0 -1px 0 rgba(0,0,0,.28);--sg-ts:var(--g-emb,none)}
+:root[data-gloss]{--sg-bg:var(--g-key),var(--card);--sg-line:var(--g-edge);--sg-on:var(--g-key),var(--g-btn);--sg-on-sh:inset 0 1px 2px rgba(0,0,0,.3);--sg-on-ts:var(--emb);--sg-ts:var(--g-emb,none)}
 :root[data-theme="aqua"]{--sg-r:6px;--sg-bg:linear-gradient(180deg,#FDFDFE 0%,#ECEEF2 48%,#DFE2E7 52%,#F2F3F6 100%);--sg-line:#8B909A;--sg-ink:#22262C;--sg-sh:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(20,30,50,.18);
   --sg-on:linear-gradient(180deg,var(--gel-hi) 0%,var(--gel-mid) 50%,var(--gel-deep) 51%,var(--gel-light) 100%);--sg-on-ink:#fff;--sg-on-sh:inset 0 1px 2px rgba(10,40,90,.35);--sg-on-ts:0 -1px 1px rgba(10,40,90,.4);--sg-ts:0 1px 0 rgba(255,255,255,.8)}
 :root[data-theme="aqua"][data-mode="dark"]{--sg-bg:var(--capsule);--sg-line:#23272C;--sg-ink:#F2F4F7;--sg-ts:0 -1px 1px rgba(0,0,0,.5);--sg-sh:0 1px 2px rgba(0,0,0,.4)}
 :root[data-theme="eink"]{--sg-r:6px;--sg-bg:var(--card);--sg-line:var(--ink);--sg-on:var(--ink);--sg-on-ink:var(--bg);--sg-on-sh:none;--sg-sh:none}
 /* orange and copper fills read better with dark words */
-:root[data-theme="ember"][data-mode="light"],:root[data-theme="braun"],:root[data-theme="md"],:root[data-theme="dyson"][data-mode="dark"]{--sg-on-ink:#1E1208;--sg-on-ts:0 1px 0 rgba(255,255,255,.25)}
+:root[data-theme="ember"][data-mode="light"],:root[data-theme="braun"],:root[data-theme="md"],:root[data-theme="dyson"][data-mode="dark"]{--sg-on-ink:#1E1208;--sg-on-ts:var(--emb)}
