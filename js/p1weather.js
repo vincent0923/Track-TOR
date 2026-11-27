@@ -54,7 +54,7 @@ function wxTiltOn(){if(wxTiltOn.done)return;const D=window.DeviceOrientationEven
 function wxApply(fx,lv){fx=fx||"none";if(fx!==WX.fx){WX.drops=[];WX.flakes=[]}WX.fx=fx;WX.lv=lv||1;
   if(fx==="none"){cancelAnimationFrame(WX.raf);WX.raf=0;if(WX.cv){[WX.ctx,WX.cx].forEach(g=>{g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,WX.cv.width,WX.cv.height)});WX.cv.hidden=WX.cs.hidden=true;WX.sSig=null}return}
   wxCanvas();WX.cv.hidden=WX.cs.hidden=false;WX.sSig=null;WX.dyn=1;if(!window.DeviceOrientationEvent||typeof DeviceOrientationEvent.requestPermission!=="function")wxTiltOn();
-  if(fx==="rain"&&!WX.drops.length){const n=[9,15,21][WX.lv-1];for(let i=0;i<n;i++)WX.drops.push(wxDrop())}
+  if(fx==="rain"&&!WX.drops.length){const n=[8,13,18][WX.lv-1];for(let i=0;i<n;i++)WX.drops.push(wxDrop())}
   if(!WX.raf&&!document.hidden){WX.last=performance.now();WX.raf=requestAnimationFrame(wxTick)}}
 /* an uneven outline: 10 radii around the bead, smoothed; small beads are almost round */
 /* beads at rest are never quite round: an uneven outline (two or three soft lobes where beads met, plus noise),
@@ -63,8 +63,11 @@ function wxShape(r){const n=14,small=r<2.2,irr=small?.05:.12+Math.random()*.14,a
   let k=Array.from({length:n},(_,i)=>{const t=i/n*Math.PI*2;return 1+a2*Math.cos(2*t+p2)+a3*Math.cos(3*t+p3)+(Math.random()-.5)*irr*2});
   k=k.map((v,i)=>(k[(i+n-1)%n]+v*2+k[(i+1)%n])/4);return k}
 function wxDrop(r,x,y){const big=Math.random()<.22;r=r||(big?4+Math.random()*3:1.4+Math.random()*2.2);
-  return {x:x??Math.random()*WX.W,y:y??Math.random()*WX.H,r,k:wxShape(r),v:0,slide:false,life:0,max:25+Math.random()*30,trail:[],melt:0,rot:(Math.random()-.5)*1.6,asp:r<2.2?1:.78+Math.random()*.5}}
-const WX_CAP=[27,39,51],WX_SLIDERS=[3,4,6],WX_RATE=[1.5,3,4.8];
+  return {x:x??Math.random()*WX.W,y:y??wxY(WX.H),r,k:wxShape(r),v:0,slide:false,life:0,max:25+Math.random()*30,trail:[],melt:0,rot:(Math.random()-.5)*1.6,asp:r<2.2?1:.78+Math.random()*.5}}
+/* 15% fewer beads than at first, and the top half of the screen holds only a fifth of what the bottom half does: beads
+   gather low on the glass, and there are fewer to draw */
+const WX_CAP=[23,33,43],WX_SLIDERS=[3,4,6],WX_RATE=[1.28,2.55,4.08];
+const wxY=(H,r)=>(r=r||Math.random)()<1/6?r()*H/2:H/2+r()*H/2;
 /* heavy rain: now and then a gust sweeps across from one side and blows the beads off, big ones bursting into small */
 function wxGust(dt,D){if(WX.lv<3){WX.gust=null;return}const now=performance.now();if(!WX.nextGust)WX.nextGust=now+8e3+Math.random()*10e3;
   if(!WX.gust&&now>WX.nextGust){WX.gust={dir:Math.random()<.5?-1:1,x:0,v:WX.W*1.6};WX.gust.x=WX.gust.dir>0?-40:WX.W+40;WX.nextGust=now+9e3+Math.random()*12e3}
@@ -178,7 +181,7 @@ function wxPaint(g,W,H,t){const w=!WX.preview&&WX.fx&&WX.fx!=="none"?{fx:WX.fx,l
   let sd=7;for(const ch of t)sd=(sd*31+ch.charCodeAt(0))>>>0;const rnd=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};
   const R=Math.random,gx=WX.gx,gy=WX.gy,k=W/390,w0=390,h0=H/k,area=h0/844;Math.random=rnd;WX.gx=0;WX.gy=1;
   try{g.save();g.scale(k,k);
-    if(w.fx==="rain"){const n=Math.max(6,Math.round([20,32,44][lv-1]*area));for(let i=0;i<n;i++)wxDrawDrop(g,wxDrop(null,rnd()*w0,rnd()*h0),dark)}
+    if(w.fx==="rain"){const n=Math.max(6,Math.round([17,27,37][lv-1]*area));for(let i=0;i<n;i++)wxDrawDrop(g,wxDrop(null,rnd()*w0,wxY(h0,rnd)),dark)}
     else if(w.fx==="snow"){const n=Math.max(8,Math.round([21,33,48][lv-1]*area));
       for(let i=0;i<n;i++){const x=rnd()*w0,y=rnd()*h0,r=1.2+rnd()*2.8;
         if(!dark){g.beginPath();g.arc(x,y+.6,r+.7,0,7);g.fillStyle="rgba(90,110,140,.22)";g.fill()}
