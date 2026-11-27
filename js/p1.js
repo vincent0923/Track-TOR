@@ -241,9 +241,9 @@ function curSet(){return run.sets[run.ex].findIndex(x=>!x.d)}
 function cfLists(){const todo=[],done=[];run.sets.forEach((a,i)=>(a.every(y=>y.d)?done:todo).push(i));return {todo,done}}
 const cfLast=done=>done.slice().sort((x,y)=>Math.max(0,...run.sets[y].map(z=>z.o||0))-Math.max(0,...run.sets[x].map(z=>z.o||0)))[0];
 function cfCard(i,cls){const e=run.p.ex[i],a=run.sets[i],m=N(e).match(/[（(]([^）)]*)[）)]/),sub=[m&&m[1],e.note?NOTE(e):""].filter(Boolean).join(" · "),
-    vs=a.map(x=>x.v),sum=vs.every(v=>v===vs[0])?a.length+" × "+vs[0]:vs.join(" · ");
+    vs=a.map(x=>x.v),sum=!a.length?"—":vs.every(v=>v===vs[0])?a.length+" × "+vs[0]:vs.join(" · ");
   return '<div class="cf-card card'+(cls||"")+'" data-i="'+i+'" role="option" aria-selected="'+(i===run.ex)+'"><h2>'+esc(NS(e))+'</h2>'+(sub?'<p class="cf-sub">'+esc(sub)+'</p>':'')
-    +'<p class="cf-sum n">'+sum+'<small>'+U(e.unit)+'</small></p><span class="cf-pips">'+a.map(x=>'<i'+(x.d?' class="dn"':'')+'></i>').join("")+'</span><i class="cf-dim"></i></div>'}
+    +'<p class="cf-sum n">'+sum+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</p><span class="cf-pips">'+a.map(x=>'<i'+(x.d?' class="dn"':'')+'></i>').join("")+'</span><i class="cf-dim"></i></div>'}
 function renderFocus(anim){
   const f=$("#focus"),p=run.p,allDone=run.sets.every(x=>x.every(y=>y.d));
   if(allDone&&!run.finished&&run.askFeel==null){finishRun();return}
@@ -254,23 +254,24 @@ function renderFocus(anim){
   const other=run.stk==="done"?todo:done.filter(i=>i!==run.askFeel),
     fly=run.cfPrevStk==="todo"&&run.stk==="todo"&&run.cfPrev?run.cfPrev.find(i=>!list.includes(i)&&done.includes(i)):undefined;
   run.cfPrev=list;run.cfPrevStk=run.stk;
-  const e=p.ex[run.ex],a=run.sets[run.ex],ci=curSet(),val=ci<0?a[a.length-1].v:a[ci].v;
+  const e=p.ex[run.ex],a=run.sets[run.ex],ci=curSet(),val=ci<0?(a.length?a[a.length-1].v:"—"):a[ci].v;
   let bottom;
   if(run.askFeel!=null)bottom='<div class="feelbar" role="slider" tabindex="0" aria-label="'+T('这个动作感觉？','How did that feel?')+'" aria-valuemin="1" aria-valuemax="4"><span class="fl-lab">'+T('感觉？','Feel?')+'</span><div class="fl-bks">'+FEEL4.map((x,i)=>'<i style="--i:'+i+'"></i>').join("")+'</div></div><button class="f-hint" data-act="feel" data-f="">'+T('跳过','Skip')+'</button>';
   else if(ci<0)bottom='<button class="tickb done" disabled>'+ICON.check+'</button>';
-  else bottom='<button class="tickb" data-act="tick" aria-label="'+T('完成这一组','Set done')+'">'+ICON.check+'</button>';
+  else bottom=+val>0?'<button class="tickb" data-act="tick" aria-label="'+T('完成这一组','Set done')+'">'+ICON.check+'</button>'
+    :'<button class="tickb skip" data-act="tick" aria-label="'+T('去掉这一组','Drop this set')+'">'+ICON.x+'</button>';
   const nb=Math.min(3,other.length),mini=nb?'<button class="cf-mini'+(run.stk==="done"?"":" dn")+'" data-act="cfswap" aria-label="'+(run.stk==="done"?T('回到没练的动作','Back to the moves to do'):T('看练好的动作','See the finished moves'))+'">'
     +Array.from({length:nb-1},(_,k)=>'<i style="transform:translate('+3*(nb-1-k)+'px,'+3*(nb-1-k)+'px)"></i>').join("")+'<i>'+(run.stk==="done"?ICON.dumbbell:ICON.check)+'</i></button>':'';
   f.innerHTML='<div class="f-top"><span class="f-lab">'+LAB(p)+'</span><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
     +'<div class="f-body" id="fBody"><div class="cflow" tabindex="0" role="listbox" aria-label="'+T('动作','Moves')+'"><div class="cf-rail'+(run.cfIn?" in":"")+'">'+list.map(i=>cfCard(i)).join("")+(fly!=null?cfCard(fly," cf-fly"):"")+'</div></div>'
-    +'<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
+    +'<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'" data-i="'+i+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
     +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+mini+'</div>'
-    +'<div class="f-num">'+(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n"><span id="fVal"'+(anim?' class="pop"':'')+'>'+val+'</span><small>'+U(e.unit)+'</small></b>'
+    +'<div class="f-num">'+(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n"><span id="fVal"'+(anim?' class="pop"':'')+'>'+val+'</span>'+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</b>'
     +(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div></div>'
     +'<div class="f-bottom" id="fBottom"><button class="mini f-x" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-bc">'+bottom+'</div><span class="f-x"></span></div>';
   run.cfIn=0;
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
-  setsCenter();cfBind($(".cflow"),list);cfFit();if(document.fonts)document.fonts.ready.then(cfFit);feelBind($(".feelbar"));if(fly!=null)cfFly()}
+  setsCenter();cfBind($(".cflow"),list);cfFit();if(document.fonts)document.fonts.ready.then(cfFit);feelBind($(".feelbar"));setsHold();if(fly!=null)cfFly()}
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
   const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,x=v.clientWidth/2-(c.offsetLeft+c.offsetWidth/2);
@@ -319,7 +320,7 @@ function feelBind(el){if(!el)return;const bks=[...el.querySelectorAll(".fl-bks i
   const up=()=>{if(!drag)return;drag=0;clearTimeout(tm);tm=setTimeout(commit,650)};
   el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
   el.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();show(Math.max(1,Math.min(4,(lv||0)+(e.key==="ArrowRight"?1:-1))))}else if(e.key==="Enter")commit()})}
-function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].o=maxOrdOf(run.doc)+1;a[ci].d=true;if(v!=null)a[ci].v=v;lsSave();if(typeof wxMark==="function")wxMark();
+function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;if(!(+(v!=null?v:a[ci].v)>0)){dropRunSet(ci);return}a[ci].o=maxOrdOf(run.doc)+1;a[ci].d=true;if(v!=null)a[ci].v=v;lsSave();if(typeof wxMark==="function")wxMark();
   SFX.tick();buzz(18);
   const e=run.p.ex[run.ex];
   if(!a.every(x=>x.d))celebrate(1,0);
@@ -327,7 +328,19 @@ function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;a[ci].o=
     if(e.unit!=="分钟"){run.askFeel=run.ex;renderFocus();return}
     {const nx=run.sets.findIndex(x=>x.some(y=>!y.d));if(nx>=0)run.ex=nx;renderFocus(true);return}}
   renderFocus(true)}
-function untick(i){const x=run.sets[run.ex][i];if(!x||!x.d)return;x.d=false;
+/* a set can go: hold its chip (done or not), or bring its number down to 0, where the big button turns into ×.
+   Nothing is ever kept at 0; a move left with no sets counts as skipped (the engine eases it next time) */
+function dropRunSet(i){const arr=run.sets[run.ex],x=arr[i];if(!x)return;
+  if(x.o){const o=x.o;Object.values(run.doc.sets).forEach(a2=>a2.forEach(y=>{if(y.o>o)y.o--}))}
+  arr.splice(i,1);run.doc.edited=true;run.setsX=null;lsSave();SFX.tap();buzz([10,30,10]);
+  if(!x.d&&arr.length&&arr.every(y=>y.d)){SFX.ex();if(run.p.ex[run.ex].unit!=="分钟")run.askFeel=run.ex}
+  renderFocus(true)}
+function setsHold(){document.querySelectorAll(".fs-track i[data-i]").forEach(ch=>{let tm=0,x0=0,y0=0;
+  const end=()=>{clearTimeout(tm);tm=0;ch.classList.remove("hold")};
+  ch.addEventListener("pointerdown",e=>{clearTimeout(tm);x0=e.clientX;y0=e.clientY;ch.classList.add("hold");tm=setTimeout(()=>{tm=0;run.held=Date.now();ch.classList.add("gone");buzz(20);setTimeout(()=>{if(run)dropRunSet(+ch.dataset.i)},200)},550)});
+  ch.addEventListener("pointermove",e=>{if(tm&&Math.hypot(e.clientX-x0,e.clientY-y0)>10)end()});
+  ["pointerup","pointercancel"].forEach(k=>ch.addEventListener(k,end))})}
+function untick(i){if(Date.now()-(run.held||0)<800)return;const x=run.sets[run.ex][i];if(!x||!x.d)return;x.d=false;
   if(x.o){const o=x.o;delete x.o;Object.values(run.doc.sets).forEach(arr=>arr.forEach(y=>{if(y.o>o)y.o--}))}
   lsSave();SFX.tap();renderFocus(true)}
 function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Math.floor((Date.now()-run.t0)/1000);
@@ -912,7 +925,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
     else if(a==="tick")tickSet();
     else if(a==="addset"){const arr=run.sets[run.ex],l=arr[arr.length-1];arr.push({v:l?l.v:run.p.ex[run.ex].target,d:false});run.doc.edited=true;lsSave();run.askFeel=null;SFX.tap();buzz(8);renderFocus(true)}
     else if(a==="inc"||a==="dec"){const ci=curSet();if(ci<0)return;run.doc.edited=true;const s=run.sets[run.ex][ci],st=run.p.ex[run.ex].unit==="秒"?5:1;s.v=Math.max(0,(+s.v||0)+(a==="inc"?st:-st));
-      /* only this set: the planned numbers for the rest stay put; the engine adjusts after sessions, never mid-session */lsSave();SFX.tap();const el=$("#fVal");el.textContent=s.v;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");}
+      /* only this set: the planned numbers for the rest stay put; the engine adjusts after sessions, never mid-session */lsSave();SFX.tap();if(!$(".tickb.skip")!==s.v>0){renderFocus();return}const el=$("#fVal");el.textContent=s.v;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");}
     else if(a==="fshare"){SFX.tap();finShare()}
     else if(a==="cfswap"){if(run.askFeel!=null)return;const L=cfLists();if(run.stk==="done"){run.stk="todo";run.ex=L.todo[0]}else{run.stk="done";run.ex=cfLast(L.done)}run.cfIn=1;SFX.tap();buzz(8);renderFocus(true)}
   }});

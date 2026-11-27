@@ -38,7 +38,7 @@ function extrasHtml(d){const doc=xDocFor(d,false),items=(doc&&doc.xs)||[],have=n
     return '<div class="xitem"><div class="row"><b class="sp">'+esc(xName(it))+'</b></div>'
       +'<div class="xsets">'+it.sets.filter(x=>x.d).map((x,i)=>'<button class="pill ac" data-act="xun" data-k="'+k+'" data-i="'+i+'" aria-label="'+T('撤销这一组','Undo this set')+'">'+x.v+unit+'</button>').join('')+'</div>'
       +'<div class="row xstep"><button class="mini" data-act="xv" data-id="'+it.id+'" data-dv="-1" aria-label="'+T('减','Less')+'">−</button><b class="n">'+v+'</b><button class="mini" data-act="xv" data-id="'+it.id+'" data-dv="1" aria-label="'+T('加','More')+'">+</button>'
-      +'<span class="sp"></span><button class="pill ac xlog" data-act="xlog" data-k="'+k+'">'+T('记一组','Log a set')+'</button></div></div>'}).join('');
+      +'<span class="sp"></span><button class="pill ac xlog" data-act="xlog" data-k="'+k+'"'+(v>0?'':' disabled')+'>'+T('记一组','Log a set')+'</button></div></div>'}).join('');
   const adds=QUICK.filter(q=>!have.has(q[0])).map(q=>'<button class="pill" data-act="xadd" data-id="'+q[0]+'">+ '+T(q[1],q[2])+'</button>').join('')+'<button class="pill" data-act="xadd" data-id="">+ '+T('其他','Other')+'</button>';
   return '<p class="xhead">'+T('加练','Extra practice')+'</p>'+rows+'<div class="xadds">'+adds+'</div>'}
 function render(){const d=curDay,dt=dateObj(d),ss=sessionsOn(d);
@@ -67,7 +67,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
     if(reopenIfEmpty(sid)){changed();return}
     lsSave();render();return}
   if(a==="xv"){const id=b.dataset.id,it=(xDocFor(curDay,false).xs||[]).find(i=>i.id===id),st=it&&it.unit==="秒"?5:1;pending[id]=Math.max(0,(pending[id]||0)+(+b.dataset.dv)*st);render();return}
-  if(a==="xlog"){const doc=xDocFor(curDay,true),it=doc.xs[+b.dataset.k];it.sets.push({v:pending[it.id],d:true});if(curDay===today()&&typeof wxMark==="function")wxMark();if(typeof SFX!=="undefined")SFX.tick();if(typeof buzz==="function")buzz(16);if(curDay===today())celebrate(1,0);changed();return}
+  if(a==="xlog"){const doc=xDocFor(curDay,true),it=doc.xs[+b.dataset.k];if(!(+pending[it.id]>0))return;it.sets.push({v:pending[it.id],d:true});if(curDay===today()&&typeof wxMark==="function")wxMark();if(typeof SFX!=="undefined")SFX.tick();if(typeof buzz==="function")buzz(16);if(curDay===today())celebrate(1,0);changed();return}
   if(a==="xun"){const doc=xDocFor(curDay,false),it=doc.xs[+b.dataset.k],done=it.sets.filter(x=>x.d),x=done[+b.dataset.i];it.sets.splice(it.sets.indexOf(x),1);
     if(!it.sets.length)doc.xs.splice(+b.dataset.k,1);if(doc.xs&&!doc.xs.length&&state.dayx[curDay]===doc&&!doc.note)delete state.dayx[curDay];changed();return}
   if(a==="xadd"){let id=b.dataset.id,name,unit="个";

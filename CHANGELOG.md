@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.72a] — 2026-11-27
+
+### 新增 / Added
+- ✂️ **练的时候能去掉一组**：按住组胶囊半秒就去掉（加多了的、记错的都行）；或者把次数减到 0，大勾变成 ×，按下去去掉这一组。一个动作的组全去掉就算跳过。
+- ✂️ **Drop a set mid-session**: hold a set chip for half a second to remove it (an extra one, or a wrong one), or bring the count to 0, where the big tick turns into × and removes the set. A move with every set removed counts as skipped.
+
+### 修复 / Fixed
+- 0 个、0 秒的组不再被记下：练的时候和日历里记加练都一样（减到 0 时「记一组」按不了）。
+- Sets of 0 reps or 0 seconds are no longer recorded, in a session or when logging extra practice (Log a set is disabled at 0).
+
+---
+
 ## [v1.71a] — 2026-11-27
 
 ### 新增 / Added
