@@ -15,7 +15,7 @@ function lastVal(id){let best=null,bd="";const look=(doc,date)=>{(doc&&doc.xs||[
   Object.values(state.sessions).forEach(s=>look(s,s&&s.date));Object.values(state.dayx||{}).forEach(x=>look(x,x&&x.date));return best}
 const pending={};   /* the value waiting in each extra's stepper */
 function sessHtml(p){const doc=state.sessions[p.sid],ed=editSid===p.sid;
-  return '<div class="plan1"><div class="row"><i class="kd" style="background:var(--'+p.kind+')"></i><b class="sp">'+LAB(p)+'</b><button class="pill'+(ed?' ac':'')+'" data-act="dedit" data-sid="'+p.sid+'">'+(ed?T('完成','Done'):T('修改','Edit'))+'</button></div>'
+  return '<div class="plan1"><div class="row"><i class="kd" style="background:var(--'+p.kind+')"></i><b class="sp">'+LAB(p)+'</b>'+(ed?'<button class="mini dreset" data-act="dreset" data-sid="'+p.sid+'" aria-label="'+T('重置这次训练','Reset this session')+'">'+ICON.reset+'</button>':'')+'<button class="pill'+(ed?' ac':'')+'" data-act="dedit" data-sid="'+p.sid+'">'+(ed?T('完成','Done'):T('修改','Edit'))+'</button></div>'
     +p.ex.map(e=>{const a=(doc.sets&&doc.sets[e.id])||[];
       if(!ed&&!a.length)return '';
       if(!ed)return '<div class="pex"><div class="row"><span class="sp">'+N(e)+'</span><b class="n">'+(a.length?a.map(x=>x.d?x.v:'<span class="muted">'+x.v+'</span>').join('·'):'–')+'</b></div></div>';
@@ -28,7 +28,10 @@ function sessHtml(p){const doc=state.sessions[p.sid],ed=editSid===p.sid;
         +'<button class="fsreset sx" data-act="ddel"'+at+' data-i="'+i+'" aria-label="'+T('删掉这一组','Delete this set')+'">'+ICON.x+'</button></div>').join('')+'</div>'}).join('')+'</div>'}
 /* a finished session with no record left is not finished: it goes back to "ready" (so the one after it locks again),
    its sets return to the plan, and any extras logged with it stay on that day */
-function reopenIfEmpty(sid){const doc=state.sessions[sid];if(!doc||!doc.done||Object.values(doc.sets||{}).some(a=>a.some(x=>x.d)))return false;
+function reopenIfEmpty(sid){const doc=state.sessions[sid];if(!doc||!doc.done||Object.values(doc.sets||{}).some(a=>a.some(x=>x.d)))return false;return resetSession(sid)}
+/* a session back to how it was planned and not yet done: its planned sets, no ticks, no feel, no date; extra practice
+   logged inside it moves to that day's extras so nothing practised is lost; the engine then re-plans what follows */
+function resetSession(sid){const doc=state.sessions[sid];if(!doc)return false;
   const p=BYID[sid],d=doc.date;if(doc.xs&&doc.xs.length&&d){const dx=state.dayx[d]=state.dayx[d]||{date:d,xs:[]};dx.xs=(dx.xs||[]).concat(doc.xs)}
   delete doc.xs;delete doc.feel;delete doc.edited;doc.done=false;doc.date=null;doc.sets={};p.ex.forEach(e=>{doc.sets[e.id]=Array.from({length:e.sets},()=>({v:e.target,d:false}))});
   editSid=null;engPlanAll();toast(LAB(p)+T(' 回到可练',' is ready again'));return true}
@@ -58,6 +61,8 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   if(a==="cal"){openDay(b.dataset.d);return}
   if(!curDay||!$("#sheet").classList.contains("on")||$("#sheetBody").dataset.day!==curDay)return;
   if(a==="tshare"){if(typeof SFX!=="undefined")SFX.tap();finShare(curDay);return}
+  if(a==="dreset"){const sid=b.dataset.sid,p=BYID[sid];if(!p||!confirm(T('把「'+LAB(p)+'」退回没练的样子？练过的组和感觉会清掉，加练会留下。','Put '+LAB(p)+' back as not done? Its sets and feel are cleared; extra practice stays.')))return;
+    resetSession(sid);lsSave();changed();return}
   if(a==="dedit"){const was=editSid;editSid=was===b.dataset.sid?null:b.dataset.sid;if(was&&!editSid){engPlanAll();changed();toast(T("已保存","Saved"))}else render();return}
   if(a==="dsv"||a==="dst"||a==="ddel"||a==="dadd"){const sid=b.dataset.sid,doc=state.sessions[sid],id=b.dataset.e,arr=doc.sets[id]=doc.sets[id]||[],i=+b.dataset.i,x=arr[i],e=BYID[sid].ex.find(y=>y.id===id);
     if(a==="dadd"){const l=arr[arr.length-1];arr.push({v:l?l.v:(e?e.target:1),d:true,o:maxOrdOf(doc)+1});if(typeof SFX!=="undefined")SFX.tap()}

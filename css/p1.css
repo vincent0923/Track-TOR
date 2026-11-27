@@ -1914,3 +1914,4 @@ html:root .seg.seg.seg button:active,html:root .mask .mode-tabs.mode-tabs.mode-t
 :root[data-theme="eink"]{--sg-r:6px;--sg-bg:var(--card);--sg-line:var(--ink);--sg-on:var(--ink);--sg-on-ink:var(--bg);--sg-on-sh:none;--sg-sh:none}
 /* orange and copper fills read better with dark words */
 :root[data-theme="ember"][data-mode="light"],:root[data-theme="braun"],:root[data-theme="md"],:root[data-theme="dyson"][data-mode="dark"]{--sg-on-ink:#1E1208;--sg-on-ts:var(--emb)}
+.plan1 .row .dreset{margin-right:8px}

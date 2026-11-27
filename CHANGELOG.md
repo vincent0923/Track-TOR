@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.75a] — 2026-11-28
+
+### 新增 / Added
+- ↺ **重置一次训练**：日历里点那天、点「修改」，训练旁边多一个重置键，确认后这次训练回到没练的样子（组数恢复计划、打勾和感觉清掉），里面记的加练挪到当天的加练里，训练引擎重新排后面的训练。
+- ↺ **Reset a session**: in a day from the calendar, tap Edit and a reset key appears beside the session; once confirmed it goes back to not done (planned sets, no ticks, no feel), extra practice logged in it moves to that day's extras, and the engine re-plans what follows.
+
+### 修复 / Fixed
+- 练过的组全删掉后，动作回到没练那摞（以前会留在练好那摞算跳过）；滑动停稳和打勾时 Cover Flow 不再闪一下；切换两摞后唱片不再变透明。
+- Holding away every done set sends the move back to the moves to do (it used to stay among the finished ones as skipped); the cover flow no longer blinks on rest or on a tick, and records no longer turn see-through after swapping stacks.
+
+---
+
 ## [v1.74a] — 2026-11-27
 
 ### 新增 / Added
