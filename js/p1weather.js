@@ -54,18 +54,17 @@ function wxTiltOn(){if(wxTiltOn.done)return;const D=window.DeviceOrientationEven
 function wxApply(fx,lv){fx=fx||"none";if(fx!==WX.fx){WX.drops=[];WX.flakes=[]}WX.fx=fx;WX.lv=lv||1;
   if(fx==="none"){cancelAnimationFrame(WX.raf);WX.raf=0;if(WX.cv){[WX.ctx,WX.cx].forEach(g=>{g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,WX.cv.width,WX.cv.height)});WX.cv.hidden=WX.cs.hidden=true;WX.sSig=null}return}
   wxCanvas();WX.cv.hidden=WX.cs.hidden=false;WX.sSig=null;WX.dyn=1;if(!window.DeviceOrientationEvent||typeof DeviceOrientationEvent.requestPermission!=="function")wxTiltOn();
-  if(fx==="rain"&&!WX.drops.length){const n=[7,11,16][WX.lv-1];for(let i=0;i<n;i++)WX.drops.push(wxDrop())}
+  if(fx==="rain"&&!WX.drops.length){const n=[9,15,21][WX.lv-1];for(let i=0;i<n;i++)WX.drops.push(wxDrop())}
   if(!WX.raf&&!document.hidden){WX.last=performance.now();WX.raf=requestAnimationFrame(wxTick)}}
 /* an uneven outline: 10 radii around the bead, smoothed; small beads are almost round */
 /* beads at rest are never quite round: an uneven outline (two or three soft lobes where beads met, plus noise),
    stretched one way or the other; the smallest stay nearly round */
-function wxShape(r){const n=14,small=r<2.9,irr=small?.05:.12+Math.random()*.14,a2=small?.04:Math.random()*.2,a3=small?0:Math.random()*.12,p2=Math.random()*6.28,p3=Math.random()*6.28;
+function wxShape(r){const n=14,small=r<2.2,irr=small?.05:.12+Math.random()*.14,a2=small?.04:Math.random()*.2,a3=small?0:Math.random()*.12,p2=Math.random()*6.28,p3=Math.random()*6.28;
   let k=Array.from({length:n},(_,i)=>{const t=i/n*Math.PI*2;return 1+a2*Math.cos(2*t+p2)+a3*Math.cos(3*t+p3)+(Math.random()-.5)*irr*2});
   k=k.map((v,i)=>(k[(i+n-1)%n]+v*2+k[(i+1)%n])/4);return k}
-function wxDrop(r,x,y){const big=Math.random()<.22;r=r||(big?5.2+Math.random()*3.9:1.8+Math.random()*2.9);
-  return {x:x??Math.random()*WX.W,y:y??Math.random()*WX.H,r,k:wxShape(r),v:0,slide:false,life:0,max:25+Math.random()*30,trail:[],melt:0,rot:(Math.random()-.5)*1.6,asp:r<2.9?1:.78+Math.random()*.5}}
-/* a quarter fewer beads than at first and each 30% bigger: fewer to draw, and they read better */
-const WX_CAP=[20,29,38],WX_SLIDERS=[3,4,6],WX_RATE=[1.1,2.25,3.6];
+function wxDrop(r,x,y){const big=Math.random()<.22;r=r||(big?4+Math.random()*3:1.4+Math.random()*2.2);
+  return {x:x??Math.random()*WX.W,y:y??Math.random()*WX.H,r,k:wxShape(r),v:0,slide:false,life:0,max:25+Math.random()*30,trail:[],melt:0,rot:(Math.random()-.5)*1.6,asp:r<2.2?1:.78+Math.random()*.5}}
+const WX_CAP=[27,39,51],WX_SLIDERS=[3,4,6],WX_RATE=[1.5,3,4.8];
 /* heavy rain: now and then a gust sweeps across from one side and blows the beads off, big ones bursting into small */
 function wxGust(dt,D){if(WX.lv<3){WX.gust=null;return}const now=performance.now();if(!WX.nextGust)WX.nextGust=now+8e3+Math.random()*10e3;
   if(!WX.gust&&now>WX.nextGust){WX.gust={dir:Math.random()<.5?-1:1,x:0,v:WX.W*1.6};WX.gust.x=WX.gust.dir>0?-40:WX.W+40;WX.nextGust=now+9e3+Math.random()*12e3}
@@ -78,42 +77,32 @@ function wxGust(dt,D){if(WX.lv<3){WX.gust=null;return}const now=performance.now(
   if(G.x<-80||G.x>WX.W+80)WX.gust=null}
 function wxRain(dt){const lv=WX.lv-1,D=WX.drops,m=Math.hypot(WX.gx,WX.gy),ux=m>.05?WX.gx/m:0,uy=m>.05?WX.gy/m:1;WX.acc+=dt*WX_RATE[lv];wxGust(dt,D);
   while(WX.acc>=1){WX.acc-=1;const still=D.filter(d=>!d.slide&&!d.melt);
-    if(still.length>=WX_CAP[lv]){const d=still[Math.random()*still.length|0];d.r=Math.min(11.7,Math.hypot(d.r,3.1));d.k=wxShape(d.r)}
-    else{const n=wxDrop();const hit=still.find(d=>Math.hypot(d.x-n.x,d.y-n.y)<d.r+n.r);if(hit){hit.r=Math.min(11.7,Math.hypot(hit.r,n.r));hit.k=wxShape(hit.r);hit.life=0}else D.push(n)}}
+    if(still.length>=WX_CAP[lv]){const d=still[Math.random()*still.length|0];d.r=Math.min(9,Math.hypot(d.r,2.4));d.k=wxShape(d.r)}
+    else{const n=wxDrop();const hit=still.find(d=>Math.hypot(d.x-n.x,d.y-n.y)<d.r+n.r);if(hit){hit.r=Math.min(9,Math.hypot(hit.r,n.r));hit.k=wxShape(hit.r);hit.life=0}else D.push(n)}}
   let sliders=D.filter(d=>d.slide).length;
   for(let i=D.length-1;i>=0;i--){const d=D[i];
     if(d.melt){d.melt+=dt*4;if(d.melt>=1)D.splice(i,1);continue}
     if(d.blow){d.x+=d.blow*dt;d.y+=(d.lift||0)*dt+uy*30*dt;d.blow*=Math.pow(.12,dt);d.lift*=Math.pow(.2,dt);d.trail.push({x:d.x,y:d.y});if(d.trail.length>14)d.trail.shift();
       if(Math.abs(d.blow)<30){d.blow=0;d.trail=[];d.life=0}if(d.x<-30||d.x>WX.W+30||d.y<-30||d.y>WX.H+30)D.splice(i,1);continue}
-    if(!d.slide){d.life+=dt;if(d.r>6&&m>.3&&sliders<WX_SLIDERS[lv]&&Math.random()<dt*.9*m){d.slide=true;sliders++}
+    if(!d.slide){d.life+=dt;if(d.r>4.6&&m>.3&&sliders<WX_SLIDERS[lv]&&Math.random()<dt*.9*m){d.slide=true;sliders++}
       if(d.life>d.max){d.r-=dt*.25;if(d.r<.8)D.splice(i,1)}continue}
     if(m<.2){d.v*=.8;if(d.v<2){d.slide=false;d.life=0}continue}
     /* stop-and-go: drops stick, then let go; heavier and steeper runs faster */
     const vmax=(30+d.r*22)*m;d.v=Math.random()<dt*1.5?d.v*.15:Math.min(vmax,d.v+dt*(120+d.r*30)*m);
     const step=d.v*dt,wob=Math.sin((d.x+d.y)*.05+d.r)*.15;d.x+=ux*step-uy*wob;d.y+=uy*step+ux*wob;
-    d.trail.push({x:d.x,y:d.y});if(d.trail.length>40)d.trail.shift();d.r=Math.max(4.7,d.r-step*.004);
-    if(Math.random()<step*.015){const b=wxDrop(1.2+Math.random()*1.4,d.x-ux*d.r*1.8+(Math.random()-.5)*2,d.y-uy*d.r*1.8);b.max=6+Math.random()*10;D.push(b)}
-    for(let j=D.length-1;j>=0;j--){const o=D[j];if(o===d||o.slide||o.melt)continue;if(Math.hypot(o.x-d.x,o.y-d.y)<d.r+o.r*.8){d.r=Math.min(13,Math.hypot(d.r,o.r));D.splice(j,1);if(j<i)i--}}
+    d.trail.push({x:d.x,y:d.y});if(d.trail.length>40)d.trail.shift();d.r=Math.max(3.6,d.r-step*.004);
+    if(Math.random()<step*.02){const b=wxDrop(.9+Math.random()*1.1,d.x-ux*d.r*1.8+(Math.random()-.5)*2,d.y-uy*d.r*1.8);b.max=6+Math.random()*10;D.push(b)}
+    for(let j=D.length-1;j>=0;j--){const o=D[j];if(o===d||o.slide||o.melt)continue;if(Math.hypot(o.x-d.x,o.y-d.y)<d.r+o.r*.8){d.r=Math.min(10,Math.hypot(d.r,o.r));D.splice(j,1);if(j<i)i--}}
     if(d.x<-30||d.x>WX.W+30||d.y<-30||d.y>WX.H+30)D.splice(D.indexOf(d),1)}}
 /* a closed smooth path through the bead's outline; running beads stretch into a teardrop behind them */
 function wxPath(g,d,run){const n=d.k.length;const pts=d.k.map((k,i)=>{const a=i/n*Math.PI*2;let x=Math.cos(a)*d.r*k,y=Math.sin(a)*d.r*k;
     if(y>0)y*=1.1;else y*=run?1.7:.92;if(run&&y<0)x*=1+y/(d.r*3.2);return [x,y]});
   g.beginPath();for(let i=0;i<=n;i++){const p=pts[i%n],q=pts[(i+1)%n],mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2;if(i===0)g.moveTo(mx,my);else g.quadraticCurveTo(p[0],p[1],mx,my)}g.closePath()}
-/* a bead at rest is drawn once into its own little sprite (redrawn only when it grows, merges or the light changes) and
-   then just stamped, turned to the tilt and shrunk while it melts; only running beads, whose outline stretches, and the
-   shared picture (live=true, drawn sharp at its own scale) draw the full bead every time */
-function wxDrawDrop(g,d,dark,live){const life=d.melt?1-d.melt:1;if(life<=0)return;const run=d.slide||!!d.blow;
+function wxDrawDrop(g,d,dark){const life=d.melt?1-d.melt:1;if(life<=0)return;const run=d.slide||!!d.blow;
   if(run&&d.trail.length>2){g.save();g.lineCap="round";g.lineJoin="round";g.lineWidth=d.r*.75;g.strokeStyle=dark?"rgba(200,220,255,.07)":"rgba(80,100,130,.09)";
     g.beginPath();d.trail.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.stroke();g.restore()}
-  const ang=d.blow?Math.atan2((d.lift||0)*.3+20,d.blow)-Math.PI/2:run?Math.atan2(WX.gy,WX.gx)-Math.PI/2:Math.atan2(WX.gy||1,WX.gx)-Math.PI/2+(d.rot||0),sh=d.melt?1-d.melt*.6:1;
-  g.save();g.globalAlpha=life;g.translate(d.x,d.y);g.rotate(ang);if(!run&&d.asp)g.scale(d.asp,1/Math.sqrt(d.asp));
-  if(run||live){wxBead(g,d.r*sh,d.k,run,dark);g.restore();return}
-  const key=(d.r*4|0)+(dark?"d":"l")+(WX.dpr||1);
-  if(d.sKey!==key||d.sK!==d.k){const sz=Math.ceil(d.r*3.8+4),dp=WX.dpr||1,c=d.sp||(d.sp=document.createElement("canvas"));c.width=c.height=Math.ceil(sz*dp);
-    const sg=c.getContext("2d");sg.setTransform(dp,0,0,dp,0,0);sg.translate(sz/2,sz/2);wxBead(sg,d.r,d.k,false,dark);d.sKey=key;d.sK=d.k;d.sz=sz}
-  const z=d.sz*sh;g.drawImage(d.sp,-z/2,-z/2,z,z);g.restore()}
-/* one bead at the origin, already turned: its shadow, the clear body, the lens, the rim and the glint */
-function wxBead(g,r,k,run,dark){const dd={r,k};
+  const ang=d.blow?Math.atan2((d.lift||0)*.3+20,d.blow)-Math.PI/2:run?Math.atan2(WX.gy,WX.gx)-Math.PI/2:Math.atan2(WX.gy||1,WX.gx)-Math.PI/2+(d.rot||0),r=d.r*(d.melt?1-d.melt*.6:1);
+  g.save();g.globalAlpha=life;g.translate(d.x,d.y);g.rotate(ang);if(!run&&d.asp)g.scale(d.asp,1/Math.sqrt(d.asp));const dd={r,k:d.k};
   /* the shadow it casts, a little downhill */
   g.save();g.translate(0,r*.3);wxPath(g,dd,run);g.fillStyle=dark?"rgba(0,0,0,.32)":"rgba(30,50,80,.14)";g.fill();g.restore();
   /* body: almost clear, darker toward the uphill rim where the edge bends the light away */
@@ -126,7 +115,8 @@ function wxBead(g,r,k,run,dark){const dd={r,k};
   /* the rim */
   wxPath(g,dd,run);g.lineWidth=Math.max(.6,r*.12);g.strokeStyle=dark?"rgba(170,195,225,.22)":"rgba(40,60,90,.22)";g.stroke();
   /* glint uphill, not dead centre */
-  g.beginPath();g.ellipse(-r*.3,-r*.42,Math.max(.4,r*.2),Math.max(.25,r*.11),-.5,0,7);g.fillStyle="rgba(255,255,255,"+(dark?.75:.95)+")";g.fill()}
+  g.beginPath();g.ellipse(-r*.3,-r*.42,Math.max(.4,r*.2),Math.max(.25,r*.11),-.5,0,7);g.fillStyle="rgba(255,255,255,"+(dark?.75:.95)+")";g.fill();
+  g.restore()}
 function wxSnow(dt){const n=[21,33,48][WX.lv-1],m=Math.hypot(WX.gx,WX.gy),fx=WX.gx,fy=Math.max(.35,WX.gy);
   while(WX.flakes.length<n)WX.flakes.push({x:Math.random()*WX.W,y:-10-Math.random()*WX.H,r:1.2+Math.random()*2.8,vy:14+Math.random()*26,p:Math.random()*6,melt:0});
   for(let i=WX.flakes.length-1;i>=0;i--){const f=WX.flakes[i];if(f.melt){f.melt+=dt*3;if(f.melt>=1){WX.flakes.splice(i,1)}continue}
@@ -188,7 +178,7 @@ function wxPaint(g,W,H,t){const w=!WX.preview&&WX.fx&&WX.fx!=="none"?{fx:WX.fx,l
   let sd=7;for(const ch of t)sd=(sd*31+ch.charCodeAt(0))>>>0;const rnd=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};
   const R=Math.random,gx=WX.gx,gy=WX.gy,k=W/390,w0=390,h0=H/k,area=h0/844;Math.random=rnd;WX.gx=0;WX.gy=1;
   try{g.save();g.scale(k,k);
-    if(w.fx==="rain"){const n=Math.max(6,Math.round([15,24,33][lv-1]*area));for(let i=0;i<n;i++)wxDrawDrop(g,wxDrop(null,rnd()*w0,rnd()*h0),dark,true)}
+    if(w.fx==="rain"){const n=Math.max(6,Math.round([20,32,44][lv-1]*area));for(let i=0;i<n;i++)wxDrawDrop(g,wxDrop(null,rnd()*w0,rnd()*h0),dark)}
     else if(w.fx==="snow"){const n=Math.max(8,Math.round([21,33,48][lv-1]*area));
       for(let i=0;i<n;i++){const x=rnd()*w0,y=rnd()*h0,r=1.2+rnd()*2.8;
         if(!dark){g.beginPath();g.arc(x,y+.6,r+.7,0,7);g.fillStyle="rgba(90,110,140,.22)";g.fill()}
