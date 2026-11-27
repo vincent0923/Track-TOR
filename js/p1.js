@@ -84,27 +84,8 @@ function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}
   de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if((THEMES.find(x=>x.id===th)||{}).gloss)de.dataset.gloss="";else delete de.dataset.gloss;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;if(fix||(THEMES.find(x=>x.id===th)||{}).lit)de.dataset.lit="";else delete de.dataset.lit;
   iconApply();requestAnimationFrame(()=>fitTitle());document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
-/* tactile themes: the light on the materials follows the phone. Tilt moves the highlight (--lx/--ly) and turns the
-   reflections on metal (--rot); the rest point drifts back, so holding still settles it. A mouse does the same. */
-/* how strong the light is: 0 off (still), 1 soft, 2 standard, 3 max; scales highlight alpha (--rt) and how far the tilt moves it */
-/* light: on (a gentle effect) or off (still); older stored levels 1–3 count as on */
-function rtLevel(){let v=1;try{const x=localStorage.getItem(PK+"rt");if(x!=null)v=+x}catch(e){}return v>0?1:0}
-const RT_K=[0,.5];
-function rtApply(){const de=document.documentElement,k=RT_K[rtLevel()];de.style.setProperty("--rt",k||.5);if(!k){["--lx","--ly","--rot"].forEach(v=>de.style.removeProperty(v))}}
-rtApply();
-/* every change repaints every lit surface, so the light moves in coarse steps at most about 12 times a second */
-(function(){const de=document.documentElement,on=()=>"lit" in de.dataset&&rtLevel()>0&&!matchMedia("(prefers-reduced-motion: reduce)").matches;let last="",lastAt=0;
-  let bg=null,bb=null,x=0,y=0,raf=0;
-  const put=()=>{raf=0;const now=performance.now();if(now-lastAt<80||de.classList.contains("touching")){raf=requestAnimationFrame(put);return}
-    const k=RT_K[rtLevel()],lx=Math.round(30+x*1.6*k),ly=Math.round(10+y*1.3*k),rot=Math.round(x*3*k/2)*2,key=lx+","+ly+","+rot;if(key===last)return;last=key;lastAt=now;
-    de.style.setProperty("--lx",lx+"%");de.style.setProperty("--ly",ly+"%");de.style.setProperty("--rot",rot+"deg")};
-  const go=(nx,ny)=>{x=Math.max(-25,Math.min(25,nx));y=Math.max(-20,Math.min(20,ny));if(!raf)raf=requestAnimationFrame(put)};
-  const ori=e=>{if(!on()||e.gamma==null)return;if(bg==null){bg=e.gamma;bb=e.beta}bg+=(e.gamma-bg)*.02;bb+=(e.beta-bb)*.02;go(e.gamma-bg,e.beta-bb)};
-  /* listen from the start (no events arrive until allowed); where the browser asks first, ask on the first tap */
-  addEventListener("deviceorientation",ori);
-  const ask=()=>{const D=window.DeviceOrientationEvent;if(ask.d||!D||typeof D.requestPermission!=="function")return;ask.d=true;D.requestPermission().catch(()=>{ask.d=false})};
-  addEventListener("pointerdown",()=>{if(on())ask()},{passive:true});
-  addEventListener("pointermove",e=>{if(e.pointerType==="mouse"&&on())go((e.clientX/innerWidth-.5)*40,(e.clientY/innerHeight-.5)*30)},{passive:true})})();
+/* the light on the materials stays where it is (the tilt-following light was dropped); its old setting goes */
+try{localStorage.removeItem(PK+"rt")}catch(e){}
 /* dust: two days without training or extras and the screen gathers dust, more each day (levels 1–3); training wipes it */
 /* music easter egg (js/p1music.js spGroove): bricks, trained days and the start key move with what plays */
 function grooveOn(){try{return localStorage.getItem(PK+"groove")!=="0"}catch(e){return true}}
@@ -855,7 +836,7 @@ function advSheet(){const row=(to,ic,t)=>'<button class="opt" data-act="go" data
 /* Effects: ray-traced light (a knob), weather, dust after days off, celebrations */
 function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+'" role="switch" aria-checked="'+on+'">'+ic+'<span class="sp">'+t+'</span><span class="sw" aria-hidden="true"></span></button>';
   openSheet('<div class="sh-h"><h3>'+T('特效','Effects')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
-    +'<div class="setlist">'+sw("rt",rtLevel()>0,ICON.spark,T('光追','Ray-traced light'))
+    +'<div class="setlist">'
     +'<button class="opt" data-act="go" data-to="p1:weather">'+ICON.rain+'<span class="sp">'+T('天气','Weather')+'</span>'+ICON.right+'</button>'
     +sw("glass",glassOn(),ICON.spark,T('半透明玻璃','Translucent glass'))+sw("dust",dustOn(),ICON.dust,T('两天没练就落灰','Dust after two days off'))
     +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+sw("cfart",cfMusicOn(),ICON.music,T('动作唱片用常听的歌（需 Spotify）','Move records from songs you play (needs Spotify)'))+sw("groove",grooveOn(),ICON.music,T('音乐律动（需 Spotify）','Move with the music (needs Spotify)'))+'</div>');CUR_SHEET=fxSheet}
@@ -949,7 +930,6 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="fxmenu"){const up=CUR_SHEET;fxSheet();SHEET_UP=up}
   else if(a==="iconmenu"){const up=CUR_SHEET;iconSheet();SHEET_UP=up}
   else if(a==="iconpick"){try{localStorage.setItem(PK+"icon",b.dataset.k)}catch(err){}iconApply();SFX.tap();buzz(10);const up=SHEET_UP;iconSheet();SHEET_UP=up}
-  else if(a==="rt"){const on=rtLevel()===0;try{localStorage.setItem(PK+"rt",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);rtApply();buzz(8)}
   else if(a==="groove"){const on=!grooveOn();try{localStorage.setItem(PK+"groove",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);buzz(8);if(typeof spGroove==="function")spGroove()}
   else if(a==="cfart"){const on=!cfMusicOn();try{localStorage.setItem(PK+"cfart",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);buzz(8)}
   else if(a==="glass"){const on=!glassOn();try{localStorage.setItem(PK+"glass",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);glassApply();buzz(8)}

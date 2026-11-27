@@ -1032,7 +1032,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="pocket"][data-mode="dark"] .btn.ghost{color:var(--ink)}
 
 /* light strength (Settings › Effects › 光追): highlight alphas scale with --rt */
-:root{--rt:1}
+:root{--rt:.5}
 /* effects sheet: the light knob sits in its row */
 /* dust after days off: specks, a few hairline scratches, a sallow vignette and a faded backdrop; training wipes it away */
 #dust{position:fixed;inset:0;z-index:35;pointer-events:none;opacity:0;transition:opacity 1.4s ease;clip-path:inset(0 0 0 0);
