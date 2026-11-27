@@ -1325,8 +1325,8 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="ipod"] .fs-peek i{}
 :root[data-theme="ipod"] .opt,:root[data-theme="ipod"] .seg,:root[data-theme="ipod"] .calpill,:root[data-theme="ipod"] .thc,:root[data-theme="ipod"] .preset{background:#F2F5F9;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(255,255,255,.4),0 1px 3px rgba(30,40,60,.08)}
 :root[data-theme="ipod"][data-mode="dark"] .opt,:root[data-theme="ipod"][data-mode="dark"] .seg,:root[data-theme="ipod"][data-mode="dark"] .calpill,:root[data-theme="ipod"][data-mode="dark"] .thc,:root[data-theme="ipod"][data-mode="dark"] .preset{background:#24252A;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 1px 3px rgba(0,0,0,.3)}
-.langseg{display:flex;width:100%;padding:4px}
-.langseg button{flex:1;height:40px;font-size:14px}
+.langseg{display:flex;width:100%}
+.langseg button{flex:1;font-size:14px}
 .mask .btn.wide{height:46px;padding:0 22px;font-size:15px}
 /* playlists inside the full player: a big pill under the controls opens a grid of covers */
 .sp-plbtn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px 0 16px;border-radius:999px;background:var(--sub);color:var(--ink);font-size:15px;font-weight:700;box-shadow:inset 0 0 0 1px var(--line);transition:transform .2s var(--spring)}
@@ -1881,3 +1881,21 @@ html.touching.groove :is(.bricks .bks,.cal .dd b,.hero .hgo){animation-play-stat
 :root[data-theme="aqua"][data-mode="dark"] .bricks{background:#353A41;box-shadow:inset 0 1px 3px rgba(0,0,0,.45)}
 :root[data-theme="aqua"][data-mode="dark"] .f-sets i.add{box-shadow:inset 0 0 0 1px #6A7079}
 :root.glass[data-theme="aqua"][data-mode="dark"]{--gl-dock:#50555D;--gl-mp:#4B515A}
+/* ---------- segmented control, after the Mac's: one bar with small corners, the segments flush with hairline dividers,
+   the chosen one filled to its edges. One shape for every skin; each skin only sets the colours (--sg-*) ---------- */
+html:root .seg.seg.seg,html:root .mask .mode-tabs.mode-tabs.mode-tabs{display:flex;gap:0;padding:0;border-radius:var(--sg-r,10px);overflow:hidden;background:var(--sg-bg,var(--card));
+  border:1px solid var(--sg-line,color-mix(in srgb,var(--ink) 16%,transparent));box-shadow:var(--sg-sh,0 1px 2px rgba(0,0,0,.07))}
+html:root .seg.seg.seg button,html:root .mask .mode-tabs.mode-tabs.mode-tabs button{flex:1;height:auto;min-height:34px;margin:0;padding:7px 10px;border:0;border-radius:0;background:none;box-shadow:none;
+  color:var(--sg-ink,var(--ink));font-size:13px;font-weight:600;text-shadow:var(--sg-ts,none);transform:none}
+html:root .seg.seg.seg button+button,html:root .mask .mode-tabs.mode-tabs.mode-tabs button+button{border-left:1px solid var(--sg-line,color-mix(in srgb,var(--ink) 16%,transparent))}
+html:root .seg.seg.seg button::before,html:root .seg.seg.seg button::after,html:root .mask .mode-tabs.mode-tabs.mode-tabs button::before,html:root .mask .mode-tabs.mode-tabs.mode-tabs button::after{content:none}
+html:root .seg.seg.seg button[aria-pressed="true"],html:root .mask .mode-tabs.mode-tabs.mode-tabs button.active{background:var(--sg-on,var(--ac));color:var(--sg-on-ink,var(--on-ac));box-shadow:var(--sg-on-sh,inset 0 1px 2px rgba(0,0,0,.16));text-shadow:var(--sg-on-ts,none)}
+html:root .seg.seg.seg button:active,html:root .mask .mode-tabs.mode-tabs.mode-tabs button:active{filter:brightness(.94)}
+/* skins: iOS 6 gloss, Aqua (Snow Leopard's segmented control: the pale button gradient, grey hairlines, the chosen part blue gel), e-ink */
+:root[data-gloss]{--sg-bg:var(--g-key),var(--card);--sg-line:var(--g-edge);--sg-on:var(--g-key),var(--g-btn);--sg-on-sh:inset 0 1px 2px rgba(0,0,0,.3);--sg-on-ts:0 -1px 0 rgba(0,0,0,.28);--sg-ts:var(--g-emb,none)}
+:root[data-theme="aqua"]{--sg-r:6px;--sg-bg:linear-gradient(180deg,#FDFDFE 0%,#ECEEF2 48%,#DFE2E7 52%,#F2F3F6 100%);--sg-line:#8B909A;--sg-ink:#22262C;--sg-sh:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(20,30,50,.18);
+  --sg-on:linear-gradient(180deg,var(--gel-hi) 0%,var(--gel-mid) 50%,var(--gel-deep) 51%,var(--gel-light) 100%);--sg-on-ink:#fff;--sg-on-sh:inset 0 1px 2px rgba(10,40,90,.35);--sg-on-ts:0 -1px 1px rgba(10,40,90,.4);--sg-ts:0 1px 0 rgba(255,255,255,.8)}
+:root[data-theme="aqua"][data-mode="dark"]{--sg-bg:var(--capsule);--sg-line:#23272C;--sg-ink:#F2F4F7;--sg-ts:0 -1px 1px rgba(0,0,0,.5);--sg-sh:0 1px 2px rgba(0,0,0,.4)}
+:root[data-theme="eink"]{--sg-r:6px;--sg-bg:var(--card);--sg-line:var(--ink);--sg-on:var(--ink);--sg-on-ink:var(--bg);--sg-on-sh:none;--sg-sh:none}
+/* orange and copper fills read better with dark words */
+:root[data-theme="ember"][data-mode="light"],:root[data-theme="braun"],:root[data-theme="md"],:root[data-theme="dyson"][data-mode="dark"]{--sg-on-ink:#1E1208;--sg-on-ts:0 1px 0 rgba(255,255,255,.25)}
