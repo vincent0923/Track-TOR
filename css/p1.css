@@ -197,7 +197,8 @@ h1,h2,h3,p{margin:0}
 .f-sets{width:100%;overflow:hidden;margin:8px 0 -4px;padding:10px 0;-webkit-mask-image:linear-gradient(90deg,transparent 0,transparent 4%,#000 36%);mask-image:linear-gradient(90deg,transparent 0,transparent 4%,#000 36%)}
 .fs-track{display:flex;gap:8px;width:max-content;transition:transform .5s var(--spring)}
 .fs-track i{flex:none}
-@keyframes setBreath{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ac) 0%,transparent)}50%{box-shadow:0 0 14px 2px color-mix(in srgb,var(--ac) 42%,transparent)}}
+/* the breathing glow is a fixed halo whose opacity breathes: opacity runs on the GPU, an animated box-shadow repainted every frame */
+@keyframes setBreath{0%,100%{opacity:0}50%{opacity:1}}
 .f-sets i{min-width:44px;height:30px;padding:0 8px;border-radius:999px;display:grid;place-items:center;font:700 13px/1 var(--num);background:var(--sub);color:var(--muted);font-style:normal;transition:all .3s var(--ease)}
 .f-sets i.dn{background:var(--ac-soft);color:var(--ac-text);display:flex;gap:3px}
 .f-sets i.dn svg{width:13px;height:13px;color:var(--ac);flex:none}
@@ -208,8 +209,9 @@ h1,h2,h3,p{margin:0}
 .fs-track i.gone{transform:scale(0);opacity:0;transition:transform .2s var(--ease),opacity .2s}
 .xlog:disabled{opacity:.4}
 .f-sets i.add:active{transform:scale(.88)}
-.f-sets i.cur{background:var(--ink);color:var(--bg);animation:setBreath 2.6s ease-in-out infinite}
-@media (prefers-reduced-motion: reduce){.f-sets i.cur{animation:none}}
+.f-sets i.cur{background:var(--ink);color:var(--bg)}
+.f-sets i.cur::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 14px 2px color-mix(in srgb,var(--ac) 42%,transparent);opacity:0;will-change:opacity;animation:setBreath 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.f-sets i.cur::before{animation:none}}
 .f-num{display:flex;align-items:center;gap:22px;margin-top:6px}
 .f-num b{font-family:var(--num);font-size:84px;font-weight:800;letter-spacing:-.06em;line-height:1;min-width:150px;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;justify-content:center}
 .f-num b>span{display:inline-block}
@@ -1180,7 +1182,8 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
   --disc-ink:#2A1A0C;--rim:#0A0D1E;--disc-edge:#6A4220;
   --grille-bg:#C2864A;--grille-hole:#3A2410;--grille-lip:#F1C894;--throat:#0C1022;
   --shadow:0 0 0 1px rgba(0,0,0,.25),0 1px 1px rgba(0,0,0,.3),0 8px 16px -6px rgba(0,0,0,.45),0 26px 40px -20px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -12px 22px -14px rgba(0,0,0,.25);color-scheme:dark}
-:root[data-theme="dyson"] body{background:var(--fine),var(--page);background-size:200px 200px,100% 100%;background-blend-mode:soft-light,normal;background-attachment:scroll}
+/* --page is two gradients and a colour: give both gradients the whole page (a short list repeats, and the dark corner got tiled every 200px) */
+:root[data-theme="dyson"] body{background:var(--fine),var(--page);background-size:200px 200px,100% 100%,100% 100%;background-blend-mode:soft-light,normal,normal;background-attachment:scroll}
 :root[data-theme="dyson"] .card,:root[data-theme="dyson"] .tile,:root[data-theme="dyson"] .hero.dark,:root[data-theme="dyson"] .sheet .panel,:root[data-theme="dyson"] .mask .sheet,:root[data-theme="dyson"] .dock,:root[data-theme="dyson"] .mini-pl{background:radial-gradient(150% 100% at var(--lx,30%) var(--ly,10%),rgba(255,255,255,calc(.22*var(--rt,.5))),rgba(255,255,255,0) 60%),var(--fine),var(--mat);background-size:100% 100%,200px 200px,100% 100%;background-blend-mode:normal,soft-light,normal;border:0;border-radius:24px;box-shadow:var(--shadow);color:var(--ink)}
 /* the big card is the head of the dryer: the metal, with the fine grain */
 :root[data-theme="dyson"] .dark:not(.hero){--muted:color-mix(in srgb,var(--metal-ink) 70%,transparent);--sub:rgba(0,0,0,.12);--track:rgba(255,255,255,.28);background:var(--fine),var(--metal);background-size:200px 200px,100% 100%;background-blend-mode:soft-light,normal;color:var(--metal-ink);border:0;border-radius:24px;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 0 0 1px rgba(255,255,255,.12),inset 0 -20px 30px -20px rgba(60,20,0,.35),0 12px 24px -8px var(--metal-sh)}
@@ -1370,6 +1373,8 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
    layout to themselves; taps don't wait for a possible double tap */
 .fstack>.fs-top,.dock .pc,.sheet .panel,.mini-pl{will-change:transform}
 .card,.tile,.dock{contain:layout style}
+/* glows drawn with drop-shadow (rings, chart lines and dots) reach past the little svg box; without this they were cut off square */
+.ring svg,.spark svg,.chart svg{overflow:visible}
 button,[role=button],a{touch-action:manipulation}
 
 /* ---------- focus: the bottom row ---------- */

@@ -263,6 +263,7 @@ function renderFocus(anim){
     :'<button class="tickb skip" data-act="tick" aria-label="'+T('去掉这一组','Drop this set')+'">'+ICON.x+'</button>';
   const nb=Math.min(3,other.length),mini=nb?'<button class="cf-mini'+(run.stk==="done"?"":" dn")+'" data-act="cfswap" aria-label="'+(run.stk==="done"?T('回到没练的动作','Back to the moves to do'):T('看练好的动作','See the finished moves'))+'">'
     +Array.from({length:nb-1},(_,k)=>'<i style="transform:translate('+3*(nb-1-k)+'px,'+3*(nb-1-k)+'px)"></i>').join("")+'<i>'+(run.stk==="done"?ICON.dumbbell:ICON.check)+'</i></button>':'';
+  const keep=run.keepFlow&&fly==null&&run.cfKey===run.stk+list.join()?$(".cflow"):null;run.keepFlow=0;run.cfKey=run.stk+list.join();const keepX=keep?keep.querySelector(".cf-scroll").scrollLeft:0;if(keep)keep.remove();
   f.innerHTML='<div class="f-top"><span class="f-lab">'+LAB(p)+'</span><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
     +'<div class="f-body" id="fBody"><div class="cflow"><div class="cf-scroll'+(run.askFeel!=null?" lock":"")+'" tabindex="0" role="listbox" aria-label="'+T('动作','Moves')+'"><div class="cf-rail'+(run.cfIn?" in":"")+'">'+list.map(i=>'<div class="cf-slot">'+cfCard(i)+'</div>').join("")+'</div></div>'+(fly!=null?cfCard(fly," cf-fly"):"")+'</div>'
     +'<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'" data-i="'+i+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
@@ -271,8 +272,10 @@ function renderFocus(anim){
     +(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="inc" aria-label="'+T('加一','More')+'">+</button>')+'</div></div>'
     +'<div class="f-bottom" id="fBottom"><button class="mini f-x" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-bc">'+bottom+'</div><span class="f-x"></span></div>';
   run.cfIn=0;
+  /* the flow just came to rest on another record: keep the very same row (its covers stay decoded, its scroll stays put) */
+  if(keep){const nf=$(".cflow");if(nf)nf.replaceWith(keep);keep.querySelector(".cf-scroll").scrollLeft=keepX}
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
-  setsCenter();cfBind($(".cf-scroll"),list);cfFit();if(document.fonts)document.fonts.ready.then(cfFit);feelBind($(".feelbar"));setsHold();if(fly!=null)cfFly()}
+  setsCenter();if(!keep){cfBind($(".cf-scroll"),list);cfFit();if(document.fonts)document.fonts.ready.then(cfFit)}else document.querySelectorAll(".cf-card").forEach((c,j)=>c.setAttribute("aria-selected",list[j]===run.ex));feelBind($(".feelbar"));setsHold();if(fly!=null)cfFly()}
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
   const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,x=v.clientWidth/2-(c.offsetLeft+c.offsetWidth/2);
@@ -291,8 +294,8 @@ function cfBind(sc,list){if(!sc)return;const slots=[...sc.querySelectorAll(".cf-
   const sw=Math.max(40,Math.round(sc.clientWidth*.176));sc.parentNode.style.setProperty("--slot",sw+"px");
   const idx=()=>Math.max(0,Math.min(n-1,Math.round(sc.scrollLeft/sw)));
   sc.scrollLeft=Math.max(0,list.indexOf(run.ex))*sw;let shown=idx(),lx=sc.scrollLeft,lt=performance.now(),tm=0;
-  const done=()=>{clearTimeout(tm);const ex=list[idx()];if(run&&run.askFeel==null&&ex!=null&&ex!==run.ex){run.ex=ex;buzz(8);renderFocus(true)}};
-  sc.addEventListener("scroll",()=>{const t=performance.now(),i=idx();if(i!==shown){cfTick(i-shown,Math.abs(sc.scrollLeft-lx)/Math.max(1,t-lt)*1000);buzz(4);shown=i}lx=sc.scrollLeft;lt=t;
+  const done=()=>{clearTimeout(tm);const ex=list[idx()];if(run&&run.askFeel==null&&ex!=null&&ex!==run.ex){run.ex=ex;buzz(8);run.keepFlow=1;renderFocus(true)}};
+  sc.addEventListener("scroll",()=>{const t=performance.now(),i=idx();if(typeof WX!=="undefined")WX.hold=t+250;if(i!==shown){cfTick(i-shown,Math.abs(sc.scrollLeft-lx)/Math.max(1,t-lt)*1000);buzz(4);shown=i}lx=sc.scrollLeft;lt=t;
     clearTimeout(tm);tm=setTimeout(done,"onscrollend" in window?600:160)},{passive:true});
   if("onscrollend" in window)sc.addEventListener("scrollend",done);
   slots.forEach((el,j)=>el.addEventListener("click",()=>{if(run.askFeel==null&&j!==idx())sc.scrollTo({left:j*sw,behavior:"smooth"})}));
