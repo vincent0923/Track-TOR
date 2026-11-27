@@ -219,7 +219,7 @@ function startRun(sid){const p=BYID[sid],doc=sessionDoc(sid),pb=pullSeries();
   const f=$("#focus");f.classList.add("on");document.documentElement.classList.add("infocus");f.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
   clearInterval(clockT);clockT=setInterval(()=>{const el=$("#fTime");if(el){const s=Math.floor((Date.now()-run.t0)/1000);el.textContent=Math.floor(s/60)+":"+pad(s%60)}},1000);
   renderFocus()}
-function closeRun(){clearInterval(clockT);const f=$("#focus");f.classList.remove("on");document.documentElement.classList.remove("infocus");f.setAttribute("aria-hidden","true");document.body.style.overflow="";run=null;renderTrainView()}
+function closeRun(){clearInterval(clockT);document.documentElement.classList.remove("cfmove");const f=$("#focus");f.classList.remove("on");document.documentElement.classList.remove("infocus");f.setAttribute("aria-hidden","true");document.body.style.overflow="";run=null;renderTrainView()}
 function curSet(){return run.sets[run.ex].findIndex(x=>!x.d)}
 /* the moves are two stacks: the ones still to do and the ones done. The stack in focus is a cover flow, one "record"
    per move (name, tempo, sets × reps, a pip per set); the other sits small at the right of the sets, a tick on the done
@@ -290,7 +290,9 @@ function cfBind(sc,list){if(!sc)return;const slots=[...sc.querySelectorAll(".cf-
   const idx=()=>Math.max(0,Math.min(n-1,Math.round(sc.scrollLeft/sw)));
   sc.scrollLeft=Math.max(0,list.indexOf(run.ex))*sw;let shown=idx(),lx=sc.scrollLeft,lt=performance.now(),tm=0;
   const done=()=>{clearTimeout(tm);const ex=list[idx()];if(run&&run.askFeel==null&&ex!=null&&ex!==run.ex){run.ex=ex;buzz(8);renderFocus(true)}};
-  sc.addEventListener("scroll",()=>{const t=performance.now(),i=idx();if(typeof WX!=="undefined")WX.hold=t+250;if(i!==shown){cfTick(i-shown,Math.abs(sc.scrollLeft-lx)/Math.max(1,t-lt)*1000);buzz(4);shown=i}lx=sc.scrollLeft;lt=t;
+  /* while the row moves the rain fades out (a see-through layer is skipped by the GPU) and comes back once it rests */
+  const de=document.documentElement;let mvT=0;const still=()=>{de.classList.remove("cfmove")};
+  sc.addEventListener("scroll",()=>{const t=performance.now(),i=idx();if(typeof WX!=="undefined")WX.hold=t+250;if(!de.classList.contains("cfmove"))de.classList.add("cfmove");clearTimeout(mvT);mvT=setTimeout(still,220);if(i!==shown){cfTick(i-shown,Math.abs(sc.scrollLeft-lx)/Math.max(1,t-lt)*1000);buzz(4);shown=i}lx=sc.scrollLeft;lt=t;
     clearTimeout(tm);tm=setTimeout(done,"onscrollend" in window?600:160)},{passive:true});
   if("onscrollend" in window)sc.addEventListener("scrollend",done);
   slots.forEach((el,j)=>el.addEventListener("click",()=>{if(run.askFeel==null&&j!==idx())sc.scrollTo({left:j*sw,behavior:"smooth"})}));
