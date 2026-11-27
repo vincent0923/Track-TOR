@@ -264,7 +264,7 @@ function renderFocus(anim){
   const nb=Math.min(3,other.length),mini=nb?'<button class="cf-mini'+(run.stk==="done"?"":" dn")+'" data-act="cfswap" aria-label="'+(run.stk==="done"?T('回到没练的动作','Back to the moves to do'):T('看练好的动作','See the finished moves'))+'">'
     +Array.from({length:nb-1},(_,k)=>'<i style="transform:translate('+3*(nb-1-k)+'px,'+3*(nb-1-k)+'px)"></i>').join("")+'<i>'+(run.stk==="done"?ICON.dumbbell:ICON.check)+'</i></button>':'';
   f.innerHTML='<div class="f-top"><span class="f-lab">'+LAB(p)+'</span><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
-    +'<div class="f-body" id="fBody"><div class="cflow" tabindex="0" role="listbox" aria-label="'+T('动作','Moves')+'"><div class="cf-rail'+(run.cfIn?" in":"")+'">'+list.map(i=>cfCard(i)).join("")+(fly!=null?cfCard(fly," cf-fly"):"")+'</div></div>'
+    +'<div class="f-body" id="fBody"><div class="cflow"><div class="cf-scroll'+(run.askFeel!=null?" lock":"")+'" tabindex="0" role="listbox" aria-label="'+T('动作','Moves')+'"><div class="cf-rail'+(run.cfIn?" in":"")+'">'+list.map(i=>'<div class="cf-slot">'+cfCard(i)+'</div>').join("")+'</div></div>'+(fly!=null?cfCard(fly," cf-fly"):"")+'</div>'
     +'<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'" data-i="'+i+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
     +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+mini+'</div>'
     +'<div class="f-num">'+(ci<0?'<span style="width:46px"></span>':'<button class="mini" data-act="dec" aria-label="'+T('减一','Less')+'">−</button>')+'<b class="n"><span id="fVal"'+(anim?' class="pop"':'')+'>'+val+'</span>'+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</b>'
@@ -272,7 +272,7 @@ function renderFocus(anim){
     +'<div class="f-bottom" id="fBottom"><button class="mini f-x" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><div class="f-bc">'+bottom+'</div><span class="f-x"></span></div>';
   run.cfIn=0;
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
-  setsCenter();cfBind($(".cflow"),list);cfFit();if(document.fonts)document.fonts.ready.then(cfFit);feelBind($(".feelbar"));setsHold();if(fly!=null)cfFly()}
+  setsCenter();cfBind($(".cf-scroll"),list);cfFit();if(document.fonts)document.fonts.ready.then(cfFit);feelBind($(".feelbar"));setsHold();if(fly!=null)cfFly()}
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
   const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,x=v.clientWidth/2-(c.offsetLeft+c.offsetWidth/2);
@@ -281,33 +281,22 @@ function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return
 /* a move's name may take two lines on its record; one that still doesn't fit shrinks */
 function cfFit(){document.querySelectorAll(".cf-card h2").forEach(h=>{h.style.fontSize="";
   for(let k=0;k<14&&(h.scrollHeight>h.clientHeight+4||h.scrollWidth>h.clientWidth+1);k++){const f=parseFloat(getComputedStyle(h).fontSize);if(f<=14)break;h.style.fontSize=Math.max(14,f*.92)+"px"}})}
-/* the cover flow's motion is Ashish Gogula's Cover Flow (MIT, docs/COVERFLOW-LICENSE.txt), ported from React: the
-   position follows its target on a spring (stiffness 150, damping 30, mass 1); a drag moves the target by
-   dx / (gap × 0.8), a release projects the flick (velocity × 0.002 s) to the nearest record; the middle record turns
-   through 100° over its first half step, the others sit at ±gap, stacked every quarter of a record, turned 50° and
-   pushed back; each record that passes the middle clicks, panned the way it moves and brighter when it moves fast */
-function cfBind(el,list){if(!el)return;const cards=[...el.querySelectorAll(".cf-card:not(.cf-fly)")],n=cards.length;if(!n)return;
-  const w=cards[0].offsetWidth||200,gap=w*.625,stack=w*.25,zk=w/400,ROT=50,dims=cards.map(c=>c.lastElementChild);
-  let tgt=Math.max(0,list.indexOf(run.ex)),pos=tgt,vel=0,raf=0,last=0,drag=null,shown=tgt;
-  const paint=()=>{cards.forEach((c,j)=>{const k=j-pos,a=Math.abs(k),sg=k<0?-1:1,x=a<1?k*gap:sg*(gap+(a-1)*stack),r=a<.5?-k*ROT*2:k<0?ROT:-ROT,z=(a>.5?-200:a*-400)*zk;
-      c.style.transform="translate3d("+x.toFixed(1)+"px,0,"+z.toFixed(1)+"px) rotateY("+r.toFixed(1)+"deg)";c.style.zIndex=1000-Math.round(a*10);c.style.opacity=a>3.6?0:1;
-      dims[j].style.opacity=Math.min(.5,a).toFixed(2)});
-    const i=Math.max(0,Math.min(n-1,Math.round(pos)));if(i!==shown){cfTick(i-shown,vel*gap);buzz(4);shown=i}};
-  const settle=()=>{const ex=list[tgt];if(!run||ex==null||ex===run.ex)return;run.ex=ex;buzz(8);renderFocus(true)};
-  const step=t=>{const dt=Math.min(.034,(t-last)/1000)||.016;last=t;for(let i=0;i<4;i++){const h=dt/4;vel+=(-150*(pos-tgt)-30*vel)*h;pos+=vel*h}paint();
-    if(!drag&&Math.abs(pos-tgt)<6e-4&&Math.abs(vel)<2e-3){pos=tgt;vel=0;paint();raf=0;settle();return}raf=requestAnimationFrame(step)};
-  const kick=()=>{if(!raf){last=performance.now();raf=requestAnimationFrame(step)}};
-  ["touchstart","touchmove","touchend"].forEach(k=>el.addEventListener(k,e=>e.stopPropagation(),{passive:true}));
-  el.addEventListener("pointerdown",e=>{if(run.askFeel!=null)return;el.setPointerCapture(e.pointerId);drag={x0:e.clientX,x:e.clientX,mv:0,tg:e.target.closest(".cf-card"),pts:[[performance.now(),e.clientX]]}});
-  el.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x;drag.x=e.clientX;if(Math.abs(e.clientX-drag.x0)>6)drag.mv=1;if(!drag.mv)return;
-    tgt=Math.max(-.45,Math.min(n-.55,tgt-dx/(gap*.8)));const t=performance.now();drag.pts.push([t,e.clientX]);while(drag.pts.length>2&&t-drag.pts[0][0]>100)drag.pts.shift();kick()});
-  const up=()=>{if(!drag)return;const d=drag;drag=null;
-    if(!d.mv){const j=cards.indexOf(d.tg);tgt=j>=0?j:Math.round(tgt);kick();return}
-    const a=d.pts[0],b=d.pts[d.pts.length-1],v=b[0]-a[0]>5&&performance.now()-b[0]<80?(b[1]-a[1])/(b[0]-a[0])*1000:0;
-    tgt=Math.max(0,Math.min(n-1,Math.round(tgt-v*.002)));kick()};
-  el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
-  el.addEventListener("keydown",e=>{if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;e.preventDefault();tgt=Math.max(0,Math.min(n-1,Math.round(tgt)+(e.key==="ArrowRight"?1:-1)));kick()});
-  paint()}
+/* the cover flow is the browser's own scrolling: the records sit in a row of narrow snap slots and CSS turns each one
+   by where it is in the row (a scroll-driven animation, after Bramus's CSS Cover Flow demo on
+   scroll-driven-animations.style, Apache 2.0, docs/SDA-LICENSE.txt), so the turning runs off the main thread. A slot is
+   0.176 of the row, one slot is 15% of each record's path, and the CSS turns a record over exactly that 15% either side
+   of the middle. Script only clicks as a record passes the middle, brings a tapped record round, and when the
+   scrolling stops makes the middle record's move the current one */
+function cfBind(sc,list){if(!sc)return;const slots=[...sc.querySelectorAll(".cf-slot")],n=slots.length;if(!n)return;
+  const sw=Math.max(40,Math.round(sc.clientWidth*.176));sc.parentNode.style.setProperty("--slot",sw+"px");
+  const idx=()=>Math.max(0,Math.min(n-1,Math.round(sc.scrollLeft/sw)));
+  sc.scrollLeft=Math.max(0,list.indexOf(run.ex))*sw;let shown=idx(),lx=sc.scrollLeft,lt=performance.now(),tm=0;
+  const done=()=>{clearTimeout(tm);const ex=list[idx()];if(run&&run.askFeel==null&&ex!=null&&ex!==run.ex){run.ex=ex;buzz(8);renderFocus(true)}};
+  sc.addEventListener("scroll",()=>{const t=performance.now(),i=idx();if(i!==shown){cfTick(i-shown,Math.abs(sc.scrollLeft-lx)/Math.max(1,t-lt)*1000);buzz(4);shown=i}lx=sc.scrollLeft;lt=t;
+    clearTimeout(tm);tm=setTimeout(done,"onscrollend" in window?600:160)},{passive:true});
+  if("onscrollend" in window)sc.addEventListener("scrollend",done);
+  slots.forEach((el,j)=>el.addEventListener("click",()=>{if(run.askFeel==null&&j!==idx())sc.scrollTo({left:j*sw,behavior:"smooth"})}));
+  ["touchstart","touchmove","touchend"].forEach(k=>sc.addEventListener(k,e=>e.stopPropagation(),{passive:true}))}
 /* Cover Flow's tick: a band-passed triangle chirp over a breath of noise, panned across as the record passes */
 function cfTick(dir,v){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const c=AC,t=c.currentTime,vn=Math.min(Math.abs(v)/300,1),pk=.28*(.55+vn*.45),f=1600*(.88+vn*.24),bd=.022-vn*.008,cd=bd*.3,ps=dir<0?.7:-.7;
   const pan=c.createStereoPanner?c.createStereoPanner():null,out=pan||c.destination;if(pan){pan.pan.setValueAtTime(ps,t);pan.pan.linearRampToValueAtTime(-ps,t+bd);pan.connect(c.destination)}
@@ -317,7 +306,7 @@ function cfTick(dir,v){try{AC=AC||new (window.AudioContext||window.webkitAudioCo
   const ns=Math.ceil(c.sampleRate*cd),nb=c.createBuffer(1,ns,c.sampleRate),d=nb.getChannelData(0);for(let i=0;i<ns;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(ns*.2));
   const ng=c.createGain();ng.gain.setValueAtTime(pk*.35,t);ng.gain.exponentialRampToValueAtTime(1e-4,t+cd);ng.connect(out);
   const hp=c.createBiquadFilter();hp.type="highpass";hp.frequency.value=2400;hp.connect(ng);const src=c.createBufferSource();src.buffer=nb;src.connect(hp);src.start(t);src.stop(t+cd)}catch(e){}}
-/* each move's record is a cover: one of eight flat designs in the skin's own colours, picked from the move's id so a
+/* each move's record is a cover: one of eight soft gradient designs in the skin's own colours, picked from the move's id so a
    move keeps its cover; or, with Effects › records from your songs, the cover of a song you played lately, drawn
    far out of focus so it reads as colour, not as the artwork. Drawn once per skin and cached */
 const CF_ART=new Map();
@@ -330,27 +319,26 @@ function cfArt(i){const e=run.p.ex[i],de=document.documentElement,music=cfMusicO
     cov=music.length?music[i%music.length]:null,key=[de.dataset.theme,de.dataset.mode,e.id,cov?cov.src:cfDes(i)].join("|");
   if(CF_ART.has(key))return CF_ART.get(key);
   const S=480,cv=document.createElement("canvas");cv.width=cv.height=S;const g=cv.getContext("2d");let url="";
-  try{if(cov){g.filter="blur(26px)";const k=Math.max(S/cov.naturalWidth,S/cov.naturalHeight)*1.35,cw=cov.naturalWidth*k,ch=cov.naturalHeight*k;g.drawImage(cov,(S-cw)/2,(S-ch)/2,cw,ch);g.filter="none";g.fillStyle="rgba(0,0,0,.12)";g.fillRect(0,0,S,S)}
+  try{if(cov){g.filter="blur(26px)";const k=Math.max(S/cov.naturalWidth,S/cov.naturalHeight)*1.35,cw=cov.naturalWidth*k,ch=cov.naturalHeight*k;g.drawImage(cov,(S-cw)/2,(S-ch)/2,cw,ch);g.filter="none"}
     else cfDesign(g,S,cfHash(e.id),cfPal(),cfDes(i));
-    const sc=g.createLinearGradient(0,S*.3,0,S);sc.addColorStop(0,"rgba(0,0,0,0)");sc.addColorStop(.55,"rgba(0,0,0,.38)");sc.addColorStop(1,"rgba(0,0,0,.62)");g.fillStyle=sc;g.fillRect(0,0,S,S);
+    cfFinish(g,S);
     url=cv.toDataURL("image/jpeg",.86)}catch(err){url=""}
   CF_ART.set(key,url);return url}
 /* which of the eight designs: the move's own, unless an earlier move of this session has it, then the next free one */
 function cfDes(i){const used=new Set();let d=0;for(let j=0;j<=i;j++){d=cfHash(run.p.ex[j].id)%8;for(let k=0;k<8&&used.has(d);k++)d=(d+1)%8;used.add(d)}return d}
+/* Apple Music style: two of the skin's colours across the cover at the design's angle, two or three soft clouds of
+   the others melted in, a pale wash from the top-left corner (where the words sit, in dark ink) and a deep shadow in
+   the bottom-right; two of the eight designs lay a soft grid of round lights over it */
 function cfDesign(g,S,h,P,des){let sd=h||1;const rnd=()=>{sd=(Math.imul(sd,1664525)+1013904223)>>>0;return sd/4294967296};
   const pool=P.cols.slice(),pick=()=>pool.length?pool.splice(Math.floor(rnd()*pool.length),1)[0]:P.cols[Math.floor(rnd()*P.cols.length)];
-  const c0=pick(),c1=pick(),c2=pick(),c3=pick();
-  const disc=(x,y,r,c)=>{g.fillStyle=c;g.beginPath();g.arc(x,y,r,0,7);g.fill()},bg=c=>{g.fillStyle=c;g.fillRect(0,0,S,S)};
-  switch(des){
-    case 0:bg(c0);disc(S*.64,S*.36,S*.36,c1);disc(S*.64,S*.36,S*.18,c2);break;                       // sun
-    case 1:bg(c0);g.save();g.translate(S/2,S/2);g.rotate(-Math.PI/4);for(let k=-6;k<6;k++){g.fillStyle=[c1,c2,c0][(k+12)%3];g.fillRect(k*S/7,-S,S/7,S*2)}g.restore();break; // stripes
-    case 2:bg(c0);[[.95,c1],[.75,c2],[.55,c3],[.35,c1],[.15,c2]].forEach(([r,c])=>disc(S*.15,S*.85,S*r,c));break; // rings
-    case 3:bg(c0);for(let y=0;y<5;y++)for(let x=0;x<5;x++)disc(S*(.12+x*.19),S*(.12+y*.19),S*.065,rnd()<.22?c2:c1);break; // dots
-    case 4:bg(c0);g.fillStyle=c1;g.beginPath();g.moveTo(0,S);g.lineTo(S,0);g.lineTo(S,S);g.fill();disc(S*.5,S*.5,S*.2,c2);break; // split
-    case 5:bg(c0);[c1,c2,c3,c1].forEach((c,k)=>{g.fillStyle=c;g.beginPath();g.moveTo(0,S);for(let x=0;x<=S;x+=8)g.lineTo(x,S*(.3+k*.18)+Math.sin(x/S*Math.PI*2+k*1.3)*S*.05);g.lineTo(S,S);g.fill()});break; // waves
-    case 6:bg(c3);[[0,0,.62,.58,c0],[.66,0,.34,.3,c1],[.66,.34,.34,.66,c2],[0,.62,.62,.38,c1]].forEach(([x,y,ww,hh,c])=>{g.fillStyle=c;g.fillRect(x*S+4,y*S+4,ww*S-8,hh*S-8)});break; // blocks
-    default:bg(c0);[[.25,.3,c1],[.75,.55,c2],[.4,.85,c3]].forEach(([x,y,c])=>{const rg=g.createRadialGradient(x*S,y*S,0,x*S,y*S,S*.55);rg.addColorStop(0,c);rg.addColorStop(1,"rgba(0,0,0,0)");g.fillStyle=rg;g.fillRect(0,0,S,S)})} // glow
-}
+  const c0=pick(),c1=pick(),c2=pick(),c3=pick(),an=des*Math.PI/4+rnd()*.4,dx=Math.cos(an)*S*.7,dy=Math.sin(an)*S*.7;
+  g.filter="saturate(1.35)";const lg=g.createLinearGradient(S/2-dx,S/2-dy,S/2+dx,S/2+dy);lg.addColorStop(0,c0);lg.addColorStop(1,c1);g.fillStyle=lg;g.fillRect(0,0,S,S);
+  g.filter="blur("+Math.round(S*.1)+"px) saturate(1.35)";[c2,c3,c0].slice(0,2+(des%2)).forEach(c=>{g.globalAlpha=.85;g.fillStyle=c;g.beginPath();g.ellipse(S*(.15+rnd()*.75),S*(.25+rnd()*.7),S*(.22+rnd()*.2),S*(.18+rnd()*.2),rnd()*3,0,7);g.fill()});
+  g.globalAlpha=1;g.filter="none";
+  if(des===3||des===6){const n=3,r=S/(n*2),gl=g.createLinearGradient(0,0,S,S);gl.addColorStop(0,c2);gl.addColorStop(1,c3);g.filter="blur(1.5px) saturate(1.35)";g.globalAlpha=.7;
+    for(let y=0;y<n;y++)for(let x=0;x<n;x++){g.fillStyle=gl;g.beginPath();g.arc(r+x*2*r,r+y*2*r+S*.04,r*.97,0,7);g.fill()}g.globalAlpha=1;g.filter="none"}}
+function cfFinish(g,S){const w=g.createRadialGradient(0,0,0,0,0,S*1.05);w.addColorStop(0,"rgba(255,255,255,.7)");w.addColorStop(.38,"rgba(255,255,255,.22)");w.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=w;g.fillRect(0,0,S,S);
+  const d=g.createRadialGradient(S,S,0,S,S,S*.75);d.addColorStop(0,"rgba(12,8,18,.88)");d.addColorStop(.5,"rgba(12,8,18,.35)");d.addColorStop(1,"rgba(12,8,18,0)");g.fillStyle=d;g.fillRect(0,0,S,S)}
 /* a move just finished: its record shrinks into the done stack, which gives a little bump */
 function cfFly(){const c=$(".cf-fly"),m=$(".cf-mini");if(!c)return;
   if(!m||matchMedia("(prefers-reduced-motion: reduce)").matches){c.remove();return}

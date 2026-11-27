@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.74a] — 2026-11-27
+
+### 新增 / Added
+- 🌀 **Cover Flow 换成浏览器原生滚动**：唱片的转动交给 CSS 滚动驱动动画（照 Bramus 的 CSS Cover Flow 示例），不再由脚本逐帧计算，跟手、不卡。
+- 🌀 **Cover Flow on the browser's own scrolling**: the records turn with a CSS scroll-driven animation (after Bramus's CSS Cover Flow demo) instead of script on every frame, so it follows the finger without stutter.
+- 🎨 **Apple Music 风格的封面**：主题颜色的柔和渐变，左上提亮、右下压暗，字在左上角；有两种带柔和圆点阵。
+- 🎨 **Apple Music style covers**: soft gradients in the theme's colours, pale top-left, deep bottom-right, the words top-left; two variants carry a soft grid of round lights.
+- 🌧️ **分享那一刻在下雨，运动图片也带雨**（以前只看练的时候）；其他分享图不带天气。
+- 🌧️ **Raining as you share? The training picture gets the rain too** (before, only the weather while training counted); no other shared picture carries weather.
+
+---
+
 ## [v1.73a] — 2026-11-27
 
 ### 新增 / Added

@@ -154,14 +154,15 @@ async function wxRefresh(force){if(WX.preview)return;const w=wxSet();if(!w||w.la
 setInterval(()=>{if(!document.hidden)wxRefresh(false)},5*60e3);
 
 /* ---------- the weather while training, for the shared picture ----------
-   Each tick or extra set notes the weather on screen for that day (tracktor-wxlog, last 90 days, not in backups);
-   drawTrain then lays the same drops, flakes or mist over the picture. A seed from the date keeps the picture
+   The weather on screen as you share wins; otherwise the weather noted while training that day (each tick or extra set
+   notes it in tracktor-wxlog, last 90 days, not in backups). drawTrain lays the same drops, flakes or mist over the
+   training picture; no other shared picture gets weather. A seed from the date keeps the picture
    the same every time it is drawn (preview, save, share) */
 const WXL_K="tracktor-wxlog";
 function wxLog(){try{return JSON.parse(localStorage.getItem(WXL_K)||"{}")||{}}catch(e){return {}}}
 function wxMark(t){if(WX.preview||WX.fx==="none")return;t=t||today();const L=wxLog(),c=L[t];if(c&&c.fx===WX.fx&&c.lv>=WX.lv)return;
   L[t]={fx:WX.fx,lv:WX.lv};const ks=Object.keys(L).sort();while(ks.length>90)delete L[ks.shift()];try{localStorage.setItem(WXL_K,JSON.stringify(L))}catch(e){}}
-function wxPaint(g,W,H,t){const w=wxLog()[t];if(!w||!w.fx||w.fx==="none")return;const dark=wxDark(),lv=Math.max(1,Math.min(3,w.lv||1));
+function wxPaint(g,W,H,t){const w=!WX.preview&&WX.fx&&WX.fx!=="none"?{fx:WX.fx,lv:WX.lv}:wxLog()[t];if(!w||!w.fx||w.fx==="none")return;const dark=wxDark(),lv=Math.max(1,Math.min(3,w.lv||1));
   let sd=7;for(const ch of t)sd=(sd*31+ch.charCodeAt(0))>>>0;const rnd=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};
   const R=Math.random,gx=WX.gx,gy=WX.gy,k=W/390,w0=390,h0=H/k,area=h0/844;Math.random=rnd;WX.gx=0;WX.gy=1;
   try{g.save();g.scale(k,k);
