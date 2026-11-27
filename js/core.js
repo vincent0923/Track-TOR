@@ -152,6 +152,7 @@ function lsLoad(){
     let z=0;for(const [d,m] of Object.entries(state.metrics)){if(m.sleep===0){delete m.sleep;delete m.sleepH;z++;if(Object.keys(m).every(k=>k==="date"||m[k]==null))delete state.metrics[d]}}
     if(z)lsSave();
     if(repairMapped())lsSave();
+    if(dropZeroSets())lsSave();
     registerPlanned(state.sessions);
     if(j.extras&&moveDatedExtras(j.extras))lsSave();}
 }
@@ -163,6 +164,12 @@ function repairMapped(){let n=0;Object.entries(state.sessions).forEach(([sid,doc
   const base=baseEx(sid);if(!base)return;const keys=Object.keys(doc.sets),ids=base.map(e=>e.id);
   if(keys.length!==ids.length||keys.join()===ids.join()||ids.includes(keys[0]))return;
   const sets={};ids.forEach((id,i)=>sets[id]=doc.sets[keys[i]]);doc.sets=sets;n++});return n}
+/* a set done at 0 reps or 0 seconds is no set: older versions kept them, these days none is ever saved. Done sets at
+   0 go from the sessions, from the extras logged in a session and from the extras of days without one. Runs on every
+   load and after an import; returns how many it took out */
+function dropZeroSets(){let n=0;const clean=arr=>{if(!Array.isArray(arr))return arr;const k=arr.filter(x=>!(x&&x.d&&!(+x.v>0)));n+=arr.length-k.length;return k};
+  Object.values(state.sessions||{}).forEach(doc=>{if(!doc)return;if(doc.sets)Object.keys(doc.sets).forEach(id=>doc.sets[id]=clean(doc.sets[id]));(doc.xs||[]).forEach(it=>it.sets=clean(it.sets))});
+  Object.values(state.dayx||{}).forEach(d=>(d&&d.xs||[]).forEach(it=>it.sets=clean(it.sets)));return n}
 function lsSave(){
   try{localStorage.setItem(DATA_K,JSON.stringify(state));lsOk=true}catch(e){if(lsOk){lsOk=false;toast(T("这个浏览器不允许保存，请先保存进度文件","This browser can't save data — save a progress file now"))}}
 }

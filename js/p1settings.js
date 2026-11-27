@@ -91,7 +91,7 @@ async function saveBackup(){const name=backupFileName(),file=new File([await enc
   const url=URL.createObjectURL(file),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1e4);
   markBackedUp();toast(T("已保存 "+name,"Saved "+name))}
 function applyImport(j){state.sessions=j.sessions;state.metrics=j.metrics;if(j.diet)state.diet=j.diet;if(j.settings)state.settings=j.settings;if(j.dayx)state.dayx=j.dayx;
-  if(j.extras)moveDatedExtras(j.extras);resetPlanned(state.sessions);
+  if(j.extras)moveDatedExtras(j.extras);dropZeroSets();resetPlanned(state.sessions);
   if(j.su){try{localStorage.setItem(SHEET_URL_K,j.su)}catch(e){}}
   lsSave();engPlanAll();renderAll();toast(T("进度已导入","Progress imported"))}
 function openBackup(){const t=lastBackupTs();

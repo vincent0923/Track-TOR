@@ -15,6 +15,8 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 ### 修复 / Fixed
 - 0 个、0 秒的组不再被记下：练的时候和日历里记加练都一样（减到 0 时「记一组」按不了）。
 - Sets of 0 reps or 0 seconds are no longer recorded, in a session or when logging extra practice (Log a set is disabled at 0).
+- 以前存下的 0 个、0 秒的组，打开 App 时自动清掉（训练里的、训练里加练的、没训练那天的加练都算）；导入旧进度文件时也会清掉。
+- Sets of 0 saved by older versions are cleared when the app opens (in sessions, in a session's extras and in extras on days without one), and when an old progress file is imported.
 
 ---
 
