@@ -1390,6 +1390,14 @@ body.has-mini .focus.on .f-body{padding-top:72px}
 .cf-pips{display:flex;gap:5px}
 .cf-pips i{width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--ink) 16%,transparent)}
 .cf-pips i.dn{background:var(--ac)}
+/* a record with a cover: the art fills it, the words sit bottom-left in white over its dark foot */
+.cflow .cf-card.cf-card.art{background-size:cover;background-position:center;background-repeat:no-repeat;color:#fff;--muted:rgba(255,255,255,.86);justify-items:start;text-align:left;gap:2px;padding:16px 16px 14px;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.cflow .cf-card.cf-card.art h2{align-self:end;color:#fff}
+.cflow .cf-card.art .cf-sub{color:rgba(255,255,255,.86)}
+.cflow .cf-card.art .cf-sum{color:#fff;margin-top:2px}
+.cflow .cf-card.art .cf-pips{margin-top:4px}
+.cflow .cf-card.art .cf-pips i{background:rgba(255,255,255,.38)}
+.cflow .cf-card.art .cf-pips i.dn{background:#fff}
 .cflow .cf-dim{position:absolute;inset:0;border-radius:inherit;background:var(--bg);opacity:0;pointer-events:none}
 .cflow .cf-fly.cf-fly{z-index:200!important;transform:none;transition:transform .5s cubic-bezier(.5,0,.75,0),opacity .5s ease-in}
 .cflow .cf-fly.cf-fly.go{transform:translate(var(--fx),var(--fy)) scale(.16);opacity:.2}

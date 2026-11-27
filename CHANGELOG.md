@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.73a] — 2026-11-27
+
+### 新增 / Added
+- 🎨 **动作唱片有了封面**：每个动作一张用主题色板画的封面（八种图案，同一次训练里不重复），字压在封面底部。特效里可以改成用你最近在 Spotify 听过的歌的封面，做成失焦模糊的色块。
+- 🎨 **Covers on the move records**: each move gets a cover drawn in the theme's own colours (eight designs, never repeated within a session), with the words over its dark foot. In Effects you can switch to the covers of songs you played lately on Spotify, blurred far out of focus into colour.
+- 🌀 **更顺的 Cover Flow**：翻动照搬 Ashish Gogula 的开源 Cover Flow（MIT）：弹簧跟手、按甩的速度停下、左右声道移动的咔哒声。
+- 🌀 **Smoother Cover Flow**: the motion follows Ashish Gogula's open-source Cover Flow (MIT): a spring that follows the finger, a stop projected from the flick, and a click that pans across.
+
+---
+
 ## [v1.72a] — 2026-11-27
 
 ### 新增 / Added

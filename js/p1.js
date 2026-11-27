@@ -242,7 +242,8 @@ function cfLists(){const todo=[],done=[];run.sets.forEach((a,i)=>(a.every(y=>y.d
 const cfLast=done=>done.slice().sort((x,y)=>Math.max(0,...run.sets[y].map(z=>z.o||0))-Math.max(0,...run.sets[x].map(z=>z.o||0)))[0];
 function cfCard(i,cls){const e=run.p.ex[i],a=run.sets[i],m=N(e).match(/[（(]([^）)]*)[）)]/),sub=[m&&m[1],e.note?NOTE(e):""].filter(Boolean).join(" · "),
     vs=a.map(x=>x.v),sum=!a.length?"—":vs.every(v=>v===vs[0])?a.length+" × "+vs[0]:vs.join(" · ");
-  return '<div class="cf-card card'+(cls||"")+'" data-i="'+i+'" role="option" aria-selected="'+(i===run.ex)+'"><h2>'+esc(NS(e))+'</h2>'+(sub?'<p class="cf-sub">'+esc(sub)+'</p>':'')
+  const art=cfArt(i);
+  return '<div class="cf-card card'+(art?" art":"")+(cls||"")+'"'+(art?' style="background-image:url('+art+')"':'')+' data-i="'+i+'" role="option" aria-selected="'+(i===run.ex)+'"><h2>'+esc(NS(e))+'</h2>'+(sub?'<p class="cf-sub">'+esc(sub)+'</p>':'')
     +'<p class="cf-sum n">'+sum+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</p><span class="cf-pips">'+a.map(x=>'<i'+(x.d?' class="dn"':'')+'></i>').join("")+'</span><i class="cf-dim"></i></div>'}
 function renderFocus(anim){
   const f=$("#focus"),p=run.p,allDone=run.sets.every(x=>x.every(y=>y.d));
@@ -280,28 +281,76 @@ function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return
 /* a move's name may take two lines on its record; one that still doesn't fit shrinks */
 function cfFit(){document.querySelectorAll(".cf-card h2").forEach(h=>{h.style.fontSize="";
   for(let k=0;k<14&&(h.scrollHeight>h.clientHeight+4||h.scrollWidth>h.clientWidth+1);k++){const f=parseFloat(getComputedStyle(h).fontSize);if(f<=14)break;h.style.fontSize=Math.max(14,f*.92)+"px"}})}
-/* the cover flow: the record in the middle faces you, the others turn away on either side. Drag or flick to go
-   through them (a click per record), tap a side one to bring it round; it settles with a small overshoot */
+/* the cover flow's motion is Ashish Gogula's Cover Flow (MIT, docs/COVERFLOW-LICENSE.txt), ported from React: the
+   position follows its target on a spring (stiffness 150, damping 30, mass 1); a drag moves the target by
+   dx / (gap × 0.8), a release projects the flick (velocity × 0.002 s) to the nearest record; the middle record turns
+   through 100° over its first half step, the others sit at ±gap, stacked every quarter of a record, turned 50° and
+   pushed back; each record that passes the middle clicks, panned the way it moves and brighter when it moves fast */
 function cfBind(el,list){if(!el)return;const cards=[...el.querySelectorAll(".cf-card:not(.cf-fly)")],n=cards.length;if(!n)return;
-  const w=cards[0].offsetWidth||200,step=w*.62;let pos=Math.max(0,list.indexOf(run.ex)),raf=0,drag=null,shown=pos,lastBz=0;
-  const paint=()=>{cards.forEach((c,j)=>{const k=j-pos,ak=Math.abs(k),sg=Math.sign(k),x=ak<1?k*step:sg*(step+(ak-1)*w*.2),r=ak<1?-k*55:-sg*55,z=-Math.min(ak,1)*150-Math.max(0,ak-1)*40;
-      c.style.transform="translate3d("+x.toFixed(1)+"px,0,"+z.toFixed(1)+"px) rotateY("+r.toFixed(1)+"deg)";c.style.zIndex=100-Math.round(ak*10);c.style.opacity=ak>2.8?0:1;
-      c.lastElementChild.style.opacity=Math.min(.55,ak*.45).toFixed(2)});
-    const i=Math.round(pos);if(i!==shown){shown=i;SFX.detent();const t=performance.now();if(t-lastBz>45){lastBz=t;buzz(4)}}};
-  const commit=i=>{const ex=list[i];if(!run||ex==null||ex===run.ex)return;run.ex=ex;SFX.land();buzz(10);renderFocus(true)};
-  const go=to=>{cancelAnimationFrame(raf);const from=pos,t0=performance.now(),ms=420;
-    const st=t=>{const k=Math.min(1,(t-t0)/ms),q=k-1,e=1+2*q*q*q+q*q;pos=from+(to-from)*e;paint();if(k<1)raf=requestAnimationFrame(st);else{pos=to;paint();commit(to)}};raf=requestAnimationFrame(st)};
+  const w=cards[0].offsetWidth||200,gap=w*.625,stack=w*.25,zk=w/400,ROT=50,dims=cards.map(c=>c.lastElementChild);
+  let tgt=Math.max(0,list.indexOf(run.ex)),pos=tgt,vel=0,raf=0,last=0,drag=null,shown=tgt;
+  const paint=()=>{cards.forEach((c,j)=>{const k=j-pos,a=Math.abs(k),sg=k<0?-1:1,x=a<1?k*gap:sg*(gap+(a-1)*stack),r=a<.5?-k*ROT*2:k<0?ROT:-ROT,z=(a>.5?-200:a*-400)*zk;
+      c.style.transform="translate3d("+x.toFixed(1)+"px,0,"+z.toFixed(1)+"px) rotateY("+r.toFixed(1)+"deg)";c.style.zIndex=1000-Math.round(a*10);c.style.opacity=a>3.6?0:1;
+      dims[j].style.opacity=Math.min(.5,a).toFixed(2)});
+    const i=Math.max(0,Math.min(n-1,Math.round(pos)));if(i!==shown){cfTick(i-shown,vel*gap);buzz(4);shown=i}};
+  const settle=()=>{const ex=list[tgt];if(!run||ex==null||ex===run.ex)return;run.ex=ex;buzz(8);renderFocus(true)};
+  const step=t=>{const dt=Math.min(.034,(t-last)/1000)||.016;last=t;for(let i=0;i<4;i++){const h=dt/4;vel+=(-150*(pos-tgt)-30*vel)*h;pos+=vel*h}paint();
+    if(!drag&&Math.abs(pos-tgt)<6e-4&&Math.abs(vel)<2e-3){pos=tgt;vel=0;paint();raf=0;settle();return}raf=requestAnimationFrame(step)};
+  const kick=()=>{if(!raf){last=performance.now();raf=requestAnimationFrame(step)}};
   ["touchstart","touchmove","touchend"].forEach(k=>el.addEventListener(k,e=>e.stopPropagation(),{passive:true}));
-  el.addEventListener("pointerdown",e=>{if(run.askFeel!=null)return;cancelAnimationFrame(raf);el.setPointerCapture(e.pointerId);drag={x:e.clientX,p:pos,mv:0,tg:e.target.closest(".cf-card"),pts:[[performance.now(),e.clientX]]}});
-  el.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x;if(Math.abs(dx)>6)drag.mv=1;if(!drag.mv)return;
-    let q=drag.p-dx/step;if(q<0)q/=3;if(q>n-1)q=n-1+(q-n+1)/3;pos=q;const t=performance.now();drag.pts.push([t,e.clientX]);while(drag.pts.length>2&&t-drag.pts[0][0]>90)drag.pts.shift();paint()});
+  el.addEventListener("pointerdown",e=>{if(run.askFeel!=null)return;el.setPointerCapture(e.pointerId);drag={x0:e.clientX,x:e.clientX,mv:0,tg:e.target.closest(".cf-card"),pts:[[performance.now(),e.clientX]]}});
+  el.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.x;drag.x=e.clientX;if(Math.abs(e.clientX-drag.x0)>6)drag.mv=1;if(!drag.mv)return;
+    tgt=Math.max(-.45,Math.min(n-.55,tgt-dx/(gap*.8)));const t=performance.now();drag.pts.push([t,e.clientX]);while(drag.pts.length>2&&t-drag.pts[0][0]>100)drag.pts.shift();kick()});
   const up=()=>{if(!drag)return;const d=drag;drag=null;
-    if(!d.mv){const j=cards.indexOf(d.tg);if(j>=0&&j!==Math.round(pos))go(j);return}
-    const a=d.pts[0],b=d.pts[d.pts.length-1],v=b[0]-a[0]>5&&performance.now()-b[0]<70?(b[1]-a[1])/(b[0]-a[0]):0;
-    go(Math.max(0,Math.min(n-1,Math.round(pos-v*160/step))))};
+    if(!d.mv){const j=cards.indexOf(d.tg);tgt=j>=0?j:Math.round(tgt);kick();return}
+    const a=d.pts[0],b=d.pts[d.pts.length-1],v=b[0]-a[0]>5&&performance.now()-b[0]<80?(b[1]-a[1])/(b[0]-a[0])*1000:0;
+    tgt=Math.max(0,Math.min(n-1,Math.round(tgt-v*.002)));kick()};
   el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);
-  el.addEventListener("keydown",e=>{if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;e.preventDefault();go(Math.max(0,Math.min(n-1,Math.round(pos)+(e.key==="ArrowRight"?1:-1))))});
+  el.addEventListener("keydown",e=>{if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;e.preventDefault();tgt=Math.max(0,Math.min(n-1,Math.round(tgt)+(e.key==="ArrowRight"?1:-1)));kick()});
   paint()}
+/* Cover Flow's tick: a band-passed triangle chirp over a breath of noise, panned across as the record passes */
+function cfTick(dir,v){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const c=AC,t=c.currentTime,vn=Math.min(Math.abs(v)/300,1),pk=.28*(.55+vn*.45),f=1600*(.88+vn*.24),bd=.022-vn*.008,cd=bd*.3,ps=dir<0?.7:-.7;
+  const pan=c.createStereoPanner?c.createStereoPanner():null,out=pan||c.destination;if(pan){pan.pan.setValueAtTime(ps,t);pan.pan.linearRampToValueAtTime(-ps,t+bd);pan.connect(c.destination)}
+  const bg=c.createGain();bg.gain.setValueAtTime(pk,t);bg.gain.exponentialRampToValueAtTime(1e-4,t+bd);bg.connect(out);
+  const fl=c.createBiquadFilter();fl.type="bandpass";fl.frequency.value=f;fl.Q.value=6;fl.connect(bg);
+  const o=c.createOscillator();o.type="triangle";o.frequency.setValueAtTime(f*1.25,t);o.frequency.exponentialRampToValueAtTime(f*.65,t+bd);o.connect(fl);o.start(t);o.stop(t+bd);
+  const ns=Math.ceil(c.sampleRate*cd),nb=c.createBuffer(1,ns,c.sampleRate),d=nb.getChannelData(0);for(let i=0;i<ns;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(ns*.2));
+  const ng=c.createGain();ng.gain.setValueAtTime(pk*.35,t);ng.gain.exponentialRampToValueAtTime(1e-4,t+cd);ng.connect(out);
+  const hp=c.createBiquadFilter();hp.type="highpass";hp.frequency.value=2400;hp.connect(ng);const src=c.createBufferSource();src.buffer=nb;src.connect(hp);src.start(t);src.stop(t+cd)}catch(e){}}
+/* each move's record is a cover: one of eight flat designs in the skin's own colours, picked from the move's id so a
+   move keeps its cover; or, with Effects › records from your songs, the cover of a song you played lately, drawn
+   far out of focus so it reads as colour, not as the artwork. Drawn once per skin and cached */
+const CF_ART=new Map();
+function cfMusicOn(){try{return localStorage.getItem(PK+"cfart")==="1"}catch(e){return false}}
+function cfHash(s){let h=2166136261;for(const ch of String(s))h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0}
+function cfPal(){const pr=document.createElement("i");pr.style.display="none";document.body.appendChild(pr);
+  const rd=k=>{pr.style.color="";pr.style.color="var("+k+")";return getComputedStyle(pr).color};
+  const cols=[...new Set(["--ac","--push","--pull","--third","--good","--sleep","--bad"].map(rd))],r={cols,ink:rd("--ink"),card:rd("--card"),bg:rd("--bg")};pr.remove();return r}
+function cfArt(i){const e=run.p.ex[i],de=document.documentElement,music=cfMusicOn()&&typeof MD_COVERS!=="undefined"?MD_COVERS.filter(m=>m.complete&&m.naturalWidth):[],
+    cov=music.length?music[i%music.length]:null,key=[de.dataset.theme,de.dataset.mode,e.id,cov?cov.src:cfDes(i)].join("|");
+  if(CF_ART.has(key))return CF_ART.get(key);
+  const S=480,cv=document.createElement("canvas");cv.width=cv.height=S;const g=cv.getContext("2d");let url="";
+  try{if(cov){g.filter="blur(26px)";const k=Math.max(S/cov.naturalWidth,S/cov.naturalHeight)*1.35,cw=cov.naturalWidth*k,ch=cov.naturalHeight*k;g.drawImage(cov,(S-cw)/2,(S-ch)/2,cw,ch);g.filter="none";g.fillStyle="rgba(0,0,0,.12)";g.fillRect(0,0,S,S)}
+    else cfDesign(g,S,cfHash(e.id),cfPal(),cfDes(i));
+    const sc=g.createLinearGradient(0,S*.3,0,S);sc.addColorStop(0,"rgba(0,0,0,0)");sc.addColorStop(.55,"rgba(0,0,0,.38)");sc.addColorStop(1,"rgba(0,0,0,.62)");g.fillStyle=sc;g.fillRect(0,0,S,S);
+    url=cv.toDataURL("image/jpeg",.86)}catch(err){url=""}
+  CF_ART.set(key,url);return url}
+/* which of the eight designs: the move's own, unless an earlier move of this session has it, then the next free one */
+function cfDes(i){const used=new Set();let d=0;for(let j=0;j<=i;j++){d=cfHash(run.p.ex[j].id)%8;for(let k=0;k<8&&used.has(d);k++)d=(d+1)%8;used.add(d)}return d}
+function cfDesign(g,S,h,P,des){let sd=h||1;const rnd=()=>{sd=(Math.imul(sd,1664525)+1013904223)>>>0;return sd/4294967296};
+  const pool=P.cols.slice(),pick=()=>pool.length?pool.splice(Math.floor(rnd()*pool.length),1)[0]:P.cols[Math.floor(rnd()*P.cols.length)];
+  const c0=pick(),c1=pick(),c2=pick(),c3=pick();
+  const disc=(x,y,r,c)=>{g.fillStyle=c;g.beginPath();g.arc(x,y,r,0,7);g.fill()},bg=c=>{g.fillStyle=c;g.fillRect(0,0,S,S)};
+  switch(des){
+    case 0:bg(c0);disc(S*.64,S*.36,S*.36,c1);disc(S*.64,S*.36,S*.18,c2);break;                       // sun
+    case 1:bg(c0);g.save();g.translate(S/2,S/2);g.rotate(-Math.PI/4);for(let k=-6;k<6;k++){g.fillStyle=[c1,c2,c0][(k+12)%3];g.fillRect(k*S/7,-S,S/7,S*2)}g.restore();break; // stripes
+    case 2:bg(c0);[[.95,c1],[.75,c2],[.55,c3],[.35,c1],[.15,c2]].forEach(([r,c])=>disc(S*.15,S*.85,S*r,c));break; // rings
+    case 3:bg(c0);for(let y=0;y<5;y++)for(let x=0;x<5;x++)disc(S*(.12+x*.19),S*(.12+y*.19),S*.065,rnd()<.22?c2:c1);break; // dots
+    case 4:bg(c0);g.fillStyle=c1;g.beginPath();g.moveTo(0,S);g.lineTo(S,0);g.lineTo(S,S);g.fill();disc(S*.5,S*.5,S*.2,c2);break; // split
+    case 5:bg(c0);[c1,c2,c3,c1].forEach((c,k)=>{g.fillStyle=c;g.beginPath();g.moveTo(0,S);for(let x=0;x<=S;x+=8)g.lineTo(x,S*(.3+k*.18)+Math.sin(x/S*Math.PI*2+k*1.3)*S*.05);g.lineTo(S,S);g.fill()});break; // waves
+    case 6:bg(c3);[[0,0,.62,.58,c0],[.66,0,.34,.3,c1],[.66,.34,.34,.66,c2],[0,.62,.62,.38,c1]].forEach(([x,y,ww,hh,c])=>{g.fillStyle=c;g.fillRect(x*S+4,y*S+4,ww*S-8,hh*S-8)});break; // blocks
+    default:bg(c0);[[.25,.3,c1],[.75,.55,c2],[.4,.85,c3]].forEach(([x,y,c])=>{const rg=g.createRadialGradient(x*S,y*S,0,x*S,y*S,S*.55);rg.addColorStop(0,c);rg.addColorStop(1,"rgba(0,0,0,0)");g.fillStyle=rg;g.fillRect(0,0,S,S)})} // glow
+}
 /* a move just finished: its record shrinks into the done stack, which gives a little bump */
 function cfFly(){const c=$(".cf-fly"),m=$(".cf-mini");if(!c)return;
   if(!m||matchMedia("(prefers-reduced-motion: reduce)").matches){c.remove();return}
@@ -820,7 +869,7 @@ function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+
     +'<div class="setlist">'+sw("rt",rtLevel()>0,ICON.spark,T('光追','Ray-traced light'))
     +'<button class="opt" data-act="go" data-to="p1:weather">'+ICON.rain+'<span class="sp">'+T('天气','Weather')+'</span>'+ICON.right+'</button>'
     +sw("glass",glassOn(),ICON.spark,T('半透明玻璃','Translucent glass'))+sw("dust",dustOn(),ICON.dust,T('两天没练就落灰','Dust after two days off'))
-    +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+sw("groove",grooveOn(),ICON.music,T('音乐律动（需 Spotify）','Move with the music (needs Spotify)'))+'</div>');CUR_SHEET=fxSheet}
+    +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+sw("cfart",cfMusicOn(),ICON.music,T('动作唱片用常听的歌（需 Spotify）','Move records from songs you play (needs Spotify)'))+sw("groove",grooveOn(),ICON.music,T('音乐律动（需 Spotify）','Move with the music (needs Spotify)'))+'</div>');CUR_SHEET=fxSheet}
 function meSheet(){SHEET_UP=null;let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>'+T('设定','Settings')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">'+T('外观','Appearance')+'</p>'
@@ -913,6 +962,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="iconpick"){try{localStorage.setItem(PK+"icon",b.dataset.k)}catch(err){}iconApply();SFX.tap();buzz(10);const up=SHEET_UP;iconSheet();SHEET_UP=up}
   else if(a==="rt"){const on=rtLevel()===0;try{localStorage.setItem(PK+"rt",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);rtApply();buzz(8)}
   else if(a==="groove"){const on=!grooveOn();try{localStorage.setItem(PK+"groove",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);buzz(8);if(typeof spGroove==="function")spGroove()}
+  else if(a==="cfart"){const on=!cfMusicOn();try{localStorage.setItem(PK+"cfart",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);buzz(8)}
   else if(a==="glass"){const on=!glassOn();try{localStorage.setItem(PK+"glass",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);glassApply();buzz(8)}
   else if(a==="dust"){const on=!dustOn();try{localStorage.setItem(PK+"dust",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);dustApply()}
   else if(a==="fx"){const on=!fxOn();try{localStorage.setItem("tracktor-p1-fx",on?"1":"0")}catch(err){}b.setAttribute("aria-checked",on);if(on){SFX.tap();celebrate(2,0)}}

@@ -241,7 +241,7 @@ p1Reg("music",openMusic);
    js/p1fx.js); without Spotify they stay plain */
 async function spMdCovers(){if(spMdCovers.done||typeof MD_COVERS==="undefined")return;spMdCovers.done=true;
   try{const r=await spApi("/me/player/recently-played?limit=30"),seen=new Set();
-    ((r&&r.items)||[]).forEach(it=>{const u=spCover(it.track&&it.track.album&&it.track.album.images);if(u&&!seen.has(u)&&seen.size<14){seen.add(u);const im=new Image();im.src=u;MD_COVERS.push(im)}})}
+    ((r&&r.items)||[]).forEach(it=>{const u=spCover(it.track&&it.track.album&&it.track.album.images);if(u&&!seen.has(u)&&seen.size<14){seen.add(u);const im=new Image();im.crossOrigin="anonymous";im.src=u;MD_COVERS.push(im)}})}
   catch(e){spMdCovers.done=false}}
 function spStart(){spStop();SP.demo=spMode()==="demo";if(SP.demo){SP.st=Object.assign({},SP_DEMO);SP.at=Date.now()}
   else if(!(spMode()==="on"&&SP.tok)){spPaint();return}
