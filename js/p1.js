@@ -349,9 +349,9 @@ function ipPress(k){if(!run||run.finished)return;
   if(k==="menu"){if(run.askFeel!=null)return;const L=cfLists();if(run.stk==="done"){if(!L.todo.length){SFX.tap();return}run.stk="todo";run.ex=L.todo[0]}else{if(!L.done.length){SFX.tap();return}run.stk="done";run.ex=cfLast(L.done)}if(run.ipT)ipTime(false);SFX.tap();buzz(8);renderFocus(true);return}
   if(k==="prev"||k==="next"){if(run.askFeel!=null)return;ipMove(k==="next"?1:-1);return}
   if(k==="play"){if(run.askFeel!=null)return;ipTime(!run.ipT)}}
-/* the wheel: a finger going round it turns the number one step every 18°; a touch that hardly turns is a press of the
+/* the wheel: a finger going round it turns the number one step every 36°; a touch that hardly turns is a press of the
    button under it; the centre button is a button of its own */
-function ipWheel(w){if(!w)return;let st=null;const STEP=Math.PI/10;
+function ipWheel(w){if(!w)return;let st=null;const STEP=Math.PI/5;
   w.addEventListener("pointerdown",e=>{if(e.target.closest(".ip-ok"))return;const r=w.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
     st={cx,cy,a:Math.atan2(e.clientY-cy,e.clientX-cx),acc:0,moved:0,k:(e.target.closest("[data-ip]")||{}).dataset};try{w.setPointerCapture(e.pointerId)}catch(err){}
     w.classList.add("down")});
