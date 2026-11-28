@@ -1944,7 +1944,7 @@ html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box
   --ip-body:radial-gradient(circle at 20% 30%,rgba(255,255,255,.9) 0 .6px,rgba(255,255,255,0) 1.2px) 0 0/17px 19px,radial-gradient(circle at 70% 60%,rgba(255,255,255,.75) 0 .5px,rgba(255,255,255,0) 1px) 0 0/23px 13px,linear-gradient(180deg,#CBBDF5 0%,#B5A3EF 50%,#A08CE8 100%);--ip-edge:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 8px rgba(70,40,150,.18),0 0 0 1px rgba(90,60,170,.18),0 24px 40px -18px rgba(70,40,150,.45);
   --ip-wheel:radial-gradient(circle at 20% 30%,rgba(255,255,255,.9) 0 .6px,rgba(255,255,255,0) 1.2px) 0 0/15px 17px,radial-gradient(circle at 50% 25%,#C2B2F5 0%,#AB98EE 100%);--ip-wl:#FFFFFF;--ip-center:radial-gradient(circle at 38% 30%,#FFFFFF 0 10%,rgba(255,255,255,.6) 18%,rgba(255,255,255,0) 32%),radial-gradient(circle at 50% 80%,#F4D7FF 0%,#C9B4FA 40%,#9E86EE 100%);--ip-bezel:#6E58C8;
   --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
-:root[data-theme="ipclr"]{--bg:#EDF0F8;--glow:none;--card:#FFFFFF;--line:rgba(30,40,110,.07);--sub:#F1F3FA;--seg:#E2E6F5;--dark:linear-gradient(160deg,#4A62D6 0%,#2A3BB0 100%);--dark-solid:#3549BE;--dark-line:rgba(255,255,255,.16);--track:rgba(255,255,255,.24);--ink:#1A2250;--muted:#5B648C;--ac:#3550D8;--on-ac:#fff;--ac-soft:rgba(53,80,216,.13);--ac-text:#2A43C4;--st1:rgba(53,80,216,.22);--st2:rgba(53,80,216,.58);--push:#3550D8;--pull:#E8763A;--third:#7F8BB5;--good:#25996B;--bad:#D9443B;--sleep:#8A6CE0;
+:root[data-theme="ipclr"]{--mt:#4D66D8;--mt2:#2F43B0;--bg:#EDF0F8;--glow:none;--card:#FFFFFF;--line:rgba(30,40,110,.07);--sub:#F1F3FA;--seg:#E2E6F5;--dark:linear-gradient(160deg,#4A62D6 0%,#2A3BB0 100%);--dark-solid:#3549BE;--dark-line:rgba(255,255,255,.16);--track:rgba(255,255,255,.24);--ink:#1A2250;--muted:#5B648C;--ac:#3550D8;--on-ac:#fff;--ac-soft:rgba(53,80,216,.13);--ac-text:#2A43C4;--st1:rgba(53,80,216,.22);--st2:rgba(53,80,216,.58);--push:#3550D8;--pull:#E8763A;--third:#7F8BB5;--good:#25996B;--bad:#D9443B;--sleep:#8A6CE0;
   --ip-body:linear-gradient(180deg,rgba(110,130,235,.82) 0%,rgba(72,92,210,.86) 50%,rgba(52,70,190,.9) 100%);--ip-edge:inset 0 2px 0 rgba(255,255,255,.4),inset 0 0 0 2px rgba(150,170,255,.35),inset 0 -3px 10px rgba(10,20,80,.3),0 24px 40px -18px rgba(30,40,130,.55);
   --ip-wheel:radial-gradient(circle at 50% 30%,#3E52CC 0%,#2B3AAE 100%);--ip-wl:#FFFFFF;--ip-center:radial-gradient(circle at 50% 35%,#3A4DC6 0%,#2C3BAE 100%);--ip-bezel:#3C52C6;
   --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
@@ -2050,7 +2050,7 @@ html:root[data-ipod] :is(.btn,.hgo):active{filter:brightness(.92)}
    window 7.6 mm from the top, a 38 mm click wheel centred 75 mm down, its centre button 36% across). Everything inside
    is sized in cqw of the body, 1 mm = 1.618cqw ---------- */
 .ipod.ipod{container-type:inline-size;display:block;padding:0;gap:0;height:auto;aspect-ratio:61.8/103.5;
-  width:min(100%,380px,calc((100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom))*.597));border-radius:10%/6%}
+  width:min(100%,380px,calc((100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom))*.597));border-radius:15%/9%}
 .ipod .ip-scr{position:absolute;left:7.6cqw;top:12.3cqw;width:84.8cqw;height:64.4cqw;border-width:1.6cqw;border-radius:2.2cqw;display:flex;flex-direction:column}
 .ipod .ip-wheel{position:absolute;left:19.25cqw;top:90.65cqw;width:61.5cqw;margin:0}
 .ipod .ip-ok{inset:32%}
@@ -2172,30 +2172,30 @@ html:root[data-ipod] :is(.btn,.hgo):active{filter:brightness(.92)}
   box-shadow:0 .7cqw 1.6cqw rgba(80,50,160,.4),0 .2cqw .3cqw rgba(80,50,160,.3),inset 0 -1cqw 1.4cqw rgba(255,190,240,.55),inset 0 .6cqw 1cqw rgba(255,255,255,.55),inset 0 0 0 .2cqw rgba(255,255,255,.5)}
 :root[data-theme="iplav"] .ip-k{text-shadow:0 .15cqw .3cqw rgba(80,50,160,.35)}
 /* clear cobalt: a see-through blue shell with the board under it, a clear thick rim, a cobalt frame, a cobalt wheel */
-/* the clear shells (cobalt, smoke, lemon, sage): one recipe, each skin gives its tint (--cl-a top, --cl-b bottom), what
-   shows where the board isn't (--cl-base), the clear rim (--cl-rim), the shadow colour (--cl-sh), the frame round the
-   screen (--cl-frame), the wheel and the centre button; the board under the shell is the SVG --ip-deco */
-:root[data-theme="ipclr"]{--cl-a:rgba(92,116,236,.6);--cl-b:rgba(52,72,200,.46);--cl-base:linear-gradient(180deg,#7D92EA 0%,#5A71DA 100%);--cl-rim:rgba(175,192,255,.5);--cl-glow:rgba(120,145,255,.28);--cl-sh:20,30,110;--cl-frame:#3E55CC;
+/* the ceramic iPods (cobalt, smoke, lemon, sage): glossy glazed ceramic in the skin's --mt (lighter at the top, --mt2
+   at the bottom), a soft window of light up at the left, the glaze rolling over at the edges; each skin also gives its
+   wheel (--cl-wheel), centre (--cl-center) and shadow colour (--cl-sh, r,g,b) */
+:root[data-theme="ipclr"]{--cl-sh:20,30,110;
   --cl-wheel:radial-gradient(120% 90% at 50% 15%,#4258D6 0%,#3349C4 55%,#2A3DB2 100%);--cl-center:radial-gradient(100% 100% at 50% 20%,#2C3EB3 0%,#3549C3 60%,#3D52CE 100%)}
-:root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ipod.ipod{background:linear-gradient(162deg,rgba(255,255,255,.3) 0%,rgba(255,255,255,.08) 24%,rgba(255,255,255,0) 24.5%) no-repeat,linear-gradient(180deg,var(--cl-a) 0%,var(--cl-b) 100%) no-repeat,var(--ip-deco) 0 0/100% 100% no-repeat,var(--cl-base) no-repeat;
-  box-shadow:inset 0 0 0 .6cqw var(--cl-rim),inset 0 0 1.4cqw .9cqw var(--cl-glow),inset .9cqw .9cqw 1.2cqw -.6cqw rgba(255,255,255,.45),inset -.6cqw -.8cqw 1.2cqw -.6cqw rgba(var(--cl-sh),.35),0 .5px 1px rgba(var(--cl-sh),.35),0 4px 8px -2px rgba(var(--cl-sh),.3),0 22px 36px -12px rgba(var(--cl-sh),.42)}
-:root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ip-scr{border:2.4cqw solid var(--cl-frame);border-radius:3cqw;box-shadow:0 .2cqw .4cqw rgba(var(--cl-sh),.4),inset 0 0 0 .35cqw rgba(0,0,0,.28),0 0 0 .2cqw rgba(255,255,255,.3)}
+:root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ipod.ipod{background:radial-gradient(90% 40% at 28% 6%,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),linear-gradient(162deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.1) 12%,rgba(255,255,255,0) 24%),linear-gradient(180deg,color-mix(in srgb,var(--mt) 82%,#fff) 0%,var(--mt) 45%,var(--mt2) 100%);
+  box-shadow:inset 0 .45cqw .35cqw rgba(255,255,255,.75),inset 0 1.4cqw 1.6cqw -.8cqw rgba(255,255,255,.35),inset 2.6cqw 0 3cqw -1.8cqw rgba(0,0,0,.14),inset -2.6cqw 0 3cqw -1.8cqw rgba(0,0,0,.18),inset 0 -2.4cqw 3cqw -1.4cqw rgba(0,0,0,.28),0 .5px 1px rgba(var(--cl-sh),.35),0 4px 8px -2px rgba(var(--cl-sh),.3),0 22px 36px -12px rgba(var(--cl-sh),.42)}
+:root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ip-scr{border:2.2cqw solid color-mix(in srgb,var(--mt2) 70%,#000);border-radius:3cqw;box-shadow:0 .2cqw .4cqw rgba(var(--cl-sh),.35),inset 0 0 0 .3cqw rgba(0,0,0,.3),0 0 0 .2cqw rgba(255,255,255,.3)}
 :root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ip-wheel{background:var(--cl-wheel);box-shadow:inset 0 .3cqw .5cqw rgba(255,255,255,.14),inset 0 -.4cqw .6cqw rgba(0,0,0,.14),0 0 0 .2cqw rgba(var(--cl-sh),.35),0 .6cqw 1.4cqw rgba(var(--cl-sh),.4)}
 :root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ip-ok{background:var(--cl-center);box-shadow:0 0 0 .22cqw rgba(var(--cl-sh),.35),inset 0 .5cqw .7cqw rgba(0,0,0,.2),inset 0 -.3cqw .3cqw rgba(255,255,255,.18)}
 
 /* smoke: a grey see-through shell, a sage wheel and a yellow centre button */
-:root[data-theme="ipsmk"]{--bg:#EEF0F2;--glow:none;--card:#FFFFFF;--line:rgba(0,0,0,.07);--sub:#F2F3F4;--seg:#E5E7E9;--dark:linear-gradient(160deg,#55585D 0%,#36383C 100%);--dark-solid:#45474B;--dark-line:rgba(255,255,255,.14);--track:rgba(255,255,255,.22);--ink:#1D1F22;--muted:#5E6268;--ac:#5F8F58;--on-ac:#fff;--ac-soft:rgba(95,143,88,.15);--ac-text:#457640;--st1:rgba(95,143,88,.24);--st2:rgba(95,143,88,.6);--push:#5F8F58;--pull:#E0B12E;--third:#8A8E94;--good:#3E8F5A;--bad:#D24A3C;--sleep:#7C6CD8;
-  --cl-a:rgba(70,72,76,.5);--cl-b:rgba(46,48,52,.56);--cl-base:linear-gradient(180deg,#8A8D92 0%,#6B6E73 100%);--cl-rim:rgba(225,228,232,.45);--cl-glow:rgba(160,165,172,.25);--cl-sh:20,22,26;--cl-frame:#3E4044;
+:root[data-theme="ipsmk"]{--mt:#62656B;--mt2:#3F4146;--bg:#EEF0F2;--glow:none;--card:#FFFFFF;--line:rgba(0,0,0,.07);--sub:#F2F3F4;--seg:#E5E7E9;--dark:linear-gradient(160deg,#55585D 0%,#36383C 100%);--dark-solid:#45474B;--dark-line:rgba(255,255,255,.14);--track:rgba(255,255,255,.22);--ink:#1D1F22;--muted:#5E6268;--ac:#5F8F58;--on-ac:#fff;--ac-soft:rgba(95,143,88,.15);--ac-text:#457640;--st1:rgba(95,143,88,.24);--st2:rgba(95,143,88,.6);--push:#5F8F58;--pull:#E0B12E;--third:#8A8E94;--good:#3E8F5A;--bad:#D24A3C;--sleep:#7C6CD8;
+  --cl-sh:20,22,26;
   --cl-wheel:radial-gradient(120% 90% at 50% 15%,#8DAE86 0%,#7A9E73 55%,#6C9266 100%);--cl-center:radial-gradient(100% 100% at 50% 25%,#F6D85C 0%,#EFCB3F 60%,#E2BC2E 100%);--ip-wl:#FFFFFF;
   --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
 /* lemon: a clear yellow shell, a yellow wheel */
-:root[data-theme="ipylw"]{--bg:#F1F0EA;--glow:none;--card:#FFFFFF;--line:rgba(60,50,0,.07);--sub:#F6F4EA;--seg:#EEEAD8;--dark:linear-gradient(160deg,#E7C042 0%,#C99D1C 100%);--dark-solid:#D8AE2E;--dark-line:rgba(255,255,255,.2);--track:rgba(255,255,255,.3);--ink:#2A2614;--muted:#6B6448;--ac:#E2B323;--on-ac:#2A2208;--ac-soft:rgba(226,179,35,.18);--ac-text:#8A6A00;--st1:rgba(226,179,35,.26);--st2:rgba(226,179,35,.62);--push:#E2B323;--pull:#5B8FD9;--third:#9C9478;--good:#3E8F5A;--bad:#D24A3C;--sleep:#7C6CD8;
-  --cl-a:rgba(238,206,92,.55);--cl-b:rgba(214,176,48,.5);--cl-base:linear-gradient(180deg,#E9D79A 0%,#CDB56A 100%);--cl-rim:rgba(255,240,170,.55);--cl-glow:rgba(255,225,120,.3);--cl-sh:110,85,10;--cl-frame:#D9BA4E;
+:root[data-theme="ipylw"]{--mt:#F0CF5A;--mt2:#D6A82A;--bg:#F1F0EA;--glow:none;--card:#FFFFFF;--line:rgba(60,50,0,.07);--sub:#F6F4EA;--seg:#EEEAD8;--dark:linear-gradient(160deg,#E7C042 0%,#C99D1C 100%);--dark-solid:#D8AE2E;--dark-line:rgba(255,255,255,.2);--track:rgba(255,255,255,.3);--ink:#2A2614;--muted:#6B6448;--ac:#E2B323;--on-ac:#2A2208;--ac-soft:rgba(226,179,35,.18);--ac-text:#8A6A00;--st1:rgba(226,179,35,.26);--st2:rgba(226,179,35,.62);--push:#E2B323;--pull:#5B8FD9;--third:#9C9478;--good:#3E8F5A;--bad:#D24A3C;--sleep:#7C6CD8;
+  --cl-sh:110,85,10;
   --cl-wheel:radial-gradient(120% 90% at 50% 15%,#F6CC3A 0%,#EDBB28 55%,#E2AC1C 100%);--cl-center:radial-gradient(100% 100% at 50% 25%,#E3AE1E 0%,#ECBC2A 60%,#F2C634 100%);--ip-wl:#FFFFFF;
   --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
 /* sage: a clear green shell, a green wheel */
-:root[data-theme="ipgrn"]{--bg:#EDF1EC;--glow:none;--card:#FFFFFF;--line:rgba(20,50,20,.07);--sub:#F1F5F0;--seg:#E2EAE1;--dark:linear-gradient(160deg,#7FA977 0%,#55834F 100%);--dark-solid:#679661;--dark-line:rgba(255,255,255,.18);--track:rgba(255,255,255,.26);--ink:#1B2A1B;--muted:#56685A;--ac:#4F8A47;--on-ac:#fff;--ac-soft:rgba(79,138,71,.15);--ac-text:#3B7234;--st1:rgba(79,138,71,.24);--st2:rgba(79,138,71,.6);--push:#4F8A47;--pull:#E39A3B;--third:#8A9A88;--good:#2E8F5E;--bad:#D24A3C;--sleep:#7C6CD8;
-  --cl-a:rgba(120,168,116,.55);--cl-b:rgba(88,138,84,.52);--cl-base:linear-gradient(180deg,#A9C7A3 0%,#86A880 100%);--cl-rim:rgba(205,235,200,.5);--cl-glow:rgba(150,200,145,.28);--cl-sh:25,60,25;--cl-frame:#6F9B69;
+:root[data-theme="ipgrn"]{--mt:#82AE78;--mt2:#5A8952;--bg:#EDF1EC;--glow:none;--card:#FFFFFF;--line:rgba(20,50,20,.07);--sub:#F1F5F0;--seg:#E2EAE1;--dark:linear-gradient(160deg,#7FA977 0%,#55834F 100%);--dark-solid:#679661;--dark-line:rgba(255,255,255,.18);--track:rgba(255,255,255,.26);--ink:#1B2A1B;--muted:#56685A;--ac:#4F8A47;--on-ac:#fff;--ac-soft:rgba(79,138,71,.15);--ac-text:#3B7234;--st1:rgba(79,138,71,.24);--st2:rgba(79,138,71,.6);--push:#4F8A47;--pull:#E39A3B;--third:#8A9A88;--good:#2E8F5E;--bad:#D24A3C;--sleep:#7C6CD8;
+  --cl-sh:25,60,25;
   --cl-wheel:radial-gradient(120% 90% at 50% 15%,#76A565 0%,#679A57 55%,#5B8D4C 100%);--cl-center:radial-gradient(100% 100% at 50% 25%,#5B8D4C 0%,#659752 60%,#6EA05C 100%);--ip-wl:#FFFFFF;
   --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
 :root.glass[data-theme="ipsmk"]{--gl-dock:#F3F4F5;--gl-mp:#F3F4F5}
@@ -2241,7 +2241,7 @@ html:root[data-theme="ipylw"] :is(.btn:not(.ghost),.hgo,.dock .pc) svg{filter:no
 
 /* the aluminium iPod classic's face rolls over at its edges: a broad soft fall-off a few mm wide at the sides and the
    bottom, a bright lip along the top, a fine highlight right on the rim; no steel ring showing at the front */
-:root[data-theme="ipc"] .ipod.ipod{border-radius:8.5%/5.1%;background:linear-gradient(180deg,#9EA2A8,#7F8389)}
+:root[data-theme="ipc"] .ipod.ipod{background:linear-gradient(180deg,#9EA2A8,#7F8389)}
 :root[data-theme="ipc"] .ipod.ipod::before{inset:.25cqw;
   box-shadow:inset 0 .35cqw .25cqw rgba(255,255,255,.85),inset 0 1.8cqw 2cqw -1cqw rgba(255,255,255,.55),
     inset 3.2cqw 0 3.4cqw -1.8cqw rgba(60,64,72,.16),inset -3.2cqw 0 3.4cqw -1.8cqw rgba(60,64,72,.2),inset 0 -3.2cqw 3.6cqw -1.8cqw rgba(60,64,72,.24),
