@@ -2287,3 +2287,6 @@ label:has(>select),.field:has(select){cursor:pointer}
 .mcard .mview:active{opacity:.6}
 .mcard .mview{display:grid;justify-items:start;gap:2px;width:max-content;max-width:100%;padding-right:12px}
 .mcard .mbody{cursor:pointer}
+.tile .tchart{display:block;cursor:pointer}.tile .tchart svg{display:block;width:100%}
+.gapcard .gchart{cursor:pointer}
+div.tile:active{transform:none}

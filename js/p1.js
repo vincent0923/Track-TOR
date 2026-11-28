@@ -800,8 +800,8 @@ function gapCardHtml(){const {from,to,days,gaps}=gapData();
   let cols=days.map((d,i)=>({g:gaps[i],l:days.length<=14?WD[dateObj(d).getDay()]:""}));
   if(days.length>31){cols=[];for(let i=0;i<days.length;i+=7){const ch=gaps.slice(i,i+7).filter(g=>g!=null);cols.push({g:ch.length?ch.reduce((a,b)=>a+b,0)/ch.length:null,l:""})}}
   const cm=Math.max(300,...cols.filter(c=>c.g!=null).map(c=>Math.abs(c.g)));
-  return '<section class="card gapcard" id="gapCard" data-act="intake">'+gapHeadHtml()
-    +bricksHtml(cols.map(c=>({n:c.g==null?0:Math.max(1,Math.round(Math.abs(c.g)/cm*8)),c:c.g==null?"":c.g>=0?"var(--good)":"var(--bad)",l:c.l})),true)
+  return '<section class="card gapcard" id="gapCard">'+gapHeadHtml()
+    +'<div class="gchart" data-act="intake" role="button" aria-label="'+T('摄入与消耗','Intake vs burn')+'">'+bricksHtml(cols.map(c=>({n:c.g==null?0:Math.max(1,Math.round(Math.abs(c.g)/cm*8)),c:c.g==null?"":c.g>=0?"var(--good)":"var(--bad)",l:c.l})),true)+'</div>'
     +(days.length?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
     +'</section>'}
 /* the head of the gap card (and of the intake panel): the period, the total and its fat; tap it for the next period */
@@ -961,10 +961,12 @@ function tileList(){const c=tileCfg(),off=k=>{const s=state.settings.sync;return
   return {shown:all.filter(m=>!c.hidden.includes(m.k)),hidden:all.filter(m=>c.hidden.includes(m.k))}}
 function renderProgView(){const v=$("#v-prog"),{shown,hidden}=tileList();
   const tiles=shown.map(m=>{if(m.k==="pull")return '<div class="tile wide tstack" data-k="pull">'+mainCardHtml()+(tileEdit?'<span class="tx" data-act="thide" data-k="pull" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</div>';const all=m.pts(),pts=recent(all,30),last=all[all.length-1];
-    return '<button class="tile'+(m.wide?" wide":"")+'" data-act="metric" data-k="'+m.k+'"><span class="tl"><i style="background:'+m.c+'"></i>'+m.name+(m.sub?' · '+m.sub:'')+'</span>'
+    /* only the chart opens the full chart; a tile with no chart yet opens on a tap anywhere */
+    const ch=pts.length>1,tag=ch?'div':'button';
+    return '<'+tag+' class="tile'+(m.wide?" wide":"")+'"'+(ch?'':' data-act="metric"')+' data-k="'+m.k+'"><span class="tl"><i style="background:'+m.c+'"></i>'+m.name+(m.sub?' · '+m.sub:'')+'</span>'
       +'<span class="tv">'+(last?last.y.toFixed(m.dec)+'<small>'+m.unit+'</small>':'–')+'</span>'+(last?deltaOf(m,all):'<span class="td muted">'+T('还没有数据','No data yet')+'</span>')
-      +(pts.length>1?lineSvg(pts,m.wide?320:150,m.wide?64:44,m.c,"spark"):'')
-      +(tileEdit?'<span class="tx" data-act="thide" data-k="'+m.k+'" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</button>'}).join("");
+      +(ch?'<span class="tchart" data-act="metric" data-k="'+m.k+'" role="button" aria-label="'+T('打开图表','Open the chart')+'">'+lineSvg(pts,m.wide?320:150,m.wide?64:44,m.c,"spark")+'</span>':'')
+      +(tileEdit?'<span class="tx" data-act="thide" data-k="'+m.k+'" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</'+tag+'>'}).join("");
   v.innerHTML=goalsHtml()+'<div class="bento'+(tileEdit?' editing':'')+'">'+tiles+'</div>'
     +(tileEdit?'<div class="tilebar">'+(hidden.length?'<button class="fsreset" data-act="tadd" aria-label="'+T('加回图表','Add a chart back')+'">'+ICON.plus+'</button>':'')+'<button class="fsreset" data-act="tdone" aria-label="'+T('完成','Done')+'">'+ICON.check+'</button></div>':'');
   animateRings(v);tileBind();goalHolds(v)}
