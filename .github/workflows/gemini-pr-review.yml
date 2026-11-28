@@ -1,0 +1,94 @@
+name: Gemini PR Peer Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# 权限锁死：代码只读，仅允许在 PR 下发评论，绝不修改代码
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    # 仅审查本仓库内部发起的 PR，防止公开仓库被外部 Fork 盗用 API 额度
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Gemini Peer Review
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          # 可按需替换为 gemini-4-carbon 获取更深度的架构审查
+          GEMINI_MODEL: gemini-3.8-flash
+        run: |
+          node - <<'EOF'
+          const { execSync } = require('child_process');
+          const fs = require('fs');
+
+          const prNumber = process.env.PR_NUMBER;
+          const diff = execSync(`gh pr diff ${prNumber}`, {
+            maxBuffer: 10 * 1024 * 1024,
+            encoding: 'utf8'
+          });
+
+          if (!diff.trim()) {
+            console.log('Empty diff, skipping review.');
+            process.exit(0);
+          }
+
+          const customRules = fs.existsSync('.gemini/review-rules.md')
+            ? fs.readFileSync('.gemini/review-rules.md', 'utf8')
+            : '';
+
+          const prompt = [
+            '你是一位严苛但务实的高级前端与产品评审专家，正在对个人健身饮食 Web App（Track-TOR）的 PR 进行只读 Peer Review。',
+            '只提出审查意见，不要替作者大段重写全部文件。用中文输出，按以下结构组织：',
+            '1. 总体结论（通过 / 建议修改后再合并）',
+            '2. P0（数据丢失风险、导入导出损坏、明显 Bug）',
+            '3. P1（移动端交互摩擦、流畅度/性能卡顿、布局错位）',
+            '4. P2（视觉美学精简、成瘾性正反馈、代码可维护性）',
+            '每条意见必须标明文件名、大致位置和明确验收标准，方便程序员（Claude）直接修复。',
+            customRules ? `\n项目补充审查规则：\n${customRules}` : '',
+            `\n以下是本次 PR 的完整 Git Diff（如超长已截断）：\n\`\`\`diff\n${diff.slice(0, 120000)}\n\`\`\``
+          ].join('\n');
+
+          async function main() {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL}:generateContent`;
+            const res = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': process.env.GEMINI_API_KEY
+              },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+              })
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+              console.error('Gemini API Error:', JSON.stringify(data));
+              process.exit(1);
+            }
+
+            const review = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!review) {
+              console.error('Empty review response:', JSON.stringify(data));
+              process.exit(1);
+            }
+
+            const body = `## 🤖 Gemini Peer Review (${process.env.GEMINI_MODEL})\n\n${review}`;
+            fs.writeFileSync('/tmp/review.md', body, 'utf8');
+            execSync(`gh pr comment ${prNumber} --body-file /tmp/review.md`, { stdio: 'inherit' });
+          }
+
+          main().catch((err) => {
+            console.error(err);
+            process.exit(1);
+          });
+          EOF
