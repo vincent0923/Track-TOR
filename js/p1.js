@@ -317,7 +317,7 @@ function ipRender(anim,list,mini){const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=r
     +'<div class="f-body ip-body" id="fBody"><div class="ipod">'+(ipodDeco[document.documentElement.dataset.theme]||(()=>""))()+scr+wheel+'</div></div><div></div>';
   /* the wheel stays the same element, so a finger still on it keeps turning across a redraw */
   if(old){f.querySelector(".ip-wheel").replaceWith(old)}else ipWheel(f.querySelector(".ip-wheel"));
-  run.ipDir=0;run.cfIn=0;run.cfKey=null;if(swap)ipSwapFx(swap);
+  run.ipDir=0;run.cfIn=0;run.cfKey=null;{const th=document.documentElement.dataset.theme;if(IP_ART[th])f.querySelector(".ipod").style.setProperty("--ip-deco",ipDecoUrl(th))}if(swap)ipSwapFx(swap);
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
   setsCenter();feelBind($(".feelbar"));setsHold()}
 /* swapping stacks: the big cover flies down into the small stack at its lower left corner while the other stack's
@@ -386,23 +386,90 @@ function ipWheel(w){if(!w)return;let st=null;const STEP=Math.PI/5;
   ["touchstart","touchmove","touchend"].forEach(k=>w.addEventListener(k,e=>e.stopPropagation(),{passive:true}))}
 /* stickers and rhinestones on the body, by skin (drawn as SVG, nothing from the photos) */
 const ipodDeco={
-  ipice:()=>{let g="";for(let i=0;i<34;i++){const x=6+Math.random()*88,y=74+Math.random()*24;g+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(.55+Math.random()*.5).toFixed(2)+'"/>'}
-    return '<svg class="ip-deco" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g fill="url(#ipgem)">'+g+'</g><defs><radialGradient id="ipgem" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#E4EEF8"/><stop offset="1" stop-color="#9DB6CF"/></radialGradient></defs></svg>'},
-  iplav:()=>'<div class="ip-stk" aria-hidden="true">'
-    +'<svg style="left:4%;top:3%;width:7%;transform:rotate(-14deg)" viewBox="0 0 24 18"><path d="M5 1h14l4 5v6l-4 5H5l-4-5V6z" fill="#9BDB7E"/><path d="M5 1h14l4 5H1z" fill="#C9F1B4"/><path d="M8 6h8v6H8z" fill="#7CC560" opacity=".7"/></svg>'
-    +'<svg style="right:3%;top:14%;width:10%;transform:rotate(12deg)" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#E38BE0"/><path d="M12 1l3.2 7L12 12 8.8 8z" fill="#F7C5F2"/></svg>'
-    +'<svg style="left:6%;top:56%;width:13%;transform:rotate(-10deg)" viewBox="0 0 24 22"><path d="M12 21L2.5 11.5A5.6 5.6 0 0 1 12 3.6a5.6 5.6 0 0 1 9.5 7.9z" fill="#E9468F"/><path d="M12 3.6a5.6 5.6 0 0 1 9.5 7.9L12 12z" fill="#F57DB5"/><path d="M6 6.5a3 3 0 0 1 3-1" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>'
-    +'<svg style="right:7%;top:51%;width:11%" viewBox="0 0 24 24"><g fill="#F2B544"><circle cx="12" cy="5.5" r="4.5"/><circle cx="18.2" cy="10" r="4.5"/><circle cx="15.8" cy="17.3" r="4.5"/><circle cx="8.2" cy="17.3" r="4.5"/><circle cx="5.8" cy="10" r="4.5"/></g><circle cx="12" cy="12" r="3.4" fill="#FFE08A"/></svg>'
-    +'<svg style="right:3%;top:58%;width:5%" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#2F5BD8"/></svg>'
-    +'<svg style="left:5%;top:83%;width:10%" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#A08BF0"/><circle cx="12" cy="12" r="8" fill="none" stroke="#C7B9FA" stroke-width="1.2"/><g fill="#7A62DA"><circle cx="9.5" cy="9.5" r="1.4"/><circle cx="14.5" cy="9.5" r="1.4"/><circle cx="9.5" cy="14.5" r="1.4"/><circle cx="14.5" cy="14.5" r="1.4"/></g></svg>'
-    +'<svg style="left:4%;top:71%;width:7%;transform:rotate(18deg)" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#5BB8A8"/></svg>'
-    +'<svg style="right:6%;bottom:3%;width:12%;transform:rotate(-8deg)" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#B18CF2"/><path d="M12 1l3.2 7L12 12 8.8 8z" fill="#DCC8FF"/></svg>'
-    +'<svg style="right:22%;bottom:6%;width:5%" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#F4F2FF"/></svg>'
-    +'<svg style="right:5%;top:44%;width:6%;transform:rotate(20deg)" viewBox="0 0 20 24"><path d="M4 1h12l3 6v10l-3 6H4l-3-6V7z" fill="#EADFF7"/><path d="M6 5h8v14H6z" fill="#C9B6EE"/></svg>'
-    +'</div>',
-  ipclr:()=>'<div class="ip-pcb" aria-hidden="true"></div>',
-  /* the U2 face: a fine line of light running round inside the rolled edge (shown in dark mode only) */
+  /* the U2 face: a fine line of light running round inside the rolled edge */
   ipu2:()=>'<i class="ip-gloss" aria-hidden="true"></i>'};
+/* what is laid on (or, for the clear shell, under) the body, drawn once per skin as one SVG picture in millimetres of the
+   real iPod (61.8 × 103.5; screen window 4.7,7.6 52.4 × 39.8; wheel centre 30.9,75, radius 19) and used as a background,
+   so it costs nothing while the page moves */
+const IP_DECO=new Map();
+function ipRnd(seed){let a=seed>>>0;return ()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
+function ipDecoUrl(th){if(IP_DECO.has(th))return IP_DECO.get(th);const f=IP_ART[th];const svg=f?'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 61.8 103.5" preserveAspectRatio="none">'+f()+'</svg>':"";
+  const u=svg?'url("data:image/svg+xml,'+encodeURIComponent(svg).replace(/'/g,"%27")+'")':"none";IP_DECO.set(th,u);return u}
+const IP_STAR=(R,k)=>{let d="";for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*(k||.46):R;d+=(i?"L":"M")+(r*Math.cos(a)).toFixed(3)+","+(r*Math.sin(a)).toFixed(3)}return d+"Z"};
+const IP_ART={
+  /* ice crystal: rhinestones in silver cups, a ring round the screen window and one round the wheel, more scattered
+     over the lower half, a few catching the light in four-pointed glints */
+  ipice:()=>{const r=ipRnd(11),U=[];
+    const gem=(x,y,s)=>U.push('<use href="#rs" x="'+(x-s*1.3).toFixed(2)+'" y="'+(y-s*1.3).toFixed(2)+'" width="'+(s*2.6).toFixed(2)+'" height="'+(s*2.6).toFixed(2)+'"/>');
+    /* round the screen: a rounded rectangle 1.3 mm outside the window */
+    const x0=3.35,y0=6.25,x1=58.45,y1=48.75,rr=2.6,st=1.2;const per=[];
+    const seg=(ax,ay,bx,by)=>{const L=Math.hypot(bx-ax,by-ay),n=Math.max(1,Math.round(L/st));for(let i=0;i<n;i++)per.push([ax+(bx-ax)*i/n,ay+(by-ay)*i/n])};
+    const arc=(cx,cy,a0)=>{for(let i=0;i<3;i++){const a=a0+i*Math.PI/6;per.push([cx+rr*Math.cos(a),cy+rr*Math.sin(a)])}};
+    seg(x0+rr,y0,x1-rr,y0);arc(x1-rr,y0+rr,-Math.PI/2);seg(x1,y0+rr,x1,y1-rr);arc(x1-rr,y1-rr,0);seg(x1-rr,y1,x0+rr,y1);arc(x0+rr,y1-rr,Math.PI/2);seg(x0,y1-rr,x0,y0+rr);arc(x0+rr,y0+rr,Math.PI);
+    per.forEach(([x,y])=>gem(x,y,.5));
+    /* round the wheel */
+    const WR=20.05,n=Math.round(2*Math.PI*WR/1.22);for(let i=0;i<n;i++){const a=i/n*Math.PI*2;gem(30.9+WR*Math.cos(a),75+WR*Math.sin(a),.5)}
+    /* scattered below, denser toward the bottom, never on the wheel */
+    const sc=[];for(let k=0;k<400&&sc.length<58;k++){const x=2.6+r()*56.6,y=52+Math.pow(r(),.7)*49,s=.3+r()*r()*.55;
+      if(Math.hypot(x-30.9,y-75)<21.3+s)continue;if(y>96&&(x<5+(y-96)||x>56.8-(y-96)))continue;if(sc.some(([a,b,c])=>Math.hypot(a-x,b-y)<c+s+.9))continue;sc.push([x,y,s])}
+    sc.forEach(([x,y,s])=>gem(x,y,s));
+    const glint=[];for(let k=0;k<7;k++){const p=k<3?per[(r()*per.length)|0]:sc[(r()*sc.length)|0];if(p)glint.push('<path transform="translate('+(p[0]+.15).toFixed(2)+' '+(p[1]-.15).toFixed(2)+') scale('+(1.1+r()*1.1).toFixed(2)+') rotate('+(r()*20-10).toFixed(1)+')" d="M0-1Q.1-.1 1 0Q.1.1 0 1Q-.1.1-1 0Q-.1-.1 0-1Z" fill="#fff" opacity=".95"/>')}
+    return '<defs><radialGradient id="rsc" cx=".5" cy=".42" r=".6"><stop offset="0" stop-color="#F4F8FC"/><stop offset=".7" stop-color="#B9C8D7"/><stop offset="1" stop-color="#7F94AA"/></radialGradient>'
+      +'<radialGradient id="rsg" cx=".38" cy=".34" r=".72"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".32" stop-color="#EEF5FC"/><stop offset=".62" stop-color="#BDD2E6"/><stop offset=".86" stop-color="#7E9AB8"/><stop offset="1" stop-color="#5E7894"/></radialGradient>'
+      +'<symbol id="rs" viewBox="-1.3 -1.3 2.6 2.6"><ellipse cx=".12" cy=".22" rx="1.12" ry="1.1" fill="#3E5F86" opacity=".28"/><circle r="1.12" fill="url(#rsc)"/><circle r=".9" fill="url(#rsg)"/>'
+      +'<path d="M0-.9L.26-.26L.9 0L.26.26L0 .9L-.26.26L-.9 0L-.26-.26Z" fill="#fff" opacity=".5"/><path d="M-.64-.64L0-.3L.64-.64L.3 0L.64.64L0 .3L-.64.64L-.3 0Z" fill="#9FB8D2" opacity=".35"/>'
+      +'<circle r=".3" fill="#F7FBFF"/><circle cx="-.34" cy="-.4" r=".17" fill="#fff"/><circle r=".9" fill="none" stroke="#6E88A6" stroke-width=".07" opacity=".7"/></symbol></defs>'+U.join("")+glint.join("")},
+  /* lavender: a pearly glitter over the whole body and glossy faceted stickers: an emerald, stars, a crystal heart,
+     a gold flower, a round pink stone, a cut lavender stone and a button */
+  iplav:()=>{const r=ipRnd(23);let gl="";
+    for(let k=0;k<900;k++){const x=r()*61.8,y=r()*103.5,q=r(),s=.06+q*q*.22,c=q>.93?"#FFE3F6":q>.86?"#DDF3FF":"#FFFFFF";gl+='<circle cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r="'+s.toFixed(3)+'" fill="'+c+'" opacity="'+(.35+q*.6).toFixed(2)+'"/>'}
+    for(let k=0;k<14;k++){const x=r()*61.8,y=r()*103.5,z=.5+r()*.8;gl+='<path transform="translate('+x.toFixed(2)+' '+y.toFixed(2)+') scale('+z.toFixed(2)+')" d="M0-1Q.08-.08 1 0Q.08.08 0 1Q-.08.08-1 0Q-.08-.08 0-1Z" fill="#fff" opacity=".85"/>'}
+    const star=(x,y,R,rot,c1,c2,c3)=>{let f="";const pts=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?R*.47:R;pts.push([rr*Math.cos(a),rr*Math.sin(a)])}
+      for(let i=0;i<10;i++){const a=pts[i],b=pts[(i+1)%10];f+='<path d="M0,0L'+a[0].toFixed(3)+','+a[1].toFixed(3)+'L'+b[0].toFixed(3)+','+b[1].toFixed(3)+'Z" fill="'+(i%2?c2:c1)+'"/>'}
+      return '<g transform="translate('+x+' '+y+') rotate('+rot+')" filter="url(#sh)"><path d="'+IP_STAR(R,.47)+'" fill="'+c3+'"/>'+f+'<path d="'+IP_STAR(R,.47)+'" fill="none" stroke="'+c3+'" stroke-width="'+(R*.06).toFixed(3)+'" opacity=".7"/><ellipse cx="'+(-R*.18).toFixed(2)+'" cy="'+(-R*.38).toFixed(2)+'" rx="'+(R*.16).toFixed(2)+'" ry="'+(R*.08).toFixed(2)+'" fill="#fff" opacity=".85" transform="rotate(-30)"/></g>'};
+    const heart='M0 3.3C-.6 2.6-3.6.6-3.6-1.4A1.9 1.9 0 0 1 0-2.3A1.9 1.9 0 0 1 3.6-1.4C3.6.6.6 2.6 0 3.3Z';
+    return '<defs><filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx=".18" dy=".4" stdDeviation=".35" flood-color="#4B2A92" flood-opacity=".45"/></filter>'
+      +'<radialGradient id="hg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FF9CCB"/><stop offset=".5" stop-color="#EC3E8D"/><stop offset="1" stop-color="#B01762"/></radialGradient>'
+      +'<radialGradient id="fg" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#FFE7A3"/><stop offset=".6" stop-color="#F4B63E"/><stop offset="1" stop-color="#C9811A"/></radialGradient>'
+      +'<radialGradient id="pg" cx=".38" cy=".34" r=".75"><stop offset="0" stop-color="#FFE0EC"/><stop offset=".45" stop-color="#F6A3C1"/><stop offset="1" stop-color="#C9608A"/></radialGradient>'
+      +'<linearGradient id="eg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C8F5B0"/><stop offset=".5" stop-color="#7FCF66"/><stop offset="1" stop-color="#3E9A3A"/></linearGradient>'
+      +'<linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBF6FF"/><stop offset=".55" stop-color="#E3D3FA"/><stop offset="1" stop-color="#B9A2EA"/></linearGradient>'
+      +'<radialGradient id="bg" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#C9B8FA"/><stop offset="1" stop-color="#8E74E4"/></radialGradient></defs>'
+      +'<g opacity=".9">'+gl+'</g>'
+      /* emerald, top left */
+      +'<g transform="translate(5.4 5.4) rotate(-14)" filter="url(#sh)"><path d="M-2.2-1.2L-1.4-1.9H1.4L2.2-1.2V1.2L1.4 1.9H-1.4L-2.2 1.2Z" fill="#3F9A3C"/><path d="M-2.2-1.2L-1.4-1.9H1.4L2.2-1.2L1.4-.9H-1.4Z" fill="#D2F7BE"/><path d="M2.2-1.2V1.2L1.4.9V-.9Z" fill="#5DB34E"/><path d="M-2.2-1.2V1.2L-1.4.9V-.9Z" fill="#9BE07E"/><path d="M-1.4-.9H1.4V.9H-1.4Z" fill="url(#eg)"/><path d="M-1.1-.7H.2L-.6.2H-1.1Z" fill="#fff" opacity=".55"/></g>'
+      +star(57.6,25,2.4,12,"#F6B7EE","#D776D2","#B4469F")
+      /* crystal heart, left */
+      +'<g transform="translate(7.6 64) rotate(-12)" filter="url(#sh)"><path d="'+heart+'" fill="url(#hg)"/><path d="M0-2.3L-1.6.2L0 3.3Z" fill="#FF8FC0" opacity=".55"/><path d="M0-2.3L1.6.2L0 3.3Z" fill="#B8145F" opacity=".35"/><path d="M-3.6-1.4L-1.6.2L0-2.3Z" fill="#FFC2DD" opacity=".5"/><ellipse cx="-1.9" cy="-1.5" rx=".8" ry=".35" fill="#fff" opacity=".85" transform="rotate(-35 -1.9 -1.5)"/></g>'
+      /* round pink stone */
+      +'<g transform="translate(5.6 73.6)" filter="url(#sh)"><circle r="1.25" fill="url(#pg)"/><path d="M0-1.25L.38-.38L1.25 0L.38.38L0 1.25L-.38.38L-1.25 0L-.38-.38Z" fill="#fff" opacity=".35"/><circle cx="-.42" cy="-.48" r=".24" fill="#fff"/></g>'
+      /* gold flower */
+      +'<g transform="translate(55 57.5) rotate(10)" filter="url(#sh)">'+[0,72,144,216,288].map(a=>'<circle cx="'+(1.35*Math.cos((a-90)*Math.PI/180)).toFixed(2)+'" cy="'+(1.35*Math.sin((a-90)*Math.PI/180)).toFixed(2)+'" r="1.3" fill="url(#fg)"/>').join("")+'<circle r=".95" fill="#FFE59A"/><circle cx="-.3" cy="-.35" r=".3" fill="#fff" opacity=".8"/>'+[0,72,144,216,288].map(a=>'<circle cx="'+(1.6*Math.cos((a-100)*Math.PI/180)).toFixed(2)+'" cy="'+(1.6*Math.sin((a-100)*Math.PI/180)).toFixed(2)+'" r=".28" fill="#fff" opacity=".7"/>').join("")+'</g>'
+      +star(59,59.6,.95,0,"#3E6EE8","#2449B8","#1C379A")
+      /* cut lavender stone, right */
+      +'<g transform="translate(56.6 82) rotate(18)" filter="url(#sh)"><path d="M-1.2-2H1.2L1.9-1.2V1.2L1.2 2H-1.2L-1.9 1.2V-1.2Z" fill="#A58BE6"/><path d="M-1.2-2H1.2L1.9-1.2V1.2L1.2 2H-1.2L-1.9 1.2V-1.2Z" fill="url(#lg)" opacity=".95"/><path d="M-.8-1.2H.8V1.2H-.8Z" fill="#CDB8F6"/><path d="M-1.2-2L-.8-1.2H.8L1.2-2Z" fill="#fff" opacity=".7"/><path d="M1.9-1.2L.8-1.2V1.2L1.9 1.2Z" fill="#9A80DC" opacity=".6"/></g>'
+      +star(6.2,91.5,1.5,-14,"#7AD3C2","#3FA898","#2C7F74")
+      /* button */
+      +'<g transform="translate(8.6 98)" filter="url(#sh)"><circle r="2.1" fill="url(#bg)"/><circle r="1.6" fill="none" stroke="#D8CCFB" stroke-width=".18"/>'+[[-.5,-.5],[.5,-.5],[-.5,.5],[.5,.5]].map(([a,b])=>'<circle cx="'+a+'" cy="'+b+'" r=".3" fill="#6247C4"/>').join("")+'<ellipse cx="-.9" cy="-1.1" rx=".6" ry=".25" fill="#fff" opacity=".6" transform="rotate(-35 -.9 -1.1)"/></g>'
+      +star(50.6,97.4,1.1,8,"#FFFFFF","#E3DEF2","#B5ACCF")+star(56.4,96.6,2.3,-10,"#C9A6FA","#9C72EA","#7550C9")},
+  /* clear cobalt: the circuit board under the shell (the shell itself, a see-through blue, is painted over it in CSS):
+     two steel clips under the screen, chips, rows of tiny parts, traces, screws and a flex cable */
+  ipclr:()=>{const r=ipRnd(37);let g='<rect x="2.6" y="50.6" width="56.6" height="50.4" rx="3.2" fill="#2C3D96" opacity=".85"/>';
+    const chip=(x,y,w,h,c)=>{let p='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx=".25" fill="'+(c||"#141E5A")+'"/><rect x="'+(x+.25)+'" y="'+(y+.25)+'" width="'+(w-.5)+'" height="'+(h-.5)+'" rx=".2" fill="none" stroke="#2A3A86" stroke-width=".12"/>';
+      for(let i=.6;i<w-.3;i+=.55)p+='<rect x="'+(x+i).toFixed(2)+'" y="'+(y-.35)+'" width=".22" height=".35" fill="#A7B3D8"/><rect x="'+(x+i).toFixed(2)+'" y="'+(y+h)+'" width=".22" height=".35" fill="#A7B3D8"/>';
+      for(let i=.6;i<h-.3;i+=.55)p+='<rect x="'+(x-.35)+'" y="'+(y+i).toFixed(2)+'" width=".35" height=".22" fill="#A7B3D8"/><rect x="'+(x+w)+'" y="'+(y+i).toFixed(2)+'" width=".35" height=".22" fill="#A7B3D8"/>';return p};
+    /* traces */
+    for(let k=0;k<46;k++){let x=4+r()*54,y=52+r()*47;let d="M"+x.toFixed(1)+" "+y.toFixed(1);for(let s=0;s<3;s++){if(r()<.5)x=Math.min(58,Math.max(3.5,x+(r()-.5)*14));else y=Math.min(100,Math.max(51.5,y+(r()-.5)*12));d+="L"+x.toFixed(1)+" "+y.toFixed(1)}
+      g+='<path d="'+d+'" fill="none" stroke="#3B4FA8" stroke-width=".16" opacity=".85"/>'}
+    g+=chip(5,54,9,6.5)+chip(46.5,54.5,8.5,5)+chip(44.5,86,10.5,10.5,"#111A44")+chip(6,82,6,5)+chip(48,66,5,4)+chip(5.5,66,5.5,7);
+    /* tiny parts in rows */
+    for(let k=0;k<160;k++){const x=3.5+r()*54.5,y=52+r()*48;if(Math.hypot(x-30.9,y-75)<19.5)continue;const v=r()<.5;g+='<rect x="'+x.toFixed(2)+'" y="'+y.toFixed(2)+'" width="'+(v?.35:.75)+'" height="'+(v?.75:.35)+'" fill="'+(r()<.3?"#C9A46A":"#C9D1E8")+'" opacity=".9"/>'}
+    /* screws, clips, connector, flex */
+    [[5,52.6],[56.8,52.6],[5,98.6],[56.8,98.6]].forEach(([x,y])=>g+='<circle cx="'+x+'" cy="'+y+'" r=".95" fill="#B7C0D8"/><circle cx="'+x+'" cy="'+y+'" r=".5" fill="#6A7698"/><path d="M'+(x-.4)+' '+y+'H'+(x+.4)+'" stroke="#2A3466" stroke-width=".15"/>');
+    [[14.2,49.6],[43.6,49.6]].forEach(([x,y])=>g+='<rect x="'+x+'" y="'+y+'" width="4" height="2.6" rx=".3" fill="#C3CBE0"/><circle cx="'+(x+2)+'" cy="'+(y+1.3)+'" r=".55" fill="#14215E"/>');
+    g+='<rect x="22" y="97" width="17.8" height="2.6" rx=".4" fill="#0E1847"/>';for(let i=0;i<22;i++)g+='<rect x="'+(22.6+i*.76).toFixed(2)+'" y="97.5" width=".38" height="1.6" fill="#C9A46A"/>';
+    g+='<path d="M50 52.2H57.6V56" fill="none" stroke="#C99A4A" stroke-width="1.6" opacity=".55"/>';
+    return '<g>'+g+'</g>'}};
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
   const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,ip=ipodOn(),

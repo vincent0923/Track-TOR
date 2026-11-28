@@ -1960,15 +1960,6 @@ html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box
 .ip-top .f-lab{font-weight:600;color:var(--muted)}
 .ip-body{align-content:center;touch-action:none}
 .ipod{position:relative;width:min(100%,372px);height:min(calc(100dvh - 110px - env(safe-area-inset-top) - env(safe-area-inset-bottom)),640px);grid-template-rows:auto auto minmax(0,1fr);align-items:center;border-radius:40px;padding:18px 18px 22px;display:grid;justify-items:center;gap:10px;background:var(--ip-body);box-shadow:var(--ip-edge);isolation:isolate}
-.ipod>.ip-deco,.ipod>.ip-stk,.ipod>.ip-pcb{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1;border-radius:inherit}
-.ip-stk svg{position:absolute;height:auto;filter:drop-shadow(0 1.5px 1.5px rgba(60,30,120,.35));overflow:visible}
-.ip-pcb{overflow:hidden;opacity:.26;background:
-  linear-gradient(90deg,rgba(10,16,60,.75) 0 2px,transparent 2px) 18% 58%/2px 30% no-repeat,linear-gradient(90deg,rgba(10,16,60,.75) 0 2px,transparent 2px) 84% 60%/2px 34% no-repeat,
-  linear-gradient(rgba(10,16,60,.8),rgba(10,16,60,.8)) 9% 52%/18% 9% no-repeat,linear-gradient(rgba(10,16,60,.8),rgba(10,16,60,.8)) 74% 52%/16% 7% no-repeat,
-  linear-gradient(rgba(10,16,60,.7),rgba(10,16,60,.7)) 8% 86%/14% 8% no-repeat,linear-gradient(rgba(10,16,60,.85),rgba(10,16,60,.85)) 86% 88%/14% 9% no-repeat,
-  repeating-linear-gradient(90deg,rgba(10,16,60,.5) 0 1px,transparent 1px 9px) 4% 70%/22% 12% no-repeat,repeating-linear-gradient(90deg,rgba(10,16,60,.5) 0 1px,transparent 1px 7px) 80% 72%/16% 10% no-repeat,
-  repeating-linear-gradient(0deg,rgba(10,16,60,.45) 0 1px,transparent 1px 6px) 30% 96%/40% 4% no-repeat,
-  radial-gradient(circle,rgba(220,228,255,.9) 0 2px,transparent 2.5px) 0 52%/100% 8px no-repeat}
 .ip-scr{width:100%;border-radius:10px;overflow:hidden;background:#FFFFFF;color:#1B1B1C;border:3px solid var(--ip-bezel);box-shadow:0 1px 0 rgba(255,255,255,.35),inset 0 1px 3px rgba(0,0,0,.12);text-align:left;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC","Noto Sans SC",sans-serif;color-scheme:light}
 .ip-bar{display:flex;align-items:center;gap:6px;height:26px;padding:0 9px;background:linear-gradient(180deg,#F7F8F9 0%,#E3E6E9 50%,#CFD3D8 100%);border-bottom:1px solid #A9AFB6;font-size:13px}
 .ip-bar b{font-weight:700;color:#2A2D31;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -2005,9 +1996,6 @@ html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box
 .ip-ok:active{filter:brightness(.92)}
 :root:is([data-theme="ipc"],[data-theme="ipu2"])[data-mode="dark"] .ip-ok{box-shadow:0 0 0 1px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08)}
 /* ice crystal: rhinestones round the screen and the wheel */
-:root[data-theme="ipice"] .ip-scr{border:7px solid transparent;background:linear-gradient(#fff,#fff) padding-box,radial-gradient(circle,#FFFFFF 0 1.3px,#D7E3EE 1.8px,#9DB4CA 2.4px,rgba(0,0,0,0) 2.8px) border-box 0 0/7px 7px,#B9CDE0 border-box;border-radius:14px}
-:root[data-theme="ipice"] .ip-ring{inset:-9px;background:repeating-conic-gradient(from 0deg,#FFFFFF 0 2.6deg,#9DB4CA 2.6deg 3.2deg,rgba(0,0,0,0) 3.2deg 5deg);-webkit-mask:radial-gradient(circle closest-side,rgba(0,0,0,0) 0 calc(100% - 7px),#000 calc(100% - 6.5px) calc(100% - 1px),rgba(0,0,0,0) 100%);mask:radial-gradient(circle closest-side,rgba(0,0,0,0) 0 calc(100% - 7px),#000 calc(100% - 6.5px) calc(100% - 1px),rgba(0,0,0,0) 100%)}
-:root[data-theme="ipice"] .ip-deco circle{filter:drop-shadow(0 .2px .2px rgba(40,70,110,.4))}
 /* clear cobalt: the screen sits in a darker window */
 :root[data-theme="ipclr"] .ip-scr{border-width:8px;border-radius:12px}
 :root[data-theme="ipclr"] .ip-wheel{box-shadow:inset 0 1px 1px rgba(255,255,255,.25),0 0 0 1px rgba(20,30,110,.4),0 6px 14px -6px rgba(10,20,80,.6)}
@@ -2163,3 +2151,29 @@ html:root[data-ipod] :is(.btn,.hgo):active{filter:brightness(.92)}
 :root[data-theme="ipc"] .ip-ok{box-shadow:0 0 0 .22cqw rgba(0,0,0,.08),inset 0 .55cqw .7cqw rgba(0,0,0,.2),inset 0 -.3cqw .3cqw rgba(255,255,255,.75),0 .2cqw 0 rgba(255,255,255,.7)}
 :root[data-theme="ipc"][data-mode="dark"]{--ip-center:linear-gradient(180deg,#2E2E31 0%,#38383B 40%,#414145 100%)}
 :root[data-theme="ipc"][data-mode="dark"] .ip-ok{box-shadow:0 0 0 .22cqw rgba(0,0,0,.45),inset 0 .55cqw .7cqw rgba(0,0,0,.45),inset 0 -.3cqw .3cqw rgba(255,255,255,.1),0 .2cqw 0 rgba(255,255,255,.06)}
+
+/* ---------- the three concept skins, after the pictures: what is drawn on them (rhinestones, glitter and stickers, the
+   circuit board) is one SVG picture per skin, --ip-deco, set by ipRender ---------- */
+:root:is([data-theme="ipice"],[data-theme="iplav"]) .ipod::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;background:var(--ip-deco) 0 0/100% 100% no-repeat}
+/* ice crystal: satin pastel blue, a silver frame round the screen, the spun silver wheel, a pale blue centre */
+:root[data-theme="ipice"] .ipod.ipod{background:radial-gradient(120% 45% at 28% 0%,rgba(255,255,255,.5),rgba(255,255,255,0) 60%),url(../img/tex-0.webp) 0 0/120px 120px,linear-gradient(180deg,#C2DCF4 0%,#A9CBEC 45%,#94BCE4 100%);background-blend-mode:normal,soft-light,normal;
+  box-shadow:inset 0 .9cqw .9cqw -.4cqw rgba(255,255,255,.75),inset 0 -1.2cqw 1.6cqw -.8cqw rgba(40,80,140,.22),inset 0 0 0 .3cqw rgba(255,255,255,.4),0 .5px 1px rgba(40,70,110,.3),0 4px 8px -2px rgba(40,70,110,.25),0 22px 36px -12px rgba(40,70,110,.35)}
+:root[data-theme="ipice"] .ip-scr{border:1.3cqw solid #A3B7CB;box-shadow:0 0 0 .2cqw rgba(255,255,255,.6),inset 0 .2cqw .4cqw rgba(0,0,0,.15)}
+:root[data-theme="ipice"] .ip-wheel{box-shadow:inset 0 .3cqw .5cqw rgba(40,70,110,.2),0 0 0 .25cqw rgba(140,165,190,.6),0 .4cqw .8cqw rgba(40,70,110,.2)}
+:root[data-theme="ipice"] .ip-ok{background:radial-gradient(100% 100% at 50% 20%,#9EC1E5 0%,#AFCDEB 60%,#BDD6EF 100%);box-shadow:0 0 0 .25cqw rgba(110,140,175,.5),inset 0 .5cqw .7cqw rgba(40,80,130,.25),inset 0 -.3cqw .3cqw rgba(255,255,255,.6)}
+:root[data-theme="ipice"] .ip-k{text-shadow:0 .15cqw 0 rgba(255,255,255,.7)}
+/* lavender: pearly lilac with glitter and stickers, a frosted wheel, a crystal bubble in the middle */
+:root[data-theme="iplav"] .ipod.ipod{background:radial-gradient(70% 40% at 88% 8%,rgba(255,205,240,.5),rgba(255,205,240,0) 70%),radial-gradient(80% 45% at 8% 96%,rgba(170,215,255,.45),rgba(170,215,255,0) 70%),radial-gradient(120% 45% at 30% 0%,rgba(255,255,255,.45),rgba(255,255,255,0) 60%),linear-gradient(180deg,#D4C7F8 0%,#BDAAF1 50%,#A893EA 100%);
+  box-shadow:inset 0 .9cqw .9cqw -.4cqw rgba(255,255,255,.7),inset 0 -1.2cqw 1.6cqw -.8cqw rgba(80,50,160,.25),inset 0 0 0 .3cqw rgba(255,255,255,.35),0 .5px 1px rgba(70,40,140,.3),0 4px 8px -2px rgba(70,40,140,.25),0 22px 36px -12px rgba(70,40,140,.38)}
+:root[data-theme="iplav"] .ip-scr{border:1.3cqw solid #7A63D2;box-shadow:0 0 0 .2cqw rgba(255,255,255,.35),inset 0 .2cqw .4cqw rgba(0,0,0,.15)}
+:root[data-theme="iplav"] .ip-wheel{background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.95) 0 .5px,rgba(255,255,255,0) 1px) 0 0/13px 15px,radial-gradient(circle at 70% 60%,rgba(255,230,250,.8) 0 .4px,rgba(255,255,255,0) .9px) 0 0/17px 11px,radial-gradient(120% 90% at 50% 15%,#D7CCF9 0%,#C3B4F5 45%,#AE9BEF 100%);
+  box-shadow:inset 0 .5cqw .8cqw rgba(255,255,255,.6),inset 0 -.6cqw 1cqw rgba(90,60,170,.28),0 0 0 .25cqw rgba(255,255,255,.3),0 .5cqw 1.2cqw rgba(80,50,160,.25)}
+:root[data-theme="iplav"] .ip-ok{background:radial-gradient(22% 16% at 36% 26%,#FFFFFF 0%,rgba(255,255,255,.9) 45%,rgba(255,255,255,0) 100%),radial-gradient(60% 40% at 55% 85%,rgba(255,190,235,.95) 0%,rgba(255,190,235,0) 100%),radial-gradient(50% 35% at 30% 75%,rgba(160,220,255,.8) 0%,rgba(160,220,255,0) 100%),radial-gradient(circle at 50% 55%,#F3EEFF 0%,#D2C2FB 35%,#A88EF0 72%,#8467E0 100%);
+  box-shadow:0 .7cqw 1.6cqw rgba(80,50,160,.4),0 .2cqw .3cqw rgba(80,50,160,.3),inset 0 -1cqw 1.4cqw rgba(255,190,240,.55),inset 0 .6cqw 1cqw rgba(255,255,255,.55),inset 0 0 0 .2cqw rgba(255,255,255,.5)}
+:root[data-theme="iplav"] .ip-k{text-shadow:0 .15cqw .3cqw rgba(80,50,160,.35)}
+/* clear cobalt: a see-through blue shell with the board under it, a clear thick rim, a cobalt frame, a cobalt wheel */
+:root[data-theme="ipclr"] .ipod.ipod{background:linear-gradient(162deg,rgba(255,255,255,.3) 0%,rgba(255,255,255,.08) 24%,rgba(255,255,255,0) 24.5%) no-repeat,linear-gradient(180deg,rgba(92,116,236,.6) 0%,rgba(66,90,218,.5) 45%,rgba(52,72,200,.46) 100%) no-repeat,var(--ip-deco) 0 0/100% 100% no-repeat,linear-gradient(180deg,#7D92EA 0%,#5A71DA 100%) no-repeat;
+  box-shadow:inset 0 0 0 .6cqw rgba(175,192,255,.5),inset 0 0 1.4cqw .9cqw rgba(120,145,255,.28),inset .9cqw .9cqw 1.2cqw -.6cqw rgba(255,255,255,.45),inset -.6cqw -.8cqw 1.2cqw -.6cqw rgba(20,30,120,.35),0 .5px 1px rgba(20,30,110,.35),0 4px 8px -2px rgba(20,30,110,.3),0 22px 36px -12px rgba(20,30,110,.42)}
+:root[data-theme="ipclr"] .ip-scr{border:2.4cqw solid #3E55CC;border-radius:3cqw;box-shadow:0 .2cqw .4cqw rgba(10,20,90,.4),inset 0 0 0 .2cqw rgba(0,0,0,.2),0 0 0 .2cqw rgba(160,180,255,.4)}
+:root[data-theme="ipclr"] .ip-wheel{background:radial-gradient(120% 90% at 50% 15%,#4258D6 0%,#3349C4 55%,#2A3DB2 100%);box-shadow:inset 0 .3cqw .5cqw rgba(255,255,255,.12),inset 0 -.4cqw .6cqw rgba(0,0,40,.25),0 0 0 .2cqw rgba(15,25,100,.45),0 .6cqw 1.4cqw rgba(10,20,90,.45)}
+:root[data-theme="ipclr"] .ip-ok{background:radial-gradient(100% 100% at 50% 20%,#2C3EB3 0%,#3549C3 60%,#3D52CE 100%);box-shadow:0 0 0 .22cqw rgba(15,25,100,.5),inset 0 .5cqw .7cqw rgba(0,0,40,.35),inset 0 -.3cqw .3cqw rgba(255,255,255,.12)}
