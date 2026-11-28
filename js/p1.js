@@ -764,34 +764,37 @@ function knobHtml(opts,cur,attr,label){const n=opts.length,i=Math.max(0,opts.fin
 /* the main exercise as a swipe stack of two brick cards: its best set day by day, and its weekly total (every ticked
    rep: any training day, extras added to a session, extras on days without one). One brick is a round number of reps
    so the tallest column stays within about 9; run a finger across the bricks to read a column. */
-/* the main move's tile: tap its title to step through its views, best set of the last 7, 12, 30 sessions, then the
-   weekly total over 4, 8, 12 weeks (remembered); the rest of the tile opens the chart */
-const MAIN_VIEWS=[["s",7],["s",12],["s",30],["w",4],["w",8],["w",12]];
-let mainView=1;try{const v=+localStorage.getItem(PK+"mainv");if(v>=0&&v<MAIN_VIEWS.length&&localStorage.getItem(PK+"mainv")!==null)mainView=v}catch(e){}
+/* the main move's tile: tap its head to step through 7, 14, 30, 60 days and all time (remembered). It shows the three
+   things that matter: the most done in one go in that time (the figure), how many in all, and how many days it takes on
+   average to add one rep (from the trend of the best set per session); the bricks are each day's best set */
+const MAIN_VIEWS=[7,14,30,60,0];
+let mainView=2;try{const v=localStorage.getItem(PK+"mainr");if(v!==null&&+v>=0&&+v<MAIN_VIEWS.length)mainView=+v}catch(e){}
+function mainStats(R){const m=mainEx(),t=today(),sets=m.custom?[]:setsOfMove(m.id),man={};
+  Object.values(state.metrics).forEach(r=>{const v=r.date&&mainManualOf(r);if(v!=null)man[r.date]=+v});
+  const dates=sets.map(x=>x[0]).concat(Object.keys(man)).sort(),first=dates[0]||t,from=R?ymdAdd(t,-(R-1)):first;
+  const best={};let total=0;sets.forEach(([d,v])=>{if(d<from||d>t)return;total+=v;best[d]=Math.max(best[d]||0,v)});
+  Object.entries(man).forEach(([d,v])=>{if(d>=from&&d<=t)best[d]=Math.max(best[d]||0,v)});
+  const days=Object.keys(best).sort(),top=days.length?Math.max(...days.map(d=>best[d])):null;
+  /* days per extra rep: least squares through each session's best (the smoothed series), over this window */
+  const pts=mainSeries().filter(p=>p.date>=from&&p.date<=t);let per=null,dir=0;
+  if(pts.length>=3&&pts[pts.length-1].x-pts[0].x>=3){const n=pts.length,mx=pts.reduce((a,p)=>a+p.x,0)/n,my=pts.reduce((a,p)=>a+p.y,0)/n;
+    const sxx=pts.reduce((a,p)=>a+(p.x-mx)**2,0),sl=sxx?pts.reduce((a,p)=>a+(p.x-mx)*(p.y-my),0)/sxx:0;dir=sl>.005?1:sl<-.005?-1:0;if(dir>0)per=1/sl}
+  return {from,days,best,top,total:m.custom?null:total,per,dir}}
 function wkMon(d){return ymdAdd(d,-((dateObj(d).getDay()+6)%7))}
 function brickUnit(mx){return [1,2,5,10,20,25,50,100,200,500].find(u=>mx/u<=9)||1000}
-function weeklyData(n){n=n||12;const m=mainEx();if(m.custom)return null;const by={};
-  const add=(d,sets)=>(sets||[]).forEach(x=>{if(x&&x.d){const w=wkMon(d);by[w]=(by[w]||0)+(+x.v||0)}});
-  Object.values(state.sessions).forEach(x=>{if(!x)return;const d=x.date||today();add(d,x.sets&&x.sets[m.id]);(x.xs||[]).forEach(it=>{if(it.id===m.id)add(d,it.sets)})});
-  Object.entries(state.dayx||{}).forEach(([d,x])=>((x&&x.xs)||[]).forEach(it=>{if(it.id===m.id)add(d,it.sets)}));
-  const first=Object.keys(by).filter(w=>by[w]>0).sort()[0];if(!first)return null;
-  const cur=wkMon(today()),weeks=[];for(let i=n-1;i>=0;i--){const w=ymdAdd(cur,-7*i);if(w>=first)weeks.push(w)}
-  return {weeks,vals:weeks.map(w=>by[w]||0)}}
-function mainCardHtml(){let [kind,n]=MAIN_VIEWS[mainView];const u=mainUnit(),M=METRICS[0],dec=M.dec,W=kind==="w"?weeklyData(n):null;if(kind==="w"&&!W)kind="s";
-  const foot=(a,unit,b)=>'<div class="row muted bkf"><span>'+a+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--pull)"></i>= '+unit+' '+u+'</span><span>'+b+'</span></div>';
-  let head,body;
-  if(W){const {weeks,vals}=W,mx=Math.max(...vals),best=vals.lastIndexOf(mx),tot=vals.reduce((a,b)=>a+b,0),unit=brickUnit(mx);
-    head='<span class="tl"><i style="background:var(--pull)"></i>'+T('每周总数 · '+n+' 周','Weekly total · '+n+' weeks')+'</span>'
-      +'<span class="tv">'+fmt(tot)+'<small>'+u+'</small></span><span class="td muted">'+T('本周 ','This week ')+fmt(vals[vals.length-1])+' '+u+'</span>';
-    body=bricksHtml(vals.map((v,k)=>({n:v?Math.max(1,Math.round(v/unit)):0,c:k===best?"var(--push)":"var(--pull)",t:T(dayLabel(weeks[k])+' 那周 · ',dayLabel(weeks[k])+' week · ')+fmt(v)+' '+u})))
-      +foot(dayLabel(weeks[0]),unit,T('本周','This week'))}
-  else{const all=mainSeries(),pts=all.slice(-n),last=all[all.length-1];
-    head='<span class="tl"><i style="background:var(--pull)"></i>'+mainName()+T(' · 最近 '+n+' 次',' · last '+n)+'</span>'
-      +'<span class="tv">'+(last?last.y.toFixed(dec)+'<small>'+u+'</small>':'–')+'</span>'+(last?deltaOf(M,all):'<span class="td muted">'+T('还没有数据','No data yet')+'</span>');
-    if(pts.length){const mx=Math.max(...pts.map(p=>p.y)),unit=brickUnit(mx),best=pts.map(p=>p.y).lastIndexOf(mx);
-      body=bricksHtml(pts.map((p,k)=>({n:p.y>0?Math.max(1,Math.round(p.y/unit)):0,c:k===best?"var(--push)":"var(--pull)",t:dayLabel(p.date)+' · '+(+p.y).toFixed(dec)+' '+u})))
-        +foot(dayLabel(pts[0].date),unit,dayLabel(pts[pts.length-1].date))}else body=''}
-  /* the head (title, figure, line under it) switches the view; only the bricks open the chart */
+function mainCardHtml(){const R=MAIN_VIEWS[mainView],u=mainUnit(),M=METRICS[0],dec=M.dec,S=mainStats(R);
+  const lab=R?T('过去 '+R+' 天','Last '+R+' days'):T('有史以来','All time'),f=v=>(+v).toFixed(dec);
+  const rate=S.per!=null?(S.per<1.5?T('每天 +'+f(1/S.per)+' '+u,'+'+f(1/S.per)+' '+u+' a day'):T('平均 '+Math.round(S.per)+' 天 +1','+1 every '+Math.round(S.per)+' days')):S.dir<0?T('在下降','Going down'):S.days.length>=3?T('持平','Holding'):'';
+  const head='<span class="tl"><i style="background:var(--pull)"></i>'+mainName()+' · '+lab+'</span>'
+    +'<span class="tv">'+(S.top!=null?f(S.top)+'<small>'+u+'</small>':'–')+'</span>'
+    +'<span class="td'+(S.dir>0?'" style="color:var(--good)"':S.dir<0?'" style="color:var(--bad)"':' muted"')+'>'+[S.total!=null&&S.days.length?T('共 '+fmt(S.total)+' '+u,fmt(S.total)+' '+u+' in all'):'',rate].filter(Boolean).join(' · ')+(S.days.length?'':T('这段时间还没有记录','Nothing logged in this time'))+'</span>';
+  let body='';const foot=(a,unit,b)=>'<div class="row muted bkf"><span>'+a+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--pull)"></i>= '+unit+' '+u+'</span><span>'+b+'</span></div>';
+  if(S.days.length){let cols=S.days.map(d=>({d,v:S.best[d]}));
+    /* many days: one column per week, its best */
+    if(cols.length>30){const w={};cols.forEach(c=>{const k=wkMon(c.d);if(!w[k]||c.v>w[k].v)w[k]={d:k,v:c.v}});cols=Object.values(w).sort((a,b)=>a.d<b.d?-1:1)}
+    const mx=Math.max(...cols.map(c=>c.v)),unit=brickUnit(mx),bi=cols.map(c=>c.v).lastIndexOf(mx);
+    body=bricksHtml(cols.map((c,k)=>({n:c.v>0?Math.max(1,Math.round(c.v/unit)):0,c:k===bi?"var(--push)":"var(--pull)",t:dayLabel(c.d)+' · '+f(c.v)+' '+u})))+foot(dayLabel(cols[0].d),unit,dayLabel(cols[cols.length-1].d))}
+/* the head (title, figure, line under it) switches the view; only the bricks open the chart */
   return '<section class="card mcard"><span class="bkread n" aria-live="polite"></span><div class="mview" data-act="mainv" role="button" tabindex="0" aria-label="'+T('换视图','Change the view')+'">'+head+'</div>'
     +(body?'<div class="mbody" data-act="metric" data-k="pull" role="button" aria-label="'+T('打开图表','Open the chart')+'">'+body+'</div>':'')+'</section>'}
 function flapHtml(txt){return '<span class="flap">'+[...txt].map((c,i)=>'<span style="--i:'+i+'">'+c+'</span>').join("")+'</span>'}
@@ -1252,7 +1255,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="msync"){/* sync in place: the icon turns while it runs, the chart redraws with what came in */
     if(typeof syncing!=="undefined"&&syncing||p1Syncing)return;if(typeof mcp==="undefined"||!mcp){p1Sync(false);return}buzz(6);
     p1Sync(false).finally(()=>{if($("#sheet").classList.contains("on")&&$("#chart,.mhead")&&metricSheet.redraw)metricSheet.redraw()})}
-  else if(a==="mainv"){if(tileEdit)return;mainView=(mainView+1)%MAIN_VIEWS.length;try{localStorage.setItem(PK+"mainv",String(mainView))}catch(err){}SFX.tap();buzz(6);const t=$('.tile[data-k="pull"]');if(t){const k=document.createElement("div");k.innerHTML=mainCardHtml();t.querySelector(".mcard").replaceWith(k.firstElementChild)}}
+  else if(a==="mainv"){if(tileEdit)return;mainView=(mainView+1)%MAIN_VIEWS.length;try{localStorage.setItem(PK+"mainr",String(mainView))}catch(err){}SFX.tap();buzz(6);const t=$('.tile[data-k="pull"]');if(t){const k=document.createElement("div");k.innerHTML=mainCardHtml();t.querySelector(".mcard").replaceWith(k.firstElementChild)}}
   else if(a==="mrange"){chartRange=M_RANGES[(M_RANGES.indexOf(chartRange)+1)%M_RANGES.length];SFX.tap();buzz(6);metricSheet.redraw()}
   else if(a==="gapr"){if(Date.now()-gapHeld<800)return;gapNext()}
   else if(a==="intake")openIntake();
