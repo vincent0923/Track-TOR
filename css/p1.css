@@ -2305,3 +2305,10 @@ div.tile:active{transform:none}
 .plannote .pn-r{display:grid;grid-template-columns:1fr auto;gap:0 10px;padding:5px 0;border-top:1px solid var(--line);font-size:13px}
 .plannote .pn-r small{grid-column:1/-1;color:var(--muted);font-size:11.5px;line-height:1.35}
 .sp-grid .fr-h{grid-column:1/-1;margin:6px 0 -2px}
+/* a selected plan: whatever colour the skin fills it with, its smaller words and the day chips take the card's own
+   ink, so they read on a dark or a bright fill alike */
+html:root .preset.on .muted{color:color-mix(in srgb,currentColor 80%,transparent)!important}
+html:root .preset.on .cdays .chip{background:color-mix(in srgb,currentColor 12%,transparent)!important;color:inherit!important;border:1px solid color-mix(in srgb,currentColor 45%,transparent)!important;box-shadow:none!important;text-shadow:none!important;opacity:1}
+html:root .preset.on .cdays .chip[aria-pressed="true"]{background:currentColor!important;border-color:currentColor!important}
+html:root .preset.on .cdays .chip[aria-pressed="true"] *,html:root .preset.on .cdays .chip[aria-pressed="true"]{-webkit-text-fill-color:oklch(from currentColor clamp(0,(.62 - l)*100,1) 0 0)}
+html:root .preset.on .cdays .chip[aria-pressed="true"]>*{color:inherit}
