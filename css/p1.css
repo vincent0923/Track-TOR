@@ -2030,7 +2030,9 @@ html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box
 /* the other stack sits on the lower left corner of the big cover */
 .ip-scr .cf-mini{right:auto;top:auto;left:-6px;bottom:-8px;width:46px;height:40px;margin:0;z-index:2}
 .ip-scr .cf-mini .mc{width:30px;height:30px;border-radius:3px;box-shadow:0 2px 5px rgba(0,0,0,.3);right:auto;left:0;outline:1.5px solid #fff}
-.ip-scr .cf-mini.two .mc:first-of-type{right:auto;left:10px;bottom:6px;transform:perspective(120px) rotateY(-28deg) scale(.86)}
+/* both small covers lean the same way as the big one, the back one a step behind and a little darker */
+.ip-scr .cf-mini .mc{transform:perspective(420px) rotateY(11deg);transform-origin:left center}
+.ip-scr .cf-mini.two .mc:first-of-type{right:auto;left:7px;bottom:4px;transform:perspective(420px) rotateY(11deg) scale(.94);filter:brightness(.82)}
 .ip-ghost{position:fixed;z-index:60;pointer-events:none;border-radius:2px;background:var(--ac) center/cover;transform-origin:0 0;will-change:transform;box-shadow:0 2px 6px rgba(0,0,0,.3)}
 .ip-ghost.plain{background:linear-gradient(135deg,var(--push),var(--pull))}
 .ip-scr .cf-mini .mb{width:15px;height:15px;right:auto;left:22px;bottom:-4px;background:#fff;color:#5A5D62}
