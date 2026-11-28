@@ -992,12 +992,12 @@ let chartRange=30;
    a finger along the chart reads each day into the figure, a line and a dot marking it. Logging or syncing is an icon
    beside the title */
 const M_RANGES=[7,14,30,60,90,0];
-function metricSheet(k){const m=METRICS.find(x=>x.k===k),all=m.pts();
-  const draw=()=>{const pts=recent(all,chartRange),last=all[all.length-1],W=340,H=200,pad=14;
+function metricSheet(k){const m=METRICS.find(x=>x.k===k);
+  const draw=()=>{const all=m.pts(),pts=recent(all,chartRange),last=all[all.length-1],W=340,H=200,pad=14;
     const lab=chartRange?T('过去 '+chartRange+' 天','Last '+chartRange+' days'):T('全部','All time');
     const ys=pts.map(p=>p.y),lo=pts.length?Math.min(...ys):0,hi=pts.length?Math.max(...ys):0,yOf=v=>(pad+(1-(v-lo)/((hi-lo)||1))*(H-2*pad))/H*100;
     const ticks=pts.length>1?[hi,(hi+lo)/2,lo].map(v=>'<span class="mtick" style="top:'+yOf(v).toFixed(2)+'%"><b>'+(+v).toFixed(m.dec)+'</b></span>').join(""):'';
-    const recBtn=m.rec?'<button class="mini" data-act="go" data-to="'+m.rec+'" aria-label="'+(m.rec==="sync"?T('从高驰同步','Sync from COROS'):T('记一笔','Log'))+'">'+(m.rec==="sync"?ICON.sync:ICON.plus)+'</button>':'';
+    const recBtn=m.rec?'<button class="mini" '+(m.rec==="sync"?'data-act="msync"':'data-act="go" data-to="'+m.rec+'"')+' aria-label="'+(m.rec==="sync"?T('从高驰同步','Sync from COROS'):T('记一笔','Log'))+'">'+(m.rec==="sync"?ICON.sync:ICON.plus)+'</button>':'';
     $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+m.name+'</h3>'+recBtn+'<button class="mini" data-act="close">'+ICON.x+'</button></div>'
       +'<div class="mhead" data-act="mrange" role="button" tabindex="0" aria-label="'+T('换时间范围','Change the period')+'"><p class="eyebrow" id="mLab">'+lab+'</p><div class="big" id="mBig">'+(last?last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small></div><div id="mDelta">'+(last?deltaOf(m,all,chartRange):'')+'</div></div>'
       +(pts.length>1?'<div class="chart mchart" id="chart">'+ticks+lineSvg(pts,W,H,m.c,"",pad)+'<i class="mcur" aria-hidden="true"></i><i class="mdot" aria-hidden="true" style="--c:'+m.c+'"></i></div>'
@@ -1225,6 +1225,9 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="day")daySheet(b.dataset.d);
   else if(a==="metric"){if(tileEdit)return;chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
+  else if(a==="msync"){/* sync in place: the icon turns while it runs, the chart redraws with what came in */
+    if(b.classList.contains("busy"))return;if(typeof mcp==="undefined"||!mcp){p1Sync(false);return}b.classList.add("busy");buzz(6);
+    p1Sync(false).finally(()=>{b.classList.remove("busy");if($("#sheet").classList.contains("on")&&$("#chart,.mhead")&&metricSheet.redraw)metricSheet.redraw()})}
   else if(a==="mrange"){chartRange=M_RANGES[(M_RANGES.indexOf(chartRange)+1)%M_RANGES.length];SFX.tap();buzz(6);metricSheet.redraw()}
   else if(a==="gapr"){if(Date.now()-gapHeld<800)return;gapNext()}
   else if(a==="intake")openIntake();
