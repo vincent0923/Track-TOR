@@ -2212,16 +2212,12 @@ html:root[data-theme="ipylw"] :is(.btn:not(.ghost),.hgo,.dock .pc) svg{filter:no
 .gaphead{cursor:pointer;-webkit-user-select:none;user-select:none;border-radius:12px;transition:transform .2s var(--spring)}
 .gaphead:active{transform:scale(.97)}
 .ichart{position:relative}.ichart .isvg{display:block;width:100%;height:auto;overflow:visible;touch-action:none}
-/* the records' thickness (about 1.5 mm): the side turned toward you, in the cover's own colours, shaded, lit at its
-   outer rim; it fades in as the record turns away from the middle (the same scroll timeline as cfTurn) */
-.cflow .cf-card .cf-e{position:absolute;inset:0;border-radius:inherit;display:block;pointer-events:none;opacity:0;animation:linear both;animation-timeline:--cfv}
-.cflow .cf-card .cf-el{box-shadow:-1px 0 0 #F6F6F8,-2px 0 0 #EEEFF2,-3px 0 0 #E6E7EB,-4px 0 0 #DEDFE4,-5px 0 0 #D6D7DD,-6px 0 0 #CDCED5,-7px 0 .6px rgba(40,40,60,.35);animation-name:cfEl}
-.cflow .cf-card .cf-er{box-shadow:1px 0 0 #F6F6F8,2px 0 0 #EEEFF2,3px 0 0 #E6E7EB,4px 0 0 #DEDFE4,5px 0 0 #D6D7DD,6px 0 0 #CDCED5,7px 0 .6px rgba(40,40,60,.35);animation-name:cfEr}
-:root[data-mode="dark"] .cflow .cf-card .cf-el{box-shadow:-1px 0 0 #4A4B52,-2px 0 0 #44454C,-3px 0 0 #3E3F46,-4px 0 0 #383940,-5px 0 0 #32333A,-6px 0 0 #2C2D33,-7px 0 .6px rgba(0,0,0,.5)}
-:root[data-mode="dark"] .cflow .cf-card .cf-er{box-shadow:1px 0 0 #4A4B52,2px 0 0 #44454C,3px 0 0 #3E3F46,4px 0 0 #383940,5px 0 0 #32333A,6px 0 0 #2C2D33,7px 0 .6px rgba(0,0,0,.5)}
-@keyframes cfEl{0%,52%{opacity:0}60%,100%{opacity:1}}
-@keyframes cfEr{0%,40%{opacity:1}48%,100%{opacity:0}}
-:root[data-theme="eink"] .cflow .cf-card .cf-e{display:none}
+/* the records' rounded edge: a soft bright lip along the top and left, a falling shade along the bottom and right, a
+   fine dark outline where the edge turns away; static, so the GPU keeps it with the record */
+.cflow .cf-card .cf-bev{position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 4px 5px -2px rgba(255,255,255,.35),inset 1.5px 0 0 rgba(255,255,255,.3),inset 4px 0 5px -2px rgba(255,255,255,.18),
+    inset 0 -1.5px 0 rgba(0,0,0,.28),inset 0 -5px 6px -2px rgba(0,0,0,.22),inset -1.5px 0 0 rgba(0,0,0,.18),inset -5px 0 6px -2px rgba(0,0,0,.14),0 0 0 .5px rgba(0,0,0,.25)}
+:root[data-theme="eink"] .cflow .cf-card .cf-bev{display:none}
 .ihead{margin-bottom:12px}
 /* the Diet page's cards: tap Today for its log; the ring steps through what it shows; a hold arranges the cards */
 .dtoday{cursor:pointer;border-radius:12px;-webkit-user-select:none;user-select:none}
@@ -2242,3 +2238,16 @@ html:root[data-theme="ipylw"] :is(.btn:not(.ghost),.hgo,.dock .pc) svg{filter:no
 /* a panel's form scrolls up and down only (the 44 px tap areas round small buttons made it scroll sideways), with a few px of room so
    a field's outer ring isn't cut off */
 .mask .form-body{overflow-x:hidden;padding:4px 5px 8px;margin:-4px -5px -8px}
+
+/* the aluminium iPod classic's face rolls over at its edges: a broad soft fall-off a few mm wide at the sides and the
+   bottom, a bright lip along the top, a fine highlight right on the rim; no steel ring showing at the front */
+:root[data-theme="ipc"] .ipod.ipod{border-radius:8.5%/5.1%;background:linear-gradient(180deg,#9EA2A8,#7F8389)}
+:root[data-theme="ipc"] .ipod.ipod::before{inset:.25cqw;
+  box-shadow:inset 0 .35cqw .25cqw rgba(255,255,255,.85),inset 0 1.8cqw 2cqw -1cqw rgba(255,255,255,.55),
+    inset 3.2cqw 0 3.4cqw -1.8cqw rgba(60,64,72,.16),inset -3.2cqw 0 3.4cqw -1.8cqw rgba(60,64,72,.2),inset 0 -3.2cqw 3.6cqw -1.8cqw rgba(60,64,72,.24),
+    inset .25cqw 0 .2cqw rgba(255,255,255,.55),inset -.25cqw 0 .2cqw rgba(255,255,255,.35)}
+:root[data-theme="ipc"][data-mode="dark"] .ipod.ipod{background:linear-gradient(180deg,#2C2D30,#18191B)}
+:root[data-theme="ipc"][data-mode="dark"] .ipod.ipod::before{
+  box-shadow:inset 0 .35cqw .25cqw rgba(255,255,255,.22),inset 0 1.8cqw 2cqw -1cqw rgba(255,255,255,.1),
+    inset 3.2cqw 0 3.4cqw -1.8cqw rgba(0,0,0,.35),inset -3.2cqw 0 3.4cqw -1.8cqw rgba(0,0,0,.4),inset 0 -3.2cqw 3.6cqw -1.8cqw rgba(0,0,0,.45),
+    inset .25cqw 0 .2cqw rgba(255,255,255,.12),inset -.25cqw 0 .2cqw rgba(255,255,255,.08)}

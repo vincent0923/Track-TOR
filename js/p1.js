@@ -240,10 +240,9 @@ function cfCard(i,cls){const e=run.p.ex[i],a=run.sets[i],m=N(e).match(/[（(]([^
   const art=cfArt(i);
   return '<div class="cf-card'+(art?" art":"")+(cls||"")+'"'+(art?' style="background-image:url('+art+')"':'')+' data-i="'+i+'" role="option" aria-selected="'+(i===run.ex)+'"><h2>'+esc(NS(e))+'</h2>'+(sub?'<p class="cf-sub">'+esc(sub)+'</p>':'')
     +'<p class="cf-sum n">'+sum+(a.length?'<small>'+U(e.unit)+'</small>':'')+'</p><span class="cf-pips">'+a.map(x=>'<i'+(x.d?' class="dn"':'')+'></i>').join("")+'</span>'+CF_EDGES+'</div>'}
-/* each record is a slab about 1.5 mm thick: a record left of the middle shows its left side, one right of it its right side
-   (drawn in the record's plane, since the reflection keeps records flat; which side shows follows the same scroll timeline
-   as the turning), the one facing you shows none */
-const CF_EDGES='<i class="cf-e cf-el" aria-hidden="true"></i><i class="cf-e cf-er" aria-hidden="true"></i>';
+/* each record's edge is rounded over, like the rim of an aluminium iPod: lit along the top and left, shaded along the
+   bottom and right, drawn once on the record (nothing moves with the scrolling) */
+const CF_EDGES='<i class="cf-bev" aria-hidden="true"></i>';
 function renderFocus(anim){
   const f=$("#focus"),p=run.p,allDone=run.sets.every(x=>x.every(y=>y.d));
   if(allDone&&!run.finished&&run.askFeel==null){finishRun();return}
