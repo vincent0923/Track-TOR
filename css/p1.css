@@ -2283,3 +2283,5 @@ label:has(>select),.field:has(select){cursor:pointer}
 .mfoot>button{flex:none}
 /* in a panel's small sync button the toy skin's slider groove gives way to just its light */
 :root[data-theme="toy"] .mfoot .msyncb .puck{display:contents!important}
+.mcard .mview{cursor:pointer;-webkit-user-select:none;user-select:none;border-radius:8px}
+.mcard .mview:active{opacity:.6}
