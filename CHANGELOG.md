@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.78a] — 2026-11-28
+
+### 新增 / Added
+- 📀 **U2 特别版主题**（120 G，只有暗）：亮面黑色聚碳酸酯机身、圆润卷边上的高光、红转盘、圆顶黑中键，放在铝合金展示台上。
+  A U2 Special Edition skin (120 G, dark only): glossy black polycarbonate with light along its rolled edge, a red wheel and a domed black centre button, on an aluminium display stand.
+
+### 改进 / Changed
+- 🎧 经典 iPod 主题改名「经典 · 银与黑」，照 iPod classic 做：亮是银色铝机身、白转盘、铝中键，放在 Apple Store 木桌上；暗是黑色铝机身、黑转盘，放在铝合金展示台上。木桌和展示台铺满这套主题的每一页。所有 iPod 主题的专注页都照真机比例。
+  The classic iPod skin is now "Classic · Silver & Black" after the iPod classic: silver aluminium with a white wheel on an Apple Store wooden table, or black aluminium with a black wheel on an aluminium display stand, the table or stand under every page. Every iPod skin's focus page now has the real iPod's proportions.
+
 ## [v1.77a] — 2026-11-28
 
 ### 新增 / Added

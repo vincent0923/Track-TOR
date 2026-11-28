@@ -208,6 +208,7 @@ const THEME_FX={
   aqua:{make:gelP,snd:big=>{(big?[784,1047,1319,1568]:[1047,1568]).forEach((f,i)=>bell(f,i*.08,.05));tone(2400,0,.01,"sine",.03)}},
   mac:{make:glintP,snd:big=>{bell(big?1568:1760,0,.06);if(big)bell(2349,.12,.04)}},
   ipc:{make:glintP,snd:big=>{tone(2600,0,.006,"square",.02);bell(big?1319:1568,.02,.06);if(big)bell(1976,.14,.04)}},
+  ipu2:{make:glintP,snd:big=>{tone(2600,0,.006,"square",.02);(big?[659,988,1319,1976]:[988,1319]).forEach((f,i)=>bell(f,.02+i*.09,.05))}},
   ipice:{make:glintP,snd:big=>{(big?[1568,1976,2349,3136]:[1976,2637]).forEach((f,i)=>bell(f,i*.07,.04))}},
   iplav:{make:flowerP,snd:big=>{(big?[1047,1319,1568,2093]:[1319,1760]).forEach((f,i)=>bell(f,i*.08,.05))}},
   ipclr:{make:glintP,snd:big=>{tone(2600,0,.006,"square",.02);(big?[784,1175,1568]:[1175]).forEach((f,i)=>bell(f,.02+i*.1,.05))}},
@@ -242,7 +243,7 @@ function themedCannons(t){const [W,H]=PX.size();[0,250,500].forEach(d=>setTimeou
 /* themed sounds for ticks, a finished exercise, the end of a rest, the finished session and taps */
 /* the iPod skins: the wheel's own tiny click as it turns */
 const IP_SFX={detent:()=>click(3400,1.6,.05),tap:()=>tone(3000,0,.006,"square",.025)};
-const SFX_TH={ipc:IP_SFX,ipice:IP_SFX,iplav:IP_SFX,ipclr:IP_SFX,
+const SFX_TH={ipc:IP_SFX,ipu2:IP_SFX,ipice:IP_SFX,iplav:IP_SFX,ipclr:IP_SFX,
   tm4:{tick:()=>{chip(1047,0,.05,.05);chip(2093,.05,.07,.045)},ex:()=>[523,659,784,1047,1568].forEach((f,i)=>chip(f,i*.05,.07,.05)),
     rest:()=>{chip(1568,0,.06);chip(1568,.12,.06)},done:()=>{[523,659,784,1047,1319,1568,2093].forEach((f,i)=>{chip(f,i*.06,.1,.05);tone(f/2,i*.06,.12,"sawtooth",.02)})},tap:()=>chip(2400,0,.012,.03),detent:()=>click(1700,1,.07,190),land:()=>{click(1200,.9,.09,140);chip(523,.02,.05,.03)}},
   skeuo:{tick:()=>clink(2200,0,.09),ex:()=>[1600,2000,2400,3000].forEach((f,i)=>clink(f,i*.07,.07)),rest:()=>{clink(1500,0);clink(1500,.2)},

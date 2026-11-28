@@ -64,7 +64,8 @@ const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,s
   {id:"nikon",zh:"黑皮压纹",en:"Pebbled Leather",price:120,fix:"dark",sw:["#141517","#26272A","#9EA3AA","#E8302A"],dz:"压纹蒙皮、滚花拨盘、快门键",de:"Pebbled leatherette, knurled dials, a shutter button"},
   {id:"dyson",gloss:1,zh:"粉瓷 · 铜蓝",en:"Rose Ceramic · Copper Blue",price:120,lit:1,sw:["#EDDBD3","#C46F6C","#141936","#D49A5E"],dz:"亮：奶白陶瓷机身配玫瑰金属；暗：普鲁士蓝哑光配金铜；旋纹按钮、滤网纹样",de:"Light: cream ceramic with rose metal; dark: Prussian blue matte with rich copper; spun-ring buttons, filter grille"},
   /* iPod family (ipod:1): html[data-ipod]; the focus page becomes the player, a Now Playing screen over a click wheel (ipRender) */
-  {id:"ipc",ipod:1,zh:"经典 · 铝与 U2",en:"Classic · Aluminium & U2",price:120,sw:["#D3B386","#D9DBDE","#4E5155","#C42A22"],dz:"亮：铝合金机身、白转盘，放在 Apple Store 的木桌上；暗：黑色 U2 机身、红转盘，放在铝合金展示台上",de:"Light: an aluminium body with a white wheel on an Apple Store wooden table; dark: the black U2 body with a red wheel on an aluminium display stand"},
+  {id:"ipc",ipod:1,zh:"经典 · 银与黑",en:"Classic · Silver & Black",price:120,sw:["#D3B386","#D9DBDE","#4E5155","#3D3D41"],dz:"iPod classic：亮是银色铝机身、白转盘，放在 Apple Store 的木桌上；暗是黑色铝机身、黑转盘，放在铝合金展示台上",de:"iPod classic: light is silver aluminium with a white wheel on an Apple Store wooden table; dark is black aluminium with a black wheel on an aluminium display stand"},
+  {id:"ipu2",ipod:1,zh:"U2 特别版",en:"U2 Special Edition",price:120,fix:"dark",sw:["#4E5155","#0A0A0B","#C42A22","#FFFFFF"],dz:"亮面黑色机身、红转盘，放在铝合金展示台上",de:"A glossy black body with a red wheel on an aluminium display stand"},
   {id:"ipice",ipod:1,zh:"冰蓝水钻",en:"Ice Crystal",price:120,fix:"light",sw:["#A9CCEC","#E9F1F8","#4F8FCF","#FFFFFF"],dz:"冰蓝机身、拉丝银转盘、一圈圈水钻",de:"An ice-blue body, a spun-silver wheel, rings of rhinestones"},
   {id:"iplav",ipod:1,zh:"紫晶贴纸",en:"Lavender Gems",price:120,fix:"light",sw:["#B7A5EE","#C9BCF4","#8A6CE8","#F05BA6"],dz:"闪粉紫机身、水晶中键、宝石和星星贴纸",de:"A glittery lavender body, a crystal centre button, gem and star stickers"},
   {id:"ipclr",ipod:1,zh:"透明宝蓝",en:"Clear Cobalt",price:120,fix:"light",sw:["#3E55C8","#2A3BB0","#DDE3F7","#7FA2FF"],dz:"透明宝蓝外壳、看得见电路板、宝蓝转盘",de:"A see-through cobalt shell over the circuit board, a cobalt wheel"},
@@ -401,7 +402,7 @@ const ipodDeco={
     +'</div>',
   ipclr:()=>'<div class="ip-pcb" aria-hidden="true"></div>',
   /* the U2 face: a fine line of light running round inside the rolled edge (shown in dark mode only) */
-  ipc:()=>'<i class="ip-gloss" aria-hidden="true"></i>'};
+  ipu2:()=>'<i class="ip-gloss" aria-hidden="true"></i>'};
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
   const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,ip=ipodOn(),
@@ -877,7 +878,7 @@ const SUNMOON='<svg class="sunmoon" viewBox="0 0 34 18" aria-label="'+T('亮暗�
 const thModes=th=>th.fix?[th.fix]:["light","dark"];
 function thPages(th,mode){return [].concat(...(mode?[mode]:thModes(th)).map(m=>[0,1,2].map(i=>({m,i}))))}
 /* TH_V: bump when tools/thumbs.js remakes the pictures (the service worker keeps images until their address changes) */
-const TH_V=9;
+const TH_V=10;
 const thPage=(th,p)=>'background-image:url(img/th/'+th.id+'-'+p.m+'.webp?v='+TH_V+');background-position:'+["0%","50%","100%"][p.i]+' 0';
 /* the stack: the first page on top, the rest stepped right and down behind it */
 function thStack(th,big,mode){const ps=thPages(th,mode);
