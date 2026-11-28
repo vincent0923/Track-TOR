@@ -299,9 +299,9 @@ function ipRender(anim,list,mini){const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=r
     m=N(e).match(/[（(]([^）)]*)[）)]/),sub=[m&&m[1],e.note?NOTE(e):""].filter(Boolean).join(" · "),nb=ipNums(),feel=run.askFeel!=null;
   const title=feel?T("感觉如何","How was it"):run.stk==="done"?T("练好的","Done"):T("正在练","Now Training");
   const sets='<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'" data-i="'+i+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
-    +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+mini+'</div>';
+    +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+'</div>';
   const scr='<div class="ip-scr" role="group" aria-label="'+esc(NS(e))+'"><div class="ip-bar"><b>'+title+'</b><span class="sp"></span><i class="ip-st'+(run.ipT?" on":"")+'">'+IP_I.st(!!run.ipT)+'</i><span class="n" id="fTime">0:00</span><i class="ip-bat" aria-label="'+dn+'/'+tot+'"><i style="width:'+Math.round(dn/Math.max(1,tot)*100)+'%"></i></i></div>'
-    +'<div class="ip-np'+(anim&&run.ipDir?" sl"+(run.ipDir>0?"r":"l"):"")+'"><div class="ip-art'+(art?"":" plain")+'"'+(art?' style="background-image:url('+art+')"':'')+'></div><div class="ip-info"><h2>'+esc(NS(e))+'</h2>'
+    +'<div class="ip-np'+(anim&&run.ipDir?" sl"+(run.ipDir>0?"r":"l"):"")+'"><div class="ip-artw"><div class="ip-artm"><div class="ip-art'+(art?"":" plain")+'"'+(art?' style="background-image:url('+art+')"':'')+'></div></div>'+mini+'</div><div class="ip-info"><h2>'+esc(NS(e))+'</h2>'
     +'<p>'+esc(sub||LAB(p))+'</p><p class="ip-pos n">'+(pos+1)+' / '+list.length+'</p>'+sets+'</div></div>'
     +(feel?'<div class="feelbar ip-feel" role="slider" tabindex="0" aria-label="'+T('这个动作感觉？','How did that feel?')+'" aria-valuemin="1" aria-valuemax="4"><span class="fl-lab">'+T('转一转','Turn')+'</span><div class="fl-bks">'+FEEL4.map((x,i)=>'<i style="--i:'+i+'"></i>').join("")+'</div></div>'
       :'<div class="ip-prog'+(nb.over?" over":"")+'"><span class="n" id="ipL">'+nb.l+'</span><i class="ip-trk"><i id="ipF" style="width:'+nb.w+'%"></i></i><span class="n" id="ipR">'+nb.r+'</span></div>')+'</div>';
@@ -311,14 +311,32 @@ function ipRender(anim,list,mini){const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=r
     +'<button type="button" class="ip-k ip-next" data-ip="next" aria-label="'+T('下一个动作','Next move')+'">'+IP_I.next+'</button>'
     +'<button type="button" class="ip-k ip-play" data-ip="play" aria-label="'+(e.unit==="个"?T('休息计时','Rest timer'):T('计时','Time the set'))+'">'+IP_I.play+'</button>'
     +'<button type="button" class="ip-ok" data-ip="ok" aria-label="'+(feel?T('确定','OK'):ci<0?T('已练好','Done'):T('完成这一组','Set done'))+'"></button></div>';
-  const old=f.querySelector(".ip-wheel");
+  const old=f.querySelector(".ip-wheel"),swap=run.ipStk&&run.ipStk!==run.stk?ipSnap():null;run.ipStk=run.stk;
   f.innerHTML='<div class="f-top ip-top"><button class="mini" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><span class="sp"></span><span class="f-lab">'+LAB(p)+'</span></div>'
     +'<div class="f-body ip-body" id="fBody"><div class="ipod">'+(ipodDeco[document.documentElement.dataset.theme]||(()=>""))()+scr+wheel+'</div></div><div></div>';
   /* the wheel stays the same element, so a finger still on it keeps turning across a redraw */
   if(old){f.querySelector(".ip-wheel").replaceWith(old)}else ipWheel(f.querySelector(".ip-wheel"));
-  run.ipDir=0;run.cfIn=0;run.cfKey=null;
+  run.ipDir=0;run.cfIn=0;run.cfKey=null;if(swap)ipSwapFx(swap);
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
   setsCenter();feelBind($(".feelbar"));setsHold()}
+/* swapping stacks: the big cover flies down into the small stack at its lower left corner while the other stack's
+   cover grows out of that corner into the big place; transforms only, so the phone's compositor runs it at full rate */
+function ipSnap(){const a=$(".ip-art"),m=$(".ip-artw .cf-mini .mc:last-of-type");if(!a)return null;
+  return {a:a.getBoundingClientRect(),bg:a.style.backgroundImage,plain:a.classList.contains("plain"),m:m?m.getBoundingClientRect():null}}
+function ipSwapFx(S){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const mv=$(".ip-artm"),art=$(".ip-art"),mini=$(".ip-artw .cf-mini"),mc=mini&&mini.querySelector(".mc:last-of-type"),info=$(".ip-info");if(!mv||!art)return;
+  const E="cubic-bezier(.22,1,.36,1)",D=460,r=art.getBoundingClientRect();
+  /* the new big cover starts where the small one was */
+  if(S.m){const k=S.m.width/r.width;mv.animate([{transform:"translate("+(S.m.left-r.left)+"px,"+(S.m.top-r.top)+"px) scale("+k+")",opacity:.6},{transform:"none",opacity:1}],{duration:D,easing:E})}
+  else mv.animate([{transform:"scale(.6)",opacity:0},{transform:"none",opacity:1}],{duration:D,easing:E});
+  if(info)info.animate([{opacity:0,transform:"translateY(6px)"},{opacity:1,transform:"none"}],{duration:D*.8,delay:D*.2,easing:E,fill:"backwards"});
+  /* the old big cover, copied, flies into the small stack, which waits empty until it lands */
+  const g=document.createElement("i");g.className="ip-ghost"+(S.plain?" plain":"");g.style.cssText="left:"+S.a.left+"px;top:"+S.a.top+"px;width:"+S.a.width+"px;height:"+S.a.height+"px;"+(S.bg?"background-image:"+S.bg:"");
+  document.body.appendChild(g);
+  const t=mc?mc.getBoundingClientRect():(mini?mini.getBoundingClientRect():null);
+  const end=t?{transform:"translate("+(t.left-S.a.left)+"px,"+(t.top-S.a.top)+"px) scale("+(t.width/S.a.width)+")",opacity:1}:{transform:"scale(.3)",opacity:0};
+  if(mini)mini.style.opacity="0";
+  g.animate([{transform:"none",opacity:1},end],{duration:D,easing:E}).onfinish=()=>{g.remove();if(mini){mini.style.opacity="";mini.classList.remove("got");void mini.offsetWidth;mini.classList.add("got")}}}
 /* the numbers on the screen, redone in place while the wheel turns or the timer runs */
 function ipPaint(){const L=$("#ipL");if(!L)return;const nb=ipNums();L.innerHTML=nb.l;$("#ipR").textContent=nb.r;$("#ipF").style.width=nb.w+"%";L.parentNode.classList.toggle("over",!!nb.over)}
 function ipTurn(d){if(!run||run.finished)return;const fb=$(".feelbar");
