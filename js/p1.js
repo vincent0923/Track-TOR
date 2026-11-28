@@ -297,15 +297,14 @@ function ipNums(){const e=run.p.ex[run.ex],a=run.sets[run.ex],ci=curSet(),T0=run
 function ipRender(anim,list,mini){const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=run.sets[run.ex],ci=curSet(),pos=list.indexOf(run.ex),
     tot=run.sets.reduce((s,x)=>s+x.length,0),dn=run.sets.reduce((s,x)=>s+x.filter(y=>y.d).length,0),art=cfArt(run.ex),
     m=N(e).match(/[（(]([^）)]*)[）)]/),sub=[m&&m[1],e.note?NOTE(e):""].filter(Boolean).join(" · "),nb=ipNums(),feel=run.askFeel!=null;
-  const title=feel?T("感觉如何","How was it"):run.stk==="done"?T("练好的","Done"):T("正在练","Now Training"),
-    setl=ci<0?T("练好了","Done"):T("第 "+(ci+1)+" / "+a.length+" 组","Set "+(ci+1)+" of "+a.length);
-  const scr='<div class="ip-scr" role="group" aria-label="'+esc(NS(e))+'"><div class="ip-bar"><b>'+title+'</b><span class="sp"></span><i class="ip-st'+(run.ipT?" on":"")+'">'+IP_I.st(!!run.ipT)+'</i><span class="n" id="fTime">0:00</span><i class="ip-bat" aria-label="'+dn+'/'+tot+'"><i style="width:'+Math.round(dn/Math.max(1,tot)*100)+'%"></i></i></div>'
-    +'<div class="ip-np'+(anim&&run.ipDir?" sl"+(run.ipDir>0?"r":"l"):"")+'"><div class="ip-art'+(art?"":" plain")+'"'+(art?' style="background-image:url('+art+')"':'')+'></div><div class="ip-info"><h2>'+esc(NS(e))+'</h2>'
-    +'<p>'+esc(sub||LAB(p))+'</p><p>'+setl+'</p><p class="ip-pos n">'+(pos+1)+' / '+list.length+'</p></div></div>'
-    +(feel?'<div class="feelbar ip-feel" role="slider" tabindex="0" aria-label="'+T('这个动作感觉？','How did that feel?')+'" aria-valuemin="1" aria-valuemax="4"><span class="fl-lab">'+T('转一转','Turn')+'</span><div class="fl-bks">'+FEEL4.map((x,i)=>'<i style="--i:'+i+'"></i>').join("")+'</div></div>'
-      :'<div class="ip-prog'+(nb.over?" over":"")+'"><span class="n" id="ipL">'+nb.l+'</span><i class="ip-trk"><i id="ipF" style="width:'+nb.w+'%"></i></i><span class="n" id="ipR">'+nb.r+'</span></div>')+'</div>';
+  const title=feel?T("感觉如何","How was it"):run.stk==="done"?T("练好的","Done"):T("正在练","Now Training");
   const sets='<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'" data-i="'+i+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
     +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+mini+'</div>';
+  const scr='<div class="ip-scr" role="group" aria-label="'+esc(NS(e))+'"><div class="ip-bar"><b>'+title+'</b><span class="sp"></span><i class="ip-st'+(run.ipT?" on":"")+'">'+IP_I.st(!!run.ipT)+'</i><span class="n" id="fTime">0:00</span><i class="ip-bat" aria-label="'+dn+'/'+tot+'"><i style="width:'+Math.round(dn/Math.max(1,tot)*100)+'%"></i></i></div>'
+    +'<div class="ip-np'+(anim&&run.ipDir?" sl"+(run.ipDir>0?"r":"l"):"")+'"><div class="ip-art'+(art?"":" plain")+'"'+(art?' style="background-image:url('+art+')"':'')+'></div><div class="ip-info"><h2>'+esc(NS(e))+'</h2>'
+    +'<p>'+esc(sub||LAB(p))+'</p><p class="ip-pos n">'+(pos+1)+' / '+list.length+'</p>'+sets+'</div></div>'
+    +(feel?'<div class="feelbar ip-feel" role="slider" tabindex="0" aria-label="'+T('这个动作感觉？','How did that feel?')+'" aria-valuemin="1" aria-valuemax="4"><span class="fl-lab">'+T('转一转','Turn')+'</span><div class="fl-bks">'+FEEL4.map((x,i)=>'<i style="--i:'+i+'"></i>').join("")+'</div></div>'
+      :'<div class="ip-prog'+(nb.over?" over":"")+'"><span class="n" id="ipL">'+nb.l+'</span><i class="ip-trk"><i id="ipF" style="width:'+nb.w+'%"></i></i><span class="n" id="ipR">'+nb.r+'</span></div>')+'</div>';
   const wheel='<div class="ip-wheel" role="group" aria-label="'+T('转盘：转动调数字','Click wheel: turn to change the number')+'"><i class="ip-ring" aria-hidden="true"></i>'
     +'<button type="button" class="ip-k ip-menu" data-ip="menu" aria-label="'+T('切换没练 / 练好','Swap to-do and done')+'">MENU</button>'
     +'<button type="button" class="ip-k ip-prev" data-ip="prev" aria-label="'+T('上一个动作','Previous move')+'">'+IP_I.prev+'</button>'
@@ -314,7 +313,7 @@ function ipRender(anim,list,mini){const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=r
     +'<button type="button" class="ip-ok" data-ip="ok" aria-label="'+(feel?T('确定','OK'):ci<0?T('已练好','Done'):T('完成这一组','Set done'))+'"></button></div>';
   const old=f.querySelector(".ip-wheel");
   f.innerHTML='<div class="f-top ip-top"><button class="mini" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><span class="sp"></span><span class="f-lab">'+LAB(p)+'</span></div>'
-    +'<div class="f-body ip-body" id="fBody"><div class="ipod">'+(ipodDeco[document.documentElement.dataset.theme]||(()=>""))()+scr+sets+wheel+'</div></div><div></div>';
+    +'<div class="f-body ip-body" id="fBody"><div class="ipod">'+(ipodDeco[document.documentElement.dataset.theme]||(()=>""))()+scr+wheel+'</div></div><div></div>';
   /* the wheel stays the same element, so a finger still on it keeps turning across a redraw */
   if(old){f.querySelector(".ip-wheel").replaceWith(old)}else ipWheel(f.querySelector(".ip-wheel"));
   run.ipDir=0;run.cfIn=0;run.cfKey=null;
@@ -385,7 +384,9 @@ const ipodDeco={
   ipclr:()=>'<div class="ip-pcb" aria-hidden="true"></div>'};
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
-  const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,x=v.clientWidth/2-(c.offsetLeft+c.offsetWidth/2);
+  const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,ip=ipodOn(),
+    /* on the iPod screen the row is narrow: it starts at the left, and once it doesn't fit the set being done sits a third of the way in */
+    x=ip&&t.scrollWidth<=v.clientWidth?0:ip?Math.min(0,Math.max(v.clientWidth-t.scrollWidth,v.clientWidth/3-(c.offsetLeft+c.offsetWidth/2))):v.clientWidth/2-(c.offsetLeft+c.offsetWidth/2);
   if(run.setsX!=null&&run.setsK===run.ex){t.style.transition="none";t.style.transform="translateX("+run.setsX+"px)";void t.offsetWidth;t.style.transition=""}
   t.style.transform="translateX("+x+"px)";run.setsX=x;run.setsK=run.ex}
 /* a move's name may take two lines on its record; one that still doesn't fit shrinks */
