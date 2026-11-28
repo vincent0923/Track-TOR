@@ -1927,3 +1927,91 @@ html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box
 .wxbadge{display:inline-grid;place-items:center;width:20px;height:20px;margin-left:6px;vertical-align:-5px;padding:0;background:none;border:0}
 .wxbadge svg{width:20px;height:20px}
 .wxbadge[hidden]{display:none}
+
+/* ---------- iPod family (THEMES ipod:1 → html[data-ipod]): ipc classic white / black with a red wheel, ipice ice blue
+   with rhinestones, iplav glittery lavender with stickers, ipclr a see-through cobalt shell over the circuit board.
+   Each skin sets --ip-body (the shell), --ip-wheel, --ip-wl (wheel labels), --ip-center, --ip-bezel round the screen ---------- */
+:root[data-theme="ipc"]{--bg:#EEF0F3;--glow:none;--card:#FFFFFF;--line:rgba(0,0,0,.06);--sub:#F2F3F5;--seg:#E6E8EB;--dark:linear-gradient(160deg,#3A3B3F 0%,#232427 100%);--dark-solid:#2A2B2E;--dark-line:rgba(255,255,255,.1);--track:rgba(255,255,255,.18);--ink:#1C1C1E;--muted:#6B6C71;--ac:#2F7BEA;--on-ac:#fff;--ac-soft:rgba(47,123,234,.13);--ac-text:#1E63CC;--st1:rgba(47,123,234,.22);--st2:rgba(47,123,234,.58);--push:#2F7BEA;--pull:#E8572E;--third:#8A8D93;--good:#2E9B5E;--bad:#D93B30;--sleep:#7C6CD8;
+  --ip-body:linear-gradient(180deg,#FCFCFB 0%,#F1F1EF 55%,#E6E6E4 100%);--ip-edge:inset 0 2px 0 #fff,inset 0 -3px 6px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.07),0 24px 40px -18px rgba(30,40,60,.35);--ip-wheel:radial-gradient(circle at 50% 30%,#DEDFE1 0%,#CFD0D3 100%);--ip-wl:#FFFFFF;--ip-center:linear-gradient(180deg,#FFFFFF 0%,#F0F0F0 100%);--ip-bezel:#4A4F56;
+  --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
+:root[data-theme="ipc"][data-mode="dark"]{--bg:#0F0F11;--card:#1C1C1E;--line:rgba(255,255,255,.07);--sub:#242427;--seg:#242427;--dark:linear-gradient(160deg,#C2302A 0%,#8E1F1A 100%);--dark-solid:#A6271F;--ink:#F2F2F3;--muted:#9A9AA0;--ac:#D8372E;--ac-soft:rgba(216,55,46,.16);--ac-text:#FF6A60;--st1:rgba(216,55,46,.24);--st2:rgba(216,55,46,.6);--push:#E0453B;--pull:#F2A33A;--third:#8E8E93;--good:#34C26E;--bad:#FF5A4F;
+  --ip-body:linear-gradient(180deg,#2C2C2E 0%,#1E1E20 60%,#161617 100%);--ip-edge:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -3px 6px rgba(0,0,0,.4),0 0 0 1px #000,0 24px 40px -18px rgba(0,0,0,.8);--ip-wheel:radial-gradient(circle at 50% 30%,#C42A22 0%,#A3221B 100%);--ip-wl:#F6E3E0;--ip-center:linear-gradient(180deg,#1A1A1B 0%,#0E0E0F 100%);--ip-bezel:#0A0A0B;color-scheme:dark}
+:root[data-theme="ipice"]{--bg:#EDF2F8;--glow:none;--card:#FFFFFF;--line:rgba(30,60,100,.07);--sub:#F1F6FB;--seg:#E2EBF4;--dark:linear-gradient(160deg,#79B0E3 0%,#4F8FCF 100%);--dark-solid:#5A98D5;--dark-line:rgba(255,255,255,.18);--track:rgba(255,255,255,.28);--ink:#1D3350;--muted:#5A718C;--ac:#3D86D6;--on-ac:#fff;--ac-soft:rgba(61,134,214,.14);--ac-text:#2468B4;--st1:rgba(61,134,214,.22);--st2:rgba(61,134,214,.58);--push:#3D86D6;--pull:#E58FB0;--third:#8FB0CF;--good:#2E9B7A;--bad:#D9506A;--sleep:#8A7BD8;
+  --ip-body:linear-gradient(180deg,#BBD8F2 0%,#A3C7EA 50%,#8DB7E1 100%);--ip-edge:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 8px rgba(40,80,130,.15),0 0 0 1px rgba(60,100,150,.18),0 24px 40px -18px rgba(40,80,130,.4);
+  --ip-wheel:radial-gradient(circle,rgba(255,255,255,0) 0 33%,rgba(120,150,180,.25) 34%,rgba(255,255,255,0) 36%),repeating-radial-gradient(circle,rgba(255,255,255,.5) 0 1px,rgba(190,206,222,.35) 1px 2px),conic-gradient(from 20deg,#FFFFFF,#CBD9E6,#F6FAFD,#BFD0E0,#FFFFFF,#CBD9E6,#F6FAFD,#BFD0E0,#FFFFFF);--ip-wl:#3E7CC4;--ip-center:radial-gradient(circle at 50% 35%,#B6D4F0 0%,#93BAE0 100%);--ip-bezel:#A9BDD0;
+  --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
+:root[data-theme="iplav"]{--bg:#F1EEF9;--glow:none;--card:#FFFFFF;--line:rgba(60,40,120,.07);--sub:#F5F2FC;--seg:#E9E3F8;--dark:linear-gradient(160deg,#A48EF0 0%,#7C62DE 100%);--dark-solid:#8C73E6;--dark-line:rgba(255,255,255,.18);--track:rgba(255,255,255,.28);--ink:#2D2450;--muted:#6E6496;--ac:#8065E6;--on-ac:#fff;--ac-soft:rgba(128,101,230,.14);--ac-text:#6A4ED6;--st1:rgba(128,101,230,.22);--st2:rgba(128,101,230,.58);--push:#8065E6;--pull:#EC5AA2;--third:#4FB3A3;--good:#2E9E7E;--bad:#E0466E;--sleep:#5E7BE0;
+  --ip-body:radial-gradient(circle at 20% 30%,rgba(255,255,255,.9) 0 .6px,rgba(255,255,255,0) 1.2px) 0 0/17px 19px,radial-gradient(circle at 70% 60%,rgba(255,255,255,.75) 0 .5px,rgba(255,255,255,0) 1px) 0 0/23px 13px,linear-gradient(180deg,#CBBDF5 0%,#B5A3EF 50%,#A08CE8 100%);--ip-edge:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 8px rgba(70,40,150,.18),0 0 0 1px rgba(90,60,170,.18),0 24px 40px -18px rgba(70,40,150,.45);
+  --ip-wheel:radial-gradient(circle at 20% 30%,rgba(255,255,255,.9) 0 .6px,rgba(255,255,255,0) 1.2px) 0 0/15px 17px,radial-gradient(circle at 50% 25%,#C2B2F5 0%,#AB98EE 100%);--ip-wl:#FFFFFF;--ip-center:radial-gradient(circle at 38% 30%,#FFFFFF 0 10%,rgba(255,255,255,.6) 18%,rgba(255,255,255,0) 32%),radial-gradient(circle at 50% 80%,#F4D7FF 0%,#C9B4FA 40%,#9E86EE 100%);--ip-bezel:#6E58C8;
+  --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
+:root[data-theme="ipclr"]{--bg:#EDF0F8;--glow:none;--card:#FFFFFF;--line:rgba(30,40,110,.07);--sub:#F1F3FA;--seg:#E2E6F5;--dark:linear-gradient(160deg,#4A62D6 0%,#2A3BB0 100%);--dark-solid:#3549BE;--dark-line:rgba(255,255,255,.16);--track:rgba(255,255,255,.24);--ink:#1A2250;--muted:#5B648C;--ac:#3550D8;--on-ac:#fff;--ac-soft:rgba(53,80,216,.13);--ac-text:#2A43C4;--st1:rgba(53,80,216,.22);--st2:rgba(53,80,216,.58);--push:#3550D8;--pull:#E8763A;--third:#7F8BB5;--good:#25996B;--bad:#D9443B;--sleep:#8A6CE0;
+  --ip-body:linear-gradient(180deg,rgba(110,130,235,.82) 0%,rgba(72,92,210,.86) 50%,rgba(52,70,190,.9) 100%);--ip-edge:inset 0 2px 0 rgba(255,255,255,.4),inset 0 0 0 2px rgba(150,170,255,.35),inset 0 -3px 10px rgba(10,20,80,.3),0 24px 40px -18px rgba(30,40,130,.55);
+  --ip-wheel:radial-gradient(circle at 50% 30%,#3E52CC 0%,#2B3AAE 100%);--ip-wl:#FFFFFF;--ip-center:radial-gradient(circle at 50% 35%,#3A4DC6 0%,#2C3BAE 100%);--ip-bezel:#3C52C6;
+  --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
+:root[data-ipod] .dock button[aria-selected="true"]{color:var(--on-ac)}
+:root[data-ipod] .hero .exl li,:root[data-ipod] .hero .exl li b{color:rgba(255,255,255,.9)}
+:root.glass[data-theme="ipc"][data-mode="light"]{--gl-dock:#F6F7F8;--gl-mp:#F6F7F8}
+:root.glass[data-theme="ipc"][data-mode="dark"]{--gl-dock:#1E1E20;--gl-mp:#222224}
+:root.glass[data-theme="ipice"]{--gl-dock:#F3F8FC;--gl-mp:#F3F8FC}
+:root.glass[data-theme="iplav"]{--gl-dock:#F6F3FD;--gl-mp:#F6F3FD}
+:root.glass[data-theme="ipclr"]{--gl-dock:#F2F4FB;--gl-mp:#F2F4FB}
+
+/* the player: the shell, the screen, the set chips and the wheel */
+:root[data-ipod] .focus{grid-template-rows:auto 1fr 0;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.ip-top .f-lab{font-weight:600;color:var(--muted)}
+.ip-body{align-content:center;touch-action:none}
+.ipod{position:relative;width:min(100%,372px);height:min(calc(100dvh - 110px - env(safe-area-inset-top) - env(safe-area-inset-bottom)),640px);grid-template-rows:auto auto minmax(0,1fr);align-items:center;border-radius:40px;padding:18px 18px 22px;display:grid;justify-items:center;gap:10px;background:var(--ip-body);box-shadow:var(--ip-edge);isolation:isolate}
+.ipod>.ip-deco,.ipod>.ip-stk,.ipod>.ip-pcb{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1;border-radius:inherit}
+.ip-stk svg{position:absolute;height:auto;filter:drop-shadow(0 1.5px 1.5px rgba(60,30,120,.35));overflow:visible}
+.ip-pcb{overflow:hidden;opacity:.26;background:
+  linear-gradient(90deg,rgba(10,16,60,.75) 0 2px,transparent 2px) 18% 58%/2px 30% no-repeat,linear-gradient(90deg,rgba(10,16,60,.75) 0 2px,transparent 2px) 84% 60%/2px 34% no-repeat,
+  linear-gradient(rgba(10,16,60,.8),rgba(10,16,60,.8)) 9% 52%/18% 9% no-repeat,linear-gradient(rgba(10,16,60,.8),rgba(10,16,60,.8)) 74% 52%/16% 7% no-repeat,
+  linear-gradient(rgba(10,16,60,.7),rgba(10,16,60,.7)) 8% 86%/14% 8% no-repeat,linear-gradient(rgba(10,16,60,.85),rgba(10,16,60,.85)) 86% 88%/14% 9% no-repeat,
+  repeating-linear-gradient(90deg,rgba(10,16,60,.5) 0 1px,transparent 1px 9px) 4% 70%/22% 12% no-repeat,repeating-linear-gradient(90deg,rgba(10,16,60,.5) 0 1px,transparent 1px 7px) 80% 72%/16% 10% no-repeat,
+  repeating-linear-gradient(0deg,rgba(10,16,60,.45) 0 1px,transparent 1px 6px) 30% 96%/40% 4% no-repeat,
+  radial-gradient(circle,rgba(220,228,255,.9) 0 2px,transparent 2.5px) 0 52%/100% 8px no-repeat}
+.ip-scr{width:100%;border-radius:10px;overflow:hidden;background:#FFFFFF;color:#1B1B1C;border:3px solid var(--ip-bezel);box-shadow:0 1px 0 rgba(255,255,255,.35),inset 0 1px 3px rgba(0,0,0,.12);text-align:left;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","PingFang SC","Noto Sans SC",sans-serif;color-scheme:light}
+.ip-bar{display:flex;align-items:center;gap:6px;height:26px;padding:0 9px;background:linear-gradient(180deg,#F7F8F9 0%,#E3E6E9 50%,#CFD3D8 100%);border-bottom:1px solid #A9AFB6;font-size:13px}
+.ip-bar b{font-weight:700;color:#2A2D31;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ip-bar .n{font-size:11px;color:#4A4E54;letter-spacing:0}
+.ip-st{display:grid;color:#3E8CF0}.ip-st svg{width:13px;height:13px;fill:currentColor}
+.ip-bat{position:relative;width:24px;height:11px;border-radius:2px;border:1px solid #8E949B;background:linear-gradient(#fff,#E4E6E8);padding:1px}
+.ip-bat::after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:3px;border-radius:0 1px 1px 0;background:#8E949B}
+.ip-bat i{display:block;height:100%;min-width:2px;border-radius:1px;background:linear-gradient(180deg,#8EE07A,#3FB83A)}
+.ip-np{display:grid;grid-template-columns:42% minmax(0,1fr);gap:12px;padding:12px 12px 0;align-items:start}
+.ip-np.slr{animation:ipSlr .32s var(--ease)}.ip-np.sll{animation:ipSll .32s var(--ease)}
+@keyframes ipSlr{from{transform:translateX(26px);opacity:.2}to{transform:none;opacity:1}}
+@keyframes ipSll{from{transform:translateX(-26px);opacity:.2}to{transform:none;opacity:1}}
+.ip-art{aspect-ratio:1;border-radius:2px;background:var(--ac) center/cover;box-shadow:0 1px 3px rgba(0,0,0,.25);transform:perspective(420px) rotateY(11deg);transform-origin:left center;-webkit-box-reflect:below 1px linear-gradient(rgba(0,0,0,0) 62%,rgba(0,0,0,.28))}
+.ip-art.plain{background:linear-gradient(135deg,var(--push),var(--pull))}
+.ip-info{min-width:0;padding-top:6px;text-align:left;display:grid;gap:3px}
+.ip-info h2{font-size:17px;line-height:1.2;font-weight:700;color:#1B1B1C;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;letter-spacing:-.01em}
+.ip-info p{font-size:13px;line-height:1.3;color:#5A5D62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ip-info .ip-pos{color:#8A8D92;font-size:12px;letter-spacing:0}
+.ip-prog{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;padding:14px 12px 12px;font-size:12px;color:#3A3D42}
+.ip-prog .n{letter-spacing:0;min-width:34px}.ip-prog #ipR{text-align:right}.ip-prog small{font-size:10px;margin-left:1px;color:#7A7D82}
+.ip-prog.over #ipR{color:#1E63CC;font-weight:700}
+.ip-trk{position:relative;height:9px;border-radius:2px;overflow:hidden;background:linear-gradient(180deg,#F6F6F6 0%,#E4E4E4 100%);box-shadow:inset 0 0 0 1px #C5C8CC}
+.ip-trk i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(180deg,#8CC0FF 0%,#4D93F2 48%,#2F7BEA 52%,#3F8AF0 100%);box-shadow:inset 0 0 0 1px rgba(20,80,180,.35);transition:width .2s var(--ease)}
+.ip-scr .feelbar.ip-feel{margin:10px 12px 12px;width:auto;background:#F2F3F5;color:#2A2D31;box-shadow:inset 0 0 0 1px #D0D3D7}
+.ipod .f-setrow{max-width:100%}
+.ip-wheel{position:relative;width:min(66vw,250px,100%);aspect-ratio:1;border-radius:50%;margin-top:4px;background:var(--ip-wheel);box-shadow:inset 0 1px 2px rgba(255,255,255,.35),inset 0 -2px 5px rgba(0,0,0,.12),0 1px 0 rgba(255,255,255,.3);touch-action:none;-webkit-user-select:none;user-select:none}
+.ip-ring{position:absolute;inset:0;border-radius:50%;pointer-events:none}
+.ip-k{position:absolute;display:grid;place-items:center;color:var(--ip-wl);font:600 14px/1 -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;letter-spacing:.02em;width:64px;height:44px;text-shadow:0 1px 0 rgba(0,0,0,.08)}
+.ip-k svg{width:20px;height:20px}
+.ip-menu{top:6%;left:calc(50% - 32px)}.ip-play{bottom:6%;left:calc(50% - 32px)}
+.ip-prev{left:2%;top:calc(50% - 22px);width:50px}.ip-next{right:2%;top:calc(50% - 22px);width:50px}
+.ip-k:active{opacity:.6}
+.ip-ok{position:absolute;inset:33%;border-radius:50%;background:var(--ip-center);box-shadow:0 0 0 1px rgba(0,0,0,.1),inset 0 1px 1px rgba(255,255,255,.5),0 1px 2px rgba(0,0,0,.12)}
+.ip-ok:active{filter:brightness(.92)}
+:root[data-theme="ipc"][data-mode="dark"] .ip-ok{box-shadow:0 0 0 1px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08)}
+/* ice crystal: rhinestones round the screen and the wheel */
+:root[data-theme="ipice"] .ip-scr{border:7px solid transparent;background:linear-gradient(#fff,#fff) padding-box,radial-gradient(circle,#FFFFFF 0 1.3px,#D7E3EE 1.8px,#9DB4CA 2.4px,rgba(0,0,0,0) 2.8px) border-box 0 0/7px 7px,#B9CDE0 border-box;border-radius:14px}
+:root[data-theme="ipice"] .ip-ring{inset:-9px;background:repeating-conic-gradient(from 0deg,#FFFFFF 0 2.6deg,#9DB4CA 2.6deg 3.2deg,rgba(0,0,0,0) 3.2deg 5deg);-webkit-mask:radial-gradient(circle,rgba(0,0,0,0) 0 calc(50% - 7px),#000 calc(50% - 6.5px) calc(50% - 1px),rgba(0,0,0,0) 50%);mask:radial-gradient(circle,rgba(0,0,0,0) 0 calc(50% - 7px),#000 calc(50% - 6.5px) calc(50% - 1px),rgba(0,0,0,0) 50%)}
+:root[data-theme="ipice"] .ip-deco circle{filter:drop-shadow(0 .2px .2px rgba(40,70,110,.4))}
+/* clear cobalt: the screen sits in a darker window */
+:root[data-theme="ipclr"] .ip-scr{border-width:8px;border-radius:12px}
+:root[data-theme="ipclr"] .ip-wheel{box-shadow:inset 0 1px 1px rgba(255,255,255,.25),0 0 0 1px rgba(20,30,110,.4),0 6px 14px -6px rgba(10,20,80,.6)}
+:root[data-theme="ipclr"] .ip-ok{box-shadow:inset 0 0 0 1px rgba(20,30,110,.5),inset 0 2px 3px rgba(0,0,0,.2)}
+:root[data-theme="iplav"] .ip-wheel{box-shadow:inset 0 2px 3px rgba(255,255,255,.5),inset 0 -3px 6px rgba(80,50,160,.25),0 2px 6px rgba(80,50,160,.2)}
+:root[data-theme="iplav"] .ip-ok{box-shadow:0 2px 5px rgba(80,50,160,.35),inset 0 -2px 4px rgba(120,80,200,.35)}

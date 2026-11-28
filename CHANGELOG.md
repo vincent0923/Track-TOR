@@ -6,6 +6,18 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.77a] — 2026-11-28
+
+### 新增 / Added
+- 🎧 **四套 iPod 主题**（各 120 G）：经典 · 黑白（亮：白机身灰转盘；暗：黑机身红转盘）、冰蓝水钻、紫晶贴纸、透明宝蓝。
+  Four iPod skins (120 G each): Classic · Black & White (light: white with a grey wheel; dark: black with a red wheel), Ice Crystal, Lavender Gems and Clear Cobalt.
+- 🔘 **专注页变成 iPod**：这四套主题里，专注页是「正在播放」的屏幕：封面在左、动作信息在右，进度条是这一组的个数或秒数，电池是做完的组数。下面是圆形点按转盘：转动改数字，中键完成一组，⏮ ⏭ 换动作，MENU 切换没练 / 练好，▶II 给秒的动作计时、给次数的动作计休息（90 秒，做完一组自动开始）；练完一个动作的感觉也用转盘选。
+  In these skins the focus page is a Now Playing screen: the cover at the left, the move at the right, the progress bar is the set's reps or seconds and the battery is the sets done. Below it, a click wheel: turn it to change the number, the centre button does the set, ⏮ ⏭ change moves, MENU swaps to-do and done, ▶II times a timed set or the rest after a rep set (90 s, started by itself after each set); the feel after a move is picked with the wheel too.
+
+### 改进 / Changed
+- ❄️ 强制下雪时，雪化成的水珠少了很多，看起来不再像同时在下雨。
+  With snow forced on, far fewer beads of melt water stay on the glass, so it no longer looks like rain and snow at once.
+
 ## [v1.76a] — 2026-11-28
 
 ### 新增 / Added

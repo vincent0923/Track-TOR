@@ -207,6 +207,10 @@ const THEME_FX={
   eink:{make:inkP,snd:big=>{fxHit(0,.12,3200,.5,big?.06:.04,"highpass");fxHit(.05,.18,1400,.6,big?.05:.03,"bandpass");if(big)fxHit(.22,.14,3000,.5,.05,"highpass")}},
   aqua:{make:gelP,snd:big=>{(big?[784,1047,1319,1568]:[1047,1568]).forEach((f,i)=>bell(f,i*.08,.05));tone(2400,0,.01,"sine",.03)}},
   mac:{make:glintP,snd:big=>{bell(big?1568:1760,0,.06);if(big)bell(2349,.12,.04)}},
+  ipc:{make:glintP,snd:big=>{tone(2600,0,.006,"square",.02);bell(big?1319:1568,.02,.06);if(big)bell(1976,.14,.04)}},
+  ipice:{make:glintP,snd:big=>{(big?[1568,1976,2349,3136]:[1976,2637]).forEach((f,i)=>bell(f,i*.07,.04))}},
+  iplav:{make:flowerP,snd:big=>{(big?[1047,1319,1568,2093]:[1319,1760]).forEach((f,i)=>bell(f,i*.08,.05))}},
+  ipclr:{make:glintP,snd:big=>{tone(2600,0,.006,"square",.02);(big?[784,1175,1568]:[1175]).forEach((f,i)=>bell(f,.02+i*.1,.05))}},
   ipod:{make:glintP,snd:big=>{tone(2600,0,.006,"square",.02);bell(big?1319:1568,.02,.06);if(big)bell(1976,.14,.04)}},
   md:{make:mdP,snd:big=>{fxHit(0,.02,2600,1.4,.08);fxHit(.06,.03,1500,1.2,.07);(big?[784,988,1175,1568]:[1175,1568]).forEach((f,i)=>chip(f,.1+i*.05,.06,.03))}},
   nikon:{make:silverP,shutter:true,snd:big=>{fxHit(0,.02,3000,1.5,.12);fxHit(.07,.03,1800,1.2,.1);tone(110,.0,.06,"sine",.12,70);if(big){fxHit(.25,.02,3000,1.5,.1);fxHit(.32,.03,1800,1.2,.08)}}},
@@ -236,7 +240,9 @@ function themedPopper(t){const [W,H]=PX.size();try{t.snd(false)}catch(e){}if(t.l
 function themedCannons(t){const [W,H]=PX.size();[0,250,500].forEach(d=>setTimeout(()=>{try{t.snd(d===0)}catch(e){}
   if(t.led){PX.wave(0,H,d===0);PX.wave(W,H,false);return}pxBurst(t,-10,H*.8,26,-Math.PI/3,.3,12,19,false);pxBurst(t,W+10,H*.8,26,-Math.PI*2/3,.3,12,19,false)},d))}
 /* themed sounds for ticks, a finished exercise, the end of a rest, the finished session and taps */
-const SFX_TH={
+/* the iPod skins: the wheel's own tiny click as it turns */
+const IP_SFX={detent:()=>click(3400,1.6,.05),tap:()=>tone(3000,0,.006,"square",.025)};
+const SFX_TH={ipc:IP_SFX,ipice:IP_SFX,iplav:IP_SFX,ipclr:IP_SFX,
   tm4:{tick:()=>{chip(1047,0,.05,.05);chip(2093,.05,.07,.045)},ex:()=>[523,659,784,1047,1568].forEach((f,i)=>chip(f,i*.05,.07,.05)),
     rest:()=>{chip(1568,0,.06);chip(1568,.12,.06)},done:()=>{[523,659,784,1047,1319,1568,2093].forEach((f,i)=>{chip(f,i*.06,.1,.05);tone(f/2,i*.06,.12,"sawtooth",.02)})},tap:()=>chip(2400,0,.012,.03),detent:()=>click(1700,1,.07,190),land:()=>{click(1200,.9,.09,140);chip(523,.02,.05,.03)}},
   skeuo:{tick:()=>clink(2200,0,.09),ex:()=>[1600,2000,2400,3000].forEach((f,i)=>clink(f,i*.07,.07)),rest:()=>{clink(1500,0);clink(1500,.2)},

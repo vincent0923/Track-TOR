@@ -63,6 +63,11 @@ const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,s
   {id:"md",zh:"冰蓝拉丝",en:"Ice-Blue Brushed",price:120,fix:"light",sw:["#BFC6D0","#D3DAE3","#AEB9A2","#FF6A13"],dz:"冰蓝拉丝铝、段码液晶、橡胶小键",de:"Ice-blue brushed aluminium, a segment LCD, rubber keys"},
   {id:"nikon",zh:"黑皮压纹",en:"Pebbled Leather",price:120,fix:"dark",sw:["#141517","#26272A","#9EA3AA","#E8302A"],dz:"压纹蒙皮、滚花拨盘、快门键",de:"Pebbled leatherette, knurled dials, a shutter button"},
   {id:"dyson",gloss:1,zh:"粉瓷 · 铜蓝",en:"Rose Ceramic · Copper Blue",price:120,lit:1,sw:["#EDDBD3","#C46F6C","#141936","#D49A5E"],dz:"亮：奶白陶瓷机身配玫瑰金属；暗：普鲁士蓝哑光配金铜；旋纹按钮、滤网纹样",de:"Light: cream ceramic with rose metal; dark: Prussian blue matte with rich copper; spun-ring buttons, filter grille"},
+  /* iPod family (ipod:1): html[data-ipod]; the focus page becomes the player, a Now Playing screen over a click wheel (ipRender) */
+  {id:"ipc",ipod:1,zh:"经典 · 黑白",en:"Classic · Black & White",price:120,sw:["#F3F3F1","#2F7BEA","#1C1C1E","#C8261F"],dz:"亮：白色机身、灰转盘；暗：黑色机身、红转盘；正在播放的屏幕",de:"Light: a white body with a grey wheel; dark: a black body with a red wheel; a Now Playing screen"},
+  {id:"ipice",ipod:1,zh:"冰蓝水钻",en:"Ice Crystal",price:120,fix:"light",sw:["#A9CCEC","#E9F1F8","#4F8FCF","#FFFFFF"],dz:"冰蓝机身、拉丝银转盘、一圈圈水钻",de:"An ice-blue body, a spun-silver wheel, rings of rhinestones"},
+  {id:"iplav",ipod:1,zh:"紫晶贴纸",en:"Lavender Gems",price:120,fix:"light",sw:["#B7A5EE","#C9BCF4","#8A6CE8","#F05BA6"],dz:"闪粉紫机身、水晶中键、宝石和星星贴纸",de:"A glittery lavender body, a crystal centre button, gem and star stickers"},
+  {id:"ipclr",ipod:1,zh:"透明宝蓝",en:"Clear Cobalt",price:120,fix:"light",sw:["#3E55C8","#2A3BB0","#DDE3F7","#7FA2FF"],dz:"透明宝蓝外壳、看得见电路板、宝蓝转盘",de:"A see-through cobalt shell over the circuit board, a cobalt wheel"},
   {id:"clay",gloss:1,zh:"黏土 · 薄荷",en:"Clay · Mint",price:90,fix:"light",sw:["#E3E1DA","#FFFFFF","#C7C5BD","#7CE8C4"],dz:"斜投影积木、网格纸、发光圆环",de:"Blocks with slanted shadows, grid paper, a glowing ring"}];
 /* ---------- the app icon: a paper envelope with a scratch card, dyed in the look's own colour (tools/icons.py),
    with a symbol the user picks. icons/<theme>-<light|dark>-<symbol>.webp is the tile, -m.webp maskable, -a.png for
@@ -81,7 +86,7 @@ function themeOwned(id){const t=THEMES.find(x=>x.id===id);return !!t&&(!t.price|
 function applyMode(){let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const th=themeOwned(state.settings.theme)?state.settings.theme:"aurora",fix=(THEMES.find(x=>x.id===th)||{}).fix,
     dark=fix?fix==="dark":m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches),de=document.documentElement;
-  de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if((THEMES.find(x=>x.id===th)||{}).gloss)de.dataset.gloss="";else delete de.dataset.gloss;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;if(fix||(THEMES.find(x=>x.id===th)||{}).lit)de.dataset.lit="";else delete de.dataset.lit;
+  de.dataset.mode=dark?"dark":"light";de.dataset.theme=th;if((THEMES.find(x=>x.id===th)||{}).gloss)de.dataset.gloss="";else delete de.dataset.gloss;if(fix)de.dataset.fixed="";else delete de.dataset.fixed;if(fix||(THEMES.find(x=>x.id===th)||{}).lit)de.dataset.lit="";else delete de.dataset.lit;if((THEMES.find(x=>x.id===th)||{}).ipod)de.dataset.ipod="";else delete de.dataset.ipod;
   iconApply();document.querySelector('meta[name="theme-color"]').content=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim()||(dark?"#070A10":"#F1F1EC")}
 applyMode();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyMode);
 /* the light on the materials stays where it is (the tilt-following light was dropped); its old setting goes */
@@ -219,7 +224,7 @@ function startRun(sid){const p=BYID[sid],doc=sessionDoc(sid),pb=pullSeries();
   const f=$("#focus");f.classList.add("on");document.documentElement.classList.add("infocus");f.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
   clearInterval(clockT);clockT=setInterval(()=>{const el=$("#fTime");if(el){const s=Math.floor((Date.now()-run.t0)/1000);el.textContent=Math.floor(s/60)+":"+pad(s%60)}},1000);
   renderFocus()}
-function closeRun(){clearInterval(clockT);document.documentElement.classList.remove("cfmove");const f=$("#focus");f.classList.remove("on");document.documentElement.classList.remove("infocus");f.setAttribute("aria-hidden","true");document.body.style.overflow="";run=null;renderTrainView()}
+function closeRun(){clearInterval(clockT);if(run)clearInterval(run.ipTm);document.documentElement.classList.remove("cfmove");const f=$("#focus");f.classList.remove("on");document.documentElement.classList.remove("infocus");f.setAttribute("aria-hidden","true");document.body.style.overflow="";run=null;renderTrainView()}
 function curSet(){return run.sets[run.ex].findIndex(x=>!x.d)}
 /* the moves are two stacks: the ones still to do and the ones done. The stack in focus is a cover flow, one "record"
    per move (name, tempo, sets × reps, a pip per set); the other sits small at the right of the sets, a tick on the done
@@ -253,6 +258,7 @@ function renderFocus(anim){
     mc=i=>{const u=cfArt(i);return '<i class="mc'+(u?"":" plain")+'"'+(u?' style="background-image:url('+u+')"':'')+'></i>'},
     mini=pick.length?'<button class="cf-mini'+(run.stk==="done"?"":" dn")+(pick.length>1?" two":"")+'" data-act="cfswap" aria-label="'+(run.stk==="done"?T('回到没练的动作','Back to the moves to do'):T('看练好的动作','See the finished moves'))+'">'
     +pick.slice().reverse().map(mc).join("")+'<b class="mb">'+(run.stk==="done"?ICON.dumbbell:ICON.check)+'</b></button>':'';
+  if(ipodOn()){ipRender(anim,list,mini);return}
   const keep=fly==null&&!run.cfIn&&run.cfKey===run.stk+list.join()?$(".cflow"):null;run.cfKey=run.stk+list.join();
   const H='<div class="f-top"><span class="f-lab">'+LAB(p)+'</span><span class="sp"></span><span class="f-time n" id="fTime">0:00</span></div>'
     +'<div class="f-body" id="fBody"><div class="cflow'+(run.cfIn?" in":"")+'"><div class="cf-scroll'+(run.askFeel!=null?" lock":"")+'" tabindex="0" role="listbox" aria-label="'+T('动作','Moves')+'"><div class="cf-rail">'+list.map(i=>'<div class="cf-slot">'+cfCard(i)+'</div>').join("")+'</div></div>'+(fly!=null?cfCard(fly," cf-fly"):"")+'</div>'
@@ -273,6 +279,110 @@ function renderFocus(anim){
   run.cfIn=0;
   const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
   setsCenter();if(!keep){cfBind($(".cf-scroll"),list);cfFit();if(document.fonts)document.fonts.ready.then(cfFit)}else document.querySelectorAll(".cf-card").forEach((c,j)=>c.setAttribute("aria-selected",list[j]===run.ex));feelBind($(".feelbar"));setsHold();if(fly!=null)cfFly()}
+/* ---------- the iPod skins: the focus page is the player. A Now Playing screen (the move's cover at the left, its
+   name and sets at the right, a progress bar for the reps or seconds of the set being done) over a click wheel:
+   turn it to change the number (on the feel step, to pick the feel; on a finished move, to go through the moves),
+   the centre button does the set, ⏮ ⏭ go to the move before or after, MENU swaps to-do and done, ▶II times the set
+   (a move in seconds or minutes) or the rest after it (a move in reps, 90 s) ---------- */
+const ipodOn=()=>"ipod" in document.documentElement.dataset;
+const IP_I={play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5l9 7-9 7z" fill="currentColor"/><path d="M15 5h2.2v14H15zM19 5h2.2v14H19z" fill="currentColor"/></svg>',
+  prev:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h2.2v14H3zM13 5v14L5.5 12zM21.5 5v14L14 12z" fill="currentColor"/></svg>',
+  next:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 5v14L10 12zM11 5v14l7.5-7zM18.8 5H21v14h-2.2z" fill="currentColor"/></svg>',
+  st:on=>'<svg viewBox="0 0 16 16" aria-hidden="true">'+(on?'<path d="M4 3h3v10H4zM9 3h3v10H9z"/>':'<path d="M4.5 3l8 5-8 5z"/>')+'</svg>'};
+const ipStep=e=>e.unit==="秒"?5:1;
+function ipNums(){const e=run.p.ex[run.ex],a=run.sets[run.ex],ci=curSet(),T0=run.ipT;
+  if(T0&&T0.rest&&Date.now()-(run.ipPeek||0)>1500){const s=Math.floor((Date.now()-T0.t0)/1000),R=90;return {l:Math.floor(s/60)+":"+pad(s%60),r:"−"+Math.floor(Math.max(0,R-s)/60)+":"+pad(Math.max(0,R-s)%60),w:Math.min(100,s/R*100),lab:T("休息","Rest")}}
+  const v=ci<0?(a.length?+a[a.length-1].v||0:0):+a[ci].v||0,tg=+e.target||v||1,d=v-tg;
+  return {l:v+'<small>'+U(e.unit)+'</small>',r:d<0?"−"+(-d):d>0?"+"+d:"0",w:Math.max(v>0?2:0,Math.min(100,v/Math.max(tg,1)*100)),over:d>0}}
+function ipRender(anim,list,mini){const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=run.sets[run.ex],ci=curSet(),pos=list.indexOf(run.ex),
+    tot=run.sets.reduce((s,x)=>s+x.length,0),dn=run.sets.reduce((s,x)=>s+x.filter(y=>y.d).length,0),art=cfArt(run.ex),
+    m=N(e).match(/[（(]([^）)]*)[）)]/),sub=[m&&m[1],e.note?NOTE(e):""].filter(Boolean).join(" · "),nb=ipNums(),feel=run.askFeel!=null;
+  const title=feel?T("感觉如何","How was it"):run.stk==="done"?T("练好的","Done"):T("正在练","Now Training"),
+    setl=ci<0?T("练好了","Done"):T("第 "+(ci+1)+" / "+a.length+" 组","Set "+(ci+1)+" of "+a.length);
+  const scr='<div class="ip-scr" role="group" aria-label="'+esc(NS(e))+'"><div class="ip-bar"><b>'+title+'</b><span class="sp"></span><i class="ip-st'+(run.ipT?" on":"")+'">'+IP_I.st(!!run.ipT)+'</i><span class="n" id="fTime">0:00</span><i class="ip-bat" aria-label="'+dn+'/'+tot+'"><i style="width:'+Math.round(dn/Math.max(1,tot)*100)+'%"></i></i></div>'
+    +'<div class="ip-np'+(anim&&run.ipDir?" sl"+(run.ipDir>0?"r":"l"):"")+'"><div class="ip-art'+(art?"":" plain")+'"'+(art?' style="background-image:url('+art+')"':'')+'></div><div class="ip-info"><h2>'+esc(NS(e))+'</h2>'
+    +'<p>'+esc(sub||LAB(p))+'</p><p>'+setl+'</p><p class="ip-pos n">'+(pos+1)+' / '+list.length+'</p></div></div>'
+    +(feel?'<div class="feelbar ip-feel" role="slider" tabindex="0" aria-label="'+T('这个动作感觉？','How did that feel?')+'" aria-valuemin="1" aria-valuemax="4"><span class="fl-lab">'+T('转一转','Turn')+'</span><div class="fl-bks">'+FEEL4.map((x,i)=>'<i style="--i:'+i+'"></i>').join("")+'</div></div>'
+      :'<div class="ip-prog'+(nb.over?" over":"")+'"><span class="n" id="ipL">'+nb.l+'</span><i class="ip-trk"><i id="ipF" style="width:'+nb.w+'%"></i></i><span class="n" id="ipR">'+nb.r+'</span></div>')+'</div>';
+  const sets='<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'" data-i="'+i+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
+    +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+mini+'</div>';
+  const wheel='<div class="ip-wheel" role="group" aria-label="'+T('转盘：转动调数字','Click wheel: turn to change the number')+'"><i class="ip-ring" aria-hidden="true"></i>'
+    +'<button type="button" class="ip-k ip-menu" data-ip="menu" aria-label="'+T('切换没练 / 练好','Swap to-do and done')+'">MENU</button>'
+    +'<button type="button" class="ip-k ip-prev" data-ip="prev" aria-label="'+T('上一个动作','Previous move')+'">'+IP_I.prev+'</button>'
+    +'<button type="button" class="ip-k ip-next" data-ip="next" aria-label="'+T('下一个动作','Next move')+'">'+IP_I.next+'</button>'
+    +'<button type="button" class="ip-k ip-play" data-ip="play" aria-label="'+(e.unit==="个"?T('休息计时','Rest timer'):T('计时','Time the set'))+'">'+IP_I.play+'</button>'
+    +'<button type="button" class="ip-ok" data-ip="ok" aria-label="'+(feel?T('确定','OK'):ci<0?T('已练好','Done'):T('完成这一组','Set done'))+'"></button></div>';
+  const old=f.querySelector(".ip-wheel");
+  f.innerHTML='<div class="f-top ip-top"><button class="mini" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><span class="sp"></span><span class="f-lab">'+LAB(p)+'</span></div>'
+    +'<div class="f-body ip-body" id="fBody"><div class="ipod">'+(ipodDeco[document.documentElement.dataset.theme]||(()=>""))()+scr+sets+wheel+'</div></div><div></div>';
+  /* the wheel stays the same element, so a finger still on it keeps turning across a redraw */
+  if(old){f.querySelector(".ip-wheel").replaceWith(old)}else ipWheel(f.querySelector(".ip-wheel"));
+  run.ipDir=0;run.cfIn=0;run.cfKey=null;
+  const s=Math.floor((Date.now()-run.t0)/1000);$("#fTime").textContent=Math.floor(s/60)+":"+pad(s%60);
+  setsCenter();feelBind($(".feelbar"));setsHold()}
+/* the numbers on the screen, redone in place while the wheel turns or the timer runs */
+function ipPaint(){const L=$("#ipL");if(!L)return;const nb=ipNums();L.innerHTML=nb.l;$("#ipR").textContent=nb.r;$("#ipF").style.width=nb.w+"%";L.parentNode.classList.toggle("over",!!nb.over)}
+function ipTurn(d){if(!run||run.finished)return;const fb=$(".feelbar");
+  if(run.askFeel!=null){if(fb&&fb._show)fb._show(Math.max(1,Math.min(4,(+fb.dataset.lv||0)+d)));return}
+  const ci=curSet();
+  if(ci<0){ipMove(d);return}
+  /* resting: the number shows for a moment while it changes, then the rest comes back */
+  if(run.ipT&&run.ipT.rest)run.ipPeek=Date.now();else if(run.ipT)ipTime(false);
+  const s=run.sets[run.ex][ci],st=ipStep(run.p.ex[run.ex]),v=Math.max(0,(+s.v||0)+d*st);if(v===+s.v)return;
+  s.v=v;run.doc.edited=true;lsSave();SFX.detent();buzz(3);ipPaint()}
+function ipMove(d){const {todo,done}=cfLists(),list=run.stk==="done"?done:todo,i=list.indexOf(run.ex),j=i+d;
+  if(j<0||j>=list.length){SFX.tap();return}if(run.ipT)ipTime(false);run.ex=list[j];run.ipDir=d;cfTick(d,200);buzz(6);renderFocus(true)}
+/* ▶II: a move in seconds or minutes counts the set up live; a move in reps times the rest (90 s, then a ding) */
+function ipTime(on){clearInterval(run.ipTm);const T0=run.ipT;run.ipT=null;
+  if(!on){if(T0&&!T0.rest){const e=run.p.ex[T0.ex],x=run.sets[T0.ex][T0.ci];if(x&&!x.d){const s=Math.floor((Date.now()-T0.t0)/1000);x.v=e.unit==="分钟"?Math.max(1,Math.round(s/60)):s;run.doc.edited=true;lsSave()}}renderFocus();return}
+  const e=run.p.ex[run.ex],ci=curSet();if(e.unit==="个"&&ci<0&&!run.sets[run.ex].length)return;
+  run.ipT={t0:Date.now(),ex:run.ex,ci,rest:e.unit==="个"||ci<0};
+  run.ipTm=setInterval(()=>{if(!run||!run.ipT){return}const T1=run.ipT,s=Math.floor((Date.now()-T1.t0)/1000);
+    if(T1.rest){if(s>=90){SFX.rest();buzz([30,60,30]);ipTime(false);return}}
+    else{const x=run.sets[T1.ex][T1.ci];if(x)x.v=run.p.ex[T1.ex].unit==="分钟"?Math.floor(s/60):s}
+    ipPaint()},250);
+  SFX.tap();buzz(8);renderFocus()}
+function ipPress(k){if(!run||run.finished)return;
+  if(k==="ok"){if(run.askFeel!=null){const fb=$(".feelbar");if(fb&&fb._commit&&+fb.dataset.lv)fb._commit();else{SFX.tap();buzz(6)}return}
+    if(curSet()<0){SFX.tap();return}if(run.ipT)ipTime(false);tickSet();
+    /* a rep set done: the rest starts by itself */
+    if(run&&!run.finished&&run.askFeel==null&&run.p.ex[run.ex].unit==="个"&&curSet()>=0)ipTime(true);return}
+  if(k==="menu"){if(run.askFeel!=null)return;const L=cfLists();if(run.stk==="done"){if(!L.todo.length){SFX.tap();return}run.stk="todo";run.ex=L.todo[0]}else{if(!L.done.length){SFX.tap();return}run.stk="done";run.ex=cfLast(L.done)}if(run.ipT)ipTime(false);SFX.tap();buzz(8);renderFocus(true);return}
+  if(k==="prev"||k==="next"){if(run.askFeel!=null)return;ipMove(k==="next"?1:-1);return}
+  if(k==="play"){if(run.askFeel!=null)return;ipTime(!run.ipT)}}
+/* the wheel: a finger going round it turns the number one step every 18°; a touch that hardly turns is a press of the
+   button under it; the centre button is a button of its own */
+function ipWheel(w){if(!w)return;let st=null;const STEP=Math.PI/10;
+  w.addEventListener("pointerdown",e=>{if(e.target.closest(".ip-ok"))return;const r=w.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+    st={cx,cy,a:Math.atan2(e.clientY-cy,e.clientX-cx),acc:0,moved:0,k:(e.target.closest("[data-ip]")||{}).dataset};try{w.setPointerCapture(e.pointerId)}catch(err){}
+    w.classList.add("down")});
+  w.addEventListener("pointermove",e=>{if(!st)return;const a=Math.atan2(e.clientY-st.cy,e.clientX-st.cx);let d=a-st.a;if(d>Math.PI)d-=2*Math.PI;if(d<-Math.PI)d+=2*Math.PI;st.a=a;st.acc+=d;st.moved+=Math.abs(d);
+    while(st.acc>=STEP){st.acc-=STEP;ipTurn(1)}while(st.acc<=-STEP){st.acc+=STEP;ipTurn(-1)}});
+  const up=e=>{if(!st)return;const s=st;st=null;w.classList.remove("down");if(e.type==="pointerup"&&s.moved<.3&&s.k&&s.k.ip)ipPress(s.k.ip)};
+  w.addEventListener("pointerup",up);w.addEventListener("pointercancel",up);
+  w.querySelector(".ip-ok").addEventListener("click",()=>ipPress("ok"));
+  /* keyboard: the buttons work with Enter or Space; arrows up and down turn the wheel */
+  w.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){const b=e.target.closest("[data-ip]");if(b&&b.dataset.ip!=="ok"){e.preventDefault();ipPress(b.dataset.ip)}}
+    else if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();ipTurn(e.key==="ArrowUp"?1:-1)}});
+  w.addEventListener("click",e=>e.stopPropagation());
+  ["touchstart","touchmove","touchend"].forEach(k=>w.addEventListener(k,e=>e.stopPropagation(),{passive:true}))}
+/* stickers and rhinestones on the body, by skin (drawn as SVG, nothing from the photos) */
+const ipodDeco={
+  ipice:()=>{let g="";for(let i=0;i<34;i++){const x=6+Math.random()*88,y=74+Math.random()*24;g+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(.55+Math.random()*.5).toFixed(2)+'"/>'}
+    return '<svg class="ip-deco" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g fill="url(#ipgem)">'+g+'</g><defs><radialGradient id="ipgem" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#E4EEF8"/><stop offset="1" stop-color="#9DB6CF"/></radialGradient></defs></svg>'},
+  iplav:()=>'<div class="ip-stk" aria-hidden="true">'
+    +'<svg style="left:4%;top:3%;width:7%;transform:rotate(-14deg)" viewBox="0 0 24 18"><path d="M5 1h14l4 5v6l-4 5H5l-4-5V6z" fill="#9BDB7E"/><path d="M5 1h14l4 5H1z" fill="#C9F1B4"/><path d="M8 6h8v6H8z" fill="#7CC560" opacity=".7"/></svg>'
+    +'<svg style="right:3%;top:14%;width:10%;transform:rotate(12deg)" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#E38BE0"/><path d="M12 1l3.2 7L12 12 8.8 8z" fill="#F7C5F2"/></svg>'
+    +'<svg style="left:6%;top:56%;width:13%;transform:rotate(-10deg)" viewBox="0 0 24 22"><path d="M12 21L2.5 11.5A5.6 5.6 0 0 1 12 3.6a5.6 5.6 0 0 1 9.5 7.9z" fill="#E9468F"/><path d="M12 3.6a5.6 5.6 0 0 1 9.5 7.9L12 12z" fill="#F57DB5"/><path d="M6 6.5a3 3 0 0 1 3-1" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>'
+    +'<svg style="right:7%;top:51%;width:11%" viewBox="0 0 24 24"><g fill="#F2B544"><circle cx="12" cy="5.5" r="4.5"/><circle cx="18.2" cy="10" r="4.5"/><circle cx="15.8" cy="17.3" r="4.5"/><circle cx="8.2" cy="17.3" r="4.5"/><circle cx="5.8" cy="10" r="4.5"/></g><circle cx="12" cy="12" r="3.4" fill="#FFE08A"/></svg>'
+    +'<svg style="right:3%;top:58%;width:5%" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#2F5BD8"/></svg>'
+    +'<svg style="left:5%;top:83%;width:10%" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#A08BF0"/><circle cx="12" cy="12" r="8" fill="none" stroke="#C7B9FA" stroke-width="1.2"/><g fill="#7A62DA"><circle cx="9.5" cy="9.5" r="1.4"/><circle cx="14.5" cy="9.5" r="1.4"/><circle cx="9.5" cy="14.5" r="1.4"/><circle cx="14.5" cy="14.5" r="1.4"/></g></svg>'
+    +'<svg style="left:4%;top:71%;width:7%;transform:rotate(18deg)" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#5BB8A8"/></svg>'
+    +'<svg style="right:6%;bottom:3%;width:12%;transform:rotate(-8deg)" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#B18CF2"/><path d="M12 1l3.2 7L12 12 8.8 8z" fill="#DCC8FF"/></svg>'
+    +'<svg style="right:22%;bottom:6%;width:5%" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#F4F2FF"/></svg>'
+    +'<svg style="right:5%;top:44%;width:6%;transform:rotate(20deg)" viewBox="0 0 20 24"><path d="M4 1h12l3 6v10l-3 6H4l-3-6V7z" fill="#EADFF7"/><path d="M6 5h8v14H6z" fill="#C9B6EE"/></svg>'
+    +'</div>',
+  ipclr:()=>'<div class="ip-pcb" aria-hidden="true"></div>'};
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
   const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,x=v.clientWidth/2-(c.offsetLeft+c.offsetWidth/2);
@@ -351,6 +461,7 @@ function feelBind(el){if(!el)return;const bks=[...el.querySelectorAll(".fl-bks i
   const at=x=>{const r=el.querySelector(".fl-bks").getBoundingClientRect();return Math.max(1,Math.min(4,Math.ceil((x-r.left)/r.width*4)))};
   const commit=()=>{if(!run||run.askFeel==null||!lv)return;const id=run.p.ex[run.askFeel].id;run.doc.feel=run.doc.feel||{};run.doc.feel[id]=FEEL4[lv-1][0];lsSave();
     run.askFeel=null;SFX.land();buzz(12);const nx=run.sets.findIndex(x=>x.some(y=>!y.d));if(nx>=0)run.ex=nx;renderFocus(true)};
+  el._show=show;el._commit=commit;
   ["touchstart","touchmove","touchend"].forEach(k=>el.addEventListener(k,e=>e.stopPropagation(),{passive:true}));
   el.addEventListener("pointerdown",e=>{clearTimeout(tm);drag=1;el.setPointerCapture(e.pointerId);show(at(e.clientX))});
   el.addEventListener("pointermove",e=>{if(drag)show(at(e.clientX))});
@@ -384,7 +495,7 @@ function setsHold(){document.querySelectorAll(".fs-track i[data-i]").forEach(ch=
 function untick(i){if(Date.now()-(run.held||0)<800)return;const x=run.sets[run.ex][i];if(!x||!x.d)return;x.d=false;
   if(x.o){const o=x.o;delete x.o;Object.values(run.doc.sets).forEach(arr=>arr.forEach(y=>{if(y.o>o)y.o--}))}
   lsSave();SFX.tap();renderFocus(true)}
-function finishRun(){run.finished=1;clearInterval(clockT);const p=run.p,secs=Math.floor((Date.now()-run.t0)/1000);
+function finishRun(){run.finished=1;clearInterval(clockT);clearInterval(run.ipTm);run.ipT=null;const p=run.p,secs=Math.floor((Date.now()-run.t0)/1000);
   run.doc.done=true;run.doc.date=today();lsSave();heroSid=null;engPlanAll();
   let reps=0,sets=0,pu=0;run.sets.forEach((a,i)=>a.forEach(x=>{if(!x.d)return;sets++;if(p.ex[i].unit==="个")reps+=x.v;if(isMain(p.ex[i]))pu=Math.max(pu,x.v)}));
   SFX.done();buzz([30,60,30,60,80]);
@@ -745,7 +856,7 @@ const SUNMOON='<svg class="sunmoon" viewBox="0 0 34 18" aria-label="'+T('亮暗�
 const thModes=th=>th.fix?[th.fix]:["light","dark"];
 function thPages(th,mode){return [].concat(...(mode?[mode]:thModes(th)).map(m=>[0,1,2].map(i=>({m,i}))))}
 /* TH_V: bump when tools/thumbs.js remakes the pictures (the service worker keeps images until their address changes) */
-const TH_V=8;
+const TH_V=9;
 const thPage=(th,p)=>'background-image:url(img/th/'+th.id+'-'+p.m+'.webp?v='+TH_V+');background-position:'+["0%","50%","100%"][p.i]+' 0';
 /* the stack: the first page on top, the rest stepped right and down behind it */
 function thStack(th,big,mode){const ps=thPages(th,mode);

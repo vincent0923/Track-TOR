@@ -7,8 +7,8 @@
 <script>
 /* ?t=theme&m=light|dark&only=component-id ; CSS path differs between the repo (../../css) and the published page (css) */
 (function(){var q=new URLSearchParams(location.search),de=document.documentElement,t=q.get("t")||"aurora",m=q.get("m")||"light";
-  var FIX={tm4:"dark",skeuo:"light",braun:"light",clay:"light",md:"light",nikon:"dark"};
-  de.dataset.theme=t;de.dataset.mode=FIX[t]||m;if(FIX[t])de.dataset.fixed="";if(["ember","toy","pocket","tm4","braun","dyson","clay"].includes(t))de.dataset.gloss="";
+  var FIX={ipice:"light",iplav:"light",ipclr:"light",tm4:"dark",skeuo:"light",braun:"light",clay:"light",md:"light",nikon:"dark"};
+  de.dataset.theme=t;de.dataset.mode=FIX[t]||m;if(FIX[t])de.dataset.fixed="";if(["ember","toy","pocket","tm4","braun","dyson","clay"].includes(t))de.dataset.gloss="";if(["ipc","ipice","iplav","ipclr"].includes(t))de.dataset.ipod="";
   de.style.setProperty("--lx","30%");de.style.setProperty("--ly","10%");de.style.setProperty("--rot","0deg");de.style.setProperty("--rt",".5");
   document.write('<link rel="stylesheet" href="../../css/p1.css">');window.BASE="../../";
   if(q.get("only"))document.write('<style>.grp,.spec{display:none!important}.spec[data-c="'+q.get("only").replace(/[^\w-]/g,"")+'"]{display:grid!important;margin:0!important}.grp:has(.spec[data-c="'+q.get("only").replace(/[^\w-]/g,"")+'"]){display:block!important;margin:0!important}.grp>h2,.spec>.lab{display:none!important}body{padding:14px!important}</style>');})();
@@ -126,6 +126,8 @@
 <section class="grp" id="g-music"><h2>音乐</h2>
   <div class="spec" data-c="mini"><div class="lab"><b>迷你播放器</b><span>底栏上方；专注页顶上变细条；左右划切歌</span><code>#mini.mini-pl</code></div>
     <div class="mini-pl" style="--p:.4"><span class="mp-art" style="background:linear-gradient(135deg,#ff6a3d,#3d5afe)"></span><span class="mp-t"><b>Midnight Run</b><small>The Example Band</small></span><button class="mp-b"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.2" height="14" rx="1.4"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.4"/></svg></button><button class="mp-b mp-n"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 6.2v11.6a1 1 0 0 0 1.5.86L15 13.4v4.1a1 1 0 0 0 2 0v-11a1 1 0 0 0-2 0v4.1L6.5 5.34A1 1 0 0 0 5 6.2z"/></svg></button><i class="mp-bar"></i></div></div>
+  <div class="spec" data-c="ipwheel"><div class="lab"><b>点按转盘</b><span>iPod 主题的专注页：转动调数字，中键完成一组，⏮⏭ 换动作，MENU 换一摞，▶II 计时</span><code>.ip-wheel</code></div>
+    <div class="ip-wheel" style="width:200px"><i class="ip-ring"></i><button class="ip-k ip-menu">MENU</button><button class="ip-k ip-prev"><svg viewBox="0 0 24 24"><path d="M3 5h2.2v14H3zM13 5v14L5.5 12zM21.5 5v14L14 12z" fill="currentColor"/></svg></button><button class="ip-k ip-next"><svg viewBox="0 0 24 24"><path d="M2.5 5v14L10 12zM11 5v14l7.5-7zM18.8 5H21v14h-2.2z" fill="currentColor"/></svg></button><button class="ip-k ip-play"><svg viewBox="0 0 24 24"><path d="M4 5l9 7-9 7z" fill="currentColor"/><path d="M15 5h2.2v14H15zM19 5h2.2v14H19z" fill="currentColor"/></svg></button><button class="ip-ok"></button></div></div>
   <div class="spec" data-c="transport"><div class="lab"><b>播放控制</b><span>完整播放器</span><code>.sp-ctl .sp-big</code></div>
     <div class="sp-full" style="padding:0"><div class="sp-ctl"><button class="mp-b"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.2v11.6a1 1 0 0 1-1.5.86L9 13.4v4.1a1 1 0 0 1-2 0v-11a1 1 0 0 1 2 0v4.1l8.5-5.26A1 1 0 0 1 19 6.2z"/></svg></button><button class="mp-b hgo sp-big"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></button><button class="mp-b"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 6.2v11.6a1 1 0 0 0 1.5.86L15 13.4v4.1a1 1 0 0 0 2 0v-11a1 1 0 0 0-2 0v4.1L6.5 5.34A1 1 0 0 0 5 6.2z"/></svg></button></div></div></div>
 </section>
