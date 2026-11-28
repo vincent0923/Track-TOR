@@ -664,14 +664,14 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] .goals4 circle.rv{stroke:var(--yel)}
 /* toy, in cartoon 3D (flat colour, a solid lip, no shine): round header buttons are plastic, bars are bricks with a lit top and a shaded foot,
    chart lines are plastic tubes casting a shadow, rings are plastic hoops */
-:root[data-theme="toy"] .top .circ{width:42px;height:42px;border:0;color:#fff;
+:root[data-theme="toy"] :is(.top .circ,.msyncb){width:42px;height:42px;border:0;color:#fff;
   background:var(--pc,var(--ac));
   box-shadow:0 4px 0 var(--pl,var(--ac-lip)),0 8px 14px -6px rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.22),inset 0 -3px 0 rgba(0,0,0,.12)}
-:root[data-theme="toy"] .top .circ:active{transform:translateY(3px);box-shadow:0 1px 0 var(--pl,var(--ac-lip)),inset 0 -2px 0 rgba(0,0,0,.12)}
-:root[data-theme="toy"] #syncBtn{--pc:var(--yel);--pl:var(--yel-lip)}
+:root[data-theme="toy"] :is(.top .circ,.msyncb):active{transform:translateY(3px);box-shadow:0 1px 0 var(--pl,var(--ac-lip)),inset 0 -2px 0 rgba(0,0,0,.12)}
+:root[data-theme="toy"] :is(#syncBtn,.msyncb){--pc:var(--yel);--pl:var(--yel-lip)}
 :root[data-theme="toy"] #meBtn{--pc:var(--ac);--pl:var(--ac-lip)}
-:root[data-theme="toy"] #syncBtn .syncdot{background:#fff;box-shadow:0 0 0 3px rgba(0,0,0,.12),inset 0 -2px 0 rgba(0,0,0,.15)}
-:root[data-theme="toy"] #syncBtn .syncdot.ok{background:var(--grn);box-shadow:0 0 0 3px #fff,0 0 8px var(--grn)}
+:root[data-theme="toy"] :is(#syncBtn,.msyncb) .syncdot{background:#fff;box-shadow:0 0 0 3px rgba(0,0,0,.12),inset 0 -2px 0 rgba(0,0,0,.15)}
+:root[data-theme="toy"] :is(#syncBtn,.msyncb) .syncdot.ok{background:var(--grn);box-shadow:0 0 0 3px #fff,0 0 8px var(--grn)}
 :root[data-theme="toy"] #meBtn svg{filter:drop-shadow(0 1.5px 0 rgba(0,0,0,.25))}
 /* chart lines as plastic tubes */
 :root[data-theme="toy"] svg path[fill="none"]{stroke-width:4.5px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.22))}
@@ -679,18 +679,18 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="toy"] .ring circle.rv{filter:drop-shadow(0 2px 0 rgba(0,0,0,.25))}
 
 /* the sync button's puck only shows in the toy skin */
-.top .circ .puck{display:contents}
+:is(.top .circ,.msyncb) .puck{display:contents}
 /* toy: pull-to-sync capsule (recessed well, plastic puck with a glowing dot, springs back) */
-:root[data-theme="toy"] .top #syncBtn{width:94px;height:44px;border-radius:999px;padding:5px;display:flex;align-items:center;justify-content:flex-start;touch-action:none;
+:root[data-theme="toy"] .top :is(#syncBtn,.msyncb){width:94px;height:44px;border-radius:999px;padding:5px;display:flex;align-items:center;justify-content:flex-start;touch-action:none;
   background:var(--sub);box-shadow:var(--well-sh);border:1.5px solid rgba(255,255,255,.55);color:inherit}
-:root[data-theme="toy"][data-mode="dark"] .top #syncBtn{border-color:rgba(255,255,255,.06)}
-:root[data-theme="toy"] .top #syncBtn:active{transform:none}
-:root[data-theme="toy"] #syncBtn .puck{display:flex;align-items:center;justify-content:center;width:46px;height:32px;border-radius:999px;background:var(--card);border:1px solid var(--line);
+:root[data-theme="toy"][data-mode="dark"] .top :is(#syncBtn,.msyncb){border-color:rgba(255,255,255,.06)}
+:root[data-theme="toy"] .top :is(#syncBtn,.msyncb):active{transform:none}
+:root[data-theme="toy"] :is(#syncBtn,.msyncb) .puck{display:flex;align-items:center;justify-content:center;width:46px;height:32px;border-radius:999px;background:var(--card);border:1px solid var(--line);
   box-shadow:0 4px 0 var(--lip),0 4px 10px rgba(0,0,0,.12),inset 0 1.5px 0 rgba(255,255,255,.9);transition:transform .55s cubic-bezier(.34,1.65,.64,1)}
-:root[data-theme="toy"] #syncBtn .syncdot{width:11px;height:11px;background:var(--yel);box-shadow:0 0 8px var(--yel)}
-:root[data-theme="toy"] #syncBtn .syncdot.ok{background:var(--grn);box-shadow:0 0 8px var(--grn)}
-:root[data-theme="toy"] #syncBtn.ready .syncdot{background:var(--grn);box-shadow:0 0 10px var(--grn)}
-:root[data-theme="toy"] #syncBtn .syncdot.spin{width:11px;height:11px;border:0;background:var(--ac);box-shadow:0 0 10px var(--ac);animation:toyBlink .6s ease-in-out infinite alternate}
+:root[data-theme="toy"] :is(#syncBtn,.msyncb) .syncdot{width:11px;height:11px;background:var(--yel);box-shadow:0 0 8px var(--yel)}
+:root[data-theme="toy"] :is(#syncBtn,.msyncb) .syncdot.ok{background:var(--grn);box-shadow:0 0 8px var(--grn)}
+:root[data-theme="toy"] :is(#syncBtn,.msyncb).ready .syncdot{background:var(--grn);box-shadow:0 0 10px var(--grn)}
+:root[data-theme="toy"] :is(#syncBtn,.msyncb) .syncdot.spin{width:11px;height:11px;border:0;background:var(--ac);box-shadow:0 0 10px var(--ac);animation:toyBlink .6s ease-in-out infinite alternate}
 @keyframes toyBlink{from{opacity:.35;transform:scale(.8)}to{opacity:1;transform:scale(1.1)}}
 /* toy: star-history bricks: 8px bricks, a 2px dark lip under each, a 1px lit top, 1px between */
   background-image:repeating-linear-gradient(to top,rgba(0,0,0,0) 0 1px,rgba(0,0,0,.38) 1px 3px,rgba(0,0,0,0) 3px 10px,rgba(255,255,255,.32) 10px 11px)!important;filter:none}
@@ -734,10 +734,10 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="tm4"] .fstack>.fs-top,:root[data-theme="tm4"] .fstack[data-fs="hero"]>.fs-top{box-shadow:var(--shadow)}
 :root[data-theme="tm4"] .toast{background:#0A2547;color:#fff;border:0;box-shadow:inset 0 2px 6px rgba(0,0,0,.7),0 0 0 1.5px rgba(255,255,255,.15)}
 :root[data-theme="tm4"] .pill.ac{background:#fff;color:#0B2D57;box-shadow:0 0 8px rgba(153,209,255,.8)}
-:root[data-theme="tm4"] .top .circ{width:42px;height:42px}
-:root[data-theme="tm4"] #syncBtn .syncdot{background:#fff;box-shadow:0 0 6px 2px #fff,0 0 16px 4px #6BB8FF}
-:root[data-theme="tm4"] #syncBtn .syncdot.ok{background:#fff}
-:root[data-theme="tm4"] #syncBtn .syncdot.spin{border:0;background:#FF6E30;box-shadow:0 0 6px 1px #FF6E30,0 0 12px 2px rgba(255,110,48,.7);animation:toyBlink .5s ease-in-out infinite alternate}
+:root[data-theme="tm4"] :is(.top .circ,.msyncb){width:42px;height:42px}
+:root[data-theme="tm4"] :is(#syncBtn,.msyncb) .syncdot{background:#fff;box-shadow:0 0 6px 2px #fff,0 0 16px 4px #6BB8FF}
+:root[data-theme="tm4"] :is(#syncBtn,.msyncb) .syncdot.ok{background:#fff}
+:root[data-theme="tm4"] :is(#syncBtn,.msyncb) .syncdot.spin{border:0;background:#FF6E30;box-shadow:0 0 6px 1px #FF6E30,0 0 12px 2px rgba(255,110,48,.7);animation:toyBlink .5s ease-in-out infinite alternate}
 :root[data-theme="tm4"] svg path[fill="none"]{filter:drop-shadow(0 0 3px rgba(153,209,255,.9)) drop-shadow(0 0 9px rgba(130,200,255,.5))}
 :root[data-theme="tm4"] .spark circle,:root[data-theme="tm4"] .chart circle,:root[data-theme="tm4"] .ring circle.rv{filter:drop-shadow(0 0 4px rgba(153,209,255,.9))}
 /* skeuo */
@@ -774,10 +774,10 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="skeuo"] .fstack>.fs-top,:root[data-theme="skeuo"] .fstack[data-fs="hero"]>.fs-top{box-shadow:var(--shadow)}
 :root[data-theme="skeuo"] .toast{background:#18191B;color:#24FCE2;border:0;text-shadow:var(--neon);box-shadow:0 4px 0 #000,0 10px 24px rgba(0,0,0,.45)}
 :root[data-theme="skeuo"] .pill.ac{background:#18191B;color:#24FCE2;text-shadow:0 0 6px #1FF5DC}
-:root[data-theme="skeuo"] .top .circ{width:42px;height:42px}
-:root[data-theme="skeuo"] #syncBtn .syncdot{background:#333538;box-shadow:inset 0 1.5px 2px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.4)}
-:root[data-theme="skeuo"] #syncBtn .syncdot.ok{background:#24FCE2;box-shadow:0 0 8px 2px #1FF5DC,0 0 16px 4px rgba(31,245,220,.65)}
-:root[data-theme="skeuo"] #syncBtn .syncdot.spin{border:0;background:#24FCE2;box-shadow:0 0 8px 2px #1FF5DC;animation:toyBlink .5s ease-in-out infinite alternate}
+:root[data-theme="skeuo"] :is(.top .circ,.msyncb){width:42px;height:42px}
+:root[data-theme="skeuo"] :is(#syncBtn,.msyncb) .syncdot{background:#333538;box-shadow:inset 0 1.5px 2px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.4)}
+:root[data-theme="skeuo"] :is(#syncBtn,.msyncb) .syncdot.ok{background:#24FCE2;box-shadow:0 0 8px 2px #1FF5DC,0 0 16px 4px rgba(31,245,220,.65)}
+:root[data-theme="skeuo"] :is(#syncBtn,.msyncb) .syncdot.spin{border:0;background:#24FCE2;box-shadow:0 0 8px 2px #1FF5DC;animation:toyBlink .5s ease-in-out infinite alternate}
 :root[data-theme="skeuo"] svg path[fill="none"]{filter:drop-shadow(0 1.5px 0 rgba(255,255,255,.55)) drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 :root[data-theme="skeuo"] .ring circle.rv{stroke:#0FCFB9;filter:drop-shadow(0 0 4px #1FF5DC)}
 /* braun */
@@ -816,11 +816,11 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="braun"] .fstack>.fs-top,:root[data-theme="braun"] .fstack[data-fs="hero"]>.fs-top{box-shadow:var(--shadow)}
 :root[data-theme="braun"] .toast{background:#1C1B18;color:#F6F5EF;border:0;border-radius:12px;box-shadow:0 3px 0 rgba(255,255,255,.6),0 10px 24px rgba(0,0,0,.3)}
 :root[data-theme="braun"] .pill.ac{background:#282622;color:#F6F5EF}
-:root[data-theme="braun"] .top .circ{width:40px;height:40px}
+:root[data-theme="braun"] :is(.top .circ,.msyncb){width:40px;height:40px}
 :root[data-theme="braun"] #meBtn{background:radial-gradient(circle at 45% 65%,#6E8260 0%,#4E6142 65%,#34442B 100%);color:#EEF2E8;box-shadow:0 0 0 3px #2C2A26,0 0 0 4px rgba(255,255,255,.7),0 8px 14px rgba(0,0,0,.25),inset 0 3px 6px rgba(0,0,0,.35),inset 0 -3px 5px rgba(180,210,160,.45)}
-:root[data-theme="braun"] #syncBtn .syncdot{background:#8B5A42;box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
-:root[data-theme="braun"] #syncBtn .syncdot.ok{background:var(--dot);box-shadow:0 0 6px rgba(242,100,34,.7)}
-:root[data-theme="braun"] #syncBtn .syncdot.spin{border:0;background:#F26422;animation:toyBlink .5s ease-in-out infinite alternate}
+:root[data-theme="braun"] :is(#syncBtn,.msyncb) .syncdot{background:#8B5A42;box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
+:root[data-theme="braun"] :is(#syncBtn,.msyncb) .syncdot.ok{background:var(--dot);box-shadow:0 0 6px rgba(242,100,34,.7)}
+:root[data-theme="braun"] :is(#syncBtn,.msyncb) .syncdot.spin{border:0;background:#F26422;animation:toyBlink .5s ease-in-out infinite alternate}
 /* clay */
 :root[data-theme="clay"]{--bg:#E3E1DA;--glow:none;--gridc:rgba(0,0,0,.045);--card:#FBFAF7;--line:rgba(0,0,0,.06);--lit:inset 2px 3px 4px #fff;--sub:#DCDAD2;--seg:#DCDAD2;--dark:linear-gradient(145deg,#C4F7E5 0%,#A4E2CD 100%);--dark-solid:#A4E2CD;--dark-line:#7ABFA8;--track:#D3D0C7;--ink:#222523;--muted:#7D7A72;--ac:#5FD8B0;--on-ac:#103A2D;--ac-soft:rgba(95,216,176,.2);--ac-text:#1E8A66;--st1:rgba(95,216,176,.28);--st2:rgba(30,138,102,.55);--push:#3FC79C;--pull:#F09A6E;--third:#9C8CE8;--kpush:var(--push);--kpull:var(--pull);--kthird:var(--third);--good:#1E8A66;--bad:#D9573B;--sleep:#8A7BDB;--white3d:linear-gradient(145deg,#FFFFFF 0%,#EAE8E1 100%);--mint3d:linear-gradient(145deg,#C4F7E5 0%,#A4E2CD 100%);--stone3d:linear-gradient(145deg,#DFDDD6 0%,#C7C5BD 100%);--well-sh:inset -2px 3px 6px rgba(0,0,0,.12),inset 1px -1px 0 rgba(255,255,255,.8);--shadow:-5px 8px 0 #CFCBC2,-10px 18px 22px rgba(40,38,34,.16),inset 2px 3px 4px #fff,inset -2px -3px 5px rgba(0,0,0,.06);color-scheme:light}
 :root[data-theme="clay"] body{background-image:linear-gradient(to right,var(--gridc) 1px,transparent 1px),linear-gradient(to bottom,var(--gridc) 1px,transparent 1px);background-size:22px 22px;background-attachment:scroll}
@@ -852,7 +852,7 @@ canvas.fw{position:fixed;inset:0;width:100vw;height:100dvh;z-index:55;pointer-ev
 :root[data-theme="clay"] .toast{background:var(--ink);color:#fff;border:0;box-shadow:-3px 5px 0 #000}
 :root[data-theme="clay"] .pill.ac{background:var(--mint3d);color:var(--on-ac);box-shadow:-2px 2px 0 #7ABFA8}
 :root[data-theme="clay"] #meBtn{background:var(--mint3d);box-shadow:-3px 5px 0 #7ABFA8,-6px 10px 14px rgba(30,50,42,.2),inset 2px 3px 4px rgba(255,255,255,.9)}
-:root[data-theme="clay"] #syncBtn .syncdot.ok{background:#3FC79C;box-shadow:0 0 8px 2px rgba(120,248,205,.8)}
+:root[data-theme="clay"] :is(#syncBtn,.msyncb) .syncdot.ok{background:#3FC79C;box-shadow:0 0 8px 2px rgba(120,248,205,.8)}
 :root[data-theme="clay"] svg path[fill="none"]{filter:drop-shadow(-2px 4px 0 rgba(0,0,0,.1))}
 :root[data-theme="clay"] .ring circle.rv{filter:drop-shadow(-1.5px 3px 0 rgba(0,0,0,.12))}
 
@@ -1006,7 +1006,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="pocket"] .btn,:root[data-theme="pocket"] .opt[aria-pressed="true"],:root[data-theme="pocket"] .preset.on,:root[data-theme="pocket"] .thc.on,:root[data-theme="pocket"] .dock .pc,:root[data-theme="pocket"] .pill.ac,:root[data-theme="pocket"] .hgo{background:radial-gradient(150% 100% at var(--lx) var(--ly),rgba(255,255,255,.42),rgba(255,255,255,0) 52%),var(--grain),var(--key);background-size:100% 100%,200px 200px,100% 100%;background-blend-mode:normal,soft-light,normal;color:#2A2118;border:0;border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 4px rgba(0,0,0,.22),0 0 0 1.5px var(--groove),0 3px 4px rgba(0,0,0,.22),0 10px 16px -8px rgba(0,0,0,.35);transition:transform .1s cubic-bezier(.34,1.56,.64,1),box-shadow .1s}
 :root[data-theme="pocket"] .btn:active,:root[data-theme="pocket"] .hgo:active,:root[data-theme="pocket"] .dock .pc:active{transform:translateY(2px);box-shadow:inset 0 2px 4px rgba(0,0,0,.3),0 0 0 1.5px var(--groove)}
 :root[data-theme="pocket"] .btn.ghost{--key:var(--knob);color:var(--ink)}
-:root[data-theme="pocket"] .circ,:root[data-theme="pocket"] .fsreset,:root[data-theme="pocket"] .mini,:root[data-theme="pocket"] .top .circ{background:radial-gradient(closest-side,rgba(0,0,0,0) 82%,rgba(0,0,0,.25) 88%,rgba(0,0,0,0) 94%),radial-gradient(120% 100% at var(--lx) var(--ly),rgba(255,255,255,.4),rgba(255,255,255,0) 50%),var(--knob);border:0;color:var(--ink);box-shadow:inset 0 1px 1px rgba(255,255,255,.45),inset 0 -2px 3px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.28),0 4px 6px rgba(0,0,0,.25),0 10px 14px -6px rgba(0,0,0,.3)}
+:root[data-theme="pocket"] .circ,:root[data-theme="pocket"] .fsreset,:root[data-theme="pocket"] .mini,:root[data-theme="pocket"] :is(.top .circ,.msyncb){background:radial-gradient(closest-side,rgba(0,0,0,0) 82%,rgba(0,0,0,.25) 88%,rgba(0,0,0,0) 94%),radial-gradient(120% 100% at var(--lx) var(--ly),rgba(255,255,255,.4),rgba(255,255,255,0) 50%),var(--knob);border:0;color:var(--ink);box-shadow:inset 0 1px 1px rgba(255,255,255,.45),inset 0 -2px 3px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.28),0 4px 6px rgba(0,0,0,.25),0 10px 14px -6px rgba(0,0,0,.3)}
 :root[data-theme="pocket"] .circ:active,:root[data-theme="pocket"] .fsreset:active,:root[data-theme="pocket"] .mini:active{transform:rotate(35deg) scale(.96)}
 :root[data-theme="pocket"] .opt,:root[data-theme="pocket"] .seg,:root[data-theme="pocket"] .calpill,:root[data-theme="pocket"] .thc,:root[data-theme="pocket"] .preset,:root[data-theme="pocket"] .mask .mode-tabs{background:var(--sub);border-color:transparent;box-shadow:inset 0 1.5px 3px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.3)}
 :root[data-theme="pocket"] .seg button[aria-pressed="true"],:root[data-theme="pocket"] .mask .mode-tabs button.active{background:radial-gradient(150% 100% at var(--lx) var(--ly),rgba(255,255,255,.42),rgba(255,255,255,0) 52%),var(--grain),var(--key);background-size:100% 100%,200px 200px,100% 100%;color:#2A2118;border-radius:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 0 1px var(--groove),0 2px 3px rgba(0,0,0,.25)}
@@ -1028,8 +1028,8 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="pocket"] .fstack>.fs-top{box-shadow:var(--shadow)}
 :root[data-theme="pocket"] .fstack[data-fs="hero"]>.fs-top{box-shadow:0 0 0 7px var(--bezel),0 0 0 8px rgba(0,0,0,.25),inset 0 3px 10px rgba(0,0,0,.7),0 14px 26px -8px rgba(0,0,0,.45)}
 :root[data-theme="pocket"] .toast{background:var(--screen);color:var(--phos);border:0;box-shadow:0 0 0 4px var(--bezel),0 10px 24px rgba(0,0,0,.35)}
-:root[data-theme="pocket"] #syncBtn .syncdot{background:#5A4A44;box-shadow:inset 0 1px 1px rgba(0,0,0,.6)}
-:root[data-theme="pocket"] #syncBtn .syncdot.ok,:root[data-theme="pocket"] #syncBtn .syncdot.spin{border:0;background:#E2513A;box-shadow:0 0 6px #E2513A,0 0 12px rgba(226,81,58,.5)}
+:root[data-theme="pocket"] :is(#syncBtn,.msyncb) .syncdot{background:#5A4A44;box-shadow:inset 0 1px 1px rgba(0,0,0,.6)}
+:root[data-theme="pocket"] :is(#syncBtn,.msyncb) .syncdot.ok,:root[data-theme="pocket"] :is(#syncBtn,.msyncb) .syncdot.spin{border:0;background:#E2513A;box-shadow:0 0 6px #E2513A,0 0 12px rgba(226,81,58,.5)}
 :root[data-theme="pocket"] svg path[fill="none"]{filter:drop-shadow(0 1.5px 1px rgba(0,0,0,.25))}
 :root[data-theme="pocket"][data-mode="dark"] .dock button[aria-selected="true"],:root[data-theme="pocket"][data-mode="dark"] .btn,:root[data-theme="pocket"][data-mode="dark"] .hgo,:root[data-theme="pocket"][data-mode="dark"] .opt[aria-pressed="true"],:root[data-theme="pocket"][data-mode="dark"] .preset.on,:root[data-theme="pocket"][data-mode="dark"] .thc.on,:root[data-theme="pocket"][data-mode="dark"] .pill.ac,:root[data-theme="pocket"][data-mode="dark"] .seg button[aria-pressed="true"],:root[data-theme="pocket"][data-mode="dark"] .mask .mode-tabs button.active,:root[data-theme="pocket"][data-mode="dark"] .cal .dd.trn b{color:#241200}
 :root[data-theme="pocket"][data-mode="dark"] .tickb{color:#fff}
@@ -1113,7 +1113,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="md"] .fstack>.fs-top{box-shadow:var(--shadow)}
 :root[data-theme="md"] .fstack[data-fs="hero"]>.fs-top{box-shadow:0 0 0 6px #2A2E35,0 0 0 7px rgba(255,255,255,.35),inset 0 3px 8px rgba(30,42,26,.35),0 12px 22px -8px rgba(20,30,50,.4)}
 :root[data-theme="md"] .toast{background:#2A2E35;color:#C9D6B8;border:0;font-family:var(--num)}
-:root[data-theme="md"] #syncBtn .syncdot.ok{background:#7CFF6B;box-shadow:0 0 6px #7CFF6B}
+:root[data-theme="md"] :is(#syncBtn,.msyncb) .syncdot.ok{background:#7CFF6B;box-shadow:0 0 6px #7CFF6B}
 :root[data-theme="md"] .opt .sw{background:#2A2E35;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)}
 :root[data-theme="md"] .opt[aria-checked="true"] .sw{background:#FF6A13}
 :root[data-theme="md"] .knobw .knob{background:radial-gradient(circle,rgba(0,0,0,0) 60%,rgba(0,0,0,.2) 63%,rgba(0,0,0,0) 66%),conic-gradient(from var(--a),#C9D0DA,#F4F6F9 40deg,#9AA4B2 100deg,#E3E7EC 160deg,#F7F9FB 220deg,#8D97A6 280deg,#D7DCE3 330deg,#C9D0DA);box-shadow:0 0 0 4px #2A2E35,0 8px 14px -4px rgba(20,30,50,.4),inset 0 1px 1px #fff}
@@ -1150,7 +1150,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="nikon"] .toast{background:#0E0F10;color:#fff;border:0;box-shadow:0 0 0 1px #000,0 10px 24px rgba(0,0,0,.6)}
 :root[data-theme="nikon"] .bricks{background:#0E0F10;box-shadow:inset 0 2px 6px rgba(0,0,0,.8)}
 :root[data-theme="nikon"] .opt[aria-checked="true"] .sw{background:#E8302A}
-:root[data-theme="nikon"] #syncBtn .syncdot.ok{background:#7BD389}
+:root[data-theme="nikon"] :is(#syncBtn,.msyncb) .syncdot.ok{background:#7BD389}
 /* Two-in-one hair-dryer skin. Light: ceramic pink with strawberry bronze (cream ceramic body, a rose-metal head, mauve
    anodised buttons, the lavender filter grille). Dark: Prussian blue with rich copper (deep blue matte body, a
    golden-copper head and grille, copper buttons). Shared: anodised metal with a fine grain, spun-ring buttons sitting
@@ -1224,7 +1224,7 @@ h1,.hero h2,.big,.tile .tv,.f-num b,.stats b,.sh-h h3{font-family:var(--disp)}
 :root[data-theme="mac"] .btn,:root[data-theme="mac"] .hgo{background:linear-gradient(180deg,#2E95FF 0%,#0A6FE0 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 0 .5px rgba(0,60,140,.6),0 2px 4px rgba(0,60,140,.25)}
 :root[data-theme="mac"] .btn:active,:root[data-theme="mac"] .hgo:active,:root[data-theme="mac"] .dock .pc:active{transform:translateY(1px);filter:brightness(.92)}
 :root[data-theme="mac"] .circ,:root[data-theme="mac"] .fsreset,:root[data-theme="mac"] .mini{background:var(--key);border:0;color:#F5F5F7;box-shadow:var(--keysh)}
-:root[data-theme="mac"] .top .circ{border-radius:12px}
+:root[data-theme="mac"] :is(.top .circ,.msyncb){border-radius:12px}
 :root[data-theme="mac"] .opt,:root[data-theme="mac"] .seg,:root[data-theme="mac"] .calpill,:root[data-theme="mac"] .thc,:root[data-theme="mac"] .preset,:root[data-theme="mac"] .mask .mode-tabs,:root[data-theme="mac"] .mask input,:root[data-theme="mac"] .mask select,:root[data-theme="mac"] .mask textarea{background:var(--sub);border-color:transparent;box-shadow:inset 0 1px 2px rgba(0,0,0,.18),0 1px 0 rgba(255,255,255,.35)}
 :root[data-theme="mac"] .dock{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,0)),var(--sub);border:0;border-radius:18px;box-shadow:var(--chamfer),0 0 0 .5px rgba(0,0,0,.2),0 12px 24px -10px rgba(0,0,0,.3)}
 :root[data-theme="mac"] .dock button{color:var(--muted)}
@@ -1862,7 +1862,7 @@ html.touching.groove :is(.bricks .bks,.cal .dd b,.hero .hgo){animation-play-stat
 :root[data-theme="aqua"] .f-sets i.dn{background:linear-gradient(180deg,#EAF3FE,#D5E6FB);color:#1C5FB8}
 :root[data-theme="aqua"] .f-sets i.cur{background:linear-gradient(180deg,var(--gel-hi) 0%,var(--gel-mid) 50%,var(--gel-deep) 51%,var(--gel-light) 100%);color:#fff;text-shadow:0 -1px 1px rgba(10,40,90,.4)}
 :root[data-theme="aqua"] .f-sets i.add{background:none;box-shadow:inset 0 0 0 1px #AEB3BC}
-:root[data-theme="aqua"] #syncBtn .syncdot.ok{background:radial-gradient(circle at 50% 30%,#B9F6A5,#56C93F 70%);box-shadow:0 0 0 1px #43A12F}
+:root[data-theme="aqua"] :is(#syncBtn,.msyncb) .syncdot.ok{background:radial-gradient(circle at 50% 30%,#B9F6A5,#56C93F 70%);box-shadow:0 0 0 1px #43A12F}
 :root.glass[data-theme="aqua"][data-mode="light"]{--gl-dock:#F2F4F7;--gl-mp:#F7F8FA}
 /* Aqua dark: slate graphite rather than black (Mac OS X's Graphite appearance on a dark brushed-metal desk, like the
    Linux "Midnight OS X" / brushed themes); same gel recipe, the accent gel stays blue, capsules turn graphite */

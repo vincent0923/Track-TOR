@@ -1001,14 +1001,14 @@ function metricSheet(k){const m=METRICS.find(x=>x.k===k);
     const raw=m.raw?recent(m.raw(),chartRange):null,ys=pts.map(p=>p.y).concat(raw?raw.map(p=>p.y):[]),lo=ys.length?Math.min(...ys):0,hi=ys.length?Math.max(...ys):0,yOf=v=>(pad+(1-(v-lo)/((hi-lo)||1))*(H-2*pad))/H*100;
     const px0=pts.length?pts[0].x:0,px1=pts.length?pts[pts.length-1].x:1,xOf=x=>(x-px0)/((px1-px0)||1)*100,dots=raw?raw.filter(p=>p.x>=px0&&p.x<=px1).map(p=>'<i class="mraw" style="left:'+xOf(p.x).toFixed(2)+'%;top:'+yOf(p.y).toFixed(2)+'%;--c:'+m.c+'"></i>').join(""):'';
     const ticks=pts.length>1?[hi,(hi+lo)/2,lo].map(v=>'<span class="mtick" style="top:'+yOf(v).toFixed(2)+'%"><b>'+(+v).toFixed(m.dec)+'</b></span>').join(""):'';
-    const recBtn=(m.sync?'<button class="mini" data-act="msync" aria-label="'+T('从高驰同步','Sync from COROS')+'">'+ICON.sync+'</button>':'')+(m.rec?'<button class="mini" '+(m.rec==="sync"?'data-act="msync"':'data-act="go" data-to="'+m.rec+'"')+' aria-label="'+(m.rec==="sync"?T('从高驰同步','Sync from COROS'):T('记一笔','Log'))+'">'+(m.rec==="sync"?ICON.sync:ICON.plus)+'</button>':'');
+    const syncB='<button class="circ msyncb" data-act="msync" aria-label="'+T('从高驰同步','Sync from COROS')+'"><i class="puck"><i class="syncdot"></i></i></button>',recBtn=(m.sync?syncB:'')+(m.rec?(m.rec==="sync"?syncB:'<button class="mini" data-act="go" data-to="'+m.rec+'" aria-label="'+T('记一笔','Log')+'">'+ICON.plus+'</button>'):'');
     $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+m.name+'</h3>'+recBtn+'<button class="mini" data-act="close">'+ICON.x+'</button></div>'
       +'<div class="mhead" data-act="mrange" role="button" tabindex="0" aria-label="'+T('换时间范围','Change the period')+'"><p class="eyebrow" id="mLab">'+lab+'</p><div class="big" id="mBig">'+(last?last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small></div><div id="mDelta">'+(last?deltaOf(m,all,chartRange):'')+'</div></div>'
       +(pts.length>1?'<div class="chart mchart" id="chart">'+ticks+lineSvg(pts,W,H,m.c,"",pad,[lo,hi])+dots+'<i class="mcur" aria-hidden="true"></i><i class="mdot" aria-hidden="true" style="--c:'+m.c+'"></i></div>'
         +'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(pts[0].date)+'</span><span class="sp"></span><span>'+dayLabel(pts[pts.length-1].date)+'</span></div>'
         +'<div class="row" style="margin-top:16px;gap:8px"><span class="pill">'+T('最低 ','Low ')+lo.toFixed(m.dec)+'</span><span class="pill">'+T('最高 ','High ')+hi.toFixed(m.dec)+'</span><span class="pill">'+pts.length+T(' 个记录',' records')+'</span></div>'
         :'<p class="empty">'+T('这段时间不够两个记录','Fewer than two records in this period')+'</p>');
-    const ch=$("#chart");if(ch)scrubber(ch,pts,m,{lab,last,yOf,raw:raw&&raw.filter(p=>p.x>=px0&&p.x<=px1)})};
+    syncMirror();const ch=$("#chart");if(ch)scrubber(ch,pts,m,{lab,last,yOf,raw:raw&&raw.filter(p=>p.x>=px0&&p.x<=px1)})};
   openSheet("");draw();metricSheet.redraw=draw}
 function scrubber(el,pts,m,o){const xs=pts.map(p=>p.x),x0=Math.min(...xs),x1=Math.max(...xs),cur=el.querySelector(".mcur"),dot=el.querySelector(".mdot"),L=$("#mLab"),B=$("#mBig"),D=$("#mDelta");let tm=0,hold=0,shown=null,sx=0,sy=0;
   const raw=o.raw&&o.raw.length?o.raw:null,rec=m.rec&&m.rec.startsWith("rec:")?m.rec.slice(4):null;
@@ -1192,6 +1192,10 @@ function p1SyncUI(){const d=$("#syncDot");if(!d)return;const on=typeof syncing!=
 async function p1Sync(quiet){if(typeof syncing!=="undefined"&&syncing)return;if(!mcp){if(!quiet)promptCorosToken();return}
   window.P1Quiet=!!quiet;p1Syncing=true;p1SyncUI();try{await doSync()}finally{p1Syncing=false;window.P1Quiet=false;p1SyncUI();renderAll()}}
 window.p1Sync=p1Sync;
+/* panel copies of the sync button (.msyncb) show exactly what the header's shows: its light, its turning or breathing */
+function syncMirror(){const d=$("#syncDot"),b=$("#syncBtn");if(!d)return;document.querySelectorAll(".msyncb").forEach(m=>{const x=m.querySelector(".syncdot");if(x)x.className=d.className;m.classList.toggle("ready",!!(b&&b.classList.contains("ready")))})}
+new MutationObserver(syncMirror).observe(document.getElementById("syncDot"),{attributes:true,attributeFilter:["class"]});
+if(document.getElementById("syncBtn"))new MutationObserver(syncMirror).observe(document.getElementById("syncBtn"),{attributes:true,attributeFilter:["class"]});
 /* sync: a tap syncs. In the toy skin the button is the recessed capsule with a plastic puck (after the Ovio toy kit):
    drag the puck to the far end and let go to sync, it springs back; a tap runs the puck across and syncs too */
 (function(){const b=$("#syncBtn"),pk=b.querySelector(".puck"),toy=()=>document.documentElement.dataset.theme==="toy";let x0=null,dx=0,moved=false,dragAt=0;
@@ -1236,8 +1240,8 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="metric"){if(tileEdit)return;chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
   else if(a==="msync"){/* sync in place: the icon turns while it runs, the chart redraws with what came in */
-    if(b.classList.contains("busy"))return;if(typeof mcp==="undefined"||!mcp){p1Sync(false);return}b.classList.add("busy");buzz(6);
-    p1Sync(false).finally(()=>{b.classList.remove("busy");if($("#sheet").classList.contains("on")&&$("#chart,.mhead")&&metricSheet.redraw)metricSheet.redraw()})}
+    if(typeof syncing!=="undefined"&&syncing||p1Syncing)return;if(typeof mcp==="undefined"||!mcp){p1Sync(false);return}buzz(6);
+    p1Sync(false).finally(()=>{if($("#sheet").classList.contains("on")&&$("#chart,.mhead")&&metricSheet.redraw)metricSheet.redraw()})}
   else if(a==="mrange"){chartRange=M_RANGES[(M_RANGES.indexOf(chartRange)+1)%M_RANGES.length];SFX.tap();buzz(6);metricSheet.redraw()}
   else if(a==="gapr"){if(Date.now()-gapHeld<800)return;gapNext()}
   else if(a==="intake")openIntake();
