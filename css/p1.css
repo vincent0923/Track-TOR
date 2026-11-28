@@ -2285,3 +2285,5 @@ label:has(>select),.field:has(select){cursor:pointer}
 :root[data-theme="toy"] .mfoot .msyncb .puck{display:contents!important}
 .mcard .mview{cursor:pointer;-webkit-user-select:none;user-select:none;border-radius:8px}
 .mcard .mview:active{opacity:.6}
+.mcard .mview{display:grid;justify-items:start;gap:2px;width:max-content;max-width:100%;padding-right:12px}
+.mcard .mbody{cursor:pointer}

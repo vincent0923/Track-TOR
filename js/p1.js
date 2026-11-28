@@ -781,17 +781,19 @@ function mainCardHtml(){let [kind,n]=MAIN_VIEWS[mainView];const u=mainUnit(),M=M
   const foot=(a,unit,b)=>'<div class="row muted bkf"><span>'+a+'</span><span class="sp" style="text-align:center"><i class="kd" style="background:var(--pull)"></i>= '+unit+' '+u+'</span><span>'+b+'</span></div>';
   let head,body;
   if(W){const {weeks,vals}=W,mx=Math.max(...vals),best=vals.lastIndexOf(mx),tot=vals.reduce((a,b)=>a+b,0),unit=brickUnit(mx);
-    head='<span class="tl mview" data-act="mainv" role="button" tabindex="0"><i style="background:var(--pull)"></i>'+T('每周总数 · '+n+' 周','Weekly total · '+n+' weeks')+'</span>'
+    head='<span class="tl"><i style="background:var(--pull)"></i>'+T('每周总数 · '+n+' 周','Weekly total · '+n+' weeks')+'</span>'
       +'<span class="tv">'+fmt(tot)+'<small>'+u+'</small></span><span class="td muted">'+T('本周 ','This week ')+fmt(vals[vals.length-1])+' '+u+'</span>';
     body=bricksHtml(vals.map((v,k)=>({n:v?Math.max(1,Math.round(v/unit)):0,c:k===best?"var(--push)":"var(--pull)",t:T(dayLabel(weeks[k])+' 那周 · ',dayLabel(weeks[k])+' week · ')+fmt(v)+' '+u})))
       +foot(dayLabel(weeks[0]),unit,T('本周','This week'))}
   else{const all=mainSeries(),pts=all.slice(-n),last=all[all.length-1];
-    head='<span class="tl mview" data-act="mainv" role="button" tabindex="0"><i style="background:var(--pull)"></i>'+mainName()+T(' · 最近 '+n+' 次',' · last '+n)+'</span>'
+    head='<span class="tl"><i style="background:var(--pull)"></i>'+mainName()+T(' · 最近 '+n+' 次',' · last '+n)+'</span>'
       +'<span class="tv">'+(last?last.y.toFixed(dec)+'<small>'+u+'</small>':'–')+'</span>'+(last?deltaOf(M,all):'<span class="td muted">'+T('还没有数据','No data yet')+'</span>');
     if(pts.length){const mx=Math.max(...pts.map(p=>p.y)),unit=brickUnit(mx),best=pts.map(p=>p.y).lastIndexOf(mx);
       body=bricksHtml(pts.map((p,k)=>({n:p.y>0?Math.max(1,Math.round(p.y/unit)):0,c:k===best?"var(--push)":"var(--pull)",t:dayLabel(p.date)+' · '+(+p.y).toFixed(dec)+' '+u})))
         +foot(dayLabel(pts[0].date),unit,dayLabel(pts[pts.length-1].date))}else body=''}
-  return '<section class="card mcard" data-act="metric" data-k="pull"><span class="bkread n" aria-live="polite"></span>'+head+body+'</section>'}
+  /* the head (title, figure, line under it) switches the view; only the bricks open the chart */
+  return '<section class="card mcard"><span class="bkread n" aria-live="polite"></span><div class="mview" data-act="mainv" role="button" tabindex="0" aria-label="'+T('换视图','Change the view')+'">'+head+'</div>'
+    +(body?'<div class="mbody" data-act="metric" data-k="pull" role="button" aria-label="'+T('打开图表','Open the chart')+'">'+body+'</div>':'')+'</section>'}
 function flapHtml(txt){return '<span class="flap">'+[...txt].map((c,i)=>'<span style="--i:'+i+'">'+c+'</span>').join("")+'</span>'}
 function gapCardHtml(){const {from,to,days,gaps}=gapData();
   /* long windows draw one bar per week so the bars stay readable */
