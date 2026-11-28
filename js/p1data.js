@@ -117,7 +117,8 @@ function setMetric(date,patch){
 }
 function saveMetric(date,patch){setMetric(date,patch);lsSave()}
 /* one number for a chosen date (pull-ups, weight or waist); empty clears that day's record */
-function openRecord(key){
+/* date: open on that day (a hold on a chart's day); done: called after saving */
+function openRecord(key,date,done){
   const mu=mainEx().unit,mdec=mu==="km"||mu==="kg";
   const def={pullups:mainEx().id==="pullup"?{name:T("标准引体","Strict pull-ups"),unit:T("个","reps"),step:1,mode:"numeric",min:0,max:200,int:true,hint:T("下巴过杠的标准引体向上","Strict reps, chin over the bar")}
       :{name:mainName(),unit:mainUnit(),step:mdec?0.1:1,mode:mdec?"decimal":"numeric",min:0,max:100000,int:!mdec,hint:T("这次最好的一组 / 一次","Your best set or effort")},
@@ -127,14 +128,14 @@ function openRecord(key){
   m.className="mask";
   m.innerHTML='<div class="sheet" role="dialog" aria-modal="true" aria-label="'+esc(def.name)+'" style="max-width:360px">'
     +'<h3><span>'+esc(def.name)+'</span><button class="iconbtn" type="button" data-close aria-label="'+T("取消","Cancel")+'">'+CLOSE_ICON+'</button></h3>'
-    +'<div class="form-body"><label class="flabel">'+T("日期","Date")+'<input id="recDate" type="date" value="'+today()+'" max="'+today()+'"></label>'
+    +'<div class="form-body"><label class="flabel">'+T("日期","Date")+'<input id="recDate" type="date" value="'+(date||today())+'" max="'+today()+'"></label>'
     +'<label class="flabel">'+esc(def.name)+'（'+def.unit+'）<input id="recVal" type="number" inputmode="'+def.mode+'" min="0" step="'+def.step+'" placeholder="'+esc(def.hint)+'"></label><p class="recerr" id="recErr" role="alert" hidden></p></div>'
     +'<div class="row" style="justify-content:flex-end"><button class="btn recsave" type="button" data-recsave aria-label="'+T("保存并关闭","Save and close")+'">'+SAVE_ICON+'</button></div></div>';
   document.body.appendChild(m);
   const dateEl=m.querySelector("#recDate"),valEl=m.querySelector("#recVal");
   /* the main exercise's hand-logged number: metrics.pullups for pull-ups, metrics.gm[id] for any other move */
   const gm=key==="pullups"&&mainEx().id!=="pullup"?mainEx().id:null;
-  const getV=r=>!r?null:gm?(r.gm&&r.gm[gm]):r[key];
+  const getV=r=>!r?null:gm?(r.gm&&r.gm[gm]):key==="weight"?(r.weight??r.weightC):r[key];
   const load=()=>{const r=state.metrics[dateEl.value],v=getV(r);valEl.value=v!=null?v:""};
   load();dateEl.addEventListener("change",load);
   m.querySelector("[data-close]").addEventListener("click",()=>m.remove());
@@ -150,7 +151,7 @@ function openRecord(key){
       else if(r&&r.gm&&r.gm[gm]!=null){delete r.gm[gm];if(!Object.keys(r.gm).length)delete r.gm;if(Object.keys(r).every(k=>k==="date"))delete state.metrics[date];lsSave()}}
     else if(v!=null)saveMetric(date,{[key]:v});
     else if(r&&r[key]!=null){delete r[key];if(Object.keys(r).every(k=>k==="date"))delete state.metrics[date];lsSave()}
-    m.remove();renderAll();toast(md(date)+T(" 的记录已保存"," saved"))});
+    m.remove();renderAll();if(done)done();toast(md(date)+T(" 的记录已保存"," saved"))});
   check();valEl.focus();
 }
 

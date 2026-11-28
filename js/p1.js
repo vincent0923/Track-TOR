@@ -913,7 +913,7 @@ function shareImgBind(blobOf,name){
 /* ---------- progress view ---------- */
 const METRICS=[
   {k:"pull",get name(){return mainName()},get unit(){return mainUnit()},c:"var(--pull)",up:1,wide:1,pts:()=>mainSeries(),get dec(){return /km|kg/.test(mainEx().unit)?1:0},rec:"rec:pullups"},
-  {k:"wt",name:T("体重","Weight"),unit:"kg",c:"var(--push)",up:0,pts:()=>avg7(wtMerged()),dec:1,sub:T("7 日均","7-day avg"),rec:"rec:weight",sync:1},
+  {k:"wt",name:T("体重","Weight"),unit:"kg",c:"var(--push)",up:0,pts:()=>avg7(wtMerged()),raw:()=>wtMerged(),dec:1,sub:T("7 日均","7-day avg"),rec:"rec:weight",sync:1},
   {k:"waist",name:T("腰围","Waist"),unit:"cm",c:"var(--ac-text)",up:0,pts:()=>series("waist"),dec:1,rec:"rec:waist"},
   {k:"sleep",name:T("睡眠","Sleep"),unit:T("分","pts"),c:"var(--sleep)",up:1,pts:()=>series("sleep"),dec:0,rec:"sync"},
   {k:"hrv",name:"HRV",unit:"ms",c:"#38BDF8",up:1,pts:()=>series("hrv"),dec:0,rec:"sync"},
@@ -924,8 +924,8 @@ function smoothPath(P){if(!P.length)return "";let d="M"+P[0][0].toFixed(1)+" "+P
   for(let i=0;i<n-1;i++){const h=(P[i+1][0]-P[i][0])/3;d+="C"+(P[i][0]+h).toFixed(1)+" "+(P[i][1]+t[i]*h).toFixed(1)+" "+(P[i+1][0]-h).toFixed(1)+" "+(P[i+1][1]-t[i+1]*h).toFixed(1)+" "+P[i+1][0].toFixed(1)+" "+P[i+1][1].toFixed(1)}
   return d}
 let GID=0;
-function lineSvg(pts,W,H,col,cls,pad){pad=pad||4;if(pts.length<2)return '<svg class="'+cls+'" viewBox="0 0 '+W+' '+H+'"></svg>';
-  const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y),x0=Math.min(...xs),x1=Math.max(...xs),lo=Math.min(...ys),hi=Math.max(...ys),sp=(hi-lo)||1;
+function lineSvg(pts,W,H,col,cls,pad,rng){pad=pad||4;if(pts.length<2)return '<svg class="'+cls+'" viewBox="0 0 '+W+' '+H+'"></svg>';
+  const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y),x0=Math.min(...xs),x1=Math.max(...xs),lo=rng?rng[0]:Math.min(...ys),hi=rng?rng[1]:Math.max(...ys),sp=(hi-lo)||1;
   const P=pts.map(p=>[(x1===x0?W/2:(p.x-x0)/(x1-x0)*W),pad+(1-(p.y-lo)/sp)*(H-2*pad)]);const id="g"+(++GID),line=smoothPath(P),last=P[P.length-1];
   return '<svg class="'+cls+'" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><defs><linearGradient id="'+id+'" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:'+col+';stop-opacity:.28"/><stop offset="1" style="stop-color:'+col+';stop-opacity:0"/></linearGradient></defs>'
     +'<path d="'+line+'L'+W+' '+H+'L0 '+H+'Z" fill="url(#'+id+')"/><path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2.2" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'
@@ -998,24 +998,31 @@ const M_RANGES=[7,14,30,60,90,0];
 function metricSheet(k){const m=METRICS.find(x=>x.k===k);
   const draw=()=>{const all=m.pts(),pts=recent(all,chartRange),last=all[all.length-1],W=340,H=200,pad=14;
     const lab=chartRange?T('过去 '+chartRange+' 天','Last '+chartRange+' days'):T('全部','All time');
-    const ys=pts.map(p=>p.y),lo=pts.length?Math.min(...ys):0,hi=pts.length?Math.max(...ys):0,yOf=v=>(pad+(1-(v-lo)/((hi-lo)||1))*(H-2*pad))/H*100;
+    const raw=m.raw?recent(m.raw(),chartRange):null,ys=pts.map(p=>p.y).concat(raw?raw.map(p=>p.y):[]),lo=ys.length?Math.min(...ys):0,hi=ys.length?Math.max(...ys):0,yOf=v=>(pad+(1-(v-lo)/((hi-lo)||1))*(H-2*pad))/H*100;
+    const px0=pts.length?pts[0].x:0,px1=pts.length?pts[pts.length-1].x:1,xOf=x=>(x-px0)/((px1-px0)||1)*100,dots=raw?raw.filter(p=>p.x>=px0&&p.x<=px1).map(p=>'<i class="mraw" style="left:'+xOf(p.x).toFixed(2)+'%;top:'+yOf(p.y).toFixed(2)+'%;--c:'+m.c+'"></i>').join(""):'';
     const ticks=pts.length>1?[hi,(hi+lo)/2,lo].map(v=>'<span class="mtick" style="top:'+yOf(v).toFixed(2)+'%"><b>'+(+v).toFixed(m.dec)+'</b></span>').join(""):'';
     const recBtn=(m.sync?'<button class="mini" data-act="msync" aria-label="'+T('从高驰同步','Sync from COROS')+'">'+ICON.sync+'</button>':'')+(m.rec?'<button class="mini" '+(m.rec==="sync"?'data-act="msync"':'data-act="go" data-to="'+m.rec+'"')+' aria-label="'+(m.rec==="sync"?T('从高驰同步','Sync from COROS'):T('记一笔','Log'))+'">'+(m.rec==="sync"?ICON.sync:ICON.plus)+'</button>':'');
     $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+m.name+'</h3>'+recBtn+'<button class="mini" data-act="close">'+ICON.x+'</button></div>'
       +'<div class="mhead" data-act="mrange" role="button" tabindex="0" aria-label="'+T('换时间范围','Change the period')+'"><p class="eyebrow" id="mLab">'+lab+'</p><div class="big" id="mBig">'+(last?last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small></div><div id="mDelta">'+(last?deltaOf(m,all,chartRange):'')+'</div></div>'
-      +(pts.length>1?'<div class="chart mchart" id="chart">'+ticks+lineSvg(pts,W,H,m.c,"",pad)+'<i class="mcur" aria-hidden="true"></i><i class="mdot" aria-hidden="true" style="--c:'+m.c+'"></i></div>'
+      +(pts.length>1?'<div class="chart mchart" id="chart">'+ticks+lineSvg(pts,W,H,m.c,"",pad,[lo,hi])+dots+'<i class="mcur" aria-hidden="true"></i><i class="mdot" aria-hidden="true" style="--c:'+m.c+'"></i></div>'
         +'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(pts[0].date)+'</span><span class="sp"></span><span>'+dayLabel(pts[pts.length-1].date)+'</span></div>'
         +'<div class="row" style="margin-top:16px;gap:8px"><span class="pill">'+T('最低 ','Low ')+lo.toFixed(m.dec)+'</span><span class="pill">'+T('最高 ','High ')+hi.toFixed(m.dec)+'</span><span class="pill">'+pts.length+T(' 个记录',' records')+'</span></div>'
         :'<p class="empty">'+T('这段时间不够两个记录','Fewer than two records in this period')+'</p>');
-    const ch=$("#chart");if(ch)scrubber(ch,pts,m,{lab,last,yOf})};
+    const ch=$("#chart");if(ch)scrubber(ch,pts,m,{lab,last,yOf,raw:raw&&raw.filter(p=>p.x>=px0&&p.x<=px1)})};
   openSheet("");draw();metricSheet.redraw=draw}
-function scrubber(el,pts,m,o){const xs=pts.map(p=>p.x),x0=Math.min(...xs),x1=Math.max(...xs),cur=el.querySelector(".mcur"),dot=el.querySelector(".mdot"),L=$("#mLab"),B=$("#mBig"),D=$("#mDelta");let tm=0,shown=null;
+function scrubber(el,pts,m,o){const xs=pts.map(p=>p.x),x0=Math.min(...xs),x1=Math.max(...xs),cur=el.querySelector(".mcur"),dot=el.querySelector(".mdot"),L=$("#mLab"),B=$("#mBig"),D=$("#mDelta");let tm=0,hold=0,shown=null,sx=0,sy=0;
+  const raw=o.raw&&o.raw.length?o.raw:null,rec=m.rec&&m.rec.startsWith("rec:")?m.rec.slice(4):null;
+  const near=(arr,fx)=>{let best=arr[0];arr.forEach(p=>{if(Math.abs(p.x-fx)<Math.abs(best.x-fx))best=p});return best};
   const show=e=>{const r=el.getBoundingClientRect(),cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left,fx=x0+(cx/r.width)*(x1-x0);
-    let best=pts[0];pts.forEach(p=>{if(Math.abs(p.x-fx)<Math.abs(best.x-fx))best=p});if(best===shown)return;shown=best;clearTimeout(tm);
+    const best=near(raw||pts,fx);if(best===shown)return;shown=best;clearTimeout(tm);
     const px=(best.x-x0)/((x1-x0)||1)*100;cur.style.left=dot.style.left=px+"%";dot.style.top=o.yOf(best.y)+"%";el.classList.add("on");
-    L.textContent=dayLabel(best.date);B.innerHTML=best.y.toFixed(m.dec)+'<small>'+m.unit+'</small>';D.style.visibility="hidden";buzz(3)};
-  const back=()=>{clearTimeout(tm);tm=setTimeout(()=>{shown=null;el.classList.remove("on");L.textContent=o.lab;B.innerHTML=(o.last?o.last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small>';D.style.visibility=""},1500)};
-  el.addEventListener("pointerdown",e=>{try{el.setPointerCapture(e.pointerId)}catch(err){}show(e)});el.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch")show(e)});
+    L.textContent=dayLabel(best.date);B.innerHTML=best.y.toFixed(m.dec)+'<small>'+m.unit+'</small>';
+    if(raw){const a=near(pts,best.x);D.innerHTML='<span class="td muted">'+T('7 日均 ','7-day avg ')+a.y.toFixed(m.dec)+' '+m.unit+'</span>';D.style.visibility=""}else D.style.visibility="hidden";buzz(3)};
+  const back=()=>{clearTimeout(tm);clearTimeout(hold);tm=setTimeout(()=>{shown=null;el.classList.remove("on");L.textContent=o.lab;B.innerHTML=(o.last?o.last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small>';D.innerHTML=o.last?deltaOf(m,m.pts(),chartRange):'';D.style.visibility=""},1500)};
+  el.addEventListener("pointerdown",e=>{try{el.setPointerCapture(e.pointerId)}catch(err){}sx=e.clientX;sy=e.clientY;show(e);
+    /* a hold on a day opens that day's record to change it (manual metrics only) */
+    clearTimeout(hold);if(rec)hold=setTimeout(()=>{const d=shown&&shown.date;if(!d)return;buzz(15);openRecord(rec,d,()=>{if(metricSheet.redraw&&$("#chart"))metricSheet.redraw()})},550)});
+  el.addEventListener("pointermove",e=>{if(Math.hypot(e.clientX-sx,e.clientY-sy)>10)clearTimeout(hold);if(e.buttons||e.pointerType==="touch")show(e)});
   el.addEventListener("pointerup",back);el.addEventListener("pointercancel",back)}
 
 /* ---------- G (Grind): badges and the theme shop ---------- */

@@ -2275,3 +2275,4 @@ label:has(>select),.field:has(select){cursor:pointer}
 .mchart .mdot{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--card);border:2.5px solid var(--c);box-shadow:0 1px 4px rgba(0,0,0,.25);opacity:0;pointer-events:none}
 .mchart.on .mcur{opacity:.35}.mchart.on .mdot{opacity:1}
 .mini.busy svg{animation:spin .8s linear infinite}
+.mchart .mraw{position:absolute;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:var(--card);border:1.5px solid var(--c);pointer-events:none;opacity:.85}
