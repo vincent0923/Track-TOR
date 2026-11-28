@@ -1002,12 +1002,14 @@ function metricSheet(k){const m=METRICS.find(x=>x.k===k);
     const px0=pts.length?pts[0].x:0,px1=pts.length?pts[pts.length-1].x:1,xOf=x=>(x-px0)/((px1-px0)||1)*100,dots=raw?raw.filter(p=>p.x>=px0&&p.x<=px1).map(p=>'<i class="mraw" style="left:'+xOf(p.x).toFixed(2)+'%;top:'+yOf(p.y).toFixed(2)+'%;--c:'+m.c+'"></i>').join(""):'';
     const ticks=pts.length>1?[hi,(hi+lo)/2,lo].map(v=>'<span class="mtick" style="top:'+yOf(v).toFixed(2)+'%"><b>'+(+v).toFixed(m.dec)+'</b></span>').join(""):'';
     const syncB='<button class="circ msyncb" data-act="msync" aria-label="'+T('从高驰同步','Sync from COROS')+'"><i class="puck"><i class="syncdot"></i></i></button>',recBtn=(m.sync?syncB:'')+(m.rec?(m.rec==="sync"?syncB:'<button class="mini" data-act="go" data-to="'+m.rec+'" aria-label="'+T('记一笔','Log')+'">'+ICON.plus+'</button>'):'');
-    $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+m.name+'</h3>'+recBtn+'<button class="mini" data-act="close">'+ICON.x+'</button></div>'
+    $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+m.name+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
       +'<div class="mhead" data-act="mrange" role="button" tabindex="0" aria-label="'+T('换时间范围','Change the period')+'"><p class="eyebrow" id="mLab">'+lab+'</p><div class="big" id="mBig">'+(last?last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small></div><div id="mDelta">'+(last?deltaOf(m,all,chartRange):'')+'</div></div>'
       +(pts.length>1?'<div class="chart mchart" id="chart">'+ticks+lineSvg(pts,W,H,m.c,"",pad,[lo,hi])+dots+'<i class="mcur" aria-hidden="true"></i><i class="mdot" aria-hidden="true" style="--c:'+m.c+'"></i></div>'
         +'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(pts[0].date)+'</span><span class="sp"></span><span>'+dayLabel(pts[pts.length-1].date)+'</span></div>'
-        +'<div class="row" style="margin-top:16px;gap:8px"><span class="pill">'+T('最低 ','Low ')+lo.toFixed(m.dec)+'</span><span class="pill">'+T('最高 ','High ')+hi.toFixed(m.dec)+'</span><span class="pill">'+pts.length+T(' 个记录',' records')+'</span></div>'
-        :'<p class="empty">'+T('这段时间不够两个记录','Fewer than two records in this period')+'</p>');
+        +'<div class="row mfoot"><span class="pill">'+T('最低 ','Low ')+lo.toFixed(m.dec)+'</span><span class="pill">'+T('最高 ','High ')+hi.toFixed(m.dec)+'</span><span class="pill">'+pts.length+T(' 个记录',' records')+'</span><span class="sp"></span>'+recBtn+'</div>'
+        :'<p class="empty">'+T('这段时间不够两个记录','Fewer than two records in this period')+'</p><div class="row mfoot"><span class="sp"></span>'+recBtn+'</div>');
+    /* the log and sync buttons are the size of the close button, whatever the skin makes that */
+    {const cl=$("#sheetBody .sh-h [data-act=close]");if(cl){const w=cl.offsetWidth,h=cl.offsetHeight;document.querySelectorAll("#sheetBody .mfoot>button").forEach(x=>{x.style.width=w+"px";x.style.height=h+"px";x.style.minWidth=w+"px"})}}
     syncMirror();const ch=$("#chart");if(ch)scrubber(ch,pts,m,{lab,last,yOf,raw:raw&&raw.filter(p=>p.x>=px0&&p.x<=px1)})};
   openSheet("");draw();metricSheet.redraw=draw}
 function scrubber(el,pts,m,o){const xs=pts.map(p=>p.x),x0=Math.min(...xs),x1=Math.max(...xs),cur=el.querySelector(".mcur"),dot=el.querySelector(".mdot"),L=$("#mLab"),B=$("#mBig"),D=$("#mDelta");let tm=0,hold=0,shown=null,sx=0,sy=0;

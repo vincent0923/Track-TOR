@@ -2278,3 +2278,8 @@ label:has(>select),.field:has(select){cursor:pointer}
 .mchart .mraw{position:absolute;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:var(--card);border:1.5px solid var(--c);pointer-events:none;opacity:.85}
 /* while arranging, a stacked tile is held as a whole: its cards don't swipe */
 .bento.editing .tile .fstack{pointer-events:none}
+.mfoot{margin-top:16px;gap:8px;align-items:center;flex-wrap:nowrap}
+.mfoot .pill{flex:none}
+.mfoot>button{flex:none}
+/* in a panel's small sync button the toy skin's slider groove gives way to just its light */
+:root[data-theme="toy"] .mfoot .msyncb .puck{display:contents!important}
