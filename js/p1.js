@@ -304,7 +304,7 @@ function ipRender(anim,list,mini){const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=r
   const title=feel?T("感觉如何","How was it"):run.stk==="done"?T("练好的","Done"):T("正在练","Now Training");
   const sets='<div class="f-setrow"><div class="f-sets"><div class="fs-track">'+a.map((x,i)=>x.d?'<i class="dn" role="button" tabindex="0" data-act="untick" data-i="'+i+'" aria-label="'+T('撤销第 '+(i+1)+' 组','Undo set '+(i+1))+'">'+ICON.check+x.v+'</i>':'<i class="'+(i===ci?"cur":"")+'" data-i="'+i+'">'+(i===ci?T("第 "+(i+1)+" 组","Set "+(i+1)):i+1)+'</i>').join("")
     +'<i class="add" role="button" tabindex="0" data-act="addset" aria-label="'+T('加一组','One more set')+'">'+ICON.plus+'</i></div></div>'+'</div>';
-  const scr='<div class="ip-scr" role="group" aria-label="'+esc(NS(e))+'"><div class="ip-bar"><b>'+title+'</b><span class="sp"></span><i class="ip-st'+(run.ipT?" on":"")+'">'+IP_I.st(!!run.ipT)+'</i><span class="n" id="fTime">0:00</span><i class="ip-bat" aria-label="'+dn+'/'+tot+'"><i style="width:'+Math.round(dn/Math.max(1,tot)*100)+'%"></i></i></div>'
+  const scr='<div class="ip-scr" role="group" aria-label="'+esc(NS(e))+'"><div class="ip-bar"><b>'+title+'</b><span class="sp"></span><i class="ip-st'+(run.ipT?" on":"")+'">'+IP_I.st(!!run.ipT)+'</i><span class="n" id="fTime">0:00</span>'+ipBatHtml(dn,tot)+'</div>'
     +'<div class="ip-np'+(anim&&run.ipDir?" sl"+(run.ipDir>0?"r":"l"):"")+'"><div class="ip-artw"><div class="ip-artm"><div class="ip-art'+(art?"":" plain")+'"'+(art?' style="background-image:url('+art+')"':'')+'></div></div>'+mini+'</div><div class="ip-info"><h2>'+esc(NS(e))+'</h2>'
     +'<p>'+esc(sub||LAB(p))+'</p><p class="ip-pos n">'+(pos+1)+' / '+list.length+'</p>'+sets+'</div></div>'
     +(feel?'<div class="feelbar ip-feel" role="slider" tabindex="0" aria-label="'+T('这个动作感觉？','How did that feel?')+'" aria-valuemin="1" aria-valuemax="4"><span class="fl-lab">'+T('转一转','Turn')+'</span><div class="fl-bks">'+FEEL4.map((x,i)=>'<i style="--i:'+i+'"></i>').join("")+'</div></div>'
@@ -341,6 +341,13 @@ function ipSwapFx(S){if(matchMedia("(prefers-reduced-motion: reduce)").matches)r
   const end=t?{transform:"translate("+(t.left-S.a.left)+"px,"+(t.top-S.a.top)+"px) scale("+(t.width/S.a.width)+")",opacity:1}:{transform:"scale(.3)",opacity:0};
   if(mini)mini.style.opacity="0";
   g.animate([{transform:"none",opacity:1},end],{duration:D,easing:E}).onfinish=()=>{g.remove();if(mini){mini.style.opacity="";mini.classList.remove("got");void mini.offsetWidth;mini.classList.add("got")}}}
+/* the battery on the screen is the phone's own where the browser tells (Android Chrome: level and charging, no
+   permission needed); elsewhere it shows how much of the session is done */
+const IP_BAT={};
+function ipBatHtml(dn,tot){const has=IP_BAT.level!=null,lv=has?IP_BAT.level:dn/Math.max(1,tot),pc=Math.round(lv*100);
+  return '<i class="ip-bat'+(has&&IP_BAT.charging?" chg":"")+(has&&lv<=.2&&!IP_BAT.charging?" low":"")+'" role="img" aria-label="'+(has?T("电量 ","Battery ")+pc+"%":dn+"/"+tot)+'"><i style="width:'+pc+'%"></i></i>'}
+if(navigator.getBattery)navigator.getBattery().then(b=>{const up=()=>{IP_BAT.level=b.level;IP_BAT.charging=b.charging;const el=document.querySelector(".ip-bat");if(el&&run)el.outerHTML=ipBatHtml(0,1)};
+  up();["levelchange","chargingchange"].forEach(k=>b.addEventListener(k,up))}).catch(()=>{});
 /* the numbers on the screen, redone in place while the wheel turns or the timer runs */
 function ipPaint(){const L=$("#ipL");if(!L)return;const nb=ipNums();L.innerHTML=nb.l;$("#ipR").textContent=nb.r;$("#ipF").style.width=nb.w+"%";L.parentNode.classList.toggle("over",!!nb.over)}
 function ipTurn(d){if(!run||run.finished)return;const fb=$(".feelbar");

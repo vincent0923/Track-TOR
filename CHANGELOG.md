@@ -6,6 +6,12 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.80a] — 2026-11-28
+
+### 新增 / Added
+- 🔋 **iPod 屏幕上的电池就是手机的电量**：安卓上的浏览器会告诉网页电量和是否在充电，不需要授权；低于 20% 变红，充电时电池上有个闪电。iPhone 的浏览器不提供电量，那里电池仍表示这次训练做完的组数。
+  The battery on the iPod screen is the phone's own: Android browsers share the level and whether it is charging, no permission needed; it turns red below 20% and shows a bolt while charging. iPhone browsers don't share it, so there it still shows how many of the session's sets are done.
+
 ## [v1.79a] — 2026-11-28
 
 ### 新增 / Added
