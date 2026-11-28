@@ -83,6 +83,9 @@ function engResult(p,id){const doc=state.sessions[p.sid],e=p.ex.find(x=>x.id===i
   const xg=[].concat(...engDayXs(doc.date).filter(it=>it.id===id).map(it=>it.sets.filter(x=>x.d).map(x=>+x.v||0))).sort((x,y)=>y-x);
   if(xg.length){const miss=Math.max(0,r.planned-r.got.length);r.got=r.got.concat(xg.slice(0,miss));const left=xg.slice(miss);
     if(left.some(v=>v>=r.target*0.5)&&r.feel!=="tough"&&r.feel!=="hard")r.feel="easy";r.xtra=xg}
+  /* no feel asked any more: it is read from what was done. Every planned set done and the fewest reps above the target
+     is easy (adds more); a set that fell well short (under 70% of the target) is hard (eases back) */
+  if(!r.feel&&r.got.length){const lo=Math.min(...r.got);if(r.got.length>=r.planned&&lo>r.target)r.feel="easy";else if(lo<r.target*0.7)r.feel="hard"}
   return r}
 /* a move done as extra practice on another training day counts too, when its best set reached the target */
 function engXRecs(id,target){const out=[],days=new Set(Object.values(state.sessions).filter(s=>s&&s.done&&s.date).map(s=>s.date));

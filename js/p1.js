@@ -212,7 +212,7 @@ function planSheet(){
     [T('次数范围','Rep range'),T('每组练到接近做不动时，从低次数到高次数的增肌效果差不多（Schoenfeld 等 2017 年的荟萃分析）；5–10 次同时顾到力量。','Taken close to failure, low and high reps build similar muscle (Schoenfeld et al., 2017 meta-analysis); 5–10 reps also builds strength.')],
     [T('训练量','Volume'),T('增肌跟每周的有效组数成正比，每个肌群每周 10 组以上更好（Schoenfeld、Ogborn、Krieger 2017）。所以每次 5–12 组，一周练几次就够。','Muscle growth tracks weekly hard sets, with 10 or more per muscle a week doing better (Schoenfeld, Ogborn & Krieger, 2017). Hence 5–12 sets a session, a few sessions a week.')],
     [T('看前 3 次','The last 3 sessions'),T('一次的状态受睡眠和吃饭影响大，3 次里有 2 次才算数，不会因为一次好坏就大起大落。','One session swings with sleep and food; it takes 2 of the last 3 to count, so one good or bad day doesn\'t swing the plan.')],
-    [T('按感觉调','Feel'),T('练完一个动作选 1–4 块：轻松 / 还行 / 有点难 / 难，就是自评用力程度（RPE，Helms 等 2016）：轻松多加，还行照常加，有点难先保持，难而且没达标就减。','After each move pick 1–4 bricks: easy / OK / tough / hard, a self-rated effort score (RPE, Helms et al., 2016): easy adds more, OK adds the usual step, tough holds, hard with a miss steps back.')],
+    [T('按做到的调','From what you did'),T('不用自己打分：每组都做完、最少的一组也超过目标，就算轻松，下次多加；有一组明显没做到（不到目标的七成），就算难，下次减次数或时间；其余照常加一点。','No rating to give: every set done with even the weakest above target counts as easy and adds more next time; a set well short (under 70% of the target) counts as hard and eases the reps or time back; otherwise it adds the usual step.')],
     [T('减量','Deload'),T('连着两次没达标说明疲劳在累积，下一次组数降到六成先恢复。','Missing targets twice in a row means fatigue is piling up, so the next session drops to about 60% of the sets to recover.')]];
   openSheet('<div class="sh-h"><h3>'+T('建议练（可手动调整）','Suggested (adjust as you like)')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="planlead"><p class="muted">'+T('根据你前 3 次训练的表现建议，每练完一次重新算。','Suggested from how your last 3 sessions went; it updates after every session.')+'</p><button class="mini info" data-act="theory" aria-expanded="false" aria-label="'+T('依据','The reasoning')+'">i</button></div>'
@@ -557,7 +557,6 @@ function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;if(!(+(v
   const e=run.p.ex[run.ex];
   if(!a.every(x=>x.d))celebrate(1,0);
   if(a.every(x=>x.d)){SFX.ex();buzz([20,40,30]);popper();celebrate(3,a.some((x,i)=>+x.v>+(run.p.ex[run.ex].target||0))?1:0);
-    if(e.unit!=="分钟"){run.askFeel=run.ex;renderFocus();return}
     {const nx=run.sets.findIndex(x=>x.some(y=>!y.d));if(nx>=0)run.ex=nx;renderFocus(true);return}}
   renderFocus(true)}
 /* a set can go: hold its chip (done or not), or bring its number down to 0, where the big button turns into ×.
@@ -565,7 +564,7 @@ function tickSet(v){const a=run.sets[run.ex],ci=curSet();if(ci<0)return;if(!(+(v
 function dropRunSet(i){const arr=run.sets[run.ex],x=arr[i];if(!x)return;
   if(x.o){const o=x.o;Object.values(run.doc.sets).forEach(a2=>a2.forEach(y=>{if(y.o>o)y.o--}))}
   arr.splice(i,1);run.doc.edited=true;run.setsX=null;lsSave();SFX.tap();buzz([10,30,10]);
-  if(!x.d&&arr.length&&arr.every(y=>y.d)){SFX.ex();if(run.p.ex[run.ex].unit!=="分钟")run.askFeel=run.ex}
+  if(!x.d&&arr.length&&arr.every(y=>y.d)){SFX.ex();const nx=run.sets.findIndex(y=>y.some(z=>!z.d));if(nx>=0)run.ex=nx}
   /* a move counts as done only with sets actually done. Every done set gone (logged by mistake), or no set left at all:
      the move is back among the ones still to do, with its planned sets if none is left, and without its feel */
   if(!arr.some(y=>y.d)&&(x.d||!arr.length)){const e=run.p.ex[run.ex];if(!arr.length)for(let k=0;k<(e.sets||1);k++)arr.push({v:e.target,d:false});
