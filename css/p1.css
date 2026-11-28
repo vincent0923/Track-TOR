@@ -2050,7 +2050,7 @@ html:root[data-ipod] :is(.btn,.hgo):active{filter:brightness(.92)}
    window 7.6 mm from the top, a 38 mm click wheel centred 75 mm down, its centre button 36% across). Everything inside
    is sized in cqw of the body, 1 mm = 1.618cqw ---------- */
 .ipod.ipod{container-type:inline-size;display:block;padding:0;gap:0;height:auto;aspect-ratio:61.8/103.5;
-  width:min(100%,380px,calc((100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom))*.597));border-radius:15%/9%}
+  width:min(100%,380px,calc((100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom))*.597));border-radius:9.2%/5.5%}
 .ipod .ip-scr{position:absolute;left:7.6cqw;top:12.3cqw;width:84.8cqw;height:64.4cqw;border-width:1.6cqw;border-radius:2.2cqw;display:flex;flex-direction:column}
 .ipod .ip-wheel{position:absolute;left:19.25cqw;top:90.65cqw;width:61.5cqw;margin:0}
 .ipod .ip-ok{inset:32%}
@@ -2256,3 +2256,12 @@ select{pointer-events:none}
 label:has(>select),.field:has(select){cursor:pointer}
 .mask.pick .sheet{max-height:80dvh}
 .mask.pick .opt svg{width:18px;height:18px;color:var(--ac);flex:none}
+
+/* every iPod's face rolls over into its sides: from about 3 mm in, the face starts to turn away and darken, the top
+   catches light a long way in, the bottom falls deepest into shade, and the very rim, where it turns, gives a thin
+   line of light. One static layer (.ip-roll) over the body and under the screen and wheel; dark bodies use --rl-* */
+.ipod>.ip-roll{position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  box-shadow:inset 0 0 0 .22cqw rgba(255,255,255,var(--rl-rim,.45)),inset 0 0 .5cqw .3cqw rgba(0,0,0,var(--rl-edge,.07)),
+    inset 5.5cqw 0 6.5cqw -3.2cqw rgba(0,0,0,var(--rl-side,.13)),inset -5.5cqw 0 6.5cqw -3.2cqw rgba(0,0,0,var(--rl-side2,.17)),
+    inset 0 6cqw 7cqw -3.4cqw rgba(255,255,255,var(--rl-top,.3)),inset 0 -7cqw 8cqw -3.4cqw rgba(0,0,0,var(--rl-bot,.22))}
+:root:is([data-theme="ipu2"],[data-theme="ipc"][data-mode="dark"],[data-theme="ipsmk"]){--rl-rim:.16;--rl-edge:.3;--rl-side:.32;--rl-side2:.38;--rl-top:.1;--rl-bot:.45}

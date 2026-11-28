@@ -320,7 +320,7 @@ function ipRender(anim,list,mini){const f=$("#focus"),p=run.p,e=p.ex[run.ex],a=r
     +'<button type="button" class="ip-ok" data-ip="ok" aria-label="'+(feel?T('确定','OK'):ci<0?T('已练好','Done'):T('完成这一组','Set done'))+'"></button></div>';
   const old=f.querySelector(".ip-wheel"),swap=run.ipStk&&run.ipStk!==run.stk?ipSnap():null;run.ipStk=run.stk;
   f.innerHTML='<div class="f-top ip-top"><button class="mini" data-act="fclose" aria-label="'+T('退出','Leave')+'">'+ICON.x+'</button><span class="sp"></span><span class="f-lab">'+LAB(p)+'</span></div>'
-    +'<div class="f-body ip-body" id="fBody"><div class="ipod">'+(ipodDeco[document.documentElement.dataset.theme]||(()=>""))()+scr+wheel+'</div></div><div></div>';
+    +'<div class="f-body ip-body" id="fBody"><div class="ipod">'+(ipodDeco[document.documentElement.dataset.theme]||(()=>""))()+'<i class="ip-roll" aria-hidden="true"></i>'+scr+wheel+'</div></div><div></div>';
   /* the wheel stays the same element, so a finger still on it keeps turning across a redraw */
   if(old){f.querySelector(".ip-wheel").replaceWith(old)}else ipWheel(f.querySelector(".ip-wheel"));
   run.ipDir=0;run.cfIn=0;run.cfKey=null;{const th=document.documentElement.dataset.theme;if(IP_ART[th])f.querySelector(".ipod").style.setProperty("--ip-deco",ipDecoUrl(th))}if(swap)ipSwapFx(swap);
