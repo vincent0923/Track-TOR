@@ -6,6 +6,14 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.83a] — 2026-11-29
+
+### 新增 / Added
+- 📣 **接下来的训练一调整就告诉你**：练完、改了或重置某天的训练后，如果下一次推练 / 拉练的动作、组数、次数或时间变了，屏幕上方滑下一张卡，逐项写出从多少改成多少和原因；点一下或等几秒就收起。
+  When what's coming up changes, you're told: after finishing, editing or resetting a session, if the next session's moves, sets, reps or time changed, a card slides down listing each change and why; tap it or wait and it goes.
+- 练完一个动作不再问感觉，训练引擎按做到的数自己判断难易。
+  No more feel question after a move: the engine judges easy or hard from what was done.
+
 ## [v1.82a] — 2026-11-29
 
 ### 新增 / Added

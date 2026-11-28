@@ -34,7 +34,7 @@ function reopenIfEmpty(sid){const doc=state.sessions[sid];if(!doc||!doc.done||Ob
 function resetSession(sid){const doc=state.sessions[sid];if(!doc)return false;
   const p=BYID[sid],d=doc.date;if(doc.xs&&doc.xs.length&&d){const dx=state.dayx[d]=state.dayx[d]||{date:d,xs:[]};dx.xs=(dx.xs||[]).concat(doc.xs)}
   delete doc.xs;delete doc.feel;delete doc.edited;doc.done=false;doc.date=null;doc.sets={};p.ex.forEach(e=>{doc.sets[e.id]=Array.from({length:e.sets},()=>({v:e.target,d:false}))});
-  editSid=null;engPlanAll();toast(LAB(p)+T(' 回到可练',' is ready again'));return true}
+  editSid=null;planWatch(engPlanAll);toast(LAB(p)+T(' 回到可练',' is ready again'));return true}
 function dropSet(doc,id,i){const arr=doc.sets[id],x=arr[i];if(!x)return;arr.splice(i,1);if(x.d&&x.o)Object.values(doc.sets).forEach(r=>r.forEach(y=>{if(y.o>x.o)y.o--}));if(typeof buzz==="function")buzz(10)}
 function extrasHtml(d){const doc=xDocFor(d,false),items=(doc&&doc.xs)||[],have=new Set(items.map(i=>i.id));
   const rows=items.map((it,k)=>{const unit=it.unit==="秒"?T(" 秒"," s"):"",v=pending[it.id]!=null?pending[it.id]:(lastVal(it.id)??(it.id==="pullup"?1:10));pending[it.id]=v;
@@ -63,7 +63,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   if(a==="tshare"){if(typeof SFX!=="undefined")SFX.tap();finShare(curDay);return}
   if(a==="dreset"){const sid=b.dataset.sid,p=BYID[sid];if(!p)return;
     armTap(b,()=>{resetSession(sid);lsSave();changed()},T('再点一次，「'+LAB(p)+'」退回没练的样子（加练会留下）','Tap again to put '+LAB(p)+' back as not done (extra practice stays)'));return}
-  if(a==="dedit"){const was=editSid;editSid=was===b.dataset.sid?null:b.dataset.sid;if(was&&!editSid){engPlanAll();changed();toast(T("已保存","Saved"))}else render();return}
+  if(a==="dedit"){const was=editSid;editSid=was===b.dataset.sid?null:b.dataset.sid;if(was&&!editSid){planWatch(engPlanAll);changed();toast(T("已保存","Saved"))}else render();return}
   if(a==="dsv"||a==="dst"||a==="ddel"||a==="dadd"){const sid=b.dataset.sid,doc=state.sessions[sid],id=b.dataset.e,arr=doc.sets[id]=doc.sets[id]||[],i=+b.dataset.i,x=arr[i],e=BYID[sid].ex.find(y=>y.id===id);
     if(a==="dadd"){const l=arr[arr.length-1];arr.push({v:l?l.v:(e?e.target:1),d:true,o:maxOrdOf(doc)+1});if(typeof SFX!=="undefined")SFX.tap()}
     else if(a==="ddel")dropSet(doc,id,i);

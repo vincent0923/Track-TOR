@@ -266,3 +266,16 @@ function engPlanAll(){let changed=false;
   });
   if(changed)lsSave();
   return changed}
+/* telling the user when what lies ahead changes: planWatch(fn) notes the next open session of each kind, runs fn (which
+   re-plans), and if any of those sessions' moves, sets, targets or tempo changed, shows a note listing each change with
+   the engine's reason (tap or wait to close). Used where training results re-plan: finishing, editing or resetting a day */
+function planSnap(){const out={};planKinds().forEach(k=>{const p=PROGRAM.filter(x=>x.kind===k&&!(state.sessions[x.sid]||{}).done).sort((a,b)=>a.day-b.day)[0];
+  if(p)out[k]={sid:p.sid,lab:LAB(p),ex:p.ex.map(e=>({id:e.id,n:NS(e),t:e.target,s:e.sets,tp:e.tempo||"",u:e.unit,why:T(e.why||"",e.whyEn||e.why||"")}))}});return out}
+function planWatch(fn){const a=planSnap();const r=fn();const b=planSnap(),lines=[];
+  const fm=e=>e.s+" × "+e.t+(e.u==="秒"?T(" 秒"," s"):"")+(e.tp?" · "+T("慢速","slow"):"");
+  Object.keys(b).forEach(k=>{const A=a[k],B=b[k];if(!A||A.sid!==B.sid&&!A.ex.length)return;const ch=[];
+    B.ex.forEach((e,i)=>{const o=A.ex.find(x=>x.id===e.id)||(A.ex[i]&&!B.ex.some(y=>y.id===A.ex[i].id)?A.ex[i]:null);
+      if(!o)ch.push({n:e.n,from:"",to:fm(e),why:e.why});else if(o.id!==e.id||o.t!==e.t||o.s!==e.s||o.tp!==e.tp)ch.push({n:o.id!==e.id?o.n+" → "+e.n:e.n,from:fm(o),to:fm(e),why:e.why})});
+    A.ex.forEach(o=>{if(!B.ex.some(e=>e.id===o.id)&&!B.ex.some((e,i)=>A.ex[i]===o))ch.push({n:o.n,from:fm(o),to:T("去掉","dropped"),why:""})});
+    if(ch.length)lines.push({lab:B.lab,ch})});
+  if(lines.length&&typeof planNote==="function")planNote(lines);return r}

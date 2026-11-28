@@ -351,6 +351,11 @@ function ipBatHtml(dn,tot){const has=IP_BAT.level!=null,lv=has?IP_BAT.level:dn/M
   return '<i class="ip-bat'+(has&&IP_BAT.charging?" chg":"")+(has&&lv<=.2&&!IP_BAT.charging?" low":"")+'" role="img" aria-label="'+(has?T("电量 ","Battery ")+pc+"%":dn+"/"+tot)+'"><i style="width:'+pc+'%"></i></i>'}
 if(navigator.getBattery)navigator.getBattery().then(b=>{const up=()=>{IP_BAT.level=b.level;IP_BAT.charging=b.charging;const el=document.querySelector(".ip-bat");if(el&&run)el.outerHTML=ipBatHtml(0,1)};
   up();["levelchange","chargingchange"].forEach(k=>b.addEventListener(k,up))}).catch(()=>{});
+/* the note that what lies ahead changed: a card sliding down from the top, each change with its reason; tap to close,
+   it goes by itself after a while */
+function planNote(lines){const old=$(".plannote");if(old)old.remove();const n=document.createElement("div");n.className="plannote card";n.setAttribute("role","status");
+  n.innerHTML='<p class="eyebrow">'+T('接下来的训练调整了','Coming up has changed')+'</p>'+lines.map(L=>'<p class="pn-h">'+L.lab+'</p>'+L.ch.map(c=>'<div class="pn-r"><b>'+esc(c.n)+'</b><span class="n">'+(c.from?esc(c.from)+' → ':'')+esc(c.to)+'</span>'+(c.why?'<small>'+esc(c.why)+'</small>':'')+'</div>').join("")).join("");
+  document.body.appendChild(n);requestAnimationFrame(()=>n.classList.add("on"));const bye=()=>{n.classList.remove("on");setTimeout(()=>n.remove(),400)};n.addEventListener("click",bye);setTimeout(bye,9000)}
 /* the numbers on the screen, redone in place while the wheel turns or the timer runs */
 function ipPaint(){const L=$("#ipL");if(!L)return;const nb=ipNums();L.innerHTML=nb.l;$("#ipR").textContent=nb.r;$("#ipF").style.width=nb.w+"%";L.parentNode.classList.toggle("over",!!nb.over)}
 function ipTurn(d){if(!run||run.finished)return;const fb=$(".feelbar");
@@ -579,7 +584,7 @@ function untick(i){if(Date.now()-(run.held||0)<800)return;const x=run.sets[run.e
   if(x.o){const o=x.o;delete x.o;Object.values(run.doc.sets).forEach(arr=>arr.forEach(y=>{if(y.o>o)y.o--}))}
   lsSave();SFX.tap();renderFocus(true)}
 function finishRun(){run.finished=1;clearInterval(clockT);clearInterval(run.ipTm);run.ipT=null;const p=run.p,secs=Math.floor((Date.now()-run.t0)/1000);
-  run.doc.done=true;run.doc.date=today();lsSave();heroSid=null;engPlanAll();
+  run.doc.done=true;run.doc.date=today();lsSave();heroSid=null;planWatch(engPlanAll);
   let reps=0,sets=0,pu=0;run.sets.forEach((a,i)=>a.forEach(x=>{if(!x.d)return;sets++;if(p.ex[i].unit==="个")reps+=x.v;if(isMain(p.ex[i]))pu=Math.max(pu,x.v)}));
   SFX.done();buzz([30,60,30,60,80]);
   cannons();celebrate(10,1);
