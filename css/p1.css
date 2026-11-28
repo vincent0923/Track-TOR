@@ -2208,3 +2208,7 @@ html:root[data-theme="ipylw"] :is(.btn:not(.ghost),.hgo,.dock .pc) svg{filter:no
 /* the iPod battery: red when the phone is low, a small bolt while it charges */
 .ip-bat.low i{background:linear-gradient(180deg,#FF8A7A,#E03A2A)}
 .ip-bat.chg::before{content:"";position:absolute;left:50%;top:50%;width:62%;height:120%;transform:translate(-50%,-50%);z-index:1;background:#2A2D31;clip-path:polygon(58% 0,20% 56%,46% 56%,38% 100%,80% 40%,54% 40%);filter:drop-shadow(0 0 .5px #fff)}
+/* the gap card's head switches the period; the intake panel's chart */
+.gaphead{cursor:pointer;-webkit-user-select:none;user-select:none;border-radius:12px;transition:transform .2s var(--spring)}
+.gaphead:active{transform:scale(.97)}
+.ichart{position:relative}.ichart .isvg{display:block;width:100%;height:auto;overflow:visible;touch-action:none}

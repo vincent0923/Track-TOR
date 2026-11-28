@@ -701,8 +701,8 @@ function renderDietView(){const v=$("#v-diet"),t=today();
   if(tin!=null&&tb!=null){const mx=Math.max(tin,tb);hero+='<div class="ib"><i style="width:'+(tin/mx*100)+'%;background:var(--ink)"></i><i style="width:'+(Math.max(0,tb-tin)/mx*100)+'%;background:var(--good);opacity:.35"></i></div>'
     +'<div class="legend"><span><i style="background:var(--ink)"></i>'+T('摄入','Intake')+'</span><span><i style="background:var(--good);opacity:.5"></i>'+T('缺口','Deficit')+'</span><span style="margin-left:auto"><i style="background:var(--sleep)"></i>'+T('蛋白质','Protein')+'</span></div>'}
   hero+='<div class="addrow"><button class="fsreset" data-act="go" data-to="diet" aria-label="'+T('记一笔','Log food')+'">'+ICON.plus+'</button></div></section>';
-  const week=gapStackHtml();
-  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+dietListHtml();animateRings(v);fsBind("gap",GAP_FS);fsBind("diet",DIET_FS);holdOpen($("#protRing"),openProtein)}
+  const week=gapCardHtml();
+  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+dietListHtml();animateRings(v);gapBind();fsBind("diet",DIET_FS);holdOpen($("#protRing"),openProtein)}
 /* the gap card: swipe it sideways (or tap a dot) to step through 7, 14, 30 days and since the first log; the
    big figure turns over like a split-flap board. Only finished days count (the window ends yesterday). */
 const GAP_RANGES=[7,14,30,0];
@@ -782,16 +782,47 @@ function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days
   let cols=days.map((d,i)=>({g:gaps[i],l:days.length<=14?WD[dateObj(d).getDay()]:""}));
   if(days.length>31){cols=[];for(let i=0;i<days.length;i+=7){const ch=gaps.slice(i,i+7).filter(g=>g!=null);cols.push({g:ch.length?ch.reduce((a,b)=>a+b,0)/ch.length:null,l:""})}}
   const cm=Math.max(300,...cols.filter(c=>c.g!=null).map(c=>Math.abs(c.g)));
-  return '<section class="card gapcard"><div class="row"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?T(' · 记了 '+known.length+' 天',' · '+known.length+' logged'):'')+'</p>'
+  return '<section class="card gapcard" id="gapCard"><div class="row gaphead" data-act="gapr" role="button" tabindex="0" aria-label="'+T('换时间范围','Change the period')+'"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?T(' · 记了 '+known.length+' 天',' · '+known.length+' logged'):'')+'</p>'
     +'<div class="big">'+flapHtml(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?T("缺口","deficit"):T("盈余","surplus"))+'</small></div></div>'
     +(known.length?'<span class="pill gpill '+(sum>=0?"good":"bad")+'"><span>'+(w==="about"?word:'')+(Math.abs(sum)/7700).toFixed(2)+T(' kg 脂肪',' kg fat')+'</span>'+(w==="about"?'':'<small>'+word.replace(/[:：]?\s*$/,'')+'</small>')+'</span>':'')+'</div>'
     +bricksHtml(cols.map(c=>({n:c.g==null?0:Math.max(1,Math.round(Math.abs(c.g)/cm*8)),c:c.g==null?"":c.g>=0?"var(--good)":"var(--bad)",l:c.l})),true)
     +(days.length?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
     +'</section>'}
-/* the four periods are a frosted swipe stack too: finger right for longer, left for shorter */
-function gapStackHtml(){const i=GAP_RANGES.indexOf(gapR);return fsWrap("gap",gapCardHtml(),GAP_RANGES.length-1)}
-const GAP_FS={get:dir=>{const i=GAP_RANGES.indexOf(gapR)+dir;return i<0||i>=GAP_RANGES.length?null:gapCardHtml(GAP_RANGES[i])},
-  commit:dir=>{gapR=GAP_RANGES[GAP_RANGES.indexOf(gapR)+dir];try{localStorage.setItem(PK+"gw",String(gapR))}catch(e){}},render:gapStackHtml,peekDir:1};
+/* tap the head of the gap card to step through 7, 14, 30 days and since the first log (the figure turns over like a
+   split-flap board); hold the card for intake against burn, day by day, in a panel with the same periods */
+let gapHeld=0;
+function gapSet(r){gapR=r;try{localStorage.setItem(PK+"gw",String(gapR))}catch(e){}}
+function gapNext(){gapSet(GAP_RANGES[(GAP_RANGES.indexOf(gapR)+1)%GAP_RANGES.length]);const c=$("#gapCard");if(!c)return;c.outerHTML=gapCardHtml();gapBind();SFX.tap();buzz(6)}
+function gapBind(){const c=$("#gapCard");if(!c)return;holdOpen(c,()=>{gapHeld=Date.now();openIntake()})}
+/* intake (ink) and burn (green) as two lines, the space between them a bar per day (green where burn was higher, a
+   deficit; red where intake was, a surplus), resting burn (BMR) dashed; drag across it to read a day */
+function intakeSvg(days,W,H){const L=34,R=10,TP=10,B=22,pts=days.map(d=>{const a=intakeOf(d);return {d,a,b:a==null?null:burnOfDate(d)}});
+  const vals=pts.flatMap(p=>[p.a,p.b]).filter(v=>v!=null);let lo=1200,hi=2600;if(vals.length){lo=Math.min(lo,Math.floor(Math.min(...vals)/200)*200);hi=Math.max(hi,Math.ceil(Math.max(...vals)/200)*200)}
+  const n=days.length,step=(W-L-R)/Math.max(1,n-1),x=i=>L+i*step,y=v=>TP+(hi-v)/(hi-lo)*(H-TP-B);let g="";
+  for(let v=lo;v<=hi;v+=(hi-lo>1600?400:200))g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v).toFixed(1)+'" y2="'+y(v).toFixed(1)+'" stroke="var(--line)" stroke-width="1"/><text x="'+(L-5)+'" y="'+(y(v)+3.5).toFixed(1)+'" text-anchor="end">'+v+'</text>';
+  const lab=n<=14?2:n<=31?7:Math.ceil(n/5);days.forEach((d,i)=>{if((n-1-i)%lab===0)g+='<text x="'+x(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle">'+(+d.slice(5,7))+'.'+(+d.slice(8))+'</text>'});
+  const bw=Math.max(2,Math.min(10,step*.6));
+  pts.forEach((p,i)=>{if(p.a!=null&&p.b!=null){const t=Math.min(y(p.a),y(p.b)),h=Math.abs(y(p.a)-y(p.b));g+='<rect x="'+(x(i)-bw/2).toFixed(1)+'" y="'+t.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(1,h).toFixed(1)+'" rx="1.5" fill="'+(p.b>=p.a?"var(--good)":"var(--bad)")+'" fill-opacity=".3"/>'}});
+  const path=k=>{let d="",on=false;pts.forEach((p,i)=>{if(p[k]==null){on=false;return}d+=(on?"L":"M")+x(i).toFixed(1)+" "+y(p[k]).toFixed(1);on=true});return d};
+  const bm=days.map(bmrOfDate);g+='<path d="'+bm.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join("")+'" fill="none" stroke="var(--muted)" stroke-width="1.3" stroke-dasharray="4 3"/>';
+  g+='<path d="'+path("b")+'" fill="none" stroke="var(--good)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><path d="'+path("a")+'" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+  const r=n>31?1.3:2.2;pts.forEach((p,i)=>{if(p.b!=null)g+='<circle cx="'+x(i).toFixed(1)+'" cy="'+y(p.b).toFixed(1)+'" r="'+r+'" fill="var(--good)"/>';if(p.a!=null)g+='<circle cx="'+x(i).toFixed(1)+'" cy="'+y(p.a).toFixed(1)+'" r="'+r+'" fill="var(--ink)"/>'});
+  g+='<line class="ixh" x1="0" x2="0" y1="'+TP+'" y2="'+(H-B)+'" stroke="var(--ink)" stroke-opacity=".35" visibility="hidden"/>';
+  return {svg:'<svg class="isvg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+T('摄入与消耗','Intake vs burn')+'" font-size="9" fill="var(--muted)">'+g+'</svg>',pts,x,step,L}}
+function openIntake(){const draw=()=>{const {days,known,sum}=gapData(),ch=intakeSvg(days,340,210);
+    $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+T('摄入与消耗','Intake vs burn')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
+      +'<div class="row" style="margin-bottom:14px;align-items:flex-end"><div class="sp" style="min-width:0"><div class="big" style="white-space:nowrap;font-size:clamp(26px,8.5vw,38px)">'+(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?T("缺口","deficit"):T("盈余","surplus"))+'</small></div></div>'
+      +knobHtml([[7,T("7天","7d")],[14,T("14天","14d")],[30,T("30天","30d")],[0,T("全部","All")]],gapR,d=>'data-act="irange" data-r="'+d+'"',T('时间范围','Range'))+'</div>'
+      +'<div class="chart ichart" id="ichart">'+ch.svg+'<span class="tip" id="itip"></span></div>'
+      +'<div class="legend" style="margin-top:10px"><span><i style="background:var(--ink)"></i>'+T('摄入','Intake')+'</span><span><i style="background:var(--good)"></i>'+T('消耗','Burn')+'</span><span><i style="background:var(--muted)"></i>'+T('基础代谢','BMR')+'</span></div>';
+    const el=$("#ichart"),tip=$("#itip"),xh=el.querySelector(".ixh");
+    const show=e=>{const r=el.getBoundingClientRect(),sx=((e.touches?e.touches[0].clientX:e.clientX)-r.left)/r.width*340,i=Math.max(0,Math.min(ch.pts.length-1,Math.round((sx-ch.L)/ch.step))),p=ch.pts[i];
+      xh.setAttribute("x1",ch.x(i));xh.setAttribute("x2",ch.x(i));xh.setAttribute("visibility","visible");const gp=p.a!=null&&p.b!=null?p.b-p.a:null;
+      tip.textContent=dayLabel(p.d)+'  '+T('摄入 ','In ')+(p.a!=null?fmt(Math.round(p.a)):"–")+' · '+T('消耗 ','Burn ')+(p.b!=null?fmt(Math.round(p.b)):"–")+(gp==null?'':' · '+(gp>=0?T('缺口 ','Deficit '):T('盈余 ','Surplus '))+fmt(Math.abs(Math.round(gp))));
+      tip.style.left=Math.max(70,Math.min(r.width-70,ch.x(i)/340*r.width))+"px";tip.classList.add("on")};
+    el.addEventListener("pointerdown",show);el.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch")show(e)});
+    el.addEventListener("pointerup",()=>setTimeout(()=>{tip.classList.remove("on");xh.setAttribute("visibility","hidden")},1400))};
+  openSheet("");draw();openIntake.redraw=draw}
 /* food table: opening Diet pulls it quietly (not again within half a minute); pulling the page down pulls it now */
 function syncSpin(on){$("#syncDot").classList.toggle("spin",on)}
 async function dietPull(manual){let st={};try{st=JSON.parse(localStorage.getItem(SHEET_STATUS_K)||"{}")||{}}catch(e){}
@@ -1163,6 +1194,8 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="day")daySheet(b.dataset.d);
   else if(a==="metric"){if(tileEdit)return;chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
+  else if(a==="gapr"){if(Date.now()-gapHeld<800)return;gapNext()}
+  else if(a==="irange"){gapSet(+b.dataset.r);openIntake.redraw();const c=$("#gapCard");if(c){c.outerHTML=gapCardHtml();gapBind()}}
   else if(a==="goal")bridge("goals");
   else if(a==="coins")coinSheet(false);
   else if(a==="shop"){const up=b.closest("#sheet")?CUR_SHEET:null;coinSheet(true);SHEET_UP=up}
