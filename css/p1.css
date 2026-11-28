@@ -2265,3 +2265,12 @@ label:has(>select),.field:has(select){cursor:pointer}
     inset 5.5cqw 0 6.5cqw -3.2cqw rgba(0,0,0,var(--rl-side,.13)),inset -5.5cqw 0 6.5cqw -3.2cqw rgba(0,0,0,var(--rl-side2,.17)),
     inset 0 6cqw 7cqw -3.4cqw rgba(255,255,255,var(--rl-top,.3)),inset 0 -7cqw 8cqw -3.4cqw rgba(0,0,0,var(--rl-bot,.22))}
 :root:is([data-theme="ipu2"],[data-theme="ipc"][data-mode="dark"],[data-theme="ipsmk"]){--rl-rim:.16;--rl-edge:.3;--rl-side:.32;--rl-side2:.38;--rl-top:.1;--rl-bot:.45}
+/* a metric's panel: the head switches the period; the chart has its scale and, under a finger, a line and a dot */
+.mhead{cursor:pointer;-webkit-user-select:none;user-select:none;margin-bottom:10px;min-height:84px;border-radius:12px}
+.mhead:active{opacity:.75}
+.mchart{touch-action:none;-webkit-user-select:none;user-select:none}
+.mchart .mtick{position:absolute;left:0;right:0;height:0;border-top:1px dashed var(--line);pointer-events:none}
+.mchart .mtick b{position:absolute;left:0;top:-15px;font:600 10px/1 var(--num);color:var(--muted);background:var(--card);padding:1px 3px 1px 0}
+.mchart .mcur{position:absolute;top:0;bottom:0;width:0;border-left:1.5px solid var(--ink);opacity:0;pointer-events:none;transform:translateX(-.75px)}
+.mchart .mdot{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--card);border:2.5px solid var(--c);box-shadow:0 1px 4px rgba(0,0,0,.25);opacity:0;pointer-events:none}
+.mchart.on .mcur{opacity:.35}.mchart.on .mdot{opacity:1}

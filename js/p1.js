@@ -988,24 +988,32 @@ function tileAddSheet(){const {hidden}=tileList();
   openSheet('<div class="sh-h"><h3>'+T('加回图表','Add a chart back')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><div class="setlist">'
     +hidden.map(m=>'<button class="opt" data-act="tshow" data-k="'+m.k+'"><i class="kd" style="background:'+m.c+'"></i><span class="sp">'+m.name+'</span>'+ICON.plus+'</button>').join("")+'</div>')}
 let chartRange=30;
+/* a metric's panel: the period over the figure (tap there for the next period), the chart with its scale at the left;
+   a finger along the chart reads each day into the figure, a line and a dot marking it. Logging or syncing is an icon
+   beside the title */
+const M_RANGES=[7,14,30,60,90,0];
 function metricSheet(k){const m=METRICS.find(x=>x.k===k),all=m.pts();
-  const draw=()=>{const pts=recent(all,chartRange),last=all[all.length-1];
-    $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+m.name+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
-      +'<div class="row" style="margin-bottom:14px;align-items:flex-end"><div class="sp"><div class="big">'+(last?last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small></div>'+(last?deltaOf(m,all,chartRange):'')+'</div>'
-      +knobHtml([[14,T("14天","14d")],[30,T("30天","30d")],[90,T("90天","90d")],[0,T("全部","All")]],chartRange,d=>'data-act="range" data-r="'+d+'"',T('时间范围','Range'))+'</div>'
-      +(pts.length>1?'<div class="chart" id="chart">'+lineSvg(pts,340,200,m.c,"",14)+'<span class="tip" id="ctip"></span></div>'
+  const draw=()=>{const pts=recent(all,chartRange),last=all[all.length-1],W=340,H=200,pad=14;
+    const lab=chartRange?T('过去 '+chartRange+' 天','Last '+chartRange+' days'):T('全部','All time');
+    const ys=pts.map(p=>p.y),lo=pts.length?Math.min(...ys):0,hi=pts.length?Math.max(...ys):0,yOf=v=>(pad+(1-(v-lo)/((hi-lo)||1))*(H-2*pad))/H*100;
+    const ticks=pts.length>1?[hi,(hi+lo)/2,lo].map(v=>'<span class="mtick" style="top:'+yOf(v).toFixed(2)+'%"><b>'+(+v).toFixed(m.dec)+'</b></span>').join(""):'';
+    const recBtn=m.rec?'<button class="mini" data-act="go" data-to="'+m.rec+'" aria-label="'+(m.rec==="sync"?T('从高驰同步','Sync from COROS'):T('记一笔','Log'))+'">'+(m.rec==="sync"?ICON.sync:ICON.plus)+'</button>':'';
+    $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+m.name+'</h3>'+recBtn+'<button class="mini" data-act="close">'+ICON.x+'</button></div>'
+      +'<div class="mhead" data-act="mrange" role="button" tabindex="0" aria-label="'+T('换时间范围','Change the period')+'"><p class="eyebrow" id="mLab">'+lab+'</p><div class="big" id="mBig">'+(last?last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small></div><div id="mDelta">'+(last?deltaOf(m,all,chartRange):'')+'</div></div>'
+      +(pts.length>1?'<div class="chart mchart" id="chart">'+ticks+lineSvg(pts,W,H,m.c,"",pad)+'<i class="mcur" aria-hidden="true"></i><i class="mdot" aria-hidden="true" style="--c:'+m.c+'"></i></div>'
         +'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(pts[0].date)+'</span><span class="sp"></span><span>'+dayLabel(pts[pts.length-1].date)+'</span></div>'
-        +'<div class="row" style="margin-top:16px;gap:8px"><span class="pill">'+T('最低 ','Low ')+Math.min(...pts.map(p=>p.y)).toFixed(m.dec)+'</span><span class="pill">'+T('最高 ','High ')+Math.max(...pts.map(p=>p.y)).toFixed(m.dec)+'</span><span class="pill">'+pts.length+T(' 个记录',' records')+'</span></div>'
-        :'<p class="empty">'+T('这段时间不够两个记录','Fewer than two records in this period')+'</p>')
-      +(m.rec?'<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="'+m.rec+'">'+(m.rec==="sync"?ICON.sync+T('从高驰同步','Sync from COROS'):ICON.pen+T('记一笔','Log'))+'</button>':'');
-    const ch=$("#chart");if(ch)scrubber(ch,pts,m)};
+        +'<div class="row" style="margin-top:16px;gap:8px"><span class="pill">'+T('最低 ','Low ')+lo.toFixed(m.dec)+'</span><span class="pill">'+T('最高 ','High ')+hi.toFixed(m.dec)+'</span><span class="pill">'+pts.length+T(' 个记录',' records')+'</span></div>'
+        :'<p class="empty">'+T('这段时间不够两个记录','Fewer than two records in this period')+'</p>');
+    const ch=$("#chart");if(ch)scrubber(ch,pts,m,{lab,last,yOf})};
   openSheet("");draw();metricSheet.redraw=draw}
-function scrubber(el,pts,m){const tip=el.querySelector(".tip"),xs=pts.map(p=>p.x),x0=Math.min(...xs),x1=Math.max(...xs);
+function scrubber(el,pts,m,o){const xs=pts.map(p=>p.x),x0=Math.min(...xs),x1=Math.max(...xs),cur=el.querySelector(".mcur"),dot=el.querySelector(".mdot"),L=$("#mLab"),B=$("#mBig"),D=$("#mDelta");let tm=0,shown=null;
   const show=e=>{const r=el.getBoundingClientRect(),cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left,fx=x0+(cx/r.width)*(x1-x0);
-    let best=pts[0];pts.forEach(p=>{if(Math.abs(p.x-fx)<Math.abs(best.x-fx))best=p});
-    tip.textContent=dayLabel(best.date)+'  '+best.y.toFixed(m.dec)+' '+m.unit;tip.style.left=Math.max(40,Math.min(r.width-40,(best.x-x0)/(x1-x0||1)*r.width))+"px";tip.classList.add("on")};
-  el.addEventListener("pointerdown",show);el.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch")show(e)});
-  el.addEventListener("pointerup",()=>setTimeout(()=>tip.classList.remove("on"),1200))}
+    let best=pts[0];pts.forEach(p=>{if(Math.abs(p.x-fx)<Math.abs(best.x-fx))best=p});if(best===shown)return;shown=best;clearTimeout(tm);
+    const px=(best.x-x0)/((x1-x0)||1)*100;cur.style.left=dot.style.left=px+"%";dot.style.top=o.yOf(best.y)+"%";el.classList.add("on");
+    L.textContent=dayLabel(best.date);B.innerHTML=best.y.toFixed(m.dec)+'<small>'+m.unit+'</small>';D.style.visibility="hidden";buzz(3)};
+  const back=()=>{clearTimeout(tm);tm=setTimeout(()=>{shown=null;el.classList.remove("on");L.textContent=o.lab;B.innerHTML=(o.last?o.last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small>';D.style.visibility=""},1500)};
+  el.addEventListener("pointerdown",e=>{try{el.setPointerCapture(e.pointerId)}catch(err){}show(e)});el.addEventListener("pointermove",e=>{if(e.buttons||e.pointerType==="touch")show(e)});
+  el.addEventListener("pointerup",back);el.addEventListener("pointercancel",back)}
 
 /* ---------- G (Grind): badges and the theme shop ---------- */
 /* the G coin is the theme's own round button with a G on it, breathing a gold glow */
@@ -1217,6 +1225,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="day")daySheet(b.dataset.d);
   else if(a==="metric"){if(tileEdit)return;chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
+  else if(a==="mrange"){chartRange=M_RANGES[(M_RANGES.indexOf(chartRange)+1)%M_RANGES.length];SFX.tap();buzz(6);metricSheet.redraw()}
   else if(a==="gapr"){if(Date.now()-gapHeld<800)return;gapNext()}
   else if(a==="intake")openIntake();
   else if(a==="ringnext"){if(Date.now()-ringHeld<800)return;const i=RING.findIndex(r=>r.k===ringK());try{localStorage.setItem(PK+"ring",RING[(i+1)%RING.length].k)}catch(err){}SFX.tap();buzz(6);ringSwap()}
