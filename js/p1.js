@@ -399,7 +399,9 @@ const ipodDeco={
     +'<svg style="right:22%;bottom:6%;width:5%" viewBox="0 0 24 24"><path d="M12 1l3.2 7 7.6.8-5.7 5.1 1.6 7.5L12 17.6 5.3 21.4l1.6-7.5L1.2 8.8 8.8 8z" fill="#F4F2FF"/></svg>'
     +'<svg style="right:5%;top:44%;width:6%;transform:rotate(20deg)" viewBox="0 0 20 24"><path d="M4 1h12l3 6v10l-3 6H4l-3-6V7z" fill="#EADFF7"/><path d="M6 5h8v14H6z" fill="#C9B6EE"/></svg>'
     +'</div>',
-  ipclr:()=>'<div class="ip-pcb" aria-hidden="true"></div>'};
+  ipclr:()=>'<div class="ip-pcb" aria-hidden="true"></div>',
+  /* the U2 face: a fine line of light running round inside the rolled edge (shown in dark mode only) */
+  ipc:()=>'<i class="ip-gloss" aria-hidden="true"></i>'};
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
   const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,ip=ipodOn(),

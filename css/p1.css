@@ -2117,3 +2117,26 @@ html:root[data-ipod] :is(.btn,.hgo):active{filter:brightness(.92)}
 :root[data-theme="ipc"] .ip-k{text-shadow:none;font-weight:600;letter-spacing:.04em}
 :root[data-theme="ipc"][data-mode="dark"] .ip-wheel{box-shadow:inset 0 .35cqw .5cqw rgba(0,0,0,.35),inset 0 -.25cqw .3cqw rgba(255,255,255,.12),0 0 0 .2cqw rgba(0,0,0,.5)}
 :root[data-theme="ipc"][data-mode="dark"] .ip-ok{box-shadow:0 0 0 .22cqw rgba(0,0,0,.6),inset 0 .25cqw .2cqw rgba(255,255,255,.14),0 .3cqw .5cqw rgba(0,0,0,.3)}
+/* U2: glossy black polycarbonate, warm and deep like polished jade: no steel showing at the front, the face rolls over
+   into a thick soft edge that catches broad bands of light at the top and the right, a fine bright line runs inside
+   the rim; a rich red matte wheel and a domed black centre button */
+.ip-gloss{display:none}
+:root[data-theme="ipc"][data-mode="dark"] .ipod.ipod{background:#050506;box-shadow:0 .5px 1px rgba(0,0,0,.7),0 3px 6px -1px rgba(0,0,0,.5),0 18px 26px -8px rgba(0,0,0,.55),0 46px 60px -24px rgba(0,0,0,.55)}
+:root[data-theme="ipc"][data-mode="dark"] .ipod.ipod::before{inset:0;background:radial-gradient(120% 70% at 22% 8%,#1D1C1E 0%,#0B0B0C 45%,#030304 100%);
+  box-shadow:inset 0 0 0 .3cqw #000,inset 0 0 .4cqw .5cqw rgba(0,0,0,.9),inset 0 2.4cqw 1.8cqw -1.3cqw rgba(255,255,255,.42),inset -3.4cqw 0 2.6cqw -1.6cqw rgba(255,255,255,.55),inset 2cqw 0 2cqw -1.4cqw rgba(255,255,255,.14),inset 0 -2.4cqw 2.4cqw -1.5cqw rgba(255,255,255,.26)}
+:root[data-theme="ipc"][data-mode="dark"] .ipod::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;
+  background:linear-gradient(165deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,.02) 35%,rgba(255,255,255,0) 50%),radial-gradient(60% 30% at 80% 100%,rgba(120,110,100,.08),rgba(0,0,0,0) 70%)}
+:root[data-theme="ipc"][data-mode="dark"] .ip-gloss{display:block;position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;filter:blur(.15cqw);
+  background:
+  linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.75) 18%,rgba(255,255,255,.9) 60%,rgba(255,255,255,.5) 88%,rgba(255,255,255,0) 100%) 50% 1.7cqw/82% .38cqw no-repeat,
+  linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 9%,rgba(255,255,255,.55) 50%,rgba(255,255,255,.75) 90%,rgba(255,255,255,0) 100%) right 1.6cqw top 50%/.55cqw 88% no-repeat,
+  radial-gradient(4.5cqw 46% at calc(100% - 1.8cqw) 50%,rgba(255,255,255,.17),rgba(255,255,255,0)) 0 0/100% 100% no-repeat,
+  linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.35) 30%,rgba(255,255,255,.55) 80%,rgba(255,255,255,0) 100%) 50% calc(100% - 1.7cqw)/80% .32cqw no-repeat,
+  linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.18) 20%,rgba(255,255,255,.12) 80%,rgba(255,255,255,0) 100%) left 1.6cqw top 50%/.4cqw 84% no-repeat}
+:root[data-theme="ipc"][data-mode="dark"]{--ip-wl:#FFFFFF;--ip-bezel:#0A0A0B;
+  --ip-wheel:radial-gradient(140% 140% at 85% 90%,#EC2A2F 0%,#DA1F25 40%,#C4181E 75%,#AF141A 100%);
+  --ip-center:radial-gradient(60% 60% at 68% 38%,#6A6A6D 0%,#2A2A2C 30%,#0C0C0D 62%,#000 100%)}
+:root[data-theme="ipc"][data-mode="dark"] .ip-wheel{box-shadow:inset 0 .3cqw .6cqw rgba(0,0,0,.3),inset 0 -.3cqw .5cqw rgba(255,140,140,.15),0 0 0 .25cqw rgba(0,0,0,.65),0 .3cqw .3cqw rgba(255,255,255,.06)}
+:root[data-theme="ipc"][data-mode="dark"] .ip-k{font-weight:700;letter-spacing:.05em}
+:root[data-theme="ipc"][data-mode="dark"] .ip-ok{box-shadow:0 0 0 .3cqw rgba(0,0,0,.7),0 .4cqw .8cqw rgba(0,0,0,.45),inset -.6cqw -.4cqw 1cqw rgba(255,255,255,.08),inset 0 .2cqw .2cqw rgba(255,255,255,.12)}
+:root[data-theme="ipc"][data-mode="dark"] .ip-scr{border-color:#070708;box-shadow:0 0 0 .2cqw rgba(255,255,255,.05),inset 0 .3cqw .6cqw rgba(0,0,0,.3)}
