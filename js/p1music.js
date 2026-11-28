@@ -87,15 +87,29 @@ const FR_CH=[["radio","https://stream.chillhouse-live.com/live","Chillhouse Live
   ["radio","https://0nlineradio.radioho.st/lounge-ibiza-chillout-lounge","Ibiza Chillout"],["radio","https://stream.nightride.fm/chillsynth.mp3","Chillsynth"],
   ["radio","https://stream.nightride.fm/datawave.mp3","Datawave"],["radio","https://stream.radioparadise.com/mellow-128","Radio Paradise Mellow",1],["radio","https://stream.radioparadise.com/global-128","Radio Paradise Global",3],
   ["aud","melodic house","Melodic House"],["aud","organic house","Organic House"],["aud","deep house","Deep House"],["aud","downtempo","Downtempo"],["aud","chillwave","Chillwave"],["aud","melodic techno","Melodic Techno"]]
-  .map(([k,id,name,rp])=>({k,id,name,rp,uri:k+":"+id,art:"",hue:(name.length*53+id.length*11)%360}));
-const FR={a:null,ch:null,q:[],qi:0,meta:0,host:"https://api.audius.co"};
+  .map(([k,id,name,rp],i)=>({k,id,name,rp,uri:k+":"+id,art:"",hue:Math.round(i*137.5)%360}));
+/* each channel's cover, drawn once here: a soft two-colour gradient with a glow, the channel's name large, and
+   RADIO or AUDIUS small, like a station card (the stations publish no art of their own) */
+function frCover(c){const S=320,cv=document.createElement("canvas");cv.width=cv.height=S;const g=cv.getContext("2d"),h=c.hue,h2=(h+55)%360;
+  const lg=g.createLinearGradient(0,0,S,S);lg.addColorStop(0,"hsl("+h+" 72% 58%)");lg.addColorStop(1,"hsl("+h2+" 64% 30%)");g.fillStyle=lg;g.fillRect(0,0,S,S);
+  const rg=g.createRadialGradient(S*.25,S*.2,0,S*.25,S*.2,S*.75);rg.addColorStop(0,"rgba(255,255,255,.38)");rg.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=rg;g.fillRect(0,0,S,S);
+  g.strokeStyle="rgba(255,255,255,.16)";g.lineWidth=2;for(let r=40;r<S*1.2;r+=34){g.beginPath();g.arc(S*.95,S*.95,r,0,7);g.stroke()}
+  g.fillStyle="rgba(255,255,255,.75)";g.font="700 20px -apple-system,Roboto,sans-serif";g.fillText(c.k==="radio"?"RADIO":"AUDIUS",24,40);
+  g.fillStyle="#fff";g.font="800 46px -apple-system,Roboto,sans-serif";const words=c.name.split(" "),lines=[];let cur="";
+  words.forEach(w=>{const t=cur?cur+" "+w:w;if(g.measureText(t).width>S-48&&cur){lines.push(cur);cur=w}else cur=t});lines.push(cur);
+  lines.slice(-3).forEach((l,i,arr)=>g.fillText(l,24,S-30-(arr.length-1-i)*52));
+  try{return cv.toDataURL("image/jpeg",.85)}catch(e){return ""}}
+FR_CH.forEach(c=>{c.art=frCover(c)});
+const FR={a:null,ch:null,q:[],qi:0,meta:0,want:false,host:"https://api.audius.co"};
 const frOn=()=>spMode()==="free";
 function frLast(){let u="";try{u=localStorage.getItem(SP_K+"-free")||""}catch(e){}return FR_CH.find(c=>c.uri===u)||FR_CH[0]}
 function frAudio(){if(FR.a)return FR.a;const a=FR.a=new Audio();a.preload="none";
   const st=()=>{const s=SP.st;if(!s)return;s.playing=!a.paused;s.dur=isFinite(a.duration)?a.duration*1000:0;s.pos=a.currentTime*1000;SP.at=Date.now();spPaint();frSession()};
   ["play","pause","loadedmetadata","durationchange"].forEach(k=>a.addEventListener(k,st));
   a.addEventListener("ended",()=>frStep(1));
-  a.addEventListener("error",()=>{const c=FR.ch;if(!c||!a.getAttribute("src"))return;if(c.k==="aud"){frStep(1);return}toast(T("这个电台连不上，换一个试试","Couldn't reach that station; try another"))});
+  /* the user wants it playing (picked a channel, skipped, pressed play): whenever it can play, it plays */
+  const go=()=>{if(FR.want&&a.paused)a.play().catch(()=>{})};["canplay","loadeddata","stalled"].forEach(k=>a.addEventListener(k,go));
+  a.addEventListener("error",()=>{const c=FR.ch;if(!c||!a.getAttribute("src"))return;if(c.k==="aud"){frStep(1);return}toast(T("这个电台连不上，换下一个","Couldn't reach that station; moving on"));setTimeout(()=>{if(FR.ch===c)frStep(1)},1200)});
   if(SP.st&&SP.st.vol!=null)a.volume=SP.st.vol/100;return a}
 /* the lock screen and the notification shade get the title, the art and the buttons */
 function frSession(){if(!("mediaSession" in navigator)||!SP.st)return;const s=SP.st;
@@ -107,19 +121,19 @@ async function frAud(path){const r=await fetch(FR.host+path+(path.includes("?")?
 async function frQueue(c){let list=[];try{list=await frAud("/v1/tracks/search?query="+encodeURIComponent(c.id)+"&limit=50")}catch(e){}
   if(list.length<8){try{list=list.concat(await frAud("/v1/tracks/trending?genre=Electronic&limit=50"))}catch(e){}}
   list=list.filter(t=>t&&t.is_streamable!==false&&t.duration>90&&t.duration<1500);for(let i=list.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[list[i],list[j]]=[list[j],list[i]]}return list}
-function frSetTrack(t){const s=SP.st,a=frAudio();Object.assign(s,{id:null,title:t.title,artist:t.user&&t.user.name||"",art:(t.artwork&&(t.artwork["480x480"]||t.artwork["150x150"]))||"",dur:(t.duration||0)*1000,pos:0});
-  a.src=FR.host+"/v1/tracks/"+t.id+"/stream?app_name=bG";a.play().catch(()=>{});SP.at=Date.now();spPaint();frSession()}
+function frSetTrack(t){const s=SP.st,a=frAudio();Object.assign(s,{id:null,title:t.title,artist:t.user&&t.user.name||"",art:(t.artwork&&(t.artwork["480x480"]||t.artwork["150x150"]))||(FR.ch&&FR.ch.art)||"",dur:(t.duration||0)*1000,pos:0});
+  a.src=FR.host+"/v1/tracks/"+t.id+"/stream?app_name=bG";FR.want=true;a.play().catch(()=>{});SP.at=Date.now();spPaint();frSession()}
 async function frMeta(){const c=FR.ch;if(!c||!c.rp)return;try{const j=await (await fetch("https://api.radioparadise.com/api/now_playing?chan="+c.rp)).json();
   if(j&&SP.st&&FR.ch===c){SP.st.title=j.title||c.name;SP.st.artist=j.artist||"";if(j.cover_med)SP.st.art=j.cover_med;spPaint();frSession()}}catch(e){}}
 async function frPlay(c){FR.ch=c;FR.retry=0;clearInterval(FR.meta);try{localStorage.setItem(SP_K+"-free",c.uri)}catch(e){}frSessionBind();const a=frAudio();
   SP.st=Object.assign(SP.st||{},{title:c.name,artist:c.k==="radio"?T("电台","Radio"):"Audius",art:c.art,dur:0,pos:0,playing:false,ctx:c.uri,device:T("博G","bG"),shuf:false,rep:"off"});spPaint();
-  if(c.k==="radio"){a.src=c.id;a.play().catch(()=>toast(T("点播放键开始","Tap play to start")));if(c.rp){frMeta();FR.meta=setInterval(()=>{if(!document.hidden)frMeta()},20000)}return}
+  FR.want=true;if(c.k==="radio"){a.src=c.id;a.play().catch(()=>{});if(c.rp){frMeta();FR.meta=setInterval(()=>{if(!document.hidden)frMeta()},20000)}return}
   FR.q=await frQueue(c);FR.qi=0;if(FR.ch!==c)return;if(!FR.q.length){toast(T("Audius 现在连不上","Audius isn't answering"));return}frSetTrack(FR.q[0])}
-function frStep(d){const c=FR.ch||frLast();
+function frStep(d){const c=FR.ch||frLast();FR.want=true;
   if(c.k==="radio"){const R=FR_CH.filter(x=>x.k==="radio"),i=R.indexOf(c);frPlay(R[(i+d+R.length)%R.length]);return}
   if(d<0&&FR.a&&FR.a.currentTime>4){FR.a.currentTime=0;return}
   if(!FR.q.length){frPlay(c);return}FR.qi=(FR.qi+d+FR.q.length)%FR.q.length;frSetTrack(FR.q[FR.qi])}
-function frCmd(kind){const a=frAudio();if(kind==="toggle"){if(!FR.ch||!a.src){frPlay(frLast());return}if(a.paused)a.play().catch(()=>{});else a.pause();return}
+function frCmd(kind){const a=frAudio();if(kind==="toggle"){if(!FR.ch||!a.src){frPlay(frLast());return}if(a.paused){FR.want=true;a.play().catch(()=>{})}else{FR.want=false;a.pause()}return}
   if(kind==="next"||kind==="prev"){frStep(kind==="next"?1:-1);return}}
 /* the channel grid in the full player */
 function frGrid(f){const cur=FR.ch&&FR.ch.uri,sec=(k,t)=>'<p class="eyebrow fr-h">'+t+'</p>'+FR_CH.map((c,i)=>c.k!==k?'':'<button class="sp-cell'+(c.uri===cur?' on':'')+'" type="button" data-fi="'+i+'"><span class="sp-cover"'+(c.art?' style="background-image:url(\''+esc(c.art)+'\')"':' style="background:linear-gradient(135deg,hsl('+c.hue+' 70% 60%),hsl('+(c.hue+50)+' 60% 40%))"')+'>'+(c.art?'':SPI.note)+(c.uri===cur?'<i class="sp-eq"><i></i><i></i><i></i></i>':'')+'</span><span class="sp-name">'+esc(c.name)+'</span></button>').join("");
@@ -273,22 +287,24 @@ async function spPlayList(p,back){buzz(10);if(typeof SFX!=="undefined")SFX.tap()
 
 /* ---------- Settings › Advanced › Spotify ---------- */
 const SP_PASTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h1.5A2.5 2.5 0 0 1 20 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-11A2.5 2.5 0 0 1 6.5 5H8"/></svg>';
-function openMusic(){const mode=spMode(),con=!!(SP.tok&&mode==="on"),cid=spCid();
-  const src='<div class="mode-tabs" role="group" style="margin-bottom:14px">'+[["",T("关","Off")],["free",T("免费电台","Free radio")],["on","Spotify"]].map(([v,l])=>'<button type="button" data-msrc="'+v+'" class="'+((mode===v||(v==="on"&&mode==="demo"))?"active":"")+'">'+l+'</button>').join("")+'</div>'
-    +'<p class="calc-msg" data-freehint'+(mode==="free"?'':' hidden')+'>'+T("网络电台和 Audius 的歌，免费、不用登录，在博G 里直接播放；歌单按钮里选台，‹ › 换台或切歌。","Internet radio and Audius tracks, free with no sign-in, playing right here; pick a channel under Playlists, ‹ › changes station or track.")+'</p>';
-  const body=src+'<label class="flabel">Client ID<span class="pastef"><input id="spcid" autocomplete="off" spellcheck="false" placeholder="'+T("粘贴 Spotify 开发者后台里的 Client ID","Paste the Client ID from the Spotify developer dashboard")+'" value="'+esc(cid)+'"><button type="button" class="pastebtn" data-sppaste aria-label="'+T("粘贴","Paste")+'">'+SP_PASTE+'</button></span></label>'
-    +'<p class="calc-msg">'+T("控制播放需要 Spotify Premium。","Controlling playback needs Spotify Premium.")+'</p>'
-    +(con?'<p class="wxnow">'+SPI.note+T('已连接 Spotify','Spotify connected')+'</p>':'')
-  const S=p1Sheet(T("音乐","Music"),body,con?'<button class="btn ghost wide" type="button" data-spx>'+T('断开','Disconnect')+'</button>':'<button class="btn wide" type="button" data-spc>'+T('连接 Spotify','Connect Spotify')+'</button>');
+function openMusic(){const mode=spMode(),con=!!(SP.tok&&mode==="on"),cid=spCid();let tab=mode==="demo"?"on":mode;
+  const src='<div class="mode-tabs" role="group" style="margin-bottom:14px">'+[["",T("关","Off")],["free",T("免费电台","Free radio")],["on","Spotify"]].map(([v,l])=>'<button type="button" data-msrc="'+v+'">'+l+'</button>').join("")+'</div>';
+  const freeP='<div data-pane="free"><p class="calc-msg">'+T("网络电台和 Audius 的歌，免费、不用登录，在博G 里直接播放；在播放器的「歌单」里选台，‹ › 换台或切歌。","Internet radio and Audius tracks, free with no sign-in, playing right here; pick a channel under Playlists in the player, ‹ › changes station or track.")+'</p><button class="btn wide" type="button" data-frpick>'+T("选台","Pick a channel")+'</button></div>';
+  const spP='<div data-pane="on"><label class="flabel">Client ID<span class="pastef"><input id="spcid" autocomplete="off" spellcheck="false" placeholder="'+T("粘贴 Spotify 开发者后台里的 Client ID","Paste the Client ID from the Spotify developer dashboard")+'" value="'+esc(cid)+'"><button type="button" class="pastebtn" data-sppaste aria-label="'+T("粘贴","Paste")+'">'+SP_PASTE+'</button></span></label>'
+    +'<p class="calc-msg">'+T("控制播放需要 Spotify Premium。","Controlling playback needs Spotify Premium.")+'</p>'+(con?'<p class="wxnow">'+SPI.note+T('已连接 Spotify','Spotify connected')+'</p>':'')
+    +'<div class="row" style="justify-content:flex-end;margin-top:12px">'+(con?'<button class="btn ghost wide" type="button" data-spx>'+T('断开','Disconnect')+'</button>':'<button class="btn wide" type="button" data-spc>'+T('连接 Spotify','Connect Spotify')+'</button>')+'</div></div>';
+  const S=p1Sheet(T("音乐","Music"),src+freeP+spP,' ');
+  const show=()=>{S.m.querySelectorAll("[data-msrc]").forEach(x=>x.classList.toggle("active",x.dataset.msrc===tab));S.m.querySelectorAll("[data-pane]").forEach(x=>x.hidden=x.dataset.pane!==tab)};show();
   const inp=S.q("#spcid"),save=()=>{const v=inp.value.replace(/[^A-Za-z0-9]/g,"").slice(0,64);inp.value=v;try{v?localStorage.setItem(SPC_K,v):localStorage.removeItem(SPC_K)}catch(e){}};
   inp.addEventListener("change",save);inp.addEventListener("focus",()=>setTimeout(()=>inp.select(),0));
   S.q("[data-sppaste]").addEventListener("click",async()=>{try{inp.value=await navigator.clipboard.readText();save();buzz(10)}catch(e){inp.focus();toast(T("读不到剪贴板，请长按输入框粘贴","Can't read the clipboard; long-press the box to paste"))}});
   const c=S.q("[data-spc]");if(c)c.addEventListener("click",()=>{save();if(!spCid()){toast(T("先填 Client ID","Fill in the Client ID first"));inp.focus();return}if(spMode()==="demo"){spSetMode("");spStop()}spConnect()});
   const x=S.q("[data-spx]");if(x)x.addEventListener("click",()=>{SP.tok=null;spSave();spSetMode("");spStop();S.close()});
-  S.m.querySelectorAll("[data-msrc]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.msrc;buzz(6);
-    if(v==="on"){if(SP.tok){spSetMode("on");spStart();S.close();return}inp.focus();toast(T("填 Client ID 后点「连接 Spotify」","Fill in the Client ID, then Connect Spotify"));return}
-    spSetMode(v);spStart();S.m.querySelectorAll("[data-msrc]").forEach(x=>x.classList.toggle("active",x===b));S.q("[data-freehint]").hidden=v!=="free";
-    if(v==="free"){S.close();setTimeout(()=>{spOpen();spPlView()},350)}}));
+  S.q("[data-frpick]").addEventListener("click",()=>{S.close();setTimeout(()=>{spOpen();spPlView()},300)});
+  /* off and free radio take effect at once; Spotify only once it is connected */
+  S.m.querySelectorAll("[data-msrc]").forEach(b=>b.addEventListener("click",()=>{tab=b.dataset.msrc;buzz(6);show();
+    if(tab==="on"){if(SP.tok&&spMode()!=="on"){spSetMode("on");spStart()}return}
+    if(spMode()!==tab){spSetMode(tab);spStart()}}));
 }
 p1Reg("music",openMusic);
 
@@ -304,7 +320,7 @@ function spStart(){spStop();SP.demo=spMode()==="demo";SP.free=frOn();if(SP.free)
   spPaint();if(!SP.demo){spPull();spMdCovers()}
   SP.poll=setInterval(()=>{if(document.hidden)return;const s=SP.st;if(SP.demo&&s&&s.playing&&spNow()>=s.dur){s.pos=0;SP.at=Date.now()}
     if(!SP.demo&&Date.now()-SP.at>5000)spPull();spTick()},1000)}
-function spStop(){clearInterval(SP.poll);SP.poll=0;SP.demo=false;if(SP.free&&FR.a){FR.a.pause();FR.a.removeAttribute("src")}clearInterval(FR.meta);SP.free=false;FR.ch=null;SP.st=null;spPaint()}
+function spStop(){clearInterval(SP.poll);SP.poll=0;SP.demo=false;if(SP.free&&FR.a){FR.want=false;FR.a.pause();FR.a.removeAttribute("src")}clearInterval(FR.meta);SP.free=false;FR.ch=null;SP.st=null;spPaint()}
 document.addEventListener("visibilitychange",()=>{if(document.hidden)return;if(SP.pending)setTimeout(spResume,300);const had=!!SP.tok;spLoad();if(!had&&SP.tok&&spMode()==="on"){spStart();return}if(SP.poll&&!SP.demo)spPull()});
 addEventListener("storage",e=>{if(e.key===SP_K){spLoad();if(SP.tok&&spMode()==="on"&&!SP.poll)spStart()}});
 spLoad();spCallback().finally(spStart);
