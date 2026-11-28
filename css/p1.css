@@ -2290,3 +2290,11 @@ label:has(>select),.field:has(select){cursor:pointer}
 .tile .tchart{display:block;cursor:pointer}.tile .tchart svg{display:block;width:100%}
 .gapcard .gchart{cursor:pointer}
 div.tile:active{transform:none}
+/* the Done button while arranging cards: a tick in the skin's accent that breathes, with a soft glow of the same
+   colour breathing round the button (transform and opacity only) */
+.tilebar [data-act=tdone],.tilebar [data-act=arrdone]{position:relative;isolation:isolate}
+.tilebar [data-act=tdone] svg,.tilebar [data-act=arrdone] svg{color:var(--ac);stroke-width:3;animation:doneTick 1.4s ease-in-out infinite alternate}
+.tilebar [data-act=tdone]::before,.tilebar [data-act=arrdone]::before{content:"";position:absolute;inset:-3px;border-radius:50%;z-index:-1;pointer-events:none;box-shadow:0 0 16px 4px var(--ac),inset 0 0 0 2px var(--ac);opacity:.15;animation:doneGlow 1.4s ease-in-out infinite alternate}
+@keyframes doneTick{from{transform:scale(.88);opacity:.7}to{transform:scale(1.1);opacity:1}}
+@keyframes doneGlow{from{opacity:.12}to{opacity:.6}}
+@media (prefers-reduced-motion:reduce){.tilebar [data-act=tdone] svg,.tilebar [data-act=arrdone] svg,.tilebar [data-act=tdone]::before,.tilebar [data-act=arrdone]::before{animation:none}}
