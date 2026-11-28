@@ -83,7 +83,7 @@ let spVolT=0;function spVol(v){if(!SP.st)return;SP.st.vol=v;if(SP.demo)return;if
    Mode "free" (tracktor-p1-music); the last channel in tracktor-sp-free ---------- */
 /* radio: streams checked to answer an ordinary phone (SomaFM turned out to refuse them); rp = the Radio Paradise
    channel whose now-playing it can read */
-const FR_CH=[["radio","https://stream.chillhouse-live.com/live","Chillhouse Live"],["radio","https://0nlineradio.radioho.st/technolovers-deep-house","Deep House"],
+const FR_CH=[["radio","https://media-ssl.musicradio.com/ChillMP3","Smooth Chill"],["radio","https://0nlineradio.radioho.st/technolovers-deep-house","Deep House"],
   ["radio","https://0nlineradio.radioho.st/lounge-ibiza-chillout-lounge","Ibiza Chillout"],["radio","https://stream.nightride.fm/chillsynth.mp3","Chillsynth"],
   ["radio","https://stream.nightride.fm/datawave.mp3","Datawave"],["radio","https://stream.radioparadise.com/mellow-128","Radio Paradise Mellow",1],["radio","https://stream.radioparadise.com/global-128","Radio Paradise Global",3],
   ["aud","melodic house","Melodic House"],["aud","organic house","Organic House"],["aud","deep house","Deep House"],["aud","downtempo","Downtempo"],["aud","chillwave","Chillwave"],["aud","melodic techno","Melodic Techno"]]
@@ -100,10 +100,11 @@ function frCover(c){const S=320,cv=document.createElement("canvas");cv.width=cv.
   lines.slice(-3).forEach((l,i,arr)=>g.fillText(l,24,S-30-(arr.length-1-i)*52));
   try{return cv.toDataURL("image/jpeg",.85)}catch(e){return ""}}
 FR_CH.forEach(c=>{c.art=frCover(c)});
+function frCovers(u){if(typeof MD_COVERS==="undefined"||!u||MD_COVERS.some(m=>m.src===u))return;const im=new Image();im.crossOrigin="anonymous";im.src=u;MD_COVERS.push(im);if(MD_COVERS.length>24)MD_COVERS.shift()}
 const FR={a:null,ch:null,q:[],qi:0,meta:0,want:false,host:"https://api.audius.co"};
 const frOn=()=>spMode()==="free";
 function frLast(){let u="";try{u=localStorage.getItem(SP_K+"-free")||""}catch(e){}return FR_CH.find(c=>c.uri===u)||FR_CH[0]}
-function frAudio(){if(FR.a)return FR.a;const a=FR.a=new Audio();a.preload="none";
+function frAudio(){if(FR.a)return FR.a;const a=FR.a=new Audio();a.preload="none";a.crossOrigin="anonymous";
   const st=()=>{const s=SP.st;if(!s)return;s.playing=!a.paused;s.dur=isFinite(a.duration)?a.duration*1000:0;s.pos=a.currentTime*1000;SP.at=Date.now();spPaint();frSession()};
   ["play","pause","loadedmetadata","durationchange"].forEach(k=>a.addEventListener(k,st));
   a.addEventListener("ended",()=>frStep(1));
@@ -121,13 +122,13 @@ async function frAud(path){const r=await fetch(FR.host+path+(path.includes("?")?
 async function frQueue(c){let list=[];try{list=await frAud("/v1/tracks/search?query="+encodeURIComponent(c.id)+"&limit=50")}catch(e){}
   if(list.length<8){try{list=list.concat(await frAud("/v1/tracks/trending?genre=Electronic&limit=50"))}catch(e){}}
   list=list.filter(t=>t&&t.is_streamable!==false&&t.duration>90&&t.duration<1500);for(let i=list.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[list[i],list[j]]=[list[j],list[i]]}return list}
-function frSetTrack(t){const s=SP.st,a=frAudio();Object.assign(s,{id:null,title:t.title,artist:t.user&&t.user.name||"",art:(t.artwork&&(t.artwork["480x480"]||t.artwork["150x150"]))||(FR.ch&&FR.ch.art)||"",dur:(t.duration||0)*1000,pos:0});
+function frSetTrack(t){const s=SP.st,a=frAudio();frBeatReset("aud:"+t.id);if(t.artwork&&t.artwork["480x480"])frCovers(t.artwork["480x480"]);Object.assign(s,{title:t.title,artist:t.user&&t.user.name||"",art:(t.artwork&&(t.artwork["480x480"]||t.artwork["150x150"]))||(FR.ch&&FR.ch.art)||"",dur:(t.duration||0)*1000,pos:0});
   a.src=FR.host+"/v1/tracks/"+t.id+"/stream?app_name=bG";FR.want=true;a.play().catch(()=>{});SP.at=Date.now();spPaint();frSession()}
 async function frMeta(){const c=FR.ch;if(!c||!c.rp)return;try{const j=await (await fetch("https://api.radioparadise.com/api/now_playing?chan="+c.rp)).json();
   if(j&&SP.st&&FR.ch===c){SP.st.title=j.title||c.name;SP.st.artist=j.artist||"";if(j.cover_med)SP.st.art=j.cover_med;spPaint();frSession()}}catch(e){}}
-async function frPlay(c){FR.ch=c;FR.retry=0;clearInterval(FR.meta);try{localStorage.setItem(SP_K+"-free",c.uri)}catch(e){}frSessionBind();const a=frAudio();
+async function frPlay(c){frBeatOn();FR.ch=c;FR.retry=0;clearInterval(FR.meta);try{localStorage.setItem(SP_K+"-free",c.uri)}catch(e){}frSessionBind();const a=frAudio();
   SP.st=Object.assign(SP.st||{},{title:c.name,artist:c.k==="radio"?T("电台","Radio"):"Audius",art:c.art,dur:0,pos:0,playing:false,ctx:c.uri,device:T("博G","bG"),shuf:false,rep:"off"});spPaint();
-  FR.want=true;if(c.k==="radio"){a.src=c.id;a.play().catch(()=>{});if(c.rp){frMeta();FR.meta=setInterval(()=>{if(!document.hidden)frMeta()},20000)}return}
+  frBeatReset(c.uri);frCovers(c.art);FR.want=true;if(c.k==="radio"){a.src=c.id;a.play().catch(()=>{});if(c.rp){frMeta();FR.meta=setInterval(()=>{if(!document.hidden)frMeta()},20000)}return}
   FR.q=await frQueue(c);FR.qi=0;if(FR.ch!==c)return;if(!FR.q.length){toast(T("Audius 现在连不上","Audius isn't answering"));return}frSetTrack(FR.q[0])}
 function frStep(d){const c=FR.ch||frLast();FR.want=true;
   if(c.k==="radio"){const R=FR_CH.filter(x=>x.k==="radio"),i=R.indexOf(c);frPlay(R[(i+d+R.length)%R.length]);return}
@@ -135,6 +136,27 @@ function frStep(d){const c=FR.ch||frLast();FR.want=true;
   if(!FR.q.length){frPlay(c);return}FR.qi=(FR.qi+d+FR.q.length)%FR.q.length;frSetTrack(FR.q[FR.qi])}
 function frCmd(kind){const a=frAudio();if(kind==="toggle"){if(!FR.ch||!a.src){frPlay(frLast());return}if(a.paused){FR.want=true;a.play().catch(()=>{})}else{FR.want=false;a.pause()}return}
   if(kind==="next"||kind==="prev"){frStep(kind==="next"?1:-1);return}}
+/* the music groove from what actually plays: the sound goes through an analyser (only while the groove effect is on),
+   the low end's energy is watched for kicks, and every two seconds the last eight seconds are autocorrelated for a
+   tempo between 70 and 180 BPM; tempo, loudness and where the last kick fell go into SP_BPM under the playing id, which
+   spBeat already turns into the page's beat */
+const FB={ctx:null,an:null,buf:null,env:[],t0:0,last:0,id:null,raf:0,calc:0,lv:0};
+function frBeatReset(id){FB.id=id;FB.env=[];FB.t0=0;if(SP.st)SP.st.id=id;delete SP_BPM[id]}
+function frBeatOn(){frAudio();if(FB.ctx||(typeof grooveOn==="function"&&!grooveOn()))return;try{const C=window.AudioContext||window.webkitAudioContext,ctx=FB.ctx=new C();
+    const src=ctx.createMediaElementSource(FR.a),an=FB.an=ctx.createAnalyser();an.fftSize=1024;an.smoothingTimeConstant=0;src.connect(an);an.connect(ctx.destination);FB.buf=new Uint8Array(an.frequencyBinCount)}catch(e){FB.ctx=null;return}
+  const lowBins=Math.max(2,Math.round(150/(FB.ctx.sampleRate/1024)));
+  const tick=()=>{FB.raf=requestAnimationFrame(tick);if(!FR.a||FR.a.paused||document.hidden)return;FB.an.getByteFrequencyData(FB.buf);
+    let e=0;for(let i=1;i<=lowBins;i++)e+=FB.buf[i];e/=lowBins*255;const now=FR.a.currentTime;FB.env.push([now,e]);while(FB.env.length&&now-FB.env[0][0]>8)FB.env.shift();FB.lv=FB.lv*.98+e*.02;
+    if(performance.now()-FB.calc>2000&&FB.env.length>200){FB.calc=performance.now();frTempo()}};
+  if(FB.ctx.state==="suspended")FB.ctx.resume();tick()}
+function frTempo(){const E=FB.env,n=E.length,dt=(E[n-1][0]-E[0][0])/(n-1);if(!(dt>0))return;
+  /* onset strength: how much the energy rises over its recent average */
+  const on=[];let avg=E[0][1];for(let i=0;i<n;i++){avg=avg*.9+E[i][1]*.1;on.push(Math.max(0,E[i][1]-avg))}
+  let best=0,bl=0;for(let bpm=70;bpm<=180;bpm+=1){const lag=Math.round(60/bpm/dt);if(lag<2||lag>=n/2)continue;let s=0;for(let i=lag;i<n;i++)s+=on[i]*on[i-lag];s/=(n-lag);if(s>best){best=s;bl=bpm}}
+  if(!bl||best<1e-5)return;let pk=0,pt=E[n-1][0];for(let i=Math.max(0,n-Math.round(60/bl/dt)*2);i<n;i++)if(on[i]>pk){pk=on[i];pt=E[i][0]}
+  const id=FB.id;if(!id||!SP.st||SP.st.id!==id)return;const old=SP_BPM[id];
+  SP_BPM[id]={t:old?old.t*.6+bl*.4:bl,e:Math.min(1,FB.lv*2.2),ph:pt};spBeat.last=null;spGroove()}
+
 /* the channel grid in the full player */
 function frGrid(f){const cur=FR.ch&&FR.ch.uri,sec=(k,t)=>'<p class="eyebrow fr-h">'+t+'</p>'+FR_CH.map((c,i)=>c.k!==k?'':'<button class="sp-cell'+(c.uri===cur?' on':'')+'" type="button" data-fi="'+i+'"><span class="sp-cover"'+(c.art?' style="background-image:url(\''+esc(c.art)+'\')"':' style="background:linear-gradient(135deg,hsl('+c.hue+' 70% 60%),hsl('+(c.hue+50)+' 60% 40%))"')+'>'+(c.art?'':SPI.note)+(c.uri===cur?'<i class="sp-eq"><i></i><i></i><i></i></i>':'')+'</span><span class="sp-name">'+esc(c.name)+'</span></button>').join("");
   f.innerHTML='<div class="sp-grid">'+sec("radio",T("电台","Radio"))+sec("aud",T("可切歌 · Audius","Skippable · Audius"))+'</div><div class="sp-plf"><span></span><button class="circ sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button></div>';
@@ -164,13 +186,13 @@ async function spTempo(id){if(!id||SP_BPM[id]!==undefined)return SP_BPM[id];SP_B
   try{const r=await fetch("https://api.reccobeats.com/v1/audio-features?ids="+encodeURIComponent(id));if(r.ok){const j=await r.json(),f=(j.content||[])[0];if(f&&f.tempo>30)SP_BPM[id]={t:+f.tempo,e:+f.energy||.6}}}catch(e){}
   return SP_BPM[id]}
 function spBeat(){const de=document.documentElement,s=SP.st,b=s&&SP_BPM[s.id];if(!b){["--beat","--bd"].forEach(v=>de.style.removeProperty(v));delete de.dataset.amp;return}
-  const bpm=b.t>160?b.t/2:b.t,beat=60/bpm,pos=(spNow()||0)/1000;
+  const bpm=b.t>160?b.t/2:b.t,beat=60/bpm,pos=(spNow()||0)/1000-(b.ph||0);
   /* restyling the page costs a little, so only when the song changes or the timing has drifted (a seek) */
   const anchor=performance.now()/1000-pos,L=spBeat.last;
   const dr=L?((anchor-L.anchor)%beat+beat)%beat:0;if(L&&L.id===s.id&&(dr<.08||dr>beat-.08))return;spBeat.last={id:s.id,anchor};
   de.style.setProperty("--beat",beat.toFixed(3)+"s");de.style.setProperty("--bd",(-(pos%beat)).toFixed(3)+"s");de.dataset.amp=b.e<.45?"lo":b.e>.75?"hi":"mid"}
 function spGroove(){const de=document.documentElement,s=SP.st,on=!!(s&&s.playing)&&!document.hidden&&(typeof grooveOn!=="function"||grooveOn())&&!matchMedia("(prefers-reduced-motion: reduce)").matches;
-  de.classList.toggle("groove",on);if(on&&s.id){if(SP_BPM[s.id]===undefined)spTempo(s.id).then(spBeat);else spBeat()}
+  de.classList.toggle("groove",on);if(on&&s.id){if(SP.free)spBeat();else if(SP_BPM[s.id]===undefined)spTempo(s.id).then(spBeat);else spBeat()}
   if(!on||!s.art||s.art===spAlbArt)return;spAlbArt=s.art;
   const im=new Image();im.crossOrigin="anonymous";im.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=12;const x=c.getContext("2d");x.drawImage(im,0,0,12,12);
     const d=x.getImageData(0,0,12,12).data;let best=null,bs=-1;for(let k=0;k<d.length;k+=4){const r=d[k],g=d[k+1],b=d[k+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,sc=sat*(mx/255);if(sc>bs){bs=sc;best=[r,g,b]}}

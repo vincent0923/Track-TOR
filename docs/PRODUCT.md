@@ -88,4 +88,5 @@
 
 **授权能撑多久：** access token 约 30 天，refresh token 约 180 天。网页在剩余不足 15 天时自动续期，所以约半年内打开过一次，就不用重新授权。同一份授权恢复到两台设备上时，一台续期后另一台可能要重新授权一次。
 
-- **免费音乐（设定 › 进阶 › 音乐）：** 音源三选一：关、免费电台、Spotify。免费电台不用登录：七个网络电台：Chillhouse Live、Deep House、Ibiza Chillout、Chillsynth、Datawave、Radio Paradise Mellow 和 Global（深浩斯、Chill、合成器、柔和摇滚世界音乐，‹ › 换台），和 Audius 按风格排的歌（Melodic House、Organic House、Deep House、Downtempo、Chillwave、Melodic Techno，‹ › 切歌、有时长和封面）。在博G 里直接播放，锁屏和通知栏能控制；选台在播放器的「歌单」按钮里。
+- **免费音乐（设定 › 进阶 › 音乐）：** 音源三选一：关、免费电台、Spotify。免费电台不用登录：七个网络电台：Smooth Chill、Deep House、Ibiza Chillout、Chillsynth、Datawave、Radio Paradise Mellow 和 Global（深浩斯、Chill、合成器、柔和摇滚世界音乐，‹ › 换台），和 Audius 按风格排的歌（Melodic House、Organic House、Deep House、Downtempo、Chillwave、Melodic Techno，‹ › 切歌、有时长和封面）。在博G 里直接播放，锁屏和通知栏能控制；选台在播放器的「歌单」按钮里。
+- 特效里「使用音乐封面」（原「动作唱片用常听的歌」）和「音乐律动」不再只靠 Spotify：免费电台时，唱片封面用电台和 Audius 歌曲的封面；律动从正在播放的声音里实时听鼓点（低频能量的自相关，70–180 BPM，每 2 秒更新一次），只在律动开着时才分析声音。

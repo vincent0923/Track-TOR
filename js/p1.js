@@ -1170,7 +1170,7 @@ function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+
     +'<div class="setlist">'
     +'<button class="opt" data-act="go" data-to="p1:weather">'+(typeof wxIcon==="function"?wxIcon("sunc"):ICON.rain)+'<span class="sp">'+T('天气','Weather')+'</span>'+ICON.right+'</button>'
     +sw("glass",glassOn(),ICON.spark,T('半透明玻璃','Translucent glass'))+sw("dust",dustOn(),ICON.dust,T('两天没练就落灰','Dust after two days off'))
-    +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+sw("cfart",cfMusicOn(),ICON.music,T('动作唱片用常听的歌（需 Spotify）','Move records from songs you play (needs Spotify)'))+sw("groove",grooveOn(),ICON.music,T('音乐律动（需 Spotify）','Move with the music (needs Spotify)'))+'</div>');CUR_SHEET=fxSheet}
+    +sw("fx",fxOn(),ICON.spark,T('庆祝效果','Celebrations'))+sw("cfart",cfMusicOn(),ICON.music,T('使用音乐封面','Use music covers'))+sw("groove",grooveOn(),ICON.music,T('音乐律动','Move with the music'))+'</div>');CUR_SHEET=fxSheet}
 function meSheet(){SHEET_UP=null;let m="auto";try{m=localStorage.getItem(PK+"mode")||"auto"}catch(e){}
   const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>'+T('设定','Settings')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><p class="eyebrow" style="margin-bottom:8px">'+T('外观','Appearance')+'</p>'
