@@ -2006,7 +2006,7 @@ html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box
 :root[data-theme="ipc"][data-mode="dark"] .ip-ok{box-shadow:0 0 0 1px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08)}
 /* ice crystal: rhinestones round the screen and the wheel */
 :root[data-theme="ipice"] .ip-scr{border:7px solid transparent;background:linear-gradient(#fff,#fff) padding-box,radial-gradient(circle,#FFFFFF 0 1.3px,#D7E3EE 1.8px,#9DB4CA 2.4px,rgba(0,0,0,0) 2.8px) border-box 0 0/7px 7px,#B9CDE0 border-box;border-radius:14px}
-:root[data-theme="ipice"] .ip-ring{inset:-9px;background:repeating-conic-gradient(from 0deg,#FFFFFF 0 2.6deg,#9DB4CA 2.6deg 3.2deg,rgba(0,0,0,0) 3.2deg 5deg);-webkit-mask:radial-gradient(circle,rgba(0,0,0,0) 0 calc(50% - 7px),#000 calc(50% - 6.5px) calc(50% - 1px),rgba(0,0,0,0) 50%);mask:radial-gradient(circle,rgba(0,0,0,0) 0 calc(50% - 7px),#000 calc(50% - 6.5px) calc(50% - 1px),rgba(0,0,0,0) 50%)}
+:root[data-theme="ipice"] .ip-ring{inset:-9px;background:repeating-conic-gradient(from 0deg,#FFFFFF 0 2.6deg,#9DB4CA 2.6deg 3.2deg,rgba(0,0,0,0) 3.2deg 5deg);-webkit-mask:radial-gradient(circle closest-side,rgba(0,0,0,0) 0 calc(100% - 7px),#000 calc(100% - 6.5px) calc(100% - 1px),rgba(0,0,0,0) 100%);mask:radial-gradient(circle closest-side,rgba(0,0,0,0) 0 calc(100% - 7px),#000 calc(100% - 6.5px) calc(100% - 1px),rgba(0,0,0,0) 100%)}
 :root[data-theme="ipice"] .ip-deco circle{filter:drop-shadow(0 .2px .2px rgba(40,70,110,.4))}
 /* clear cobalt: the screen sits in a darker window */
 :root[data-theme="ipclr"] .ip-scr{border-width:8px;border-radius:12px}
@@ -2057,3 +2057,63 @@ html:root[data-ipod] .modesw .kn{background:var(--ipk);box-shadow:inset 0 1px 0 
 html:root[data-ipod] :is(.circ,.mini,.fsreset,.btn.ghost,.modesw){background:var(--ips);color:var(--ips-ink);border:1px solid var(--ips-rim);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 2px rgba(0,0,0,.12)}
 html:root[data-theme="ipc"][data-mode="dark"] :is(.circ,.mini,.fsreset,.btn.ghost,.modesw){box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5)}
 html:root[data-ipod] :is(.btn,.hgo):active{filter:brightness(.92)}
+
+/* ---------- the iPod at its real proportions (iPod classic: 61.8 × 103.5 mm, a 2.5" 4:3 screen in a black glass
+   window 7.6 mm from the top, a 38 mm click wheel centred 75 mm down, its centre button 36% across). Everything inside
+   is sized in cqw of the body, 1 mm = 1.618cqw ---------- */
+.ipod.ipod{container-type:inline-size;display:block;padding:0;gap:0;height:auto;aspect-ratio:61.8/103.5;
+  width:min(100%,380px,calc((100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom))*.597));border-radius:10%/6%}
+.ipod .ip-scr{position:absolute;left:7.6cqw;top:12.3cqw;width:84.8cqw;height:64.4cqw;border-width:1.6cqw;border-radius:2.2cqw;display:flex;flex-direction:column}
+.ipod .ip-wheel{position:absolute;left:19.25cqw;top:90.65cqw;width:61.5cqw;margin:0}
+.ipod .ip-ok{inset:32%}
+.ipod .ip-k{font-size:3.9cqw;width:17cqw;height:11cqw}
+.ipod .ip-k svg{width:5.2cqw;height:5.2cqw}
+.ipod .ip-menu{top:5%;left:calc(50% - 8.5cqw)}.ipod .ip-play{bottom:5%;left:calc(50% - 8.5cqw)}
+.ipod .ip-prev{left:1%;top:calc(50% - 5.5cqw);width:13cqw}.ipod .ip-next{right:1%;top:calc(50% - 5.5cqw);width:13cqw}
+/* the screen's own type and parts, scaled with the body */
+.ipod .ip-bar{height:7.2cqw;flex:none;padding:0 2.4cqw;gap:1.6cqw;font-size:3.6cqw}
+.ipod .ip-bar .n{font-size:3cqw}.ipod .ip-st svg{width:3.3cqw;height:3.3cqw}
+.ipod .ip-bat{width:6.4cqw;height:3cqw}
+.ipod .ip-np{flex:1;min-height:0;padding:3cqw 3cqw 0;gap:3cqw;grid-template-columns:40% minmax(0,1fr)}
+.ipod .ip-info{padding-top:1.2cqw;gap:.6cqw}
+.ipod .ip-info h2{font-size:4.6cqw}.ipod .ip-info p{font-size:3.4cqw}.ipod .ip-info .ip-pos{font-size:3.1cqw}
+.ipod .ip-prog{flex:none;padding:2.4cqw 3cqw 3cqw;gap:2.2cqw;font-size:3.2cqw}
+.ipod .ip-prog .n{min-width:9cqw}.ipod .ip-prog small{font-size:2.6cqw}
+.ipod .ip-trk{height:2.4cqw}
+.ipod .ip-scr .f-setrow{padding-top:1cqw}.ipod .ip-scr .f-sets{padding:1.4cqw 0}
+.ipod .ip-scr .f-sets i{height:6.2cqw;min-width:9.4cqw;padding:0 2cqw;font-size:3.1cqw}
+.ipod .ip-scr .f-sets i.add{min-width:6.2cqw;width:6.2cqw}
+.ipod .ip-scr .feelbar.ip-feel{flex:none;margin:1.6cqw 3cqw 3cqw}
+
+/* ---------- 经典：the silver one is the last click-wheel iPod, anodised aluminium with a white wheel, on an Apple
+   Store maple table; the U2 one is glossy black with a red wheel on a brushed aluminium display stand. The table and
+   the stand are the page itself, on every page ---------- */
+:root[data-theme="ipc"]{--bg:#D3B386;--muted:#5E5850;--ip-wl:#B4B7BC;--ip-bezel:#0B0C0E;
+  --ip-wheel:radial-gradient(120% 90% at 50% 18%,#FFFFFF 0%,#F6F6F5 45%,#E9E9E8 100%);
+  --ip-center:radial-gradient(90% 90% at 50% 25%,#FFFFFF 0%,#F7F7F6 55%,#ECECEB 100%);
+  --ip-face:linear-gradient(172deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.12) 22%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 70%,rgba(0,0,0,.07) 100%),radial-gradient(140% 60% at 30% 0%,rgba(255,255,255,.35),rgba(255,255,255,0) 60%),url(../img/tex-6.webp) 0 0/90px 90px,linear-gradient(180deg,#E2E4E7 0%,#D3D6DA 55%,#C6C9CE 100%);
+  --ip-rim:linear-gradient(135deg,#FBFBFC 0%,#A5A9AF 22%,#EEF0F2 45%,#8C9096 70%,#DADCDF 88%,#A0A4AA 100%);
+  --ip-cast:0 .5px 1px rgba(40,25,10,.45),0 3px 6px -1px rgba(60,35,10,.35),0 18px 26px -8px rgba(70,40,10,.38),0 46px 60px -24px rgba(70,40,10,.35);
+  --store:linear-gradient(180deg,rgba(255,250,240,.28) 0%,rgba(255,250,240,0) 30%,rgba(60,35,10,0) 70%,rgba(60,35,10,.12) 100%) no-repeat,url(../img/tex-wood.webp) 0 0/800px 800px repeat}
+:root[data-theme="ipc"][data-mode="dark"]{--bg:#4E5155;--muted:#B5B8BE;--ip-wl:#F4DCDA;--ip-bezel:#050506;
+  --ip-wheel:radial-gradient(120% 90% at 50% 18%,#D0302B 0%,#B8211D 55%,#9F1A17 100%);
+  --ip-center:radial-gradient(90% 90% at 50% 20%,#2A2A2C 0%,#121213 60%,#070708 100%);
+  --ip-face:linear-gradient(158deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.05) 30%,rgba(255,255,255,0) 30.5%),radial-gradient(120% 50% at 70% 100%,rgba(255,255,255,.05),rgba(255,255,255,0) 60%),linear-gradient(180deg,#19191B 0%,#0D0D0E 60%,#08080A 100%);
+  --ip-cast:0 .5px 1px rgba(0,0,0,.6),0 3px 6px -1px rgba(0,0,0,.45),0 18px 26px -8px rgba(0,0,0,.5),0 46px 60px -24px rgba(0,0,0,.5);
+  --store:radial-gradient(90% 55% at 50% 0%,rgba(255,255,255,.16),rgba(255,255,255,0) 70%) no-repeat,linear-gradient(180deg,rgba(18,19,22,.42) 0%,rgba(18,19,22,.6) 100%) no-repeat,url(../img/tex-alu.webp) 0 0/600px 600px repeat}
+:root[data-theme="ipc"] body,:root[data-theme="ipc"] .focus{background:var(--store);background-color:var(--bg)}
+:root[data-theme="ipc"] .ip-top .mini{background:var(--ips)}
+:root[data-theme="ipc"] .ip-top .f-lab{color:var(--ink);opacity:.75}
+/* the body: a polished steel edge, the face inset 0.4 mm inside it, the shadow it casts on the table */
+:root[data-theme="ipc"] .ipod.ipod{background:var(--ip-rim);box-shadow:var(--ip-cast)}
+:root[data-theme="ipc"] .ipod.ipod::before{content:"";position:absolute;inset:.65cqw;border-radius:inherit;background:var(--ip-face);background-blend-mode:normal,normal,soft-light,normal;z-index:-1;box-shadow:inset 0 .4cqw .3cqw rgba(255,255,255,.55),inset 0 -.4cqw .6cqw rgba(0,0,0,.12)}
+:root[data-theme="ipc"][data-mode="dark"] .ipod.ipod::before{background-blend-mode:normal;box-shadow:inset 0 .3cqw .2cqw rgba(255,255,255,.12),inset 0 -.4cqw .6cqw rgba(0,0,0,.5)}
+/* the screen: an LCD under black glass, a sheen across the glass */
+:root[data-theme="ipc"] .ip-scr{border-color:var(--ip-bezel);box-shadow:0 0 0 .25cqw rgba(0,0,0,.35),inset 0 0 0 .2cqw rgba(0,0,0,.25)}
+.ipod .ip-scr::after{content:"";position:absolute;inset:-1.6cqw;border-radius:inherit;pointer-events:none;background:linear-gradient(118deg,rgba(255,255,255,.2) 0%,rgba(255,255,255,.07) 34%,rgba(255,255,255,0) 34.5%);z-index:3}
+/* the wheel: matte, sitting a hair below the face; the centre button a separate part with a fine gap round it */
+:root[data-theme="ipc"] .ip-wheel{background:var(--ip-wheel);box-shadow:inset 0 .35cqw .5cqw rgba(0,0,0,.16),inset 0 -.25cqw .3cqw rgba(255,255,255,.85),0 0 0 .2cqw rgba(0,0,0,.1),0 .25cqw .1cqw rgba(255,255,255,.55)}
+:root[data-theme="ipc"] .ip-ok{background:var(--ip-center);box-shadow:0 0 0 .22cqw rgba(0,0,0,.09),0 .3cqw .5cqw rgba(0,0,0,.08),inset 0 .25cqw .2cqw #fff,inset 0 -.3cqw .4cqw rgba(0,0,0,.05)}
+:root[data-theme="ipc"] .ip-k{text-shadow:none;font-weight:600;letter-spacing:.04em}
+:root[data-theme="ipc"][data-mode="dark"] .ip-wheel{box-shadow:inset 0 .35cqw .5cqw rgba(0,0,0,.35),inset 0 -.25cqw .3cqw rgba(255,255,255,.12),0 0 0 .2cqw rgba(0,0,0,.5)}
+:root[data-theme="ipc"][data-mode="dark"] .ip-ok{box-shadow:0 0 0 .22cqw rgba(0,0,0,.6),inset 0 .25cqw .2cqw rgba(255,255,255,.14),0 .3cqw .5cqw rgba(0,0,0,.3)}

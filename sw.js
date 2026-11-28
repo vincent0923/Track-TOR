@@ -1,5 +1,5 @@
 // Service Worker for 博G (bG) PWA
-const CACHE_NAME = "tracktor-pwa-v18";
+const CACHE_NAME = "tracktor-pwa-v19";
 const ASSETS = [
   "./",
   "./index.html",
@@ -41,6 +41,8 @@ const ASSETS = [
   "./img/tex-3.webp",
   "./img/tex-5.webp",
   "./img/tex-6.webp",
+  "./img/tex-wood.webp",
+  "./img/tex-alu.webp",
   "./img/grunge-1.webp",
   "./img/grunge-2.webp",
   "./img/grunge-3.webp"
