@@ -965,7 +965,7 @@ function renderProgView(){const v=$("#v-prog"),{shown,hidden}=tileList();
       +(tileEdit?'<span class="tx" data-act="thide" data-k="'+m.k+'" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</button>'}).join("");
   v.innerHTML=goalsHtml()+'<div class="bento'+(tileEdit?' editing':'')+'">'+tiles+'</div>'
     +(tileEdit?'<div class="tilebar">'+(hidden.length?'<button class="fsreset" data-act="tadd" aria-label="'+T('加回图表','Add a chart back')+'">'+ICON.plus+'</button>':'')+'<button class="fsreset" data-act="tdone" aria-label="'+T('完成','Done')+'">'+ICON.check+'</button></div>':'');
-  animateRings(v);tileBind();goalHolds(v);if(!tileEdit&&$('.fstack[data-fs="mainst"]'))fsBind("mainst",MAIN_FS)}
+  animateRings(v);tileBind();goalHolds(v);if($('.fstack[data-fs="mainst"]'))fsBind("mainst",MAIN_FS)}
 /* a goal ring held opens its manual log (pull-ups or the main move, waist, weight); fat loss is worked out, so it has none */
 let goalHeld=0;
 function goalHolds(v){v.querySelectorAll(".goals4 [data-act=goal]").forEach(b=>holdOpen(b,()=>{goalHeld=Date.now();if(b.dataset.rec)openRecord(b.dataset.rec)}))}
