@@ -208,4 +208,15 @@ setTimeout(()=>{let seen=false;try{seen=localStorage.getItem("tracktor-p1-welcom
   if(FRESH&&!seen){try{localStorage.setItem("tracktor-p1-welcomed","1")}catch(e){}openWelcome();return}
   if(backupRemindDue()){const S=sheet(T("该备份进度了","Time to back up"),'<p class="calc-msg" style="margin:0">'+T("浏览器偶尔会清空本地数据，建议每 5 天存一次进度文件。","Browsers sometimes clear local data; save a progress file every 5 days or so.")+'</p>','<button class="btn ghost" type="button" data-later>'+T("以后","Later")+'</button><button class="btn recsave" type="button" data-now style="width:auto;padding:0 18px">'+T("现在保存","Save now")+'</button>');
     S.q("[data-later]").addEventListener("click",()=>{markBackedUp();S.close()});S.q("[data-now]").addEventListener("click",()=>{S.close();saveBackup()})}},900);
+/* drop-down lists open the app's own picker instead of the phone's: a panel titled with what is being picked, a close
+   button, the options with a tick on the current one. The <select> stays in the page showing the value (taps pass
+   through it, CSS) and gets the choice with a change event, so the code around it is unchanged */
+document.addEventListener("click",e=>{const box=e.target.closest("label,.field");const sel=e.target.matches&&e.target.matches("select")?e.target:box&&box.querySelector("select");
+  if(!sel||sel.multiple||sel.disabled||e.target.closest(".mask.pick"))return;e.preventDefault();
+  const lab=sel.closest("label")||(box&&box.querySelector("label")),title=((lab&&[...lab.childNodes].filter(n=>n.nodeType===3||n.tagName==="SPAN").map(n=>n.textContent).join("").trim())||T("选择","Choose"));
+  const opts=[...sel.options];
+  const S=sheet(title,'<div class="setlist">'+opts.map((o,i)=>'<button class="opt" type="button" data-i="'+i+'"'+(o.selected?' aria-pressed="true"':'')+'><span class="sp">'+(esc(o.textContent.trim())||T("不填","None"))+'</span>'+(o.selected?ICON.check:'')+'</button>').join("")+'</div>',' ');
+  S.m.classList.add("pick");
+  S.m.querySelectorAll("[data-i]").forEach(b=>b.addEventListener("click",()=>{sel.selectedIndex=+b.dataset.i;sel.dispatchEvent(new Event("input",{bubbles:true}));sel.dispatchEvent(new Event("change",{bubbles:true}));buzz(6);S.close()}));
+  const cur=S.m.querySelector('[aria-pressed="true"]');if(cur)cur.scrollIntoView({block:"center"})},true);
 })();
