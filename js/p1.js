@@ -913,7 +913,7 @@ function shareImgBind(blobOf,name){
 /* ---------- progress view ---------- */
 const METRICS=[
   {k:"pull",get name(){return mainName()},get unit(){return mainUnit()},c:"var(--pull)",up:1,wide:1,pts:()=>mainSeries(),get dec(){return /km|kg/.test(mainEx().unit)?1:0},rec:"rec:pullups"},
-  {k:"wt",name:T("体重","Weight"),unit:"kg",c:"var(--push)",up:0,pts:()=>avg7(wtMerged()),dec:1,sub:T("7 日均","7-day avg"),rec:"rec:weight"},
+  {k:"wt",name:T("体重","Weight"),unit:"kg",c:"var(--push)",up:0,pts:()=>avg7(wtMerged()),dec:1,sub:T("7 日均","7-day avg"),rec:"rec:weight",sync:1},
   {k:"waist",name:T("腰围","Waist"),unit:"cm",c:"var(--ac-text)",up:0,pts:()=>series("waist"),dec:1,rec:"rec:waist"},
   {k:"sleep",name:T("睡眠","Sleep"),unit:T("分","pts"),c:"var(--sleep)",up:1,pts:()=>series("sleep"),dec:0,rec:"sync"},
   {k:"hrv",name:"HRV",unit:"ms",c:"#38BDF8",up:1,pts:()=>series("hrv"),dec:0,rec:"sync"},
@@ -931,7 +931,10 @@ function lineSvg(pts,W,H,col,cls,pad){pad=pad||4;if(pts.length<2)return '<svg cl
     +'<path d="'+line+'L'+W+' '+H+'L0 '+H+'Z" fill="url(#'+id+')"/><path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2.2" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'
     +'<circle cx="'+last[0]+'" cy="'+last[1]+'" r="3.5" fill="var(--card)" stroke="'+col+'" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>'}
 function recent(pts,days){const t=dnum(today());return days?pts.filter(p=>p.x>t-days):pts}
-function deltaOf(m,pts,days){days=days==null?30:days;if(pts.length<2)return "";const last=pts[pts.length-1],t=last.x-(days||1e9);let ref=pts[0];for(const p of pts)if(p.x<=t)ref=p;
+/* the change over the period shown: the latest value against the first one inside the same window the chart draws
+   (recent()), so the arrow always agrees with the line */
+function deltaOf(m,pts,days){days=days==null?30:days;if(pts.length<2)return "";const win=recent(pts,days),last=pts[pts.length-1],ref=win.length?win[0]:null;
+  if(!ref||ref===last)return "";
   const span=days?days+T(' 天',' days'):T('全部','all time');
   const d=last.y-ref.y;if(Math.abs(d)<(m.dec?.05:.5))return '<span class="td muted">'+span+T(' 持平',' flat')+'</span>';
   const good=(d>0)===!!m.up;return '<span class="td" style="color:'+(good?"var(--good)":"var(--bad)")+'">'+(d>0?"↑ ":"↓ ")+Math.abs(d).toFixed(m.dec)+' '+m.unit+' · '+span+'</span>'}
@@ -997,7 +1000,7 @@ function metricSheet(k){const m=METRICS.find(x=>x.k===k);
     const lab=chartRange?T('过去 '+chartRange+' 天','Last '+chartRange+' days'):T('全部','All time');
     const ys=pts.map(p=>p.y),lo=pts.length?Math.min(...ys):0,hi=pts.length?Math.max(...ys):0,yOf=v=>(pad+(1-(v-lo)/((hi-lo)||1))*(H-2*pad))/H*100;
     const ticks=pts.length>1?[hi,(hi+lo)/2,lo].map(v=>'<span class="mtick" style="top:'+yOf(v).toFixed(2)+'%"><b>'+(+v).toFixed(m.dec)+'</b></span>').join(""):'';
-    const recBtn=m.rec?'<button class="mini" '+(m.rec==="sync"?'data-act="msync"':'data-act="go" data-to="'+m.rec+'"')+' aria-label="'+(m.rec==="sync"?T('从高驰同步','Sync from COROS'):T('记一笔','Log'))+'">'+(m.rec==="sync"?ICON.sync:ICON.plus)+'</button>':'';
+    const recBtn=(m.sync?'<button class="mini" data-act="msync" aria-label="'+T('从高驰同步','Sync from COROS')+'">'+ICON.sync+'</button>':'')+(m.rec?'<button class="mini" '+(m.rec==="sync"?'data-act="msync"':'data-act="go" data-to="'+m.rec+'"')+' aria-label="'+(m.rec==="sync"?T('从高驰同步','Sync from COROS'):T('记一笔','Log'))+'">'+(m.rec==="sync"?ICON.sync:ICON.plus)+'</button>':'');
     $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+m.name+'</h3>'+recBtn+'<button class="mini" data-act="close">'+ICON.x+'</button></div>'
       +'<div class="mhead" data-act="mrange" role="button" tabindex="0" aria-label="'+T('换时间范围','Change the period')+'"><p class="eyebrow" id="mLab">'+lab+'</p><div class="big" id="mBig">'+(last?last.y.toFixed(m.dec):"–")+'<small>'+m.unit+'</small></div><div id="mDelta">'+(last?deltaOf(m,all,chartRange):'')+'</div></div>'
       +(pts.length>1?'<div class="chart mchart" id="chart">'+ticks+lineSvg(pts,W,H,m.c,"",pad)+'<i class="mcur" aria-hidden="true"></i><i class="mdot" aria-hidden="true" style="--c:'+m.c+'"></i></div>'
