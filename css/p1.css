@@ -2212,3 +2212,12 @@ html:root[data-theme="ipylw"] :is(.btn:not(.ghost),.hgo,.dock .pc) svg{filter:no
 .gaphead{cursor:pointer;-webkit-user-select:none;user-select:none;border-radius:12px;transition:transform .2s var(--spring)}
 .gaphead:active{transform:scale(.97)}
 .ichart{position:relative}.ichart .isvg{display:block;width:100%;height:auto;overflow:visible;touch-action:none}
+/* the records' thickness (about 1.5 mm): the side turned toward you, in the cover's own colours, shaded, lit at its
+   outer rim; it fades in as the record turns away from the middle (the same scroll timeline as cfTurn) */
+.cflow .cf-card .cf-e{position:absolute;top:4px;bottom:4px;width:9px;display:block;pointer-events:none;background:inherit;background-size:cover;opacity:0;animation:linear both;animation-timeline:--cfv}
+.cflow .cf-card .cf-el{left:-8px;border-radius:7px 0 0 7px;box-shadow:inset 0 0 0 40px rgba(0,0,0,.36),inset 1.5px 0 0 rgba(255,255,255,.35);animation-name:cfEl}
+.cflow .cf-card .cf-er{right:-8px;border-radius:0 7px 7px 0;box-shadow:inset 0 0 0 40px rgba(0,0,0,.36),inset -1.5px 0 0 rgba(255,255,255,.35);animation-name:cfEr}
+.cflow .cf-card:not(.art) .cf-e{background:color-mix(in srgb,var(--card) 70%,#000)}
+@keyframes cfEl{0%,52%{opacity:0}60%,100%{opacity:1}}
+@keyframes cfEr{0%,40%{opacity:1}48%,100%{opacity:0}}
+:root[data-theme="eink"] .cflow .cf-card .cf-e{display:none}
