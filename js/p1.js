@@ -1163,7 +1163,7 @@ const BRAND={sp:'<img class="brand" alt="Spotify" src="data:image/svg+xml,%3Csvg
 /* Advanced: everything that talks to an outside service by a link or a key */
 function advSheet(){const row=(to,ic,t)=>'<button class="opt" data-act="go" data-to="'+to+'">'+ic+'<span class="sp">'+t+'</span>'+ICON.right+'</button>';
   openSheet('<div class="sh-h"><h3>'+T('进阶','Advanced')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><div class="setlist">'
-    +row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:aifmt",ICON.spark,T("记账 AI 的格式","Format for your food-logging AI"))+row("p1:music",BRAND.sp,"Spotify")+'</div>');CUR_SHEET=advSheet}
+    +row("p1:table",ICON.table,T("饮食表格","Food table"))+row("p1:aifmt",ICON.spark,T("记账 AI 的格式","Format for your food-logging AI"))+row("p1:music",typeof SPI!=="undefined"?SPI.note:BRAND.sp,T("音乐","Music"))+'</div>');CUR_SHEET=advSheet}
 /* Effects: ray-traced light (a knob), weather, dust after days off, celebrations */
 function fxSheet(){const sw=(act,on,ic,t)=>'<button class="opt" data-act="'+act+'" role="switch" aria-checked="'+on+'">'+ic+'<span class="sp">'+t+'</span><span class="sw" aria-hidden="true"></span></button>';
   openSheet('<div class="sh-h"><h3>'+T('特效','Effects')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'

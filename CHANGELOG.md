@@ -6,6 +6,12 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.84a] — 2026-11-29
+
+### 新增 / Added
+- 📻 **免费音乐，不用 Spotify**：设定 › 进阶 › 音乐里选「免费电台」：SomaFM 的七个深浩斯、慢拍电子和氛围电台（‹ › 换台），和 Audius 按风格排的歌（Melodic House、Organic House、Deep House 等，‹ › 切歌）。在博G 里直接播放，不用登录，锁屏和通知栏能控制。
+  Free music, no Spotify: pick Free radio under Settings › Advanced › Music for seven SomaFM stations of deep house, downtempo and ambient (‹ › changes station) and Audius tracks by style (Melodic House, Organic House, Deep House and more; ‹ › skips). It plays right in bG with no sign-in, controllable from the lock screen.
+
 ## [v1.83a] — 2026-11-29
 
 ### 新增 / Added

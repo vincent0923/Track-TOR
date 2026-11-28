@@ -42,8 +42,8 @@ async function spApi(path,method,body){const a=await spAuth();if(!a)throw new Er
 
 /* ---------- state ---------- */
 const SP_DEMO={shuf:false,rep:"off",title:T("示例歌曲","Sample track"),artist:T("博G · 预览","bG · preview"),art:"",dur:214000,pos:61000,playing:true,vol:62,device:T("这台手机","This phone")};
-function spNow(){const s=SP.st;if(!s)return null;return s.playing?Math.min(s.dur,s.pos+(Date.now()-SP.at)):s.pos}
-async function spPull(){if(SP.demo||SP.busy)return;try{const j=await spApi("/me/player");
+function spNow(){const s=SP.st;if(!s)return null;if(SP.free&&FR.a)return FR.a.currentTime*1000;return s.playing?Math.min(s.dur,s.pos+(Date.now()-SP.at)):s.pos}
+async function spPull(){if(SP.demo||SP.busy||SP.free)return;try{const j=await spApi("/me/player");
     if(!j||!j.item)SP.st=j&&j.device?{title:"",artist:"",art:"",dur:0,pos:0,playing:false,vol:j.device.volume_percent,device:j.device.name,idle:true}:null;
     else{const it=j.item;SP.st={id:it.id,title:it.name,artist:(it.artists||[]).map(a=>a.name).join(", ")||(it.show&&it.show.name)||"",art:spCover((it.album||it).images),
       dur:it.duration_ms,pos:j.progress_ms||0,playing:!!j.is_playing,ctx:j.context&&j.context.uri,shuf:!!j.shuffle_state,smart:!!j.smart_shuffle,rep:j.repeat_state||"off",vol:j.device&&j.device.volume_percent,device:j.device&&j.device.name}}
@@ -59,6 +59,7 @@ async function spResume(){const p=SP.pending;SP.pending=null;if(!p||Date.now()-p
   try{const j=await spApi("/me/player");if(j&&j.is_playing){spPull();return}}catch(e){}p.f()}
 async function spPhoneWait(){for(let i=0;i<5;i++){const ph=await spPhone();if(ph)return ph;await new Promise(r=>setTimeout(r,800))}return null}
 async function spCmd(kind,back){const s=SP.st;buzz(8);if(typeof SFX!=="undefined")SFX.tap();
+  if(SP.free){if(kind==='shuf'||kind==='rep')return;frCmd(kind);return}
   if(kind==="shuf"||kind==="rep"){if(!s)return;if(kind==="shuf"){if(s.smart){s.smart=false;s.shuf=true}s.shuf=!s.shuf;try{localStorage.setItem(SP_K+"-shuf",s.shuf?"1":"0")}catch(e){}}else s.rep={off:"context",context:"track",track:"off"}[s.rep||"off"];
     spPaint();if(SP.demo)return;SP.busy=true;try{await spApi(kind==="shuf"?"/me/player/shuffle?state="+s.shuf:"/me/player/repeat?state="+s.rep,"PUT")}catch(e){if(e.status===403)toast(T("控制需要 Spotify Premium","Control needs Spotify Premium"))}SP.busy=false;setTimeout(spPull,600);return}
   /* nothing playing: start the last playlist again */
@@ -75,7 +76,53 @@ async function spCmd(kind,back){const s=SP.st;buzz(8);if(typeof SFX!=="undefined
   SP.busy=false;
   /* Spotify reports the new song a moment late (longer on speakers): look again until it changes */
   if(kind==="toggle"){setTimeout(spPull,400);return}const was=s&&s.title;[700,1600,3000].forEach(t=>setTimeout(()=>{if(!SP.st||SP.st.title===was)spPull()},t))}
-let spVolT=0;function spVol(v){if(!SP.st)return;SP.st.vol=v;if(SP.demo)return;clearTimeout(spVolT);spVolT=setTimeout(()=>spApi("/me/player/volume?volume_percent="+v,"PUT").catch(()=>{}),250)}
+let spVolT=0;function spVol(v){if(!SP.st)return;SP.st.vol=v;if(SP.demo)return;if(SP.free){frAudio().volume=v/100;return}clearTimeout(spVolT);spVolT=setTimeout(()=>spApi("/me/player/volume?volume_percent="+v,"PUT").catch(()=>{}),250)}
+
+/* ---------- free music, no account: SomaFM radio (listener-supported, no ads; ‹ › change station) and Audius (free
+   streaming of artists' own uploads; ‹ › change track). Plays here in an <audio>, with the phone's media controls.
+   Mode "free" (tracktor-p1-music); the last channel in tracktor-sp-free ---------- */
+const FR_CH=[["soma","groovesalad","Groove Salad","png?v=1780812672"],["soma","beatblender","Beat Blender","png?v=1781039119"],["soma","thetrip","The Trip","jpg?v=1674955397"],["soma","lush","Lush","jpg?v=1674955397"],["soma","fluid","Fluid","jpg?v=1674955396"],["soma","deepspaceone","Deep Space One","gif?v=1674955392"],["soma","dronezone","Drone Zone","jpg?v=1781033109"],
+  ["aud","melodic house","Melodic House"],["aud","organic house","Organic House"],["aud","deep house","Deep House"],["aud","downtempo","Downtempo"],["aud","chillwave","Chillwave"],["aud","melodic techno","Melodic Techno"]]
+  .map(([k,id,name,ext])=>({k,id,name,uri:k+":"+id,art:k==="soma"?"https://api.somafm.com/logos/120/"+id+"120."+ext:"",hue:k==="aud"?(id.length*47)%360:null}));
+const FR={a:null,ch:null,q:[],qi:0,meta:0,host:"https://api.audius.co"};
+const frOn=()=>spMode()==="free";
+function frLast(){let u="";try{u=localStorage.getItem(SP_K+"-free")||""}catch(e){}return FR_CH.find(c=>c.uri===u)||FR_CH[0]}
+function frAudio(){if(FR.a)return FR.a;const a=FR.a=new Audio();a.preload="none";
+  const st=()=>{const s=SP.st;if(!s)return;s.playing=!a.paused;s.dur=isFinite(a.duration)?a.duration*1000:0;s.pos=a.currentTime*1000;SP.at=Date.now();spPaint();frSession()};
+  ["play","pause","loadedmetadata","durationchange"].forEach(k=>a.addEventListener(k,st));
+  a.addEventListener("ended",()=>frStep(1));
+  a.addEventListener("error",()=>{const c=FR.ch;if(!c)return;if(c.k==="soma"&&(FR.retry||0)<2){FR.retry=(FR.retry||0)+1;a.src="https://ice"+(FR.retry===1?2:1)+".somafm.com/"+c.id+"-128-mp3";a.play().catch(()=>{});return}
+    if(c.k==="aud"){frStep(1);return}toast(T("这个电台连不上，换一个试试","Couldn't reach that station; try another"))});
+  if(SP.st&&SP.st.vol!=null)a.volume=SP.st.vol/100;return a}
+/* the lock screen and the notification shade get the title, the art and the buttons */
+function frSession(){if(!("mediaSession" in navigator)||!SP.st)return;const s=SP.st;
+  try{navigator.mediaSession.metadata=new MediaMetadata({title:s.title||"",artist:s.artist||"",album:FR.ch?FR.ch.name:"",artwork:s.art?[{src:s.art,sizes:"480x480"}]:[]});
+    navigator.mediaSession.playbackState=s.playing?"playing":"paused"}catch(e){}}
+function frSessionBind(){if(!("mediaSession" in navigator)||frSessionBind.done)return;frSessionBind.done=1;const m=navigator.mediaSession;
+  [["play",()=>spCmd("toggle")],["pause",()=>spCmd("toggle")],["nexttrack",()=>spCmd("next")],["previoustrack",()=>spCmd("prev")]].forEach(([k,f])=>{try{m.setActionHandler(k,f)}catch(e){}})}
+async function frAud(path){const r=await fetch(FR.host+path+(path.includes("?")?"&":"?")+"app_name=bG");if(!r.ok)throw new Error(r.status);return (await r.json()).data}
+async function frQueue(c){let list=[];try{list=await frAud("/v1/tracks/search?query="+encodeURIComponent(c.id)+"&limit=50")}catch(e){}
+  if(list.length<8){try{list=list.concat(await frAud("/v1/tracks/trending?genre=Electronic&limit=50"))}catch(e){}}
+  list=list.filter(t=>t&&t.is_streamable!==false&&t.duration>90&&t.duration<1500);for(let i=list.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[list[i],list[j]]=[list[j],list[i]]}return list}
+function frSetTrack(t){const s=SP.st,a=frAudio();Object.assign(s,{id:null,title:t.title,artist:t.user&&t.user.name||"",art:(t.artwork&&(t.artwork["480x480"]||t.artwork["150x150"]))||"",dur:(t.duration||0)*1000,pos:0});
+  a.src=FR.host+"/v1/tracks/"+t.id+"/stream?app_name=bG";a.play().catch(()=>{});SP.at=Date.now();spPaint();frSession()}
+async function frSoma(){const c=FR.ch;if(!c||c.k!=="soma")return;try{const j=await (await fetch("https://somafm.com/songs/"+c.id+".json")).json(),x=j.songs&&j.songs[0];
+  if(x&&SP.st&&FR.ch===c){SP.st.title=x.title||c.name;SP.st.artist=x.artist||"";spPaint();frSession()}}catch(e){}}
+async function frPlay(c){FR.ch=c;FR.retry=0;clearInterval(FR.meta);try{localStorage.setItem(SP_K+"-free",c.uri)}catch(e){}frSessionBind();const a=frAudio();
+  SP.st=Object.assign(SP.st||{},{title:c.name,artist:c.k==="soma"?"SomaFM":"Audius",art:c.art,dur:0,pos:0,playing:false,ctx:c.uri,device:T("博G","bG"),shuf:false,rep:"off"});spPaint();
+  if(c.k==="soma"){a.src="https://ice4.somafm.com/"+c.id+"-128-mp3";a.play().catch(()=>toast(T("点播放键开始","Tap play to start")));frSoma();FR.meta=setInterval(()=>{if(!document.hidden)frSoma()},20000);return}
+  FR.q=await frQueue(c);FR.qi=0;if(FR.ch!==c)return;if(!FR.q.length){toast(T("Audius 现在连不上","Audius isn't answering"));return}frSetTrack(FR.q[0])}
+function frStep(d){const c=FR.ch||frLast();
+  if(c.k==="soma"){const R=FR_CH.filter(x=>x.k==="soma"),i=R.indexOf(c);frPlay(R[(i+d+R.length)%R.length]);return}
+  if(d<0&&FR.a&&FR.a.currentTime>4){FR.a.currentTime=0;return}
+  if(!FR.q.length){frPlay(c);return}FR.qi=(FR.qi+d+FR.q.length)%FR.q.length;frSetTrack(FR.q[FR.qi])}
+function frCmd(kind){const a=frAudio();if(kind==="toggle"){if(!FR.ch||!a.src){frPlay(frLast());return}if(a.paused)a.play().catch(()=>{});else a.pause();return}
+  if(kind==="next"||kind==="prev"){frStep(kind==="next"?1:-1);return}}
+/* the channel grid in the full player */
+function frGrid(f){const cur=FR.ch&&FR.ch.uri,sec=(k,t)=>'<p class="eyebrow fr-h">'+t+'</p>'+FR_CH.map((c,i)=>c.k!==k?'':'<button class="sp-cell'+(c.uri===cur?' on':'')+'" type="button" data-fi="'+i+'"><span class="sp-cover"'+(c.art?' style="background-image:url(\''+esc(c.art)+'\')"':' style="background:linear-gradient(135deg,hsl('+c.hue+' 70% 60%),hsl('+(c.hue+50)+' 60% 40%))"')+'>'+(c.art?'':SPI.note)+(c.uri===cur?'<i class="sp-eq"><i></i><i></i><i></i></i>':'')+'</span><span class="sp-name">'+esc(c.name)+'</span></button>').join("");
+  f.innerHTML='<div class="sp-grid">'+sec("soma",T("电台 · SomaFM","Radio · SomaFM"))+sec("aud",T("可切歌 · Audius","Skippable · Audius"))+'</div><div class="sp-plf"><span></span><button class="circ sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button></div>';
+  f.querySelectorAll("[data-fi]").forEach(b=>b.addEventListener("click",()=>{buzz(10);frPlay(FR_CH[+b.dataset.fi]);frGrid(f)}));
+  f.querySelector("[data-spback]").addEventListener("click",()=>{buzz(6);spPaintSheet()})}
 
 /* ---------- the capsule above the dock ---------- */
 const SPI={play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>',
@@ -111,7 +158,7 @@ function spGroove(){const de=document.documentElement,s=SP.st,on=!!(s&&s.playing
   const im=new Image();im.crossOrigin="anonymous";im.onload=()=>{try{const c=document.createElement("canvas");c.width=c.height=12;const x=c.getContext("2d");x.drawImage(im,0,0,12,12);
     const d=x.getImageData(0,0,12,12).data;let best=null,bs=-1;for(let k=0;k<d.length;k+=4){const r=d[k],g=d[k+1],b=d[k+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),sat=mx?(mx-mn)/mx:0,sc=sat*(mx/255);if(sc>bs){bs=sc;best=[r,g,b]}}
     if(best)de.style.setProperty("--alb","rgb("+best.join(",")+")")}catch(e){}};im.src=s.art}
-function spPaint(){spGroove();let el=document.getElementById("mini");const on=SP.demo||(spMode()==="on"&&SP.tok);
+function spPaint(){spGroove();let el=document.getElementById("mini");const on=SP.demo||SP.free||(spMode()==="on"&&SP.tok);
   document.body.classList.toggle("has-mini",!!on);if(!on){if(el)el.remove();return}
   if(!el){el=document.createElement("div");el.id="mini";el.className="mini-pl";document.body.appendChild(el);
     el.addEventListener("click",e=>{if(el.dataset.swiped){delete el.dataset.swiped;return}const b=e.target.closest("[data-sp]");if(b){e.stopPropagation();spCmd(b.dataset.sp);return}spOpen()});
@@ -123,13 +170,13 @@ function spPaint(){spGroove();let el=document.getElementById("mini");const on=SP
       if(Math.abs(dx)>50){el.dataset.swiped=1;setTimeout(()=>delete el.dataset.swiped,400);el.classList.remove("flick");void el.offsetWidth;el.classList.add("flick");spCmd(dx<0?"next":"prev")}})}
   const s=SP.st;
   const last=(!s||!s.title)&&spLast();
-  el.innerHTML=spArt(s,"mp-art")+'<span class="mp-t"><b>'+esc(s&&s.title||(last?T("继续放「"+last.name+"」","Play "+last.name):T("Spotify 没在播放","Nothing playing")))+'</b><small>'+esc(s&&s.title?s.artist:last?T("上次的歌单","Your last playlist"):(s&&s.device)||"")+'</small></span>'
+  el.innerHTML=spArt(s,"mp-art")+'<span class="mp-t"><b>'+esc(s&&s.title||(SP.free?frLast().name:last?T("继续放「"+last.name+"」","Play "+last.name):T("Spotify 没在播放","Nothing playing")))+'</b><small>'+esc(s&&s.title?s.artist:last?T("上次的歌单","Your last playlist"):(s&&s.device)||"")+'</small></span>'
     +'<button class="mp-b mp-p" data-sp="prev" aria-label="'+T("上一首","Previous")+'">'+SPI.prev+'</button>'
     +'<button class="mp-b" data-sp="toggle" aria-label="'+T("播放 / 暂停","Play / pause")+'">'+(s&&s.playing?SPI.pause:SPI.play)+'</button>'
     +'<button class="mp-b mp-n" data-sp="next" aria-label="'+T("下一首","Next")+'">'+SPI.next+'</button><i class="mp-bar"></i>';
   el.classList.toggle("playing",!!(s&&s.playing));spTick();if(spSheetOpen()&&SP.view!=="pl")spPaintSheet();else if(SP.view==="pl")spMarkPl()}
 function spTick(){const s=SP.st,el=document.getElementById("mini");if(!el||!s)return;const p=s.dur?spNow()/s.dur:0;el.style.setProperty("--p",p);
-  const f=document.querySelector(".sp-full");if(f){f.style.setProperty("--p",p);const t=f.querySelectorAll(".sp-time span");if(t.length===2){t[0].textContent=spFmt(spNow());t[1].textContent="-"+spFmt(s.dur-spNow())}}}
+  const f=document.querySelector(".sp-full");if(f){f.style.setProperty("--p",p);const t=f.querySelectorAll(".sp-time span");if(t.length===2){t[0].textContent=spFmt(spNow());t[1].textContent=s.dur?"-"+spFmt(s.dur-spNow()):T("直播","Live")}}}
 const spFmt=ms=>{const t=Math.max(0,Math.round(ms/1000));return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")};
 
 /* ---------- the full player (bottom sheet) ---------- */
@@ -191,7 +238,7 @@ async function spRank(list){if(SP.demo||SP.ranked||!SP.rec||!SP.rec.length)retur
   const keep={};list.forEach(p=>{if(cache[p.uri])keep[p.uri]=cache[p.uri]});try{localStorage.setItem(SPT_K,JSON.stringify(keep))}catch(e){}
   list.sort((a,b)=>b.hit-a.hit||b.at-a.at||a.k-b.k);SP.ranked=true;return true}
 /* playlists as a grid of big covers (easy to hit mid-workout) */
-async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";spLoad();
+async function spPlView(){const f=document.querySelector(".sheet.on .sp-full");if(!f)return;buzz(6);SP.view="pl";if(SP.free){frGrid(f);return}spLoad();
   /* one row along the bottom: the Spotify icon (tap opens the app, hold re-ranks) on the left, back to the player on the right */
   const head='';
   const foot='<div class="sp-plf"><a class="sp-pill" href="spotify:" data-spapp aria-label="'+T('打开 Spotify','Open Spotify')+'">'+BRAND.sp+'</a><button class="circ sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button></div>';
@@ -224,15 +271,21 @@ async function spPlayList(p,back){buzz(10);if(typeof SFX!=="undefined")SFX.tap()
 /* ---------- Settings › Advanced › Spotify ---------- */
 const SP_PASTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h1.5A2.5 2.5 0 0 1 20 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-11A2.5 2.5 0 0 1 6.5 5H8"/></svg>';
 function openMusic(){const mode=spMode(),con=!!(SP.tok&&mode==="on"),cid=spCid();
-  const body='<label class="flabel">Client ID<span class="pastef"><input id="spcid" autocomplete="off" spellcheck="false" placeholder="'+T("粘贴 Spotify 开发者后台里的 Client ID","Paste the Client ID from the Spotify developer dashboard")+'" value="'+esc(cid)+'"><button type="button" class="pastebtn" data-sppaste aria-label="'+T("粘贴","Paste")+'">'+SP_PASTE+'</button></span></label>'
+  const src='<div class="mode-tabs" role="group" style="margin-bottom:14px">'+[["",T("关","Off")],["free",T("免费电台","Free radio")],["on","Spotify"]].map(([v,l])=>'<button type="button" data-msrc="'+v+'" class="'+((mode===v||(v==="on"&&mode==="demo"))?"active":"")+'">'+l+'</button>').join("")+'</div>'
+    +'<p class="calc-msg" data-freehint'+(mode==="free"?'':' hidden')+'>'+T("SomaFM 电台和 Audius 的歌，免费、不用登录，在博G 里直接播放；歌单按钮里选台，‹ › 换台或切歌。","SomaFM radio and Audius tracks, free with no sign-in, playing right here; pick a channel under Playlists, ‹ › changes station or track.")+'</p>';
+  const body=src+'<label class="flabel">Client ID<span class="pastef"><input id="spcid" autocomplete="off" spellcheck="false" placeholder="'+T("粘贴 Spotify 开发者后台里的 Client ID","Paste the Client ID from the Spotify developer dashboard")+'" value="'+esc(cid)+'"><button type="button" class="pastebtn" data-sppaste aria-label="'+T("粘贴","Paste")+'">'+SP_PASTE+'</button></span></label>'
     +'<p class="calc-msg">'+T("控制播放需要 Spotify Premium。","Controlling playback needs Spotify Premium.")+'</p>'
     +(con?'<p class="wxnow">'+SPI.note+T('已连接 Spotify','Spotify connected')+'</p>':'')
-  const S=p1Sheet("Spotify",body,con?'<button class="btn ghost wide" type="button" data-spx>'+T('断开','Disconnect')+'</button>':'<button class="btn wide" type="button" data-spc>'+T('连接 Spotify','Connect Spotify')+'</button>');
+  const S=p1Sheet(T("音乐","Music"),body,con?'<button class="btn ghost wide" type="button" data-spx>'+T('断开','Disconnect')+'</button>':'<button class="btn wide" type="button" data-spc>'+T('连接 Spotify','Connect Spotify')+'</button>');
   const inp=S.q("#spcid"),save=()=>{const v=inp.value.replace(/[^A-Za-z0-9]/g,"").slice(0,64);inp.value=v;try{v?localStorage.setItem(SPC_K,v):localStorage.removeItem(SPC_K)}catch(e){}};
   inp.addEventListener("change",save);inp.addEventListener("focus",()=>setTimeout(()=>inp.select(),0));
   S.q("[data-sppaste]").addEventListener("click",async()=>{try{inp.value=await navigator.clipboard.readText();save();buzz(10)}catch(e){inp.focus();toast(T("读不到剪贴板，请长按输入框粘贴","Can't read the clipboard; long-press the box to paste"))}});
   const c=S.q("[data-spc]");if(c)c.addEventListener("click",()=>{save();if(!spCid()){toast(T("先填 Client ID","Fill in the Client ID first"));inp.focus();return}if(spMode()==="demo"){spSetMode("");spStop()}spConnect()});
   const x=S.q("[data-spx]");if(x)x.addEventListener("click",()=>{SP.tok=null;spSave();spSetMode("");spStop();S.close()});
+  S.m.querySelectorAll("[data-msrc]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.msrc;buzz(6);
+    if(v==="on"){if(SP.tok){spSetMode("on");spStart();S.close();return}inp.focus();toast(T("填 Client ID 后点「连接 Spotify」","Fill in the Client ID, then Connect Spotify"));return}
+    spSetMode(v);spStart();S.m.querySelectorAll("[data-msrc]").forEach(x=>x.classList.toggle("active",x===b));S.q("[data-freehint]").hidden=v!=="free";
+    if(v==="free"){S.close();setTimeout(()=>{spOpen();spPlView()},350)}}));
 }
 p1Reg("music",openMusic);
 
@@ -243,12 +296,12 @@ async function spMdCovers(){if(spMdCovers.done||typeof MD_COVERS==="undefined")r
   try{const r=await spApi("/me/player/recently-played?limit=30"),seen=new Set();
     ((r&&r.items)||[]).forEach(it=>{const u=spCover(it.track&&it.track.album&&it.track.album.images);if(u&&!seen.has(u)&&seen.size<14){seen.add(u);const im=new Image();im.crossOrigin="anonymous";im.src=u;MD_COVERS.push(im)}})}
   catch(e){spMdCovers.done=false}}
-function spStart(){spStop();SP.demo=spMode()==="demo";if(SP.demo){SP.st=Object.assign({},SP_DEMO);SP.at=Date.now()}
+function spStart(){spStop();SP.demo=spMode()==="demo";SP.free=frOn();if(SP.free){const c=frLast();SP.st={title:c.name,artist:c.k==="soma"?"SomaFM":"Audius",art:c.art,dur:0,pos:0,playing:false,vol:70,device:T("博G","bG"),ctx:c.uri,shuf:false,rep:"off"};SP.at=Date.now();spPaint();SP.poll=setInterval(()=>{if(!document.hidden)spTick()},1000);return}if(SP.demo){SP.st=Object.assign({},SP_DEMO);SP.at=Date.now()}
   else if(!(spMode()==="on"&&SP.tok)){spPaint();return}
   spPaint();if(!SP.demo){spPull();spMdCovers()}
   SP.poll=setInterval(()=>{if(document.hidden)return;const s=SP.st;if(SP.demo&&s&&s.playing&&spNow()>=s.dur){s.pos=0;SP.at=Date.now()}
     if(!SP.demo&&Date.now()-SP.at>5000)spPull();spTick()},1000)}
-function spStop(){clearInterval(SP.poll);SP.poll=0;SP.demo=false;SP.st=null;spPaint()}
+function spStop(){clearInterval(SP.poll);SP.poll=0;SP.demo=false;if(SP.free&&FR.a){FR.a.pause();FR.a.removeAttribute("src")}clearInterval(FR.meta);SP.free=false;FR.ch=null;SP.st=null;spPaint()}
 document.addEventListener("visibilitychange",()=>{if(document.hidden)return;if(SP.pending)setTimeout(spResume,300);const had=!!SP.tok;spLoad();if(!had&&SP.tok&&spMode()==="on"){spStart();return}if(SP.poll&&!SP.demo)spPull()});
 addEventListener("storage",e=>{if(e.key===SP_K){spLoad();if(SP.tok&&spMode()==="on"&&!SP.poll)spStart()}});
 spLoad();spCallback().finally(spStart);
