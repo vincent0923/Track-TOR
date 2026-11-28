@@ -95,7 +95,7 @@ function wxRain(dt,noNew){const lv=WX.lv-1,D=WX.drops,m=Math.hypot(WX.gx,WX.gy),
     const vmax=(30+d.r*22)*m;d.v=Math.random()<dt*1.5?d.v*.15:Math.min(vmax,d.v+dt*(120+d.r*30)*m);
     const step=d.v*dt,wob=Math.sin((d.x+d.y)*.05+d.r)*.15;d.x+=ux*step-uy*wob;d.y+=uy*step+ux*wob;
     d.trail.push({x:d.x,y:d.y});if(d.trail.length>40)d.trail.shift();d.r=Math.max(3.6,d.r-step*.004);
-    if(Math.random()<step*.02){const b=wxDrop(.9+Math.random()*1.1,d.x-ux*d.r*1.8+(Math.random()-.5)*2,d.y-uy*d.r*1.8);b.max=6+Math.random()*10;D.push(b)}
+    if(WX.fx==="rain"&&Math.random()<step*.02){const b=wxDrop(.9+Math.random()*1.1,d.x-ux*d.r*1.8+(Math.random()-.5)*2,d.y-uy*d.r*1.8);b.max=6+Math.random()*10;D.push(b)}
     for(let j=D.length-1;j>=0;j--){const o=D[j];if(o===d||o.slide||o.melt)continue;if(Math.hypot(o.x-d.x,o.y-d.y)<d.r+o.r*.8){d.r=Math.min(10,Math.hypot(d.r,o.r));D.splice(j,1);if(j<i)i--}}
     if(d.x<-30||d.x>WX.W+30||d.y<-30||d.y>WX.H+30)D.splice(D.indexOf(d),1)}}
 /* a closed smooth path through the bead's outline; running beads stretch into a teardrop behind them */
@@ -128,12 +128,13 @@ function wxSnow(dt){const n=[21,33,48][WX.lv-1],m=Math.hypot(WX.gx,WX.gy),fx=WX.
   while(WX.flakes.length<n)WX.flakes.push({x:Math.random()*WX.W,y:first?Math.random()*WX.H:-10-Math.random()*60,r:1.2+Math.random()*2.8,vy:14+Math.random()*26,p:Math.random()*6,melt:0,land:0});
   for(let i=WX.flakes.length-1;i>=0;i--){const f=WX.flakes[i];if(f.melt){f.melt+=dt*3;if(f.melt>=1){WX.flakes.splice(i,1)}continue}
     if(f.land){f.land+=dt*.8;if(f.land>=1){wxLand(f);WX.flakes.splice(i,1)}continue}
-    f.y+=f.vy*fy*dt;f.x+=f.vy*fx*dt+Math.sin(f.p)*.35;f.p+=dt*.8;if(f.y>20&&Math.random()<dt*.12)f.land=.01;
+    f.y+=f.vy*fy*dt;f.x+=f.vy*fx*dt+Math.sin(f.p)*.35;f.p+=dt*.8;if(f.y>20&&Math.random()<dt*.04)f.land=.01;
     if(f.y>WX.H+10){f.y=-10;f.x=Math.random()*WX.W}if(f.x<-20)f.x=WX.W+10;if(f.x>WX.W+20)f.x=-10}}
 function wxLand(f){const r=1.6+f.r*.6,D=WX.drops,hit=D.find(d=>!d.slide&&!d.melt&&Math.hypot(d.x-f.x,d.y-f.y)<d.r+r);
   const still=D.filter(d=>!d.slide&&!d.melt);
-  /* once the glass holds enough beads, melt water feeds one of them instead, so beads grow heavy and run, like rain */
-  const into=hit||(still.length>=18?still[Math.random()*still.length|0]:null);
+  /* snow is what shows: the glass holds only a few beads of melt water; past that, melt water feeds one of them, so now
+     and then one grows heavy and runs */
+  const into=hit||(still.length>=5?still[Math.random()*still.length|0]:null);
   if(into){into.r=Math.min(9,Math.hypot(into.r,r));into.k=wxShape(into.r);into.life=0}else D.push(wxDrop(r,f.x,f.y))}
 /* tapping melts what's under the finger; the tap itself still reaches the page */
 document.addEventListener("pointerdown",e=>{if(WX.fx==="none")return;if(typeof DeviceOrientationEvent!=="undefined"&&typeof DeviceOrientationEvent.requestPermission==="function")wxTiltOn();
