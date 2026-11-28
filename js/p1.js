@@ -203,7 +203,7 @@ function calCard(off){const marks=dayMarks(),now=new Date(),t=today(),head='<div
 const calOff=()=>monthOpen?monthOff:weekOff;
 function calHtml(){return fsWrap("cal",calCard(calOff()),2)}
 const CAL_FS={get:dir=>{const o=calOff()-dir;return o>0?null:calCard(o)},commit:dir=>{if(monthOpen)monthOff-=dir;else weekOff-=dir},render:calHtml,peekDir:1};
-function renderTrainView(){const v=$("#v-train");v.innerHTML=freeHintHtml()+heroHtml()+calHtml();animateRings(v);fsBind("hero",HERO_FS);fsBind("cal",CAL_FS)}
+function renderTrainView(){const v=$("#v-train");v.innerHTML=freeHintHtml()+arrHtml("train",{hero:heroHtml,cal:calHtml});animateRings(v);if($('.fstack[data-fs="hero"]'))fsBind("hero",HERO_FS);if($('.fstack[data-fs="cal"]'))fsBind("cal",CAL_FS);arrBind("train")}
 /* what the engine planned: the next two sessions of a kind (or both kinds), each exercise with its reason */
 /* ✨ on the card: one line on where the suggestion comes from, and the reasoning behind "i" (the sessions themselves are the deck) */
 function planSheet(){
@@ -669,11 +669,11 @@ function finShare(t){t=t||today();const back=$("#sheet").classList.contains("on"
 /* ---------- diet view ---------- */
 /* food records, seven days to a card, older ones stacked underneath (finger right goes back) */
 let dietGrp=0;
-function dietDays(){const t=today();return Object.keys(state.diet).filter(d=>d<=t).sort().reverse()}
+function dietDays(){const t=today();return Object.keys(state.diet).filter(d=>d<t).sort().reverse()}
 function dietCard(g){const all=dietDays(),keys=all.slice(g*7,g*7+7);
-  if(!keys.length)return '<section class="card"><p class="eyebrow" style="margin-bottom:4px">'+T('记录','Logs')+'</p><p class="empty">'+T('还没有饮食记录','No food logged yet')+'</p></section>';
+  if(!keys.length)return '<section class="card"><p class="eyebrow" style="margin-bottom:4px">'+T('归档','Archive')+'</p><p class="empty">'+T('还没有以前的饮食记录','No earlier food logs yet')+'</p></section>';
   const md=d=>(dateObj(d).getMonth()+1)+'.'+dateObj(d).getDate();
-  return '<section class="card"><div class="row" style="margin-bottom:4px"><p class="eyebrow sp">'+T('记录','Logs')+'</p><span class="muted" style="font-size:12px;font-weight:600">'+md(keys[keys.length-1])+' – '+md(keys[0])+'</span>'+(g?'<button class="fsreset" data-act="dietnow" style="margin-left:8px" aria-label="'+T('回到最近','Back to the latest')+'">'+ICON.reset+'</button>':'')+'</div><div class="dl">'+keys.map(d=>{const a=intakeOf(d),g=dietGapOf(d);
+  return '<section class="card"><div class="row" style="margin-bottom:4px"><p class="eyebrow sp">'+T('归档','Archive')+'</p><span class="muted" style="font-size:12px;font-weight:600">'+md(keys[keys.length-1])+' – '+md(keys[0])+'</span>'+(g?'<button class="fsreset" data-act="dietnow" style="margin-left:8px" aria-label="'+T('回到最近','Back to the latest')+'">'+ICON.reset+'</button>':'')+'</div><div class="dl">'+keys.map(d=>{const a=intakeOf(d),g=dietGapOf(d);
       return '<button data-act="day" data-d="'+d+'"><span class="dt">'+dayLabel(d)+'</span><span class="di n">'+(a!=null?fmt(a)+' kcal':'–')+'</span>'+(g!=null?'<span class="pill '+(g>=0?"good":"bad")+'">'+(g>=0?"−":"+")+fmt(Math.abs(g))+'</span>':'')+'<svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>'}).join("")+'</div></section>'}
 function dietListHtml(){const n=Math.ceil(dietDays().length/7);if(dietGrp>=n)dietGrp=Math.max(0,n-1);return fsWrap("diet",dietCard(dietGrp),n-1)}
 const DIET_FS={get:dir=>{const n=Math.ceil(dietDays().length/7),g=dietGrp+dir;return g<0||g>=n?null:dietCard(g)},commit:dir=>{dietGrp+=dir},render:dietListHtml,peekDir:1};
@@ -693,20 +693,59 @@ function openProtein(){const t=today(),rec=proteinRec(t),w=weightAtDate(t),own=+
     +'<p class="muted">'+T("留空就用推荐值。","Leave blank to follow the recommendation.")+'</p></div>');
   const ib=S.q(".info"),th=S.q(".theory");ib.addEventListener("click",()=>{th.hidden=!th.hidden;ib.setAttribute("aria-expanded",!th.hidden);buzz(6)});
   S.q("[data-ok]").addEventListener("click",()=>{const v=Math.round(+S.q("#pg").value);if(v>0)state.settings.pg=v;else delete state.settings.pg;lsSave();S.close();renderAll();toast(T("蛋白质目标已保存","Protein target saved"))})}
+/* the ring on the Today card: a short tap steps protein → carbs → fat → veg → calories (remembered), a hold sets that
+   one's daily target (settings.pg for protein, settings.dg[k] for the rest; blank follows the default where there is one) */
+const RING=[{k:"p",zh:"蛋白质",en:"Protein",u:"g",c:"var(--sleep)"},{k:"c",zh:"碳水",en:"Carbs",u:"g",c:"var(--third)"},{k:"f",zh:"总脂肪",en:"Fat",u:"g",c:"var(--pull)"},{k:"veg",zh:"蔬菜",en:"Veg",u:"g",c:"var(--good)"},{k:"kcal",zh:"总热量",en:"Calories",u:"kcal",c:"var(--ink)"}];
+let ringHeld=0;
+function ringK(){let k="p";try{k=localStorage.getItem(PK+"ring")||"p"}catch(e){}return RING.some(r=>r.k===k)?k:"p"}
+function ringDef(k,t){if(k==="p")return proteinRec(t);if(k==="veg")return 400;if(k==="kcal"){const b=burnOfDate(t);return b!=null?Math.round(b):null}return null}
+function ringGoal(k,t){if(k==="p")return proteinNeed(t);const v=+((state.settings.dg||{})[k]);return v>0?v:ringDef(k,t)}
+function ringVal(k,t){if(k==="p")return proteinOf(t);if(k==="kcal")return intakeOf(t);const d=state.diet[t];if(!d||!d.items||!d.items.length||!d.items.some(it=>numVal(it[k])!=null))return null;return dietTotals(d)[k]}
+function ringHtml(t){const m=RING.find(r=>r.k===ringK()),v=ringVal(m.k,t),g=ringGoal(m.k,t),pp=v!=null&&g?v/g:0;
+  return '<div class="ring dring" id="protRing" data-act="ringnext" role="button" tabindex="0" aria-label="'+T(m.zh,m.en)+'">'+ringSvg(76,8,pp,m.c,"var(--sub)")+'<span class="rl"><span class="rk">'+T(m.zh,m.en)+'</span><b class="n" style="font-size:16px;font-weight:800">'+(v!=null?fmt(Math.round(v)):"–")+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ '+(g?fmt(Math.round(g)):"–")+' '+m.u+'</span></span></div>'}
+function openTarget(k){if(k==="p"){openProtein();return}const m=RING.find(r=>r.k===k),t=today(),def=ringDef(k,t),own=+((state.settings.dg||{})[k])>0?+state.settings.dg[k]:"";
+  const S=p1Sheet(T(m.zh+"目标",m.en+" target"),'<label class="flabel">'+T("每天（"+m.u+"）","Per day ("+m.u+")")+'<input id="dgv" type="number" inputmode="numeric" step="1" min="0" value="'+own+'" placeholder="'+(def!=null?def:"")+'"></label>'
+    +(def!=null?'<p class="muted" style="font-size:12px;margin-top:8px">'+(k==="kcal"?T("留空就用当天的消耗。","Leave blank to use the day's burn."):T("留空就用推荐值。","Leave blank to follow the recommendation."))+'</p>':''));
+  S.q("[data-ok]").addEventListener("click",()=>{const v=Math.round(+S.q("#dgv").value),dg=Object.assign({},state.settings.dg||{});if(v>0)dg[k]=v;else delete dg[k];state.settings.dg=dg;lsSave();S.close();renderAll();toast(T(m.zh+"目标已保存",m.en+" target saved"))})}
+/* arranging a page's cards, as on Stats: a hold puts the page into editing (cards wiggle): drag one up or down to move
+   it, × hides it, + brings a hidden one back, ✓ ends. Each page keeps {order, hidden} in settings (dtiles for Diet,
+   ttiles for Training) */
+const ARR={diet:{key:"dtiles",view:"#v-diet",cards:[{k:"today",zh:"今天",en:"Today"},{k:"gap",zh:"热量缺口",en:"Calorie gap"},{k:"arch",zh:"归档",en:"Archive"}],render:()=>renderDietView()},
+  train:{key:"ttiles",view:"#v-train",cards:[{k:"hero",zh:"训练",en:"Training"},{k:"cal",zh:"日历",en:"Calendar"}],render:()=>renderTrainView()}};
+let arrEdit=null;
+function arrCfg(id){const t=state.settings[ARR[id].key]||{};return {order:t.order||[],hidden:t.hidden||[]}}
+function arrList(id){const c=arrCfg(id),D=ARR[id].cards,pos=k=>{const i=c.order.indexOf(k);return i<0?100+D.findIndex(m=>m.k===k):i},all=D.slice().sort((a,b)=>pos(a.k)-pos(b.k));
+  return {shown:all.filter(m=>!c.hidden.includes(m.k)),hidden:all.filter(m=>c.hidden.includes(m.k))}}
+function arrHtml(id,html){const ed=arrEdit===id,{shown,hidden}=arrList(id);
+  return '<div class="dtiles'+(ed?' editing':'')+'" data-arr="'+id+'">'+shown.map(m=>'<div class="dtile" data-k="'+m.k+'">'+html[m.k]()+(ed?'<span class="tx" data-act="arrhide" data-arr="'+id+'" data-k="'+m.k+'" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</div>').join("")+'</div>'
+    +(ed?'<div class="tilebar">'+(hidden.length?'<button class="fsreset" data-act="arradd" data-arr="'+id+'" aria-label="'+T('加回卡片','Add a card back')+'">'+ICON.plus+'</button>':'')+'<button class="fsreset" data-act="arrdone" data-arr="'+id+'" aria-label="'+T('完成','Done')+'">'+ICON.check+'</button></div>':'')}
+function arrSave(id,c){state.settings[ARR[id].key]=c;lsSave()}
+function arrBind(id){const box=$(ARR[id].view+" .dtiles");if(!box)return;let tm=0,drag=null;
+  box.addEventListener("pointerdown",e=>{const t=e.target.closest(".dtile");if(!t||e.target.closest(".tx")||e.target.closest("#protRing"))return;
+    if(arrEdit!==id){clearTimeout(tm);const x=e.clientX,y=e.clientY;tm=setTimeout(()=>{tm=0;arrEdit=id;buzz(15);fsEatClick();ARR[id].render()},500);
+      const cancel=ev=>{if(ev.type!=="pointermove"||Math.hypot(ev.clientX-x,ev.clientY-y)>10){clearTimeout(tm);off()}};
+      const off=()=>{["pointermove","pointerup","pointercancel"].forEach(k=>removeEventListener(k,cancel))};["pointermove","pointerup","pointercancel"].forEach(k=>addEventListener(k,cancel));return}
+    e.preventDefault();drag={t,y:e.clientY,moved:false};t.setPointerCapture(e.pointerId);t.classList.add("drag")});
+  box.addEventListener("pointermove",e=>{if(!drag)return;const dy=e.clientY-drag.y;if(Math.abs(dy)>6)drag.moved=true;drag.t.style.transform="translateY("+dy+"px) scale(1.02)";
+    drag.t.style.pointerEvents="none";const o=document.elementFromPoint(e.clientX,e.clientY),ot=o&&o.closest(".dtiles .dtile");drag.t.style.pointerEvents="";
+    if(ot&&ot!==drag.t&&box.contains(ot)){const rb=ot.getBoundingClientRect(),before=e.clientY<rb.top+rb.height/2,r1=drag.t.getBoundingClientRect();box.insertBefore(drag.t,before?ot:ot.nextSibling);
+      const r2=drag.t.getBoundingClientRect();drag.y+=r2.top-r1.top;drag.t.style.transform="translateY("+(e.clientY-drag.y)+"px) scale(1.02)";buzz(6)}});
+  const end=()=>{if(!drag)return;const t=drag.t,moved=drag.moved;drag=null;t.classList.remove("drag");t.style.transform="";
+    if(moved){fsEatClick();const c=arrCfg(id),keys=[...box.querySelectorAll(".dtile")].map(x=>x.dataset.k);c.order=keys.concat(c.order.filter(k=>!keys.includes(k)));arrSave(id,c)}};
+  box.addEventListener("pointerup",end);box.addEventListener("pointercancel",end)}
 function renderDietView(){const v=$("#v-diet"),t=today();
-  const tin=intakeOf(t),tb=burnOfDate(t),gap=tin!=null&&tb!=null?tb-tin:null,pr=proteinOf(t),need=proteinNeed(t);
+  const tin=intakeOf(t),tb=burnOfDate(t),gap=tin!=null&&tb!=null?tb-tin:null;
   const y=ymdAdd(t,-1),yg=dietGapOf(y);
-  let hero='<section class="card"><div class="row" style="align-items:flex-start"><div class="sp">';
+  let hero='<section class="card"><div class="row" style="align-items:flex-start"><div class="sp dtoday" data-act="day" data-d="'+t+'" role="button" tabindex="0" aria-label="'+T('今天的饮食','Today\'s food')+'">';
   if(gap!=null)hero+='<p class="eyebrow">'+T('今天 · ','Today · ')+(gap>=0?T("缺口","deficit"):T("盈余","surplus"))+'</p><div class="big" style="color:'+(gap>=0?"var(--good)":"var(--bad)")+'">'+fmt(Math.abs(gap))+'<small>kcal</small></div><p class="muted" style="font-size:12px;margin-top:4px">'+T('摄入 ','In ')+fmt(tin)+T(' · 消耗 ',' · burn ')+fmt(tb)+'</p>';
   else if(tin!=null)hero+='<p class="eyebrow">'+T('今天 · 摄入','Today · intake')+'</p><div class="big">'+fmt(tin)+'<small>kcal</small></div><p class="muted" style="font-size:12px;margin-top:4px">'+T('消耗等手表同步','Burn waits for the watch')+(yg!=null?T(' · 昨天缺口 ',' · yesterday ')+fmt(yg):'')+'</p>';
-  else hero+='<p class="eyebrow">'+T('今天','Today')+'</p><div class="big" style="font-size:26px">'+T('还没记','Nothing yet')+'</div><p class="muted" style="font-size:12px;margin-top:4px">'+(yg!=null?T('昨天'+(yg>=0?'缺口 ':'盈余 '),'Yesterday '+(yg>=0?'deficit ':'surplus '))+fmt(Math.abs(yg))+' kcal':T('点下面记一笔','Log below'))+'</p>';
-  const pp=pr!=null&&need?pr/need:0;
-  hero+='</div><div class="ring" id="protRing">'+ringSvg(76,8,pp,"var(--sleep)","var(--sub)")+'<span class="rl"><b class="n" style="font-size:16px;font-weight:800">'+(pr!=null?Math.round(pr):"–")+'</b><br><span class="muted" style="font-size:10px;font-weight:600">/ '+Math.round(need)+' g</span></span></div></div>';
-  if(tin!=null&&tb!=null){const mx=Math.max(tin,tb);hero+='<div class="ib"><i style="width:'+(tin/mx*100)+'%;background:var(--ink)"></i><i style="width:'+(Math.max(0,tb-tin)/mx*100)+'%;background:var(--good);opacity:.35"></i></div>'
-    +'<div class="legend"><span><i style="background:var(--ink)"></i>'+T('摄入','Intake')+'</span><span><i style="background:var(--good);opacity:.5"></i>'+T('缺口','Deficit')+'</span><span style="margin-left:auto"><i style="background:var(--sleep)"></i>'+T('蛋白质','Protein')+'</span></div>'}
-  hero+='<div class="addrow"><button class="fsreset" data-act="go" data-to="diet" aria-label="'+T('记一笔','Log food')+'">'+ICON.plus+'</button></div></section>';
-  const week=gapCardHtml();
-  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+dietListHtml();animateRings(v);gapBind();fsBind("diet",DIET_FS);holdOpen($("#protRing"),openProtein)}
+  else hero+='<p class="eyebrow">'+T('今天','Today')+'</p><div class="big" style="font-size:26px">'+T('还没记','Nothing yet')+'</div><p class="muted" style="font-size:12px;margin-top:4px">'+(yg!=null?T('昨天'+(yg>=0?'缺口 ':'盈余 '),'Yesterday '+(yg>=0?'deficit ':'surplus '))+fmt(Math.abs(yg))+' kcal':T('点这里记一笔','Tap here to log'))+'</p>';
+  hero+='</div>'+ringHtml(t)+'</div>';
+  if(tin!=null&&tb!=null){const mx=Math.max(tin,tb),m=RING.find(r=>r.k===ringK());hero+='<div class="ib"><i style="width:'+(tin/mx*100)+'%;background:var(--ink)"></i><i style="width:'+(Math.max(0,tb-tin)/mx*100)+'%;background:var(--good);opacity:.35"></i></div>'
+    +'<div class="legend"><span><i style="background:var(--ink)"></i>'+T('摄入','Intake')+'</span><span><i style="background:var(--good);opacity:.5"></i>'+T('缺口','Deficit')+'</span><span style="margin-left:auto"><i style="background:'+m.c+'"></i>'+T(m.zh,m.en)+'</span></div>'}
+  hero+='</section>';
+  v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+arrHtml("diet",{today:()=>hero,gap:gapCardHtml,arch:dietListHtml});
+  animateRings(v);if($('.fstack[data-fs="diet"]'))fsBind("diet",DIET_FS);holdOpen($("#protRing"),()=>{ringHeld=Date.now();openTarget(ringK())});arrBind("diet")}
 /* the gap card: swipe it sideways (or tap a dot) to step through 7, 14, 30 days and since the first log; the
    big figure turns over like a split-flap board. Only finished days count (the window ends yesterday). */
 const GAP_RANGES=[3,7,14,30,60,90,0];
@@ -784,7 +823,7 @@ function gapCardHtml(){const {from,to,days,gaps}=gapData();
   let cols=days.map((d,i)=>({g:gaps[i],l:days.length<=14?WD[dateObj(d).getDay()]:""}));
   if(days.length>31){cols=[];for(let i=0;i<days.length;i+=7){const ch=gaps.slice(i,i+7).filter(g=>g!=null);cols.push({g:ch.length?ch.reduce((a,b)=>a+b,0)/ch.length:null,l:""})}}
   const cm=Math.max(300,...cols.filter(c=>c.g!=null).map(c=>Math.abs(c.g)));
-  return '<section class="card gapcard" id="gapCard">'+gapHeadHtml()
+  return '<section class="card gapcard" id="gapCard" data-act="intake">'+gapHeadHtml()
     +bricksHtml(cols.map(c=>({n:c.g==null?0:Math.max(1,Math.round(Math.abs(c.g)/cm*8)),c:c.g==null?"":c.g>=0?"var(--good)":"var(--bad)",l:c.l})),true)
     +(days.length?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
     +'</section>'}
@@ -800,7 +839,7 @@ function gapHeadHtml(inSheet){const {from,to,days,known,sum}=gapData(),R=gapR;
 let gapHeld=0;
 function gapSet(r){gapR=r;try{localStorage.setItem(PK+"gw",String(gapR))}catch(e){}}
 function gapNext(){gapSet(GAP_RANGES[(GAP_RANGES.indexOf(gapR)+1)%GAP_RANGES.length]);if($("#ichart"))openIntake.redraw();const c=$("#gapCard");if(c){c.outerHTML=gapCardHtml();gapBind()}SFX.tap();buzz(6)}
-function gapBind(){const c=$("#gapCard");if(!c)return;holdOpen(c,()=>{gapHeld=Date.now();openIntake()})}
+function gapBind(){}
 /* intake (ink) and burn (green) as two lines, the space between them a bar per day (green where burn was higher, a
    deficit; red where intake was, a surplus), resting burn (BMR) dashed; drag across it to read a day */
 function intakeSvg(days,W,H){const L=34,R=10,TP=10,B=22,pts=days.map(d=>{const a=intakeOf(d);return {d,a,b:a==null?null:burnOfDate(d)}});
@@ -849,10 +888,10 @@ function daySheet(d){const day=state.diet[d]||{},items=day.items||[],tt=dietTota
   openSheet('<div class="sh-h"><h3>'+dayLabel(d)+(/^\d/.test(dayLabel(d))?"":' · '+(dateObj(d).getMonth()+1)+'.'+dateObj(d).getDate())+'</h3>'+(items.length?'<button class="mini" data-act="dshare" data-d="'+d+'" aria-label="'+T('分享成图片','Share as a picture')+'">'+ICON.share+'</button>':'')+'<button class="mini" data-act="close">'+ICON.x+'</button></div>'
     +'<div class="row" style="margin-bottom:16px"><div class="sp"><p class="eyebrow">'+T('摄入','Intake')+'</p><b class="n" style="font-size:22px;font-weight:800">'+fmt(a)+'</b></div><div class="sp"><p class="eyebrow">'+T('消耗','Burn')+'</p><b class="n" style="font-size:22px;font-weight:800">'+fmt(b)+'</b></div>'
     +'<div class="sp"><p class="eyebrow">'+(g==null||g>=0?T("缺口","Deficit"):T("盈余","Surplus"))+'</p><b class="n" style="font-size:22px;font-weight:800;color:'+(g==null?"inherit":g>=0?"var(--good)":"var(--bad)")+'">'+(g==null?"–":fmt(Math.abs(g)))+'</b></div></div>'
-    +(items.length?'<table class="tbl"><tr><th>'+T('食物','Food')+'</th><th>'+T('蛋白','Prot.')+'</th><th>'+T('脂肪','Fat')+'</th><th>'+T('碳水','Carbs')+'</th><th>'+T('蔬菜','Veg')+'</th><th>kcal</th></tr>'+items.map(it=>'<tr><td>'+escHtml(it.name||"")+'</td><td>'+f1(it.p)+'</td><td>'+f1(it.f)+'</td><td>'+f1(it.c)+'</td><td>'+f1(it.veg)+'</td><td>'+f1(it.kcal)+'</td></tr>').join("")
+    +(!items.length&&d===today()&&intakeOf(d)==null?'<p class="empty">'+T('今天还没记','Nothing logged today')+'</p>':items.length?'<table class="tbl"><tr><th>'+T('食物','Food')+'</th><th>'+T('蛋白','Prot.')+'</th><th>'+T('脂肪','Fat')+'</th><th>'+T('碳水','Carbs')+'</th><th>'+T('蔬菜','Veg')+'</th><th>kcal</th></tr>'+items.map(it=>'<tr><td>'+escHtml(it.name||"")+'</td><td>'+f1(it.p)+'</td><td>'+f1(it.f)+'</td><td>'+f1(it.c)+'</td><td>'+f1(it.veg)+'</td><td>'+f1(it.kcal)+'</td></tr>').join("")
       +(items.length>1?'<tr class="tot"><td>'+T('合计','Total')+'</td><td>'+f1(tt.p)+'</td><td>'+f1(tt.f)+'</td><td>'+f1(tt.c)+'</td><td>'+f1(tt.veg)+'</td><td>'+f1(tt.kcal)+'</td></tr>':'')+'</table>':'<p class="empty">'+T('这天只记了总数','Only a total that day')+'</p>')
     +(day.note?'<p class="muted" style="font-size:12px;margin-top:12px">'+escHtml(day.note)+'</p>':'')
-    +'<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet:'+d+'">'+ICON.pen+T('编辑这天','Edit this day')+'</button>')}
+    +(d===today()?'<button class="btn" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet:'+d+'">'+ICON.plus+T('记一笔','Log food')+'</button>':'<button class="btn ghost" style="margin-top:16px;height:46px;font-size:15px" data-act="go" data-to="diet:'+d+'">'+ICON.pen+T('编辑这天','Edit this day')+'</button>'))}
 
 /* a day's food as a picture to send to friends: the table drawn on a canvas in the current skin's colours. A panel
    shows it first, with a switch for whether burn and deficit go in (remembered), then save it or share it */
@@ -1169,7 +1208,7 @@ window.p1Sync=p1Sync;
   b.addEventListener("click",()=>{if(Date.now()-dragAt<450)return;
     if(toy()){pk.style.transform="translateX("+max()+"px)";setTimeout(()=>{pk.style.transform=""},380)}p1Sync(false)})})();
 
-document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act;if(arrEdit&&b.closest(".dtiles")&&a!=="arrhide")return;
   if(a==="month"){monthOpen=!monthOpen;monthOff=0;weekOff=0;fsRender("cal");miniSize()}
   /* Today: back to this week or month; already there, it opens today */
   else if(a==="caltoday"){monthOff=0;weekOff=0;fsReset("cal")}
@@ -1201,6 +1240,12 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="metric"){if(tileEdit)return;chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
   else if(a==="gapr"){if(Date.now()-gapHeld<800)return;gapNext()}
+  else if(a==="intake")openIntake();
+  else if(a==="ringnext"){if(Date.now()-ringHeld<800)return;const i=RING.findIndex(r=>r.k===ringK());try{localStorage.setItem(PK+"ring",RING[(i+1)%RING.length].k)}catch(err){}SFX.tap();buzz(6);renderDietView()}
+  else if(a==="arrhide"){e.stopPropagation();const id=b.dataset.arr,c=arrCfg(id);if(!c.hidden.includes(b.dataset.k))c.hidden.push(b.dataset.k);arrSave(id,c);SFX.tap();ARR[id].render()}
+  else if(a==="arradd"){const id=b.dataset.arr,{hidden}=arrList(id);openSheet('<div class="sh-h"><h3>'+T('加回卡片','Add a card back')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><div class="setlist">'+hidden.map(m=>'<button class="opt" data-act="arrshow" data-arr="'+id+'" data-k="'+m.k+'"><span class="sp">'+T(m.zh,m.en)+'</span>'+ICON.plus+'</button>').join("")+'</div>')}
+  else if(a==="arrshow"){const id=b.dataset.arr,c=arrCfg(id);c.hidden=c.hidden.filter(k=>k!==b.dataset.k);arrSave(id,c);closeSheet();ARR[id].render()}
+  else if(a==="arrdone"){const id=arrEdit;arrEdit=null;SFX.tap();if(id)ARR[id].render()}
   else if(a==="goal")bridge("goals");
   else if(a==="coins")coinSheet(false);
   else if(a==="shop"){const up=b.closest("#sheet")?CUR_SHEET:null;coinSheet(true);SHEET_UP=up}

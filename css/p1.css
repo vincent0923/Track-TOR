@@ -2222,3 +2222,22 @@ html:root[data-theme="ipylw"] :is(.btn:not(.ghost),.hgo,.dock .pc) svg{filter:no
 @keyframes cfEr{0%,40%{opacity:1}48%,100%{opacity:0}}
 :root[data-theme="eink"] .cflow .cf-card .cf-e{display:none}
 .ihead{margin-bottom:12px}
+/* the Diet page's cards: tap Today for its log; the ring steps through what it shows; a hold arranges the cards */
+.dtoday{cursor:pointer;border-radius:12px;-webkit-user-select:none;user-select:none}
+.dtoday:active{opacity:.7}
+.dring{cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.dring .rk{display:block;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.02em;margin-bottom:1px}
+.dtiles .dtile{position:relative}
+.dtiles.editing .dtile{animation:wiggle .32s ease-in-out infinite alternate;touch-action:none;user-select:none;-webkit-user-select:none}
+.dtiles.editing .dtile:nth-child(2n){animation-delay:-.16s}
+.dtiles.editing .dtile.drag{animation:none;z-index:5;transition:none}
+.dtiles.editing .dtile>*:not(.tx){pointer-events:none}
+.dtile .tx{position:absolute;top:-7px;left:-7px;z-index:3;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.dtile .tx svg{width:12px;height:12px}
+/* panels with a field beside a button: the field gives way, so nothing spills sideways (the Aqua field's ring made the
+   protein panel scroll sideways and cut its edges) */
+.mask .sheet .row>.flabel{min-width:0}
+.mask .sheet .flabel input{max-width:100%}
+/* a panel's form scrolls up and down only (the 44 px tap areas round small buttons made it scroll sideways), with a few px of room so
+   a field's outer ring isn't cut off */
+.mask .form-body{overflow-x:hidden;padding:4px 5px 8px;margin:-4px -5px -8px}

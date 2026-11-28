@@ -6,6 +6,24 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.82a] — 2026-11-29
+
+### 新增 / Added
+- 🍽️ **点「今天」看今天吃了什么**：今天卡左边点一下打开今天的饮食明细，在里面记一笔；右下角的「+」去掉了。下面的记录卡改叫「归档」，只放以前的日子。
+  Tap Today for today's food, and log from there; the "+" in the corner is gone. The records card below is now the Archive, earlier days only.
+- 🍩 **圆环能换成别的营养素**：短按在蛋白质、碳水、总脂肪、蔬菜、总热量之间切换，长按设这一项的每日目标。
+  The ring shows other nutrients: a tap steps through protein, carbs, fat, veg and calories; a hold sets that one's daily target.
+- 🧩 **饮食页和训练页的卡片可以排列**：和统计页一样，长按进入编辑，拖动换位置、× 隐藏、+ 加回来。
+  Arrange the cards on Diet and Training as on Stats: hold to edit, drag to move, × to hide, + to bring back.
+
+### 改进 / Changed
+- 缺口卡点下半部分（柱子）打开「摄入与消耗」，长按留给排列卡片。
+  A tap on the lower half (the bars) of the gap card opens Intake vs burn; the hold now arranges the cards.
+
+### 修复 / Fixed
+- 蛋白质目标面板在水晶胶等主题里会横向滚动、输入框和「i」按钮被裁掉。
+  The protein target panel scrolled sideways in Aqua and other skins, cutting off the field and the "i" button.
+
 ## [v1.81a] — 2026-11-29
 
 ### 新增 / Added
