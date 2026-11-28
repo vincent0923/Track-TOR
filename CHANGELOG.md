@@ -6,6 +6,16 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 
 ---
 
+## [v1.79a] — 2026-11-28
+
+### 新增 / Added
+- 🫧 **三套透明 iPod 主题**（各 120 G）：透明烟灰（烟灰外壳、鼠尾草绿转盘、柠黄中键）、透明柠黄、透明青绿；壳下看得见电路板，顶上有耳机孔。
+  Three clear iPod skins (120 G each): Clear Smoke (a smoky shell, a sage wheel, a lemon centre button), Clear Lemon and Clear Sage, the circuit board and the headphone jack showing through the shell.
+
+### 改进 / Changed
+- 冰蓝水钻、紫晶贴纸、透明宝蓝照概念图重画：多切面水钻、闪粉和立体宝石贴纸、水晶泡泡中键、透明外壳下更细的电路板。
+  Ice Crystal, Lavender Gems and Clear Cobalt redrawn after their concept pictures: faceted rhinestones, glitter with glossy gem stickers and a crystal bubble, a finer circuit board under the clear shell.
+
 ## [v1.78a] — 2026-11-28
 
 ### 新增 / Added

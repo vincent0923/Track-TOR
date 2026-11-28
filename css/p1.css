@@ -2172,8 +2172,36 @@ html:root[data-ipod] :is(.btn,.hgo):active{filter:brightness(.92)}
   box-shadow:0 .7cqw 1.6cqw rgba(80,50,160,.4),0 .2cqw .3cqw rgba(80,50,160,.3),inset 0 -1cqw 1.4cqw rgba(255,190,240,.55),inset 0 .6cqw 1cqw rgba(255,255,255,.55),inset 0 0 0 .2cqw rgba(255,255,255,.5)}
 :root[data-theme="iplav"] .ip-k{text-shadow:0 .15cqw .3cqw rgba(80,50,160,.35)}
 /* clear cobalt: a see-through blue shell with the board under it, a clear thick rim, a cobalt frame, a cobalt wheel */
-:root[data-theme="ipclr"] .ipod.ipod{background:linear-gradient(162deg,rgba(255,255,255,.3) 0%,rgba(255,255,255,.08) 24%,rgba(255,255,255,0) 24.5%) no-repeat,linear-gradient(180deg,rgba(92,116,236,.6) 0%,rgba(66,90,218,.5) 45%,rgba(52,72,200,.46) 100%) no-repeat,var(--ip-deco) 0 0/100% 100% no-repeat,linear-gradient(180deg,#7D92EA 0%,#5A71DA 100%) no-repeat;
-  box-shadow:inset 0 0 0 .6cqw rgba(175,192,255,.5),inset 0 0 1.4cqw .9cqw rgba(120,145,255,.28),inset .9cqw .9cqw 1.2cqw -.6cqw rgba(255,255,255,.45),inset -.6cqw -.8cqw 1.2cqw -.6cqw rgba(20,30,120,.35),0 .5px 1px rgba(20,30,110,.35),0 4px 8px -2px rgba(20,30,110,.3),0 22px 36px -12px rgba(20,30,110,.42)}
-:root[data-theme="ipclr"] .ip-scr{border:2.4cqw solid #3E55CC;border-radius:3cqw;box-shadow:0 .2cqw .4cqw rgba(10,20,90,.4),inset 0 0 0 .2cqw rgba(0,0,0,.2),0 0 0 .2cqw rgba(160,180,255,.4)}
-:root[data-theme="ipclr"] .ip-wheel{background:radial-gradient(120% 90% at 50% 15%,#4258D6 0%,#3349C4 55%,#2A3DB2 100%);box-shadow:inset 0 .3cqw .5cqw rgba(255,255,255,.12),inset 0 -.4cqw .6cqw rgba(0,0,40,.25),0 0 0 .2cqw rgba(15,25,100,.45),0 .6cqw 1.4cqw rgba(10,20,90,.45)}
-:root[data-theme="ipclr"] .ip-ok{background:radial-gradient(100% 100% at 50% 20%,#2C3EB3 0%,#3549C3 60%,#3D52CE 100%);box-shadow:0 0 0 .22cqw rgba(15,25,100,.5),inset 0 .5cqw .7cqw rgba(0,0,40,.35),inset 0 -.3cqw .3cqw rgba(255,255,255,.12)}
+/* the clear shells (cobalt, smoke, lemon, sage): one recipe, each skin gives its tint (--cl-a top, --cl-b bottom), what
+   shows where the board isn't (--cl-base), the clear rim (--cl-rim), the shadow colour (--cl-sh), the frame round the
+   screen (--cl-frame), the wheel and the centre button; the board under the shell is the SVG --ip-deco */
+:root[data-theme="ipclr"]{--cl-a:rgba(92,116,236,.6);--cl-b:rgba(52,72,200,.46);--cl-base:linear-gradient(180deg,#7D92EA 0%,#5A71DA 100%);--cl-rim:rgba(175,192,255,.5);--cl-glow:rgba(120,145,255,.28);--cl-sh:20,30,110;--cl-frame:#3E55CC;
+  --cl-wheel:radial-gradient(120% 90% at 50% 15%,#4258D6 0%,#3349C4 55%,#2A3DB2 100%);--cl-center:radial-gradient(100% 100% at 50% 20%,#2C3EB3 0%,#3549C3 60%,#3D52CE 100%)}
+:root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ipod.ipod{background:linear-gradient(162deg,rgba(255,255,255,.3) 0%,rgba(255,255,255,.08) 24%,rgba(255,255,255,0) 24.5%) no-repeat,linear-gradient(180deg,var(--cl-a) 0%,var(--cl-b) 100%) no-repeat,var(--ip-deco) 0 0/100% 100% no-repeat,var(--cl-base) no-repeat;
+  box-shadow:inset 0 0 0 .6cqw var(--cl-rim),inset 0 0 1.4cqw .9cqw var(--cl-glow),inset .9cqw .9cqw 1.2cqw -.6cqw rgba(255,255,255,.45),inset -.6cqw -.8cqw 1.2cqw -.6cqw rgba(var(--cl-sh),.35),0 .5px 1px rgba(var(--cl-sh),.35),0 4px 8px -2px rgba(var(--cl-sh),.3),0 22px 36px -12px rgba(var(--cl-sh),.42)}
+:root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ip-scr{border:2.4cqw solid var(--cl-frame);border-radius:3cqw;box-shadow:0 .2cqw .4cqw rgba(var(--cl-sh),.4),inset 0 0 0 .35cqw rgba(0,0,0,.28),0 0 0 .2cqw rgba(255,255,255,.3)}
+:root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ip-wheel{background:var(--cl-wheel);box-shadow:inset 0 .3cqw .5cqw rgba(255,255,255,.14),inset 0 -.4cqw .6cqw rgba(0,0,0,.14),0 0 0 .2cqw rgba(var(--cl-sh),.35),0 .6cqw 1.4cqw rgba(var(--cl-sh),.4)}
+:root:is([data-theme="ipclr"],[data-theme="ipsmk"],[data-theme="ipylw"],[data-theme="ipgrn"]) .ip-ok{background:var(--cl-center);box-shadow:0 0 0 .22cqw rgba(var(--cl-sh),.35),inset 0 .5cqw .7cqw rgba(0,0,0,.2),inset 0 -.3cqw .3cqw rgba(255,255,255,.18)}
+
+/* smoke: a grey see-through shell, a sage wheel and a yellow centre button */
+:root[data-theme="ipsmk"]{--bg:#EEF0F2;--glow:none;--card:#FFFFFF;--line:rgba(0,0,0,.07);--sub:#F2F3F4;--seg:#E5E7E9;--dark:linear-gradient(160deg,#55585D 0%,#36383C 100%);--dark-solid:#45474B;--dark-line:rgba(255,255,255,.14);--track:rgba(255,255,255,.22);--ink:#1D1F22;--muted:#5E6268;--ac:#5F8F58;--on-ac:#fff;--ac-soft:rgba(95,143,88,.15);--ac-text:#457640;--st1:rgba(95,143,88,.24);--st2:rgba(95,143,88,.6);--push:#5F8F58;--pull:#E0B12E;--third:#8A8E94;--good:#3E8F5A;--bad:#D24A3C;--sleep:#7C6CD8;
+  --cl-a:rgba(70,72,76,.5);--cl-b:rgba(46,48,52,.56);--cl-base:linear-gradient(180deg,#8A8D92 0%,#6B6E73 100%);--cl-rim:rgba(225,228,232,.45);--cl-glow:rgba(160,165,172,.25);--cl-sh:20,22,26;--cl-frame:#3E4044;
+  --cl-wheel:radial-gradient(120% 90% at 50% 15%,#8DAE86 0%,#7A9E73 55%,#6C9266 100%);--cl-center:radial-gradient(100% 100% at 50% 25%,#F6D85C 0%,#EFCB3F 60%,#E2BC2E 100%);--ip-wl:#FFFFFF;
+  --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
+/* lemon: a clear yellow shell, a yellow wheel */
+:root[data-theme="ipylw"]{--bg:#F1F0EA;--glow:none;--card:#FFFFFF;--line:rgba(60,50,0,.07);--sub:#F6F4EA;--seg:#EEEAD8;--dark:linear-gradient(160deg,#E7C042 0%,#C99D1C 100%);--dark-solid:#D8AE2E;--dark-line:rgba(255,255,255,.2);--track:rgba(255,255,255,.3);--ink:#2A2614;--muted:#6B6448;--ac:#E2B323;--on-ac:#2A2208;--ac-soft:rgba(226,179,35,.18);--ac-text:#8A6A00;--st1:rgba(226,179,35,.26);--st2:rgba(226,179,35,.62);--push:#E2B323;--pull:#5B8FD9;--third:#9C9478;--good:#3E8F5A;--bad:#D24A3C;--sleep:#7C6CD8;
+  --cl-a:rgba(238,206,92,.55);--cl-b:rgba(214,176,48,.5);--cl-base:linear-gradient(180deg,#E9D79A 0%,#CDB56A 100%);--cl-rim:rgba(255,240,170,.55);--cl-glow:rgba(255,225,120,.3);--cl-sh:110,85,10;--cl-frame:#D9BA4E;
+  --cl-wheel:radial-gradient(120% 90% at 50% 15%,#F6CC3A 0%,#EDBB28 55%,#E2AC1C 100%);--cl-center:radial-gradient(100% 100% at 50% 25%,#E3AE1E 0%,#ECBC2A 60%,#F2C634 100%);--ip-wl:#FFFFFF;
+  --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
+/* sage: a clear green shell, a green wheel */
+:root[data-theme="ipgrn"]{--bg:#EDF1EC;--glow:none;--card:#FFFFFF;--line:rgba(20,50,20,.07);--sub:#F1F5F0;--seg:#E2EAE1;--dark:linear-gradient(160deg,#7FA977 0%,#55834F 100%);--dark-solid:#679661;--dark-line:rgba(255,255,255,.18);--track:rgba(255,255,255,.26);--ink:#1B2A1B;--muted:#56685A;--ac:#4F8A47;--on-ac:#fff;--ac-soft:rgba(79,138,71,.15);--ac-text:#3B7234;--st1:rgba(79,138,71,.24);--st2:rgba(79,138,71,.6);--push:#4F8A47;--pull:#E39A3B;--third:#8A9A88;--good:#2E8F5E;--bad:#D24A3C;--sleep:#7C6CD8;
+  --cl-a:rgba(120,168,116,.55);--cl-b:rgba(88,138,84,.52);--cl-base:linear-gradient(180deg,#A9C7A3 0%,#86A880 100%);--cl-rim:rgba(205,235,200,.5);--cl-glow:rgba(150,200,145,.28);--cl-sh:25,60,25;--cl-frame:#6F9B69;
+  --cl-wheel:radial-gradient(120% 90% at 50% 15%,#76A565 0%,#679A57 55%,#5B8D4C 100%);--cl-center:radial-gradient(100% 100% at 50% 25%,#5B8D4C 0%,#659752 60%,#6EA05C 100%);--ip-wl:#FFFFFF;
+  --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
+:root.glass[data-theme="ipsmk"]{--gl-dock:#F3F4F5;--gl-mp:#F3F4F5}
+:root.glass[data-theme="ipylw"]{--gl-dock:#F7F5EC;--gl-mp:#F7F5EC}
+:root.glass[data-theme="ipgrn"]{--gl-dock:#F2F6F1;--gl-mp:#F2F6F1}
+:root[data-theme="ipylw"] .ip-k{text-shadow:0 .15cqw .3cqw rgba(150,110,0,.35)}
+/* lemon: the highlight bar is light, so its words are dark */
+html:root[data-theme="ipylw"] :is(.btn:not(.ghost),.hgo,.pill.ac,.dock .pc,.f-sets i.cur,.cal .dd.today b,.opt[aria-pressed="true"],.preset.on,.thc.on),html:root[data-theme="ipylw"] .dock button[aria-selected="true"]{color:#3A2E00;text-shadow:0 1px 0 rgba(255,255,255,.45)}
+html:root[data-theme="ipylw"] :is(.btn:not(.ghost),.hgo,.dock .pc) svg{filter:none}

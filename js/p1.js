@@ -68,6 +68,9 @@ const THEMES=[{id:"aurora",zh:"草木 · 极光",en:"Meadow · Aurora",price:0,s
   {id:"ipu2",ipod:1,zh:"U2 特别版",en:"U2 Special Edition",price:120,fix:"dark",sw:["#4E5155","#0A0A0B","#C42A22","#FFFFFF"],dz:"亮面黑色机身、红转盘，放在铝合金展示台上",de:"A glossy black body with a red wheel on an aluminium display stand"},
   {id:"ipice",ipod:1,zh:"冰蓝水钻",en:"Ice Crystal",price:120,fix:"light",sw:["#A9CCEC","#E9F1F8","#4F8FCF","#FFFFFF"],dz:"冰蓝机身、拉丝银转盘、一圈圈水钻",de:"An ice-blue body, a spun-silver wheel, rings of rhinestones"},
   {id:"iplav",ipod:1,zh:"紫晶贴纸",en:"Lavender Gems",price:120,fix:"light",sw:["#B7A5EE","#C9BCF4","#8A6CE8","#F05BA6"],dz:"闪粉紫机身、水晶中键、宝石和星星贴纸",de:"A glittery lavender body, a crystal centre button, gem and star stickers"},
+  {id:"ipsmk",ipod:1,zh:"透明烟灰",en:"Clear Smoke",price:120,fix:"light",sw:["#55585D","#7A9E73","#EFCB3F","#EEF0F2"],dz:"烟灰透明外壳、看得见电路板、鼠尾草绿转盘、柠黄中键",de:"A smoky see-through shell over the circuit board, a sage wheel, a lemon centre button"},
+  {id:"ipylw",ipod:1,zh:"透明柠黄",en:"Clear Lemon",price:120,fix:"light",sw:["#EECE5C","#EDBB28","#5E5A3C","#F1F0EA"],dz:"柠黄透明外壳、看得见电路板、黄转盘",de:"A lemon see-through shell over the circuit board, a yellow wheel"},
+  {id:"ipgrn",ipod:1,zh:"透明青绿",en:"Clear Sage",price:120,fix:"light",sw:["#78A874","#679A57","#3E5640","#EDF1EC"],dz:"青绿透明外壳、看得见电路板、绿转盘",de:"A sage see-through shell over the circuit board, a green wheel"},
   {id:"ipclr",ipod:1,zh:"透明宝蓝",en:"Clear Cobalt",price:120,fix:"light",sw:["#3E55C8","#2A3BB0","#DDE3F7","#7FA2FF"],dz:"透明宝蓝外壳、看得见电路板、宝蓝转盘",de:"A see-through cobalt shell over the circuit board, a cobalt wheel"},
   {id:"clay",gloss:1,zh:"黏土 · 薄荷",en:"Clay · Mint",price:90,fix:"light",sw:["#E3E1DA","#FFFFFF","#C7C5BD","#7CE8C4"],dz:"斜投影积木、网格纸、发光圆环",de:"Blocks with slanted shadows, grid paper, a glowing ring"}];
 /* ---------- the app icon: a paper envelope with a scratch card, dyed in the look's own colour (tools/icons.py),
@@ -454,22 +457,32 @@ const IP_ART={
       +star(50.6,97.4,1.1,8,"#FFFFFF","#E3DEF2","#B5ACCF")+star(56.4,96.6,2.3,-10,"#C9A6FA","#9C72EA","#7550C9")},
   /* clear cobalt: the circuit board under the shell (the shell itself, a see-through blue, is painted over it in CSS):
      two steel clips under the screen, chips, rows of tiny parts, traces, screws and a flex cable */
-  ipclr:()=>{const r=ipRnd(37);let g='<rect x="2.6" y="50.6" width="56.6" height="50.4" rx="3.2" fill="#2C3D96" opacity=".85"/>';
-    const chip=(x,y,w,h,c)=>{let p='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx=".25" fill="'+(c||"#141E5A")+'"/><rect x="'+(x+.25)+'" y="'+(y+.25)+'" width="'+(w-.5)+'" height="'+(h-.5)+'" rx=".2" fill="none" stroke="#2A3A86" stroke-width=".12"/>';
-      for(let i=.6;i<w-.3;i+=.55)p+='<rect x="'+(x+i).toFixed(2)+'" y="'+(y-.35)+'" width=".22" height=".35" fill="#A7B3D8"/><rect x="'+(x+i).toFixed(2)+'" y="'+(y+h)+'" width=".22" height=".35" fill="#A7B3D8"/>';
-      for(let i=.6;i<h-.3;i+=.55)p+='<rect x="'+(x-.35)+'" y="'+(y+i).toFixed(2)+'" width=".35" height=".22" fill="#A7B3D8"/><rect x="'+(x+w)+'" y="'+(y+i).toFixed(2)+'" width=".35" height=".22" fill="#A7B3D8"/>';return p};
+  ipclr:()=>ipBoard("#2C3D96","#141E5A","#3B4FA8","#A7B3D8"),
+  ipsmk:()=>ipBoard("#2E3033","#121315","#55585E","#B8BCC4"),
+  ipylw:()=>ipBoard("#5E5A3C","#24221A","#857E52","#D8CFA0"),
+  ipgrn:()=>ipBoard("#3E5640","#1A241B","#62806A","#C4D4C2")};
+/* the board under a clear shell, in the board's own colours: board, chips, traces, pins */
+function ipBoard(B,C,TR,PN){const r=ipRnd(37);let g='<rect x="2.6" y="50.6" width="56.6" height="50.4" rx="3.2" fill="'+B+'" opacity=".85"/>';
+    const chip=(x,y,w,h,c)=>{let p='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx=".25" fill="'+(c||C)+'"/><rect x="'+(x+.25)+'" y="'+(y+.25)+'" width="'+(w-.5)+'" height="'+(h-.5)+'" rx=".2" fill="none" stroke="'+TR+'" stroke-width=".12"/>';
+      for(let i=.6;i<w-.3;i+=.55)p+='<rect x="'+(x+i).toFixed(2)+'" y="'+(y-.35)+'" width=".22" height=".35" fill="'+PN+'"/><rect x="'+(x+i).toFixed(2)+'" y="'+(y+h)+'" width=".22" height=".35" fill="'+PN+'"/>';
+      for(let i=.6;i<h-.3;i+=.55)p+='<rect x="'+(x-.35)+'" y="'+(y+i).toFixed(2)+'" width=".35" height=".22" fill="'+PN+'"/><rect x="'+(x+w)+'" y="'+(y+i).toFixed(2)+'" width=".35" height=".22" fill="'+PN+'"/>';return p};
     /* traces */
     for(let k=0;k<46;k++){let x=4+r()*54,y=52+r()*47;let d="M"+x.toFixed(1)+" "+y.toFixed(1);for(let s=0;s<3;s++){if(r()<.5)x=Math.min(58,Math.max(3.5,x+(r()-.5)*14));else y=Math.min(100,Math.max(51.5,y+(r()-.5)*12));d+="L"+x.toFixed(1)+" "+y.toFixed(1)}
-      g+='<path d="'+d+'" fill="none" stroke="#3B4FA8" stroke-width=".16" opacity=".85"/>'}
-    g+=chip(5,54,9,6.5)+chip(46.5,54.5,8.5,5)+chip(44.5,86,10.5,10.5,"#111A44")+chip(6,82,6,5)+chip(48,66,5,4)+chip(5.5,66,5.5,7);
+      g+='<path d="'+d+'" fill="none" stroke="'+TR+'" stroke-width=".16" opacity=".85"/>'}
+    g+=chip(5,54,9,6.5)+chip(46.5,54.5,8.5,5)+chip(44.5,86,10.5,10.5)+chip(6,82,6,5)+chip(48,66,5,4)+chip(5.5,66,5.5,7);
     /* tiny parts in rows */
-    for(let k=0;k<160;k++){const x=3.5+r()*54.5,y=52+r()*48;if(Math.hypot(x-30.9,y-75)<19.5)continue;const v=r()<.5;g+='<rect x="'+x.toFixed(2)+'" y="'+y.toFixed(2)+'" width="'+(v?.35:.75)+'" height="'+(v?.75:.35)+'" fill="'+(r()<.3?"#C9A46A":"#C9D1E8")+'" opacity=".9"/>'}
+    for(let k=0;k<420;k++){const x=3.5+r()*54.5,y=52+r()*48;if(Math.hypot(x-30.9,y-75)<19.5)continue;const v=r()<.5;g+='<rect x="'+x.toFixed(2)+'" y="'+y.toFixed(2)+'" width="'+(v?.35:.75)+'" height="'+(v?.75:.35)+'" fill="'+(r()<.3?"#C9A46A":"#C9D1E8")+'" opacity=".9"/>'}
+    /* metal shields over the radio and power parts, and a few round capacitors */
+    [[14.5,53.2,6.5,4.2],[50,72,6.6,5.4],[4.4,90.5,7,5.2],[40.5,52.4,4.8,3.4]].forEach(([x,y,w,h])=>{g+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx=".3" fill="#AEB4BE" opacity=".9"/><rect x="'+(x+.35)+'" y="'+(y+.35)+'" width="'+(w-.7)+'" height="'+(h-.7)+'" rx=".2" fill="#C9CED6" opacity=".9"/>';for(let i=1;i<w-.5;i+=1.1)g+='<circle cx="'+(x+i).toFixed(2)+'" cy="'+(y+.2)+'" r=".12" fill="#7E8590"/>'});
+    for(let k=0;k<9;k++){const x=4+r()*53,y=53+r()*46;if(Math.hypot(x-30.9,y-75)<20.5)continue;g+='<circle cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r=".55" fill="#B9BEC6"/><circle cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r=".3" fill="#6E747E"/>'}
     /* screws, clips, connector, flex */
     [[5,52.6],[56.8,52.6],[5,98.6],[56.8,98.6]].forEach(([x,y])=>g+='<circle cx="'+x+'" cy="'+y+'" r=".95" fill="#B7C0D8"/><circle cx="'+x+'" cy="'+y+'" r=".5" fill="#6A7698"/><path d="M'+(x-.4)+' '+y+'H'+(x+.4)+'" stroke="#2A3466" stroke-width=".15"/>');
-    [[14.2,49.6],[43.6,49.6]].forEach(([x,y])=>g+='<rect x="'+x+'" y="'+y+'" width="4" height="2.6" rx=".3" fill="#C3CBE0"/><circle cx="'+(x+2)+'" cy="'+(y+1.3)+'" r=".55" fill="#14215E"/>');
-    g+='<rect x="22" y="97" width="17.8" height="2.6" rx=".4" fill="#0E1847"/>';for(let i=0;i<22;i++)g+='<rect x="'+(22.6+i*.76).toFixed(2)+'" y="97.5" width=".38" height="1.6" fill="#C9A46A"/>';
+    [[14.2,49.6],[43.6,49.6]].forEach(([x,y])=>g+='<rect x="'+x+'" y="'+y+'" width="4" height="2.6" rx=".3" fill="#C3CBE0"/><circle cx="'+(x+2)+'" cy="'+(y+1.3)+'" r=".55" fill="'+B+'"/>');
+    g+='<rect x="22" y="97" width="17.8" height="2.6" rx=".4" fill="'+C+'"/>';for(let i=0;i<22;i++)g+='<rect x="'+(22.6+i*.76).toFixed(2)+'" y="97.5" width=".38" height="1.6" fill="#C9A46A"/>';
     g+='<path d="M50 52.2H57.6V56" fill="none" stroke="#C99A4A" stroke-width="1.6" opacity=".55"/>';
-    return '<g>'+g+'</g>'}};
+    /* the headphone jack and its steel sleeve at the top edge, seen through the shell */
+    g+='<rect x="8.6" y="-.2" width="3.4" height="3.6" rx=".5" fill="#9DA3AD"/><rect x="9.1" y="-.2" width="2.4" height="3.2" rx=".4" fill="#D9DDE3"/><rect x="9.6" y="-.2" width="1.4" height="2.8" rx=".3" fill="#5D636D"/>';
+    return '<g>'+g+'</g>'}
 /* the set being done sits in the middle of its row; done sets slide off to the left and fade (CSS mask) */
 function setsCenter(){const v=$(".f-sets"),t=v&&v.firstElementChild;if(!t)return;
   const c=t.querySelector(".cur")||[...t.querySelectorAll(".dn")].pop()||t.firstElementChild,ip=ipodOn(),
@@ -945,7 +958,7 @@ const SUNMOON='<svg class="sunmoon" viewBox="0 0 34 18" aria-label="'+T('亮暗�
 const thModes=th=>th.fix?[th.fix]:["light","dark"];
 function thPages(th,mode){return [].concat(...(mode?[mode]:thModes(th)).map(m=>[0,1,2].map(i=>({m,i}))))}
 /* TH_V: bump when tools/thumbs.js remakes the pictures (the service worker keeps images until their address changes) */
-const TH_V=10;
+const TH_V=11;
 const thPage=(th,p)=>'background-image:url(img/th/'+th.id+'-'+p.m+'.webp?v='+TH_V+');background-position:'+["0%","50%","100%"][p.i]+' 0';
 /* the stack: the first page on top, the rest stepped right and down behind it */
 function thStack(th,big,mode){const ps=thPages(th,mode);
