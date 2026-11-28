@@ -78,12 +78,16 @@ async function spCmd(kind,back){const s=SP.st;buzz(8);if(typeof SFX!=="undefined
   if(kind==="toggle"){setTimeout(spPull,400);return}const was=s&&s.title;[700,1600,3000].forEach(t=>setTimeout(()=>{if(!SP.st||SP.st.title===was)spPull()},t))}
 let spVolT=0;function spVol(v){if(!SP.st)return;SP.st.vol=v;if(SP.demo)return;if(SP.free){frAudio().volume=v/100;return}clearTimeout(spVolT);spVolT=setTimeout(()=>spApi("/me/player/volume?volume_percent="+v,"PUT").catch(()=>{}),250)}
 
-/* ---------- free music, no account: SomaFM radio (listener-supported, no ads; ‹ › change station) and Audius (free
+/* ---------- free music, no account: internet radio (‹ › change station) and Audius (free
    streaming of artists' own uploads; ‹ › change track). Plays here in an <audio>, with the phone's media controls.
    Mode "free" (tracktor-p1-music); the last channel in tracktor-sp-free ---------- */
-const FR_CH=[["soma","groovesalad","Groove Salad","png?v=1780812672"],["soma","beatblender","Beat Blender","png?v=1781039119"],["soma","thetrip","The Trip","jpg?v=1674955397"],["soma","lush","Lush","jpg?v=1674955397"],["soma","fluid","Fluid","jpg?v=1674955396"],["soma","deepspaceone","Deep Space One","gif?v=1674955392"],["soma","dronezone","Drone Zone","jpg?v=1781033109"],
+/* radio: streams checked to answer an ordinary phone (SomaFM turned out to refuse them); rp = the Radio Paradise
+   channel whose now-playing it can read */
+const FR_CH=[["radio","https://stream.chillhouse-live.com/live","Chillhouse Live"],["radio","https://0nlineradio.radioho.st/technolovers-deep-house","Deep House"],
+  ["radio","https://0nlineradio.radioho.st/lounge-ibiza-chillout-lounge","Ibiza Chillout"],["radio","https://stream.nightride.fm/chillsynth.mp3","Chillsynth"],
+  ["radio","https://stream.nightride.fm/datawave.mp3","Datawave"],["radio","https://stream.radioparadise.com/mellow-128","Radio Paradise Mellow",1],["radio","https://stream.radioparadise.com/global-128","Radio Paradise Global",3],
   ["aud","melodic house","Melodic House"],["aud","organic house","Organic House"],["aud","deep house","Deep House"],["aud","downtempo","Downtempo"],["aud","chillwave","Chillwave"],["aud","melodic techno","Melodic Techno"]]
-  .map(([k,id,name,ext])=>({k,id,name,uri:k+":"+id,art:k==="soma"?"https://api.somafm.com/logos/120/"+id+"120."+ext:"",hue:k==="aud"?(id.length*47)%360:null}));
+  .map(([k,id,name,rp])=>({k,id,name,rp,uri:k+":"+id,art:"",hue:(name.length*53+id.length*11)%360}));
 const FR={a:null,ch:null,q:[],qi:0,meta:0,host:"https://api.audius.co"};
 const frOn=()=>spMode()==="free";
 function frLast(){let u="";try{u=localStorage.getItem(SP_K+"-free")||""}catch(e){}return FR_CH.find(c=>c.uri===u)||FR_CH[0]}
@@ -91,8 +95,7 @@ function frAudio(){if(FR.a)return FR.a;const a=FR.a=new Audio();a.preload="none"
   const st=()=>{const s=SP.st;if(!s)return;s.playing=!a.paused;s.dur=isFinite(a.duration)?a.duration*1000:0;s.pos=a.currentTime*1000;SP.at=Date.now();spPaint();frSession()};
   ["play","pause","loadedmetadata","durationchange"].forEach(k=>a.addEventListener(k,st));
   a.addEventListener("ended",()=>frStep(1));
-  a.addEventListener("error",()=>{const c=FR.ch;if(!c)return;if(c.k==="soma"&&(FR.retry||0)<2){FR.retry=(FR.retry||0)+1;a.src="https://ice"+(FR.retry===1?2:1)+".somafm.com/"+c.id+"-128-mp3";a.play().catch(()=>{});return}
-    if(c.k==="aud"){frStep(1);return}toast(T("这个电台连不上，换一个试试","Couldn't reach that station; try another"))});
+  a.addEventListener("error",()=>{const c=FR.ch;if(!c||!a.getAttribute("src"))return;if(c.k==="aud"){frStep(1);return}toast(T("这个电台连不上，换一个试试","Couldn't reach that station; try another"))});
   if(SP.st&&SP.st.vol!=null)a.volume=SP.st.vol/100;return a}
 /* the lock screen and the notification shade get the title, the art and the buttons */
 function frSession(){if(!("mediaSession" in navigator)||!SP.st)return;const s=SP.st;
@@ -106,21 +109,21 @@ async function frQueue(c){let list=[];try{list=await frAud("/v1/tracks/search?qu
   list=list.filter(t=>t&&t.is_streamable!==false&&t.duration>90&&t.duration<1500);for(let i=list.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[list[i],list[j]]=[list[j],list[i]]}return list}
 function frSetTrack(t){const s=SP.st,a=frAudio();Object.assign(s,{id:null,title:t.title,artist:t.user&&t.user.name||"",art:(t.artwork&&(t.artwork["480x480"]||t.artwork["150x150"]))||"",dur:(t.duration||0)*1000,pos:0});
   a.src=FR.host+"/v1/tracks/"+t.id+"/stream?app_name=bG";a.play().catch(()=>{});SP.at=Date.now();spPaint();frSession()}
-async function frSoma(){const c=FR.ch;if(!c||c.k!=="soma")return;try{const j=await (await fetch("https://somafm.com/songs/"+c.id+".json")).json(),x=j.songs&&j.songs[0];
-  if(x&&SP.st&&FR.ch===c){SP.st.title=x.title||c.name;SP.st.artist=x.artist||"";spPaint();frSession()}}catch(e){}}
+async function frMeta(){const c=FR.ch;if(!c||!c.rp)return;try{const j=await (await fetch("https://api.radioparadise.com/api/now_playing?chan="+c.rp)).json();
+  if(j&&SP.st&&FR.ch===c){SP.st.title=j.title||c.name;SP.st.artist=j.artist||"";if(j.cover_med)SP.st.art=j.cover_med;spPaint();frSession()}}catch(e){}}
 async function frPlay(c){FR.ch=c;FR.retry=0;clearInterval(FR.meta);try{localStorage.setItem(SP_K+"-free",c.uri)}catch(e){}frSessionBind();const a=frAudio();
-  SP.st=Object.assign(SP.st||{},{title:c.name,artist:c.k==="soma"?"SomaFM":"Audius",art:c.art,dur:0,pos:0,playing:false,ctx:c.uri,device:T("博G","bG"),shuf:false,rep:"off"});spPaint();
-  if(c.k==="soma"){a.src="https://ice4.somafm.com/"+c.id+"-128-mp3";a.play().catch(()=>toast(T("点播放键开始","Tap play to start")));frSoma();FR.meta=setInterval(()=>{if(!document.hidden)frSoma()},20000);return}
+  SP.st=Object.assign(SP.st||{},{title:c.name,artist:c.k==="radio"?T("电台","Radio"):"Audius",art:c.art,dur:0,pos:0,playing:false,ctx:c.uri,device:T("博G","bG"),shuf:false,rep:"off"});spPaint();
+  if(c.k==="radio"){a.src=c.id;a.play().catch(()=>toast(T("点播放键开始","Tap play to start")));if(c.rp){frMeta();FR.meta=setInterval(()=>{if(!document.hidden)frMeta()},20000)}return}
   FR.q=await frQueue(c);FR.qi=0;if(FR.ch!==c)return;if(!FR.q.length){toast(T("Audius 现在连不上","Audius isn't answering"));return}frSetTrack(FR.q[0])}
 function frStep(d){const c=FR.ch||frLast();
-  if(c.k==="soma"){const R=FR_CH.filter(x=>x.k==="soma"),i=R.indexOf(c);frPlay(R[(i+d+R.length)%R.length]);return}
+  if(c.k==="radio"){const R=FR_CH.filter(x=>x.k==="radio"),i=R.indexOf(c);frPlay(R[(i+d+R.length)%R.length]);return}
   if(d<0&&FR.a&&FR.a.currentTime>4){FR.a.currentTime=0;return}
   if(!FR.q.length){frPlay(c);return}FR.qi=(FR.qi+d+FR.q.length)%FR.q.length;frSetTrack(FR.q[FR.qi])}
 function frCmd(kind){const a=frAudio();if(kind==="toggle"){if(!FR.ch||!a.src){frPlay(frLast());return}if(a.paused)a.play().catch(()=>{});else a.pause();return}
   if(kind==="next"||kind==="prev"){frStep(kind==="next"?1:-1);return}}
 /* the channel grid in the full player */
 function frGrid(f){const cur=FR.ch&&FR.ch.uri,sec=(k,t)=>'<p class="eyebrow fr-h">'+t+'</p>'+FR_CH.map((c,i)=>c.k!==k?'':'<button class="sp-cell'+(c.uri===cur?' on':'')+'" type="button" data-fi="'+i+'"><span class="sp-cover"'+(c.art?' style="background-image:url(\''+esc(c.art)+'\')"':' style="background:linear-gradient(135deg,hsl('+c.hue+' 70% 60%),hsl('+(c.hue+50)+' 60% 40%))"')+'>'+(c.art?'':SPI.note)+(c.uri===cur?'<i class="sp-eq"><i></i><i></i><i></i></i>':'')+'</span><span class="sp-name">'+esc(c.name)+'</span></button>').join("");
-  f.innerHTML='<div class="sp-grid">'+sec("soma",T("电台 · SomaFM","Radio · SomaFM"))+sec("aud",T("可切歌 · Audius","Skippable · Audius"))+'</div><div class="sp-plf"><span></span><button class="circ sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button></div>';
+  f.innerHTML='<div class="sp-grid">'+sec("radio",T("电台","Radio"))+sec("aud",T("可切歌 · Audius","Skippable · Audius"))+'</div><div class="sp-plf"><span></span><button class="circ sp-x" type="button" data-spback aria-label="'+T('返回播放器','Back to the player')+'">'+ICON.x+'</button></div>';
   f.querySelectorAll("[data-fi]").forEach(b=>b.addEventListener("click",()=>{buzz(10);frPlay(FR_CH[+b.dataset.fi]);frGrid(f)}));
   f.querySelector("[data-spback]").addEventListener("click",()=>{buzz(6);spPaintSheet()})}
 
@@ -272,7 +275,7 @@ async function spPlayList(p,back){buzz(10);if(typeof SFX!=="undefined")SFX.tap()
 const SP_PASTE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M16 5h1.5A2.5 2.5 0 0 1 20 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-11A2.5 2.5 0 0 1 6.5 5H8"/></svg>';
 function openMusic(){const mode=spMode(),con=!!(SP.tok&&mode==="on"),cid=spCid();
   const src='<div class="mode-tabs" role="group" style="margin-bottom:14px">'+[["",T("关","Off")],["free",T("免费电台","Free radio")],["on","Spotify"]].map(([v,l])=>'<button type="button" data-msrc="'+v+'" class="'+((mode===v||(v==="on"&&mode==="demo"))?"active":"")+'">'+l+'</button>').join("")+'</div>'
-    +'<p class="calc-msg" data-freehint'+(mode==="free"?'':' hidden')+'>'+T("SomaFM 电台和 Audius 的歌，免费、不用登录，在博G 里直接播放；歌单按钮里选台，‹ › 换台或切歌。","SomaFM radio and Audius tracks, free with no sign-in, playing right here; pick a channel under Playlists, ‹ › changes station or track.")+'</p>';
+    +'<p class="calc-msg" data-freehint'+(mode==="free"?'':' hidden')+'>'+T("网络电台和 Audius 的歌，免费、不用登录，在博G 里直接播放；歌单按钮里选台，‹ › 换台或切歌。","Internet radio and Audius tracks, free with no sign-in, playing right here; pick a channel under Playlists, ‹ › changes station or track.")+'</p>';
   const body=src+'<label class="flabel">Client ID<span class="pastef"><input id="spcid" autocomplete="off" spellcheck="false" placeholder="'+T("粘贴 Spotify 开发者后台里的 Client ID","Paste the Client ID from the Spotify developer dashboard")+'" value="'+esc(cid)+'"><button type="button" class="pastebtn" data-sppaste aria-label="'+T("粘贴","Paste")+'">'+SP_PASTE+'</button></span></label>'
     +'<p class="calc-msg">'+T("控制播放需要 Spotify Premium。","Controlling playback needs Spotify Premium.")+'</p>'
     +(con?'<p class="wxnow">'+SPI.note+T('已连接 Spotify','Spotify connected')+'</p>':'')
@@ -296,7 +299,7 @@ async function spMdCovers(){if(spMdCovers.done||typeof MD_COVERS==="undefined")r
   try{const r=await spApi("/me/player/recently-played?limit=30"),seen=new Set();
     ((r&&r.items)||[]).forEach(it=>{const u=spCover(it.track&&it.track.album&&it.track.album.images);if(u&&!seen.has(u)&&seen.size<14){seen.add(u);const im=new Image();im.crossOrigin="anonymous";im.src=u;MD_COVERS.push(im)}})}
   catch(e){spMdCovers.done=false}}
-function spStart(){spStop();SP.demo=spMode()==="demo";SP.free=frOn();if(SP.free){const c=frLast();SP.st={title:c.name,artist:c.k==="soma"?"SomaFM":"Audius",art:c.art,dur:0,pos:0,playing:false,vol:70,device:T("博G","bG"),ctx:c.uri,shuf:false,rep:"off"};SP.at=Date.now();spPaint();SP.poll=setInterval(()=>{if(!document.hidden)spTick()},1000);return}if(SP.demo){SP.st=Object.assign({},SP_DEMO);SP.at=Date.now()}
+function spStart(){spStop();SP.demo=spMode()==="demo";SP.free=frOn();if(SP.free){const c=frLast();SP.st={title:c.name,artist:c.k==="radio"?T("电台","Radio"):"Audius",art:c.art,dur:0,pos:0,playing:false,vol:70,device:T("博G","bG"),ctx:c.uri,shuf:false,rep:"off"};SP.at=Date.now();spPaint();SP.poll=setInterval(()=>{if(!document.hidden)spTick()},1000);return}if(SP.demo){SP.st=Object.assign({},SP_DEMO);SP.at=Date.now()}
   else if(!(spMode()==="on"&&SP.tok)){spPaint();return}
   spPaint();if(!SP.demo){spPull();spMdCovers()}
   SP.poll=setInterval(()=>{if(document.hidden)return;const s=SP.st;if(SP.demo&&s&&s.playing&&spNow()>=s.dur){s.pos=0;SP.at=Date.now()}
