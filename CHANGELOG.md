@@ -13,6 +13,8 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
   Tap Today for today's food, and log from there; the "+" in the corner is gone. The records card below is now the Archive, earlier days only.
 - 🍩 **圆环能换成别的营养素**：短按在蛋白质、碳水、总脂肪、蔬菜、总热量之间切换，长按设这一项的每日目标。
   The ring shows other nutrients: a tap steps through protein, carbs, fat, veg and calories; a hold sets that one's daily target.
+- 🎯 **长按目标圆环直接记一笔**：统计页目标里的引体（主项）、腰围、体重，长按打开手动记录；减脂是算出来的，长按没有反应。
+  Hold a goal ring to log it: pull-ups (the main move), waist and weight on Stats open their manual entry; fat loss is worked out, so a hold does nothing.
 - 🧩 **饮食页和训练页的卡片可以排列**：和统计页一样，长按进入编辑，拖动换位置、× 隐藏、+ 加回来。
   Arrange the cards on Diet and Training as on Stats: hold to edit, drag to move, × to hide, + to bring back.
 

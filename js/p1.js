@@ -962,14 +962,14 @@ function deltaOf(m,pts,days){days=days==null?30:days;if(pts.length<2)return "";c
   const good=(d>0)===!!m.up;return '<span class="td" style="color:'+(good?"var(--good)":"var(--bad)")+'">'+(d>0?"↑ ":"↓ ")+Math.abs(d).toFixed(m.dec)+' '+m.unit+' · '+span+'</span>'}
 function goalsHtml(){const st=state.settings,gap=gapAllTime();
   const pu=pullSeries(),wt=avg7(wtMerged()),wz=series("waist");
-  const G=[{k:mainEx().id==="pullup"?"pullups":"main:"+mainEx().id,n:mainName().replace(/^标准/,"").replace(/^Strict /,""),c:"var(--pull)",cur:pu.length?pu[pu.length-1].y:null,start:0,tg:+st.p||null,u:mainUnit()},
-    {k:"waist",n:T("腰围","Waist"),c:"var(--ac)",cur:wz.length?wz[wz.length-1].y:null,start:wz.length?wz[0].y:null,tg:+st.z||null,u:"cm"},
-    {k:"weight",n:T("体重","Weight"),c:"var(--sleep)",cur:wt.length?+wt[wt.length-1].y.toFixed(1):null,start:wt.length?wt[0].y:null,tg:+st.w||null,u:"kg"},
+  const G=[{k:mainEx().id==="pullup"?"pullups":"main:"+mainEx().id,rec:"pullups",n:mainName().replace(/^标准/,"").replace(/^Strict /,""),c:"var(--pull)",cur:pu.length?pu[pu.length-1].y:null,start:0,tg:+st.p||null,u:mainUnit()},
+    {k:"waist",rec:"waist",n:T("腰围","Waist"),c:"var(--ac)",cur:wz.length?wz[wz.length-1].y:null,start:wz.length?wz[0].y:null,tg:+st.z||null,u:"cm"},
+    {k:"weight",rec:"weight",n:T("体重","Weight"),c:"var(--sleep)",cur:wt.length?+wt[wt.length-1].y.toFixed(1):null,start:wt.length?wt[0].y:null,tg:+st.w||null,u:"kg"},
     {k:"fat",n:T("减脂","Fat loss"),c:"#FFB020",cur:gap?+(gap.s/7700).toFixed(1):null,start:0,tg:+st.fat||null,u:"kg"}];
   return '<section class="dark"><div class="row" style="margin-bottom:14px"><p class="eyebrow sp">'+T('目标','Goals')+'</p></div><div class="goals4">'+G.map(g=>{
     const pct=g.tg&&g.cur!=null&&g.start!=null&&g.start!==g.tg?Math.max(0,Math.min(1,(g.cur-g.start)/(g.tg-g.start))):0;
     if(g.tg&&g.cur!=null)milestone(g.k,pct*100,g.n);
-    return '<button data-act="goal"><span class="ring">'+ringSvg(66,7,pct,g.c,"var(--track)")+'<span class="rl"><b class="n" style="font-size:15px;font-weight:800">'+(g.tg?Math.round(pct*100)+"%":"–")+'</b></span></span>'
+    return '<button data-act="goal"'+(g.rec?' data-rec="'+g.rec+'"':'')+'><span class="ring">'+ringSvg(66,7,pct,g.c,"var(--track)")+'<span class="rl"><b class="n" style="font-size:15px;font-weight:800">'+(g.tg?Math.round(pct*100)+"%":"–")+'</b></span></span>'
       +'<span><span class="gn">'+g.n+'</span><br><span class="gv n">'+(g.cur==null?"–":g.cur+" "+g.u)+'</span></span></button>'}).join("")+'</div></section>'}
 /* tiles: long-press one to edit (drag to reorder, × to hide; the floating + brings hidden ones back, ✓ finishes).
    settings.tiles = {order:[k…], hidden:[k…]}; a COROS item switched off in sync settings stays hidden too. */
@@ -987,7 +987,10 @@ function renderProgView(){const v=$("#v-prog"),{shown,hidden}=tileList();
       +(tileEdit?'<span class="tx" data-act="thide" data-k="'+m.k+'" role="button" aria-label="'+T('隐藏','Hide')+'">'+ICON.x+'</span>':'')+'</button>'}).join("");
   v.innerHTML=goalsHtml()+'<div class="bento'+(tileEdit?' editing':'')+'">'+tiles+'</div>'
     +(tileEdit?'<div class="tilebar">'+(hidden.length?'<button class="fsreset" data-act="tadd" aria-label="'+T('加回图表','Add a chart back')+'">'+ICON.plus+'</button>':'')+'<button class="fsreset" data-act="tdone" aria-label="'+T('完成','Done')+'">'+ICON.check+'</button></div>':'');
-  animateRings(v);tileBind();if(!tileEdit&&$('.fstack[data-fs="mainst"]'))fsBind("mainst",MAIN_FS)}
+  animateRings(v);tileBind();goalHolds(v);if(!tileEdit&&$('.fstack[data-fs="mainst"]'))fsBind("mainst",MAIN_FS)}
+/* a goal ring held opens its manual log (pull-ups or the main move, waist, weight); fat loss is worked out, so it has none */
+let goalHeld=0;
+function goalHolds(v){v.querySelectorAll(".goals4 [data-act=goal]").forEach(b=>holdOpen(b,()=>{goalHeld=Date.now();if(b.dataset.rec)openRecord(b.dataset.rec)}))}
 function tileSave(cfg){state.settings.tiles=cfg;lsSave()}
 function tileBind(){const box=$("#v-prog .bento");if(!box)return;let tm=0,drag=null;
   /* long-press to edit */
@@ -1246,7 +1249,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="arradd"){const id=b.dataset.arr,{hidden}=arrList(id);openSheet('<div class="sh-h"><h3>'+T('加回卡片','Add a card back')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div><div class="setlist">'+hidden.map(m=>'<button class="opt" data-act="arrshow" data-arr="'+id+'" data-k="'+m.k+'"><span class="sp">'+T(m.zh,m.en)+'</span>'+ICON.plus+'</button>').join("")+'</div>')}
   else if(a==="arrshow"){const id=b.dataset.arr,c=arrCfg(id);c.hidden=c.hidden.filter(k=>k!==b.dataset.k);arrSave(id,c);closeSheet();ARR[id].render()}
   else if(a==="arrdone"){const id=arrEdit;arrEdit=null;SFX.tap();if(id)ARR[id].render()}
-  else if(a==="goal")bridge("goals");
+  else if(a==="goal"){if(Date.now()-goalHeld<800)return;bridge("goals")}
   else if(a==="coins")coinSheet(false);
   else if(a==="shop"){const up=b.closest("#sheet")?CUR_SHEET:null;coinSheet(true);SHEET_UP=up}
   else if(a==="go"){if(b.closest("#sheet")&&CUR_SHEET){const cur=CUR_SHEET,up=SHEET_UP;P1_BACK=()=>{cur();SHEET_UP=up}}bridge(b.dataset.to)}
