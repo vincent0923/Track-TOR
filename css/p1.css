@@ -1934,7 +1934,7 @@ html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box
 :root[data-theme="ipc"]{--bg:#EEF0F3;--glow:none;--card:#FFFFFF;--line:rgba(0,0,0,.06);--sub:#F2F3F5;--seg:#E6E8EB;--dark:linear-gradient(160deg,#3A3B3F 0%,#232427 100%);--dark-solid:#2A2B2E;--dark-line:rgba(255,255,255,.1);--track:rgba(255,255,255,.18);--ink:#1C1C1E;--muted:#6B6C71;--ac:#2F7BEA;--on-ac:#fff;--ac-soft:rgba(47,123,234,.13);--ac-text:#1E63CC;--st1:rgba(47,123,234,.22);--st2:rgba(47,123,234,.58);--push:#2F7BEA;--pull:#E8572E;--third:#8A8D93;--good:#2E9B5E;--bad:#D93B30;--sleep:#7C6CD8;
   --ip-body:linear-gradient(180deg,#FCFCFB 0%,#F1F1EF 55%,#E6E6E4 100%);--ip-edge:inset 0 2px 0 #fff,inset 0 -3px 6px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.07),0 24px 40px -18px rgba(30,40,60,.35);--ip-wheel:radial-gradient(circle at 50% 30%,#DEDFE1 0%,#CFD0D3 100%);--ip-wl:#FFFFFF;--ip-center:linear-gradient(180deg,#FFFFFF 0%,#F0F0F0 100%);--ip-bezel:#4A4F56;
   --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
-:root[data-theme="ipc"][data-mode="dark"]{--bg:#0F0F11;--card:#1C1C1E;--line:rgba(255,255,255,.07);--sub:#242427;--seg:#242427;--dark:linear-gradient(160deg,#C2302A 0%,#8E1F1A 100%);--dark-solid:#A6271F;--ink:#F2F2F3;--muted:#9A9AA0;--ac:#D8372E;--ac-soft:rgba(216,55,46,.16);--ac-text:#FF6A60;--st1:rgba(216,55,46,.24);--st2:rgba(216,55,46,.6);--push:#E0453B;--pull:#F2A33A;--third:#8E8E93;--good:#34C26E;--bad:#FF5A4F;
+:root[data-theme="ipc"][data-mode="dark"]{--bg:#0F0F11;--card:#1C1C1E;--line:rgba(255,255,255,.07);--sub:#242427;--seg:#242427;--dark:linear-gradient(160deg,#2E2E31 0%,#1A1A1C 100%);--dark-solid:#232325;--ink:#F2F2F3;--muted:#9A9AA0;--ac:#D8372E;--ac-soft:rgba(216,55,46,.16);--ac-text:#FF6A60;--st1:rgba(216,55,46,.24);--st2:rgba(216,55,46,.6);--push:#E0453B;--pull:#F2A33A;--third:#8E8E93;--good:#34C26E;--bad:#FF5A4F;
   --ip-body:linear-gradient(180deg,#2C2C2E 0%,#1E1E20 60%,#161617 100%);--ip-edge:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -3px 6px rgba(0,0,0,.4),0 0 0 1px #000,0 24px 40px -18px rgba(0,0,0,.8);--ip-wheel:radial-gradient(circle at 50% 30%,#C42A22 0%,#A3221B 100%);--ip-wl:#F6E3E0;--ip-center:linear-gradient(180deg,#1A1A1B 0%,#0E0E0F 100%);--ip-bezel:#0A0A0B;color-scheme:dark}
 :root[data-theme="ipice"]{--bg:#EDF2F8;--glow:none;--card:#FFFFFF;--line:rgba(30,60,100,.07);--sub:#F1F6FB;--seg:#E2EBF4;--dark:linear-gradient(160deg,#79B0E3 0%,#4F8FCF 100%);--dark-solid:#5A98D5;--dark-line:rgba(255,255,255,.18);--track:rgba(255,255,255,.28);--ink:#1D3350;--muted:#5A718C;--ac:#3D86D6;--on-ac:#fff;--ac-soft:rgba(61,134,214,.14);--ac-text:#2468B4;--st1:rgba(61,134,214,.22);--st2:rgba(61,134,214,.58);--push:#3D86D6;--pull:#E58FB0;--third:#8FB0CF;--good:#2E9B7A;--bad:#D9506A;--sleep:#8A7BD8;
   --ip-body:linear-gradient(180deg,#BBD8F2 0%,#A3C7EA 50%,#8DB7E1 100%);--ip-edge:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 8px rgba(40,80,130,.15),0 0 0 1px rgba(60,100,150,.18),0 24px 40px -18px rgba(40,80,130,.4);
@@ -1949,7 +1949,6 @@ html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box
   --ip-wheel:radial-gradient(circle at 50% 30%,#3E52CC 0%,#2B3AAE 100%);--ip-wl:#FFFFFF;--ip-center:radial-gradient(circle at 50% 35%,#3A4DC6 0%,#2C3BAE 100%);--ip-bezel:#3C52C6;
   --disp:-apple-system,BlinkMacSystemFont,"Inter Tight","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;color-scheme:light}
 :root[data-ipod] .dock button[aria-selected="true"]{color:var(--on-ac)}
-:root[data-ipod] .hero .exl li,:root[data-ipod] .hero .exl li b{color:rgba(255,255,255,.9)}
 :root.glass[data-theme="ipc"][data-mode="light"]{--gl-dock:#F6F7F8;--gl-mp:#F6F7F8}
 :root.glass[data-theme="ipc"][data-mode="dark"]{--gl-dock:#1E1E20;--gl-mp:#222224}
 :root.glass[data-theme="ipice"]{--gl-dock:#F3F8FC;--gl-mp:#F3F8FC}
@@ -2039,3 +2038,16 @@ html:root body .arm.arm{background:var(--bad)!important;color:#fff!important;box
 .ip-scr .fl-bks i{flex:1;width:auto;height:16px;border-radius:2px;background:#DCDFE3}
 .ip-scr .fl-bks i.on{background:var(--c)}
 .ip-scr .fl-bks i:nth-child(1){--c:#9CC6FF}.ip-scr .fl-bks i:nth-child(2){--c:#4D93F2}.ip-scr .fl-bks i:nth-child(3){--c:#2F7BEA}.ip-scr .fl-bks i:nth-child(4){--c:#1B5BC4}
+
+/* iPod OS buttons: the main ones are the classic glossy highlight bar in the skin's colour (light top half, a hard
+   line in the middle, white words pressed in); the small ones are the silver of the screen's title bar */
+:root[data-ipod]{--ipk:linear-gradient(180deg,color-mix(in srgb,var(--ac) 45%,#fff) 0%,color-mix(in srgb,var(--ac) 78%,#fff) 49%,var(--ac) 51%,color-mix(in srgb,var(--ac) 86%,#000) 100%);--ipk-rim:color-mix(in srgb,var(--ac) 65%,#000);
+  --ips:linear-gradient(180deg,#FCFCFD 0%,#ECEEF1 49%,#DFE2E6 51%,#D2D6DB 100%);--ips-rim:#AEB3BA;--ips-ink:#2A2D31}
+:root[data-theme="ipc"][data-mode="dark"]{--ips:linear-gradient(180deg,#55565A 0%,#3A3B3F 49%,#2C2D30 51%,#232426 100%);--ips-rim:#000;--ips-ink:#F2F2F3}
+html:root[data-ipod] :is(.btn:not(.ghost),.hgo,.pill.ac,.dock .pc,.f-sets i.cur,.cal .dd.today b,.opt[aria-pressed="true"],.preset.on,.thc.on){background:var(--ipk);color:#fff;border:1px solid var(--ipk-rim);text-shadow:0 -1px 0 rgba(0,0,0,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 1px 2px rgba(0,0,0,.18)}
+html:root[data-ipod] :is(.btn:not(.ghost),.hgo,.dock .pc) svg{filter:drop-shadow(0 -1px 0 rgba(0,0,0,.3))}
+html:root[data-ipod] .dock button[aria-selected="true"]{color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.3)}
+html:root[data-ipod] .modesw .kn{background:var(--ipk);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 0 0 1px var(--ipk-rim),0 1px 2px rgba(0,0,0,.2)}
+html:root[data-ipod] :is(.circ,.mini,.fsreset,.btn.ghost,.modesw){background:var(--ips);color:var(--ips-ink);border:1px solid var(--ips-rim);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 2px rgba(0,0,0,.12)}
+html:root[data-theme="ipc"][data-mode="dark"] :is(.circ,.mini,.fsreset,.btn.ghost,.modesw){box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 1px 2px rgba(0,0,0,.5)}
+html:root[data-ipod] :is(.btn,.hgo):active{filter:brightness(.92)}
