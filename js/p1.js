@@ -697,7 +697,7 @@ function arrHtml(id,html){const ed=arrEdit===id,{shown,hidden}=arrList(id);
 function arrSave(id,c){state.settings[ARR[id].key]=c;lsSave()}
 function arrBind(id){const box=$(ARR[id].view+" .dtiles");if(!box)return;let tm=0,drag=null;
   box.addEventListener("pointerdown",e=>{const t=e.target.closest(".dtile");if(!t||e.target.closest(".tx")||e.target.closest("#protRing"))return;
-    if(arrEdit!==id){clearTimeout(tm);const x=e.clientX,y=e.clientY;tm=setTimeout(()=>{tm=0;arrEdit=id;buzz(15);fsEatClick();ARR[id].render()},500);
+    if(arrEdit!==id){if(!blankHold(e,t))return;clearTimeout(tm);const x=e.clientX,y=e.clientY;tm=setTimeout(()=>{tm=0;arrEdit=id;buzz(15);fsEatClick();ARR[id].render()},500);
       const cancel=ev=>{if(ev.type!=="pointermove"||Math.hypot(ev.clientX-x,ev.clientY-y)>10){clearTimeout(tm);off()}};
       const off=()=>{["pointermove","pointerup","pointercancel"].forEach(k=>removeEventListener(k,cancel))};["pointermove","pointerup","pointercancel"].forEach(k=>addEventListener(k,cancel));return}
     e.preventDefault();drag={t,y:e.clientY,moved:false};t.setPointerCapture(e.pointerId);t.classList.add("drag")});
@@ -973,11 +973,15 @@ function renderProgView(){const v=$("#v-prog"),{shown,hidden}=tileList();
 /* a goal ring held opens its manual log (pull-ups or the main move, waist, weight); fat loss is worked out, so it has none */
 let goalHeld=0;
 function goalHolds(v){v.querySelectorAll(".goals4 [data-act=goal]").forEach(b=>holdOpen(b,()=>{goalHeld=Date.now();if(b.dataset.rec)openRecord(b.dataset.rec)}))}
+/* a hold puts a page's cards into arranging only from a card's empty space: not from a button, a chart, a ring, a row
+   or anything else that answers a touch of its own (a whole-card button, like a tile with no chart yet, counts as the card) */
+function blankHold(e,card){const hit=e.target.closest('[data-act],button,a,input,select,textarea,label,[role=button],.bricks,.fs-peek');
+  return !hit||!card.contains(hit)||hit===card}
 function tileSave(cfg){state.settings.tiles=cfg;lsSave()}
 function tileBind(){const box=$("#v-prog .bento");if(!box)return;let tm=0,drag=null;
   /* long-press to edit */
   box.addEventListener("pointerdown",e=>{const t=e.target.closest(".tile");if(!t||e.target.closest(".tx"))return;
-    if(!tileEdit){clearTimeout(tm);const x=e.clientX,y=e.clientY;tm=setTimeout(()=>{tm=0;tileEdit=true;buzz(15);fsEatClick();renderProgView()},500);
+    if(!tileEdit){if(!blankHold(e,t))return;clearTimeout(tm);const x=e.clientX,y=e.clientY;tm=setTimeout(()=>{tm=0;tileEdit=true;buzz(15);fsEatClick();renderProgView()},500);
       const cancel=ev=>{if(ev.type!=="pointermove"||Math.hypot(ev.clientX-x,ev.clientY-y)>10){clearTimeout(tm);off()}};
       const off=()=>{["pointermove","pointerup","pointercancel"].forEach(k=>removeEventListener(k,cancel))};["pointermove","pointerup","pointercancel"].forEach(k=>addEventListener(k,cancel));return}
     /* editing: drag a tile to a new place */
