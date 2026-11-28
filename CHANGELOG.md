@@ -9,12 +9,12 @@ Everything that changed, version by version. Format based on [Keep a Changelog](
 ## [v1.81a] — 2026-11-29
 
 ### 新增 / Added
-- 📈 **长按缺口卡看摄入与消耗**：每天的摄入和消耗两条线、中间的缺口或盈余柱子、基础代谢虚线，旋钮切换 7 天、14 天、30 天和全部，手指划过读出每天的数。
-  Hold the deficit card for intake against burn: a line each, a bar per day for the deficit or surplus between them, resting burn dashed; a knob switches 7, 14, 30 days or everything, and a finger across reads each day.
+- 📈 **长按缺口卡看摄入与消耗**：每天的摄入和消耗两条线、中间的缺口或盈余柱子、基础代谢虚线，上方和卡片一样点一下换天数，手指划过读出每天的数。
+  Hold the deficit card for intake against burn: a line each, a bar per day for the deficit or surplus between them, resting burn dashed; its head, like the card's, switches the period with a tap, and a finger across reads each day.
 
 ### 改进 / Changed
-- 缺口卡不再是卡片叠：点卡片上半部分就换天数。
-  The deficit card is no longer a stack: tap its head to change the period.
+- 缺口卡不再是卡片叠：点卡片上半部分就换天数，新增 3 天、60 天、90 天。
+  The deficit card is no longer a stack: tap its head to change the period, now also 3, 60 and 90 days.
 
 ## [v1.80a] — 2026-11-28
 

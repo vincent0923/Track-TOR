@@ -709,7 +709,7 @@ function renderDietView(){const v=$("#v-diet"),t=today();
   v.innerHTML='<div class="ptr" id="ptr" aria-hidden="true"><i></i></div>'+hero+week+dietListHtml();animateRings(v);gapBind();fsBind("diet",DIET_FS);holdOpen($("#protRing"),openProtein)}
 /* the gap card: swipe it sideways (or tap a dot) to step through 7, 14, 30 days and since the first log; the
    big figure turns over like a split-flap board. Only finished days count (the window ends yesterday). */
-const GAP_RANGES=[7,14,30,0];
+const GAP_RANGES=[3,7,14,30,60,90,0];
 let gapR=7;try{const v=+localStorage.getItem(PK+"gw");if(GAP_RANGES.includes(v)&&localStorage.getItem(PK+"gw")!==null)gapR=v}catch(e){}
 function gapData(){const t=today(),to=ymdAdd(t,-1),first=Object.keys(state.diet).sort()[0];
   const from=gapR?ymdAdd(to,-(gapR-1)):(first&&first<=to?first:to),days=[];for(let d=from;d<=to;d=ymdAdd(d,1))days.push(d);
@@ -779,24 +779,27 @@ function mainCards(){return weeklyData()?2:1}
 function mainStackHtml(){if(mainCard>=mainCards())mainCard=0;return fsWrap("mainst",mainCardHtml(mainCard),mainCards()-1)}
 const MAIN_FS={get:()=>mainCards()<2?null:mainCardHtml((mainCard+1)%2),commit:()=>{mainCard=(mainCard+1)%2},render:mainStackHtml,peekDir:1};
 function flapHtml(txt){return '<span class="flap">'+[...txt].map((c,i)=>'<span style="--i:'+i+'">'+c+'</span>').join("")+'</span>'}
-function gapCardHtml(rr){const keep=gapR;if(rr!=null)gapR=rr;const {from,to,days,gaps,known,sum}=gapData();gapR=keep;const R=rr!=null?rr:gapR,mx=Math.max(300,...known.map(Math.abs));
-  const label=R?T('过去 '+R+' 天','Last '+R+' days'):T('有记录以来 '+days.length+' 天','Since the first log · '+days.length+' days');
-  const w=known.length?fatWord(sum/7700,from,to):"about",word=(LANG==="en"?{about:"about ",high:"aggressive: ",low:"conservative: "}:{about:"约 ",high:"激进估计 ",low:"保守估计 "})[w];
+function gapCardHtml(){const {from,to,days,gaps}=gapData();
   /* long windows draw one bar per week so the bars stay readable */
   let cols=days.map((d,i)=>({g:gaps[i],l:days.length<=14?WD[dateObj(d).getDay()]:""}));
   if(days.length>31){cols=[];for(let i=0;i<days.length;i+=7){const ch=gaps.slice(i,i+7).filter(g=>g!=null);cols.push({g:ch.length?ch.reduce((a,b)=>a+b,0)/ch.length:null,l:""})}}
   const cm=Math.max(300,...cols.filter(c=>c.g!=null).map(c=>Math.abs(c.g)));
-  return '<section class="card gapcard" id="gapCard"><div class="row gaphead" data-act="gapr" role="button" tabindex="0" aria-label="'+T('换时间范围','Change the period')+'"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?T(' · 记了 '+known.length+' 天',' · '+known.length+' logged'):'')+'</p>'
-    +'<div class="big">'+flapHtml(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?T("缺口","deficit"):T("盈余","surplus"))+'</small></div></div>'
-    +(known.length?'<span class="pill gpill '+(sum>=0?"good":"bad")+'"><span>'+(w==="about"?word:'')+(Math.abs(sum)/7700).toFixed(2)+T(' kg 脂肪',' kg fat')+'</span>'+(w==="about"?'':'<small>'+word.replace(/[:：]?\s*$/,'')+'</small>')+'</span>':'')+'</div>'
+  return '<section class="card gapcard" id="gapCard">'+gapHeadHtml()
     +bricksHtml(cols.map(c=>({n:c.g==null?0:Math.max(1,Math.round(Math.abs(c.g)/cm*8)),c:c.g==null?"":c.g>=0?"var(--good)":"var(--bad)",l:c.l})),true)
     +(days.length?'<div class="row muted" style="font-size:11px;font-weight:600;margin-top:6px"><span>'+dayLabel(from)+'</span><span class="sp"></span><span>'+dayLabel(to)+'</span></div>':'')
     +'</section>'}
+/* the head of the gap card (and of the intake panel): the period, the total and its fat; tap it for the next period */
+function gapHeadHtml(inSheet){const {from,to,days,known,sum}=gapData(),R=gapR;
+  const label=R?T('过去 '+R+' 天','Last '+R+' days'):T('有记录以来 '+days.length+' 天','Since the first log · '+days.length+' days');
+  const w=known.length?fatWord(sum/7700,from,to):"about",word=(LANG==="en"?{about:"about ",high:"aggressive: ",low:"conservative: "}:{about:"约 ",high:"激进估计 ",low:"保守估计 "})[w];
+  return '<div class="row gaphead'+(inSheet?' ihead':'')+'" data-act="gapr" role="button" tabindex="0" aria-label="'+T('换时间范围','Change the period')+'"><div class="sp"><p class="eyebrow">'+label+(known.length<days.length?T(' · 记了 '+known.length+' 天',' · '+known.length+' logged'):'')+'</p>'
+    +'<div class="big">'+flapHtml(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?T("缺口","deficit"):T("盈余","surplus"))+'</small></div></div>'
+    +(known.length?'<span class="pill gpill '+(sum>=0?"good":"bad")+'"><span>'+(w==="about"?word:'')+(Math.abs(sum)/7700).toFixed(2)+T(' kg 脂肪',' kg fat')+'</span>'+(w==="about"?'':'<small>'+word.replace(/[:：]?\s*$/,'')+'</small>')+'</span>':'')+'</div>'}
 /* tap the head of the gap card to step through 7, 14, 30 days and since the first log (the figure turns over like a
    split-flap board); hold the card for intake against burn, day by day, in a panel with the same periods */
 let gapHeld=0;
 function gapSet(r){gapR=r;try{localStorage.setItem(PK+"gw",String(gapR))}catch(e){}}
-function gapNext(){gapSet(GAP_RANGES[(GAP_RANGES.indexOf(gapR)+1)%GAP_RANGES.length]);const c=$("#gapCard");if(!c)return;c.outerHTML=gapCardHtml();gapBind();SFX.tap();buzz(6)}
+function gapNext(){gapSet(GAP_RANGES[(GAP_RANGES.indexOf(gapR)+1)%GAP_RANGES.length]);if($("#ichart"))openIntake.redraw();const c=$("#gapCard");if(c){c.outerHTML=gapCardHtml();gapBind()}SFX.tap();buzz(6)}
 function gapBind(){const c=$("#gapCard");if(!c)return;holdOpen(c,()=>{gapHeld=Date.now();openIntake()})}
 /* intake (ink) and burn (green) as two lines, the space between them a bar per day (green where burn was higher, a
    deficit; red where intake was, a surplus), resting burn (BMR) dashed; drag across it to read a day */
@@ -813,10 +816,9 @@ function intakeSvg(days,W,H){const L=34,R=10,TP=10,B=22,pts=days.map(d=>{const a
   const r=n>31?1.3:2.2;pts.forEach((p,i)=>{if(p.b!=null)g+='<circle cx="'+x(i).toFixed(1)+'" cy="'+y(p.b).toFixed(1)+'" r="'+r+'" fill="var(--good)"/>';if(p.a!=null)g+='<circle cx="'+x(i).toFixed(1)+'" cy="'+y(p.a).toFixed(1)+'" r="'+r+'" fill="var(--ink)"/>'});
   g+='<line class="ixh" x1="0" x2="0" y1="'+TP+'" y2="'+(H-B)+'" stroke="var(--ink)" stroke-opacity=".35" visibility="hidden"/>';
   return {svg:'<svg class="isvg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+T('摄入与消耗','Intake vs burn')+'" font-size="9" fill="var(--muted)">'+g+'</svg>',pts,x,step,L}}
-function openIntake(){const draw=()=>{const {days,known,sum}=gapData(),ch=intakeSvg(days,340,210);
+function openIntake(){const draw=()=>{const {days}=gapData(),ch=intakeSvg(days,340,210);
     $("#sheetBody").innerHTML='<div class="sh-h"><h3>'+T('摄入与消耗','Intake vs burn')+'</h3><button class="mini" data-act="close">'+ICON.x+'</button></div>'
-      +'<div class="row" style="margin-bottom:14px;align-items:flex-end"><div class="sp" style="min-width:0"><div class="big" style="white-space:nowrap;font-size:clamp(26px,8.5vw,38px)">'+(known.length?(sum>=0?"":"+")+fmt(Math.abs(sum)):"–")+'<small>kcal '+(sum>=0?T("缺口","deficit"):T("盈余","surplus"))+'</small></div></div>'
-      +knobHtml([[7,T("7天","7d")],[14,T("14天","14d")],[30,T("30天","30d")],[0,T("全部","All")]],gapR,d=>'data-act="irange" data-r="'+d+'"',T('时间范围','Range'))+'</div>'
+      +gapHeadHtml(true)
       +'<div class="chart ichart" id="ichart">'+ch.svg+'<span class="tip" id="itip"></span></div>'
       +'<div class="legend" style="margin-top:10px"><span><i style="background:var(--ink)"></i>'+T('摄入','Intake')+'</span><span><i style="background:var(--good)"></i>'+T('消耗','Burn')+'</span><span><i style="background:var(--muted)"></i>'+T('基础代谢','BMR')+'</span></div>';
     const el=$("#ichart"),tip=$("#itip"),xh=el.querySelector(".ixh");
@@ -1199,7 +1201,6 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(
   else if(a==="metric"){if(tileEdit)return;chartRange=30;metricSheet(b.dataset.k)}
   else if(a==="range"){chartRange=+b.dataset.r;metricSheet.redraw()}
   else if(a==="gapr"){if(Date.now()-gapHeld<800)return;gapNext()}
-  else if(a==="irange"){gapSet(+b.dataset.r);openIntake.redraw();const c=$("#gapCard");if(c){c.outerHTML=gapCardHtml();gapBind()}}
   else if(a==="goal")bridge("goals");
   else if(a==="coins")coinSheet(false);
   else if(a==="shop"){const up=b.closest("#sheet")?CUR_SHEET:null;coinSheet(true);SHEET_UP=up}

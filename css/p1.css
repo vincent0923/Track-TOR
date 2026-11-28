@@ -2221,3 +2221,4 @@ html:root[data-theme="ipylw"] :is(.btn:not(.ghost),.hgo,.dock .pc) svg{filter:no
 @keyframes cfEl{0%,52%{opacity:0}60%,100%{opacity:1}}
 @keyframes cfEr{0%,40%{opacity:1}48%,100%{opacity:0}}
 :root[data-theme="eink"] .cflow .cf-card .cf-e{display:none}
+.ihead{margin-bottom:12px}
